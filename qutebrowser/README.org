@@ -1,0 +1,67 @@
+#+Property: Header-args :tangle ~/.config/qutebrowser/config.py :tangle-mode (identity #o444)
+#+auto_tangle: t
+#+AUTHOR: Richard Redcroft
+
+
+* Table of Contents :TOC:
+  - [[#defaults][Defaults]]
+  - [[#general-configuration][General configuration]]
+  - [[#keybinds][Keybinds]]
+  - [[#quickmarks][Quickmarks]]
+
+** Defaults
+Load the default qutebrowser settings, ill override the settings i care about
+#+begin_src python
+  config.load_autoconfig()
+#+end_src
+
+** General configuration
+#+begin_src python
+c.auto_save.session = True
+c.completion.shrink = True
+c.content.notifications.enabled = True
+c.content.blocking.whitelist = ["youtube.com"]
+c.downloads.location.prompt = False
+c.window.title_format = "qutebrowser"
+c.hints.chars = "arstneio"
+c.url.searchengines = {
+    'DEFAULT':  'https://bing.com/search?hl=en&q={}',
+    'az': 'https://www.amazon.co.uk/s?k={}',
+    'g':  'https://google.com/search?hl=en&q={}',
+    'yt': 'https://youtube.com/results?search_query={}'
+}
+#+end_src
+
+** Keybinds
+#+begin_src python
+config.bind("<Ctrl-tab>", "tab-next")
+config.bind("<Ctrl-Shift-tab>", "tab-prev")
+config.bind("m", "spawn mpv --hwdec=auto --ytdl-format=bestvideo[height<=?720]+bestaudio/best {url}")
+config.bind("M", "hint links spawn mpv --hwdec=auto --ytdl-format=bestvideo[height<=?720]+bestaudio/best {hint-url}")
+config.bind("<z><l>", "spawn --userscript qute-pass")
+config.bind("<z><u>", "spawn --userscript qute-pass --username-only")
+config.bind("<z><p>", "spawn --userscript qute-pass --password-only")
+config.bind("<Ctrl-f>", "scroll right")
+config.bind("<Ctrl-b>", "scroll left")
+config.bind("<Ctrl-n>", "scroll down")
+config.bind("<Ctrl-p>", "scroll up")
+#+end_src
+
+** Quickmarks
+#+begin_src conf :tangle ~/.config/qutebrowser/quickmarks :tangle-mod (identity #o444)
+  asdf https://asdf-vm.com/guide/introduction.html
+  cg https://www.cgchannel.com/
+  chat https://chat.carseandwaterman.com
+  devbox https://www.jetify.com/devbox
+  devenv https://devenv.sh/
+  gmail https://gmail.com
+  fdm http://192.168.0.132
+  git https://git.carseandwaterman.com
+  mail https://mail.hostinger.com
+  mise https://mise.jdx.dev/dev-tools/comparison-to-asdf.html
+  phoronix https://phoronix.com
+  prime https://amazon.co.uk/gp/video/storefront
+  reddit https://reddit.com
+  yt https://youtube.com/feed/subscriptions
+  tornado https://vimeo.com/ondemand/snowflaketornado
+#+end_src

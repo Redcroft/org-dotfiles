@@ -1,0 +1,595 @@
+#+Property: Header-args :tangle ~/.emacs.d/init.el :tangle-mode (identity #o444)
+#+auto_tangle: t
+#+AUTHOR: Richard Redcroft
+
+* Table of Contents :TOC_4:
+  - [[#early-init][Early Init]]
+  - [[#init][Init]]
+    - [[#elpaca][Elpaca]]
+    - [[#backup][Backup]]
+    - [[#settings][Settings]]
+    - [[#keybinds][Keybinds]]
+    - [[#org-mode][Org-mode]]
+      - [[#auto-tangle][Auto-tangle]]
+      - [[#bullets][Bullets]]
+      - [[#modern][Modern]]
+      - [[#source][Source]]
+      - [[#tempo][Tempo]]
+      - [[#toc][TOC]]
+    - [[#packages][Packages]]
+      - [[#beacon][Beacon]]
+      - [[#doom-modeline][Doom Modeline]]
+      - [[#diff-hl][Diff-hl]]
+      - [[#eyebrowse][Eyebrowse]]
+      - [[#exwm][EXWM]]
+      - [[#focus][Focus]]
+      - [[#gc][GC]]
+      - [[#gdscript][GDScript]]
+      - [[#helm][Helm]]
+      - [[#magit][Magit]]
+      - [[#marginalia][Marginalia]]
+      - [[#move-text][Move text]]
+      - [[#mu4e][Mu4e]]
+      - [[#multiplec-cursors][Multiplec Cursors]]
+      - [[#orderless][Orderless]]
+      - [[#pdf-tools][PDF-Tools]]
+      - [[#pinentry][Pinentry]]
+      - [[#savehist][Savehist]]
+      - [[#solaire][Solaire]]
+      - [[#treemacs][Treemacs]]
+      - [[#vertico][Vertico]]
+      - [[#vertico-directory][Vertico Directory]]
+      - [[#vertico-posframe][Vertico Posframe]]
+      - [[#vterm][VTerm]]
+      - [[#whichkey][Whichkey]]
+      - [[#whitespace][Whitespace]]
+      - [[#yasnippet][Yasnippet]]
+    - [[#ui][UI]]
+      - [[#all-the-icons][All-The-Icons]]
+      - [[#theme][Theme]]
+      - [[#fonts][Fonts]]
+
+** Early Init
+Disable unneeded features of emacs (ui elements, package manager) for faster startup but also i will be replacing them anyway.
+
+#+begin_src emacs-lisp :tangle ~/.emacs.d/early-init.el
+  (setq comp-async-report-warnings-errors nil
+	default-frame-alist
+	'((vertical-scroll-bars . nil)
+	  (menu-bar-lines . 0)
+	  (tool-bar-lines . 0))
+	frame-inhibit-implied-resize t
+	gc-cons-threshold most-positive-fixnum
+	gc-cons-percentage 0.6
+	inhibit-startup-screen t
+	load-prefer-newer 'noninteractive
+	package-enable-at-startup nil)
+#+end_src
+
+** Init
+
+*** Elpaca
+Testing out Elpaca package management instead of straight.el
+#+begin_src emacs-lisp
+  (defvar elpaca-installer-version 0.7)
+  (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
+  (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+  (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+  (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+				:ref nil :depth 1
+				:files (:defaults "elpaca-test.el" (:exclude "extensions"))
+				:build (:not elpaca--activate-package)))
+  (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+	 (build (expand-file-name "elpaca/" elpaca-builds-directory))
+	 (order (cdr elpaca-order))
+	 (default-directory repo))
+    (add-to-list 'load-path (if (file-exists-p build) build repo))
+    (unless (file-exists-p repo)
+      (make-directory repo t)
+      (when (< emacs-major-version 28) (require 'subr-x))
+      (condition-case-unless-debug err
+	  (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+		   ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+						   ,@(when-let ((depth (plist-get order :depth)))
+						       (list (format "--depth=%d" depth) "--no-single-branch"))
+						   ,(plist-get order :repo) ,repo))))
+		   ((zerop (call-process "git" nil buffer t "checkout"
+					 (or (plist-get order :ref) "--"))))
+		   (emacs (concat invocation-directory invocation-name))
+		   ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+					 "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+		   ((require 'elpaca))
+		   ((elpaca-generate-autoloads "elpaca" repo)))
+	      (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+	    (error "%s" (with-current-buffer buffer (buffer-string))))
+	((error) (warn "%s" err) (delete-directory repo 'recursive))))
+    (unless (require 'elpaca-autoloads nil t)
+      (require 'elpaca)
+      (elpaca-generate-autoloads "elpaca" repo)
+      (load "./elpaca-autoloads")))
+  (add-hook 'after-init-hook #'elpaca-process-queues)
+  (elpaca `(,@elpaca-order))
+
+  (elpaca elpaca-use-package
+    (elpaca-use-package-mode))
+  (setq use-package-always-ensure t)
+#+end_src
+
+*** Backup
+#+begin_src emacs-lisp
+  (setq backup-directory-alist '((".*" . "~/.emacs.d/backup-files")))
+#+end_src
+
+*** Settings
+#+begin_src emacs-lisp
+  (setq ring-bell-function 'ignore
+	use-short-answers t
+	visible-bell t)
+  (setq-default indent-tabs-mode nil)
+  (add-hook 'prog-mode 'prettify-symbols-mode)
+  (global-superword-mode)
+  (global-subword-mode)
+  (global-hl-line-mode)
+  (setq custom-file "~/.emacs.d/custom.el")
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+#+end_src
+
+*** Keybinds
+#+begin_src emacs-lisp
+  (keyboard-translate ?\C-x ?\C-t)
+  (keyboard-translate ?\C-t ?\C-x)
+  (global-set-key (kbd "M-#") #'comment-or-uncomment-region)
+  (global-set-key (kbd "C-c r") #'eval-buffer)
+  (global-set-key (kbd "C-c m") #'eval-region)
+  (global-set-key (kbd "C-x r s") #'replace-string)
+  (global-set-key (kbd "C-x C-c") #'save-buffers-kill-emacs)
+  (global-set-key (kbd "C-x c") #'compile)
+  (global-set-key (kbd "C-x RET") #'eshell)
+  (global-set-key (kbd "C-x C-y") #'recentf-open-files)
+  (define-prefix-command 'programs-map)
+  (global-set-key (kbd "C-x y") 'programs-map)
+#+end_src
+
+*** Org-mode
+
+**** Auto-tangle
+Automatically tangle org files
+#+begin_src emacs-lisp
+  (use-package org-auto-tangle
+    :hook (org-mode . org-auto-tangle-mode))
+#+end_src
+
+**** Bullets
+
+#+begin_src emacs-lisp
+  (use-package org-bullets
+    :hook (org-mode . org-bullets-mode))
+#+end_src
+
+**** Modern
+Improves the styling and look of org-mode
+#+begin_src emacs-lisp
+  (use-package org-modern
+    :hook (org-mode . org-modern-mode))
+#+end_src
+
+**** Source
+#+begin_src emacs-lisp
+  (setq org-src-window-setup 'current-window)
+#+end_src
+
+**** Tempo
+This package allows you to type `<s` then press TAB to expand a tab
+#+begin_src emacs-lisp
+  (use-package org-tempo
+    :ensure nil)
+#+end_src
+
+**** TOC
+#+begin_src emacs-lisp
+  (use-package toc-org
+    :hook (org-mode . toc-org-mode))
+#+end_src
+
+*** Packages
+
+**** Beacon
+#+begin_src emacs-lisp
+  (use-package beacon
+    :config
+    (beacon-mode))
+#+end_src
+
+**** Doom Modeline
+#+begin_src emacs-lisp
+    (use-package doom-modeline
+      :hook (after-init . doom-modeline-mode)
+      :config
+      (setq doom-modeline-hud t
+            doom-modeline-time t))
+#+end_src
+
+**** Diff-hl
+#+begin_src emacs-lisp
+  (use-package diff-hl
+    :config
+    (global-diff-hl-mode)
+    (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
+    (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
+#+end_src
+
+**** Eyebrowse
+#+begin_src emacs-lisp
+  (use-package eyebrowse
+    :if (not (string= (system-name) "red"))
+    :bind (("M-1" . eyebrowse-switch-to-window-config-1)
+           ("M-2" . eyebrowse-switch-to-window-config-2)
+           ("M-3" . eyebrowse-switch-to-window-config-3)
+           ("M-4" . eyebrowse-switch-to-window-config-4)
+           ("M-5" . eyebrowse-switch-to-window-config-5)
+           ("M-6" . eyebrowse-switch-to-window-config-6)
+           ("M-7" . eyebrowse-switch-to-window-config-7)
+           ("M-8" . eyebrowse-switch-to-window-config-8)
+           ("M-9" . eyebrowse-switch-to-window-config-9)
+           ("M-0" . eyebrowse-switch-to-window-config-0))
+    :config
+    (setq eyebrowse-new-workspace t)
+    (eyebrowse-mode))
+#+end_src
+
+**** EXWM
+#+begin_src emacs-lisp
+  (use-package exwm
+    :if (string= (system-name) "red")
+    :config
+    (setq battery-update-interval 15
+          battery-mode-line-format "[%p%% %t]"
+          display-time-default-load-average nil
+          display-time-format "[%b %d %I:%M%p]"
+          exwm-workspace-number 10
+          exwm-input-simulation-keys
+          '(([?\C-b] . [left])
+            ([?\C-f] . [right])
+            ([?\C-p] . [up])
+            ([?\C-n] . [down])
+            ([?\C-a] . [home])
+            ([?\C-e] . [end])
+            ([?\M-v] . [prior])
+            ([?\C-v] . [next])
+            ([?\C-d] . [delete])
+            ([?\C-k] . [S-end delete]))
+          exwm-input-global-keys
+          `(([?\s-r] . exwm-reset)
+            ([?\s-w] . exwm-workspace-switch)
+            ,@(mapcar (lambda (i)
+                        `(,(kbd (format "s-%d" i)) .
+                          (lambda ()
+                            (interactive)
+                            (exwm-workspace-switch-create ,i))))
+                      (number-sequence 0 9))))
+
+    (defun my/exwm-startup ()
+      (lambda)
+      (exwm-init)
+      (sleep-for 0 200)
+      (exwm-workspace-switch-create 9)
+      (sleep-for 0 200)
+      (exwm-workspace-switch 1)
+      ;;(dashboard-open)
+      )
+    (add-hook 'emacs-startup-hook 'my/exwm-startup)
+    (add-hook 'exwm-update-class-hook
+              (lambda ()
+                (unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+                            (string= "gimp" exwm-instance-name))
+                  (exwm-workspace-rename-buffer (concat "*EXWM* " exwm-class-name)))))
+    (add-hook 'exwm-update-title-hook
+              (lambda ()
+                (when (or (not exwm-instance-name)
+                          (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+                          (string= "gimp" exwm-instance-name))
+                  (exwm-workspace-rename-buffer exwm-title))))
+    (add-hook 'exwm-floating-setup-hook 'exwm-layout-hide-mode-line)
+    (add-hook 'exwm-floating-exit-hook  'exwm-layout-show-mode-line)
+    (exwm-input-set-key (kbd "s-p")
+                        (lambda (command)
+                          (interactive (list (read-shell-command "$ ")))
+                          (start-process-shell-command command nil command)))
+    (exwm-input-set-key (kbd "s-<return>")
+                        (lambda () (interactive) (eshell)))
+    (exwm-input-set-key (kbd "s-W")
+                        (lambda () (interactive) (start-process "" nil "qutebrowser")))
+    (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
+                        (lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-volume" "0" "+2%")))
+    (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
+                        (lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-volume" "0" "-2%")))
+    (exwm-input-set-key (kbd "<XF86AudioMute>")
+                        (lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-mute" "0" "toggle")))
+    (exwm-input-set-key (kbd "s-z")
+                        (lambda ()
+                          (interactive)
+                          (let ((d (format-time-string "%H:%m%p"))
+                                (b (battery-format battery-echo-area-format (funcall battery-status-function))))
+                            (message "%s\t%s" d b))))
+    (display-time-mode 1)
+    (display-battery-mode 1)
+    (exwm-input--update-global-prefix-keys)
+    )
+#+end_src
+
+**** Focus
+#+begin_src emacs-lisp
+  (use-package focus
+    :bind ("C-c f" . focus-mode)
+    :config
+    (setq focus-mode-to-thing
+          '((prog-mode . defun)
+            (text-mode . sentence))))
+#+end_src
+
+**** GC
+#+begin_src emacs-lisp
+  (use-package gcmh
+    :config
+    (gcmh-mode))
+
+  (add-hook 'emacs-startup-hook
+	    (lambda ()
+	      (message "*** Emacs loaded in %s with %d garbage collections."
+		       (format "%.2f seconds"
+			       (float-time
+				(time-subtract after-init-time before-init-time)))
+		       gcs-done)))
+#+end_src
+
+**** GDScript
+#+begin_src emacs-lisp
+  (use-package gdscript-mode
+    :hook (gdscript-mode-hook . (lambda ()
+                               (add-hook 'before-save-hook
+                                         (lambda ()
+                                           (untabify (point-min) (point-max)))))))
+#+end_src
+
+**** Helm
+***** System Packages
+#+begin_src emacs-lisp
+  (use-package helm-system-packages
+    :bind (:map programs-map
+                ("p" . helm-system-packages)))
+#+end_src
+
+**** Magit
+#+begin_src emacs-lisp
+  (use-package magit
+    :config
+    (setq magit-diff-refine-hunk t)
+    (global-set-key (kbd "C-x g") 'magit-status))
+
+  (use-package magit-lfs)
+#+end_src
+
+**** Marginalia
+Provides documentation to minibuffer completions
+#+begin_src emacs-lisp
+  (use-package marginalia
+    :bind (:map minibuffer-local-map
+		("M-A" . marginalia-cycle))
+    :init
+    (marginalia-mode))
+#+end_src
+
+**** Move text
+#+begin_src emacs-lisp
+  (use-package move-text
+    :config
+    (move-text-default-bindings)
+    (defun indent-region-advice (&rest ignored)
+      (let ((deactivate deactivate-mark))
+        (if (region-active-p)
+            (indent-region (region-beginning) (region-end))
+          (indent-region (line-beginning-position) (line-end-position)))
+        (setq deactivate-mark deactivate)))
+
+    (advice-add 'move-text-up :after 'indent-region-advice)
+    (advice-add 'move-text-down :after 'indent-region-advice)
+    )
+#+end_src
+
+**** Mu4e
+Mu4e mail uses the locally installed mu package, so cannot be managed using use-package
+#+begin_src emacs-lisp
+  (load-library "mu4e")
+  (load-library "mu4e-context")
+  (setq mu4e-attachment-dir "~/Downloads"
+        mu4e-compose-complete-addresses t
+        mu4e-compose-context-policy nil
+        mu4e-compose-dont-reply-to-self t
+        mu4e-get-mail-command "mbsync -a"
+        mu4e-headers-fields '((:human-date . 20)
+                              (:flags . 6)
+                              (:mailing-list . 10)
+                              (:from . 22)
+                              (:subject))
+        mu4e-mu-binary (executable-find "mu"))
+  (define-key programs-map (kbd "m") 'mu4e)
+#+end_src
+
+**** Multiplec Cursors
+#+begin_src emacs-lisp
+  (use-package multiple-cursors
+    :bind (("C-S-c C-S-c" . mc/edit-lines)
+           ("C->" . mc/mark-next-like-this)
+           ("C-<" . mc/mark-previous-like-this)
+           ("C-c C->" . mc/mark-all-like-this)))
+#+end_src
+
+**** Orderless
+#+begin_src emacs-lisp
+  (use-package orderless
+    :init
+    (setq completion-styles '(orderless basic)
+	  completion-category-defaults nil
+	  completion-category-overrides '((file (styles partial-completion)))))
+#+End_src
+
+**** PDF-Tools
+#+begin_src emacs-lisp
+  (use-package pdf-tools
+    :config
+    (pdf-loader-install))
+#+end_src
+
+**** Pinentry
+#+begin_src emacs-lisp
+  (use-package pinentry
+    :config (pinentry-start))
+#+end_src
+
+**** Savehist
+#+begin_src emacs-lisp
+  (use-package savehist
+    :ensure nil
+    :init
+    (savehist-mode))
+#+end_src
+
+**** Solaire
+#+begin_src emacs-lisp
+  (use-package solaire-mode
+    :config
+    (solaire-global-mode))
+#+end_src
+
+**** Treemacs
+#+begin_src emacs-lisp
+  (use-package treemacs
+    :bind (("C-x t o" . treemacs-select-window)
+	   ("C-x t t" . treemacs)
+	   ("C-x t d" . treemacs-select-directory)
+	   ("C-x t C-f" . treemacs-find-file))
+    :defer t)
+
+  (use-package treemacs-icons-dired
+    :hook (dired-mode . treemacs-icons-dired-enable-once))
+
+  (use-package treemacs-magit)
+  (use-package treemacs-projectile)
+#+end_src
+
+**** Vertico
+#+begin_src emacs-lisp
+  (use-package vertico
+    :hook (minibuffer-setup-hook . cursor-intangible-mode)
+    :init
+    (vertico-mode)
+    (setq enable-recursive-minibuffers t
+	  minibuffer-prompt-properties
+	  '(read-only t cursor-intangible t face minibuffer-prompt)
+	  read-extended-command-predicate #'command-completion-default-include-p
+	  vertico-count 20
+	  vertico-cycle t
+	  vertico-resize t
+	  vertico-scroll-margin 0))
+#+end_src
+
+**** Vertico Directory
+#+begin_src emacs-lisp
+  (use-package vertico-directory
+    :after vertico
+    :ensure nil
+    :bind (:map vertico-map
+		("RET" . vertico-directory-enter)
+		("DEL" . vertico-directory-delete-char)
+		("M-DEL" . vertico-directory-delete-word))
+    :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
+#+End_src
+
+**** Vertico Posframe
+#+begin_src emacs-lisp
+  (use-package vertico-posframe
+    :config
+    (vertico-posframe-mode))
+#+End_src
+
+**** VTerm
+#+begin_src emacs-lisp
+  (use-package vterm
+    :bind ("C-x t RET" . vterm))
+#+end_src
+
+**** Whichkey
+#+begin_src emacs-lisp
+  (use-package which-key
+    :config (which-key-mode))
+#+end_src
+
+**** Whitespace
+#+begin_src emacs-lisp
+  (use-package whitespace
+    :ensure nil
+    :config
+    (custom-set-faces '(whitespace-tab ((t (:background "#FF000088")))))) ;; Using invalid color disables background color
+#+end_src
+
+**** Yasnippet
+#+begin_src emacs-lisp
+  (use-package yasnippet
+    :config
+    (yas-global-mode 1))
+
+  (use-package yasnippet-snippets)
+#+end_src
+
+*** UI
+
+**** All-The-Icons
+#+begin_src emacs-lisp
+  (use-package all-the-icons
+    :if (display-graphic-p))
+
+  (use-package all-the-icons-dired
+    :hook (dired-mode . all-the-icons-dired-mode))
+#+end_src
+
+**** Theme
+#+begin_src emacs-lisp
+  (setq custom-safe-themes t)
+
+  (use-package doom-themes
+    :config
+    (load-theme 'doom-challenger-deep t))
+
+  (use-package heaven-and-hell
+    :config
+    (setq heaven-and-hell-theme-type 'dark
+          heaven-and-hell-themes
+          '((light . doom-one-light)
+            (dark  . doom-challenger-deep))
+          heaven-and-hell-load-theme-no-confirm t)
+    :hook (after-init . heaven-and-hell-init-hook)
+    :bind ("<f5>" . heaven-and-hell-toggle-theme))
+#+end_src
+
+**** Fonts
+#+begin_src emacs-lisp
+  (set-face-attribute 'default nil
+                      :font "MartianMono Nerd Font"
+                      :height 100
+                      :weight 'semibold)
+  (set-face-attribute 'variable-pitch nil
+                      :font "Ubuntu Nerd Font"
+                      :weight 'semibold)
+  (set-face-attribute 'fixed-pitch nil
+                      :weight 'bold)
+  (set-face-attribute 'font-lock-comment-face nil
+                      :slant 'italic)
+  (set-face-attribute 'font-lock-keyword-face nil
+                      :slant 'italic)
+
+  (setq pixel-scroll-precision-mode 1)
+  (setq-default line-spacing 0.12)
+
+  (add-to-list 'default-frame-alist '(alpha-background . 95))
+  (setq global-prettify-symbols-mode t)
+#+end_src

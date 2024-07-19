@@ -18,8 +18,9 @@
       - [[#toc][TOC]]
     - [[#packages][Packages]]
       - [[#beacon][Beacon]]
-      - [[#doom-modeline][Doom Modeline]]
       - [[#diff-hl][Diff-hl]]
+      - [[#emojify][Emojify]]
+      - [[#eshell][Eshell]]
       - [[#eyebrowse][Eyebrowse]]
       - [[#exwm][EXWM]]
       - [[#focus][Focus]]
@@ -28,6 +29,8 @@
       - [[#helm][Helm]]
       - [[#magit][Magit]]
       - [[#marginalia][Marginalia]]
+      - [[#minions][Minions]]
+      - [[#moody][Moody]]
       - [[#move-text][Move text]]
       - [[#mu4e][Mu4e]]
       - [[#multiplec-cursors][Multiplec Cursors]]
@@ -200,15 +203,6 @@ This package allows you to type `<s` then press TAB to expand a tab
     (beacon-mode))
 #+end_src
 
-**** Doom Modeline
-#+begin_src emacs-lisp
-    (use-package doom-modeline
-      :hook (after-init . doom-modeline-mode)
-      :config
-      (setq doom-modeline-hud t
-            doom-modeline-time t))
-#+end_src
-
 **** Diff-hl
 #+begin_src emacs-lisp
   (use-package diff-hl
@@ -216,6 +210,21 @@ This package allows you to type `<s` then press TAB to expand a tab
     (global-diff-hl-mode)
     (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
     (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
+#+end_src
+
+**** Emojify
+#+begin_src emacs-lisp
+  (use-package emojify
+    :config
+    (global-emojify-mode))
+#+end_src
+
+**** Eshell
+#+begin_src emacs-lisp
+  (load-library "eshell/em-tramp")
+  (add-to-list 'eshell-modules-list 'eshell-tramp)
+  (setq password-cache t
+        password-cache-expiry 3600)
 #+end_src
 
 **** Eyebrowse
@@ -379,6 +388,45 @@ Provides documentation to minibuffer completions
     (marginalia-mode))
 #+end_src
 
+**** Minions
+#+begin_src emacs-lisp
+  (use-package minions
+    :config
+    (setq minions-mode-line-lighter "..."
+          minions-mode-line-delimiters '("" . ""))
+    (minions-mode))
+#+end_src
+
+**** Moody
+#+begin_src emacs-lisp
+  (use-package moody
+    :config
+    (setq x-underline-at-descent-line t)
+          (setq-default mode-line-format
+                        '(" "
+                          mode-line-front-space
+                          mode-line-client
+                          mode-line-frame-identification
+                          mode-line-buffer-identification
+                          (:eval
+                           (when (eq major-mode 'image-mode)
+                             (let ((size (image-size (create-image (buffer-file-name) nil nil :scale 1.0) t)))
+                               (list (format "%dx%d" (car size) (cdr size))))))
+                          " "
+                          mode-line-position
+                          (vc-mode moody-vc-mode)
+                          (multiple-cursors-mode mc/mode-line)
+                          " "
+                          mode-line-modes
+                          " "
+                          (:eval
+                           (format-time-string "%H:%m%p"))
+                          mode-line-end-spaces
+                          ))
+          (moody-replace-mode-line-buffer-identification)
+          (moody-replace-vc-mode))
+#+end_src
+
 **** Move text
 #+begin_src emacs-lisp
   (use-package move-text
@@ -402,6 +450,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
   (load-library "mu4e")
   (load-library "mu4e-context")
   (setq mu4e-attachment-dir "~/Downloads"
+        mu4e-change-filenames-when-moving t
         mu4e-compose-complete-addresses t
         mu4e-compose-context-policy nil
         mu4e-compose-dont-reply-to-self t
@@ -411,7 +460,53 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
                               (:mailing-list . 10)
                               (:from . 22)
                               (:subject))
-        mu4e-mu-binary (executable-find "mu"))
+        mu4e-maildir "~/.mail"
+        mu4e-mu-binary (executable-find "mu")
+        mu4e-update-interval (* 10 60))
+
+  (setq mu4e-maildir-shortcuts
+        '(("/redcroft/Inbox"  . ?i)
+          ("/work/Inbox"      . ?w)
+          ("/gmail/Inbox"     . ?g)))
+
+  (setq mu4e-contexts
+        (list
+         (make-mu4e-context
+          :name "Redcroft"
+          :match-func
+          (lambda (msg)
+            (when msg
+              (string-prefix-p "/redcroft" (mu4e-message-field msg :maildir))))
+          :vars '((user-mail-address  . "richard@redcroft.tech")
+                  (user-full-name     . "Richard DW Redcroft")
+                  (mu4e-drafts-folder . "/redcroft/Drafts")
+                  (mu4e-sent-folder   . "/redcroft/Sent")
+                  (mu4e-trash-folder  . "/redcroft/Trash")))
+         (make-mu4e-context
+          :name "Work"
+          :match-func
+          (lambda (msg)
+            (when msg
+              (string-prefix-p "/work" (mu4e-message-field msg :maildir))))
+          :vars '((user-mail-address  . "richard@carseandwaterman.com")
+                  (user-full-name     . "Richard DW Work")
+                  (mu4e-drafts-folder . "/work/[Gmail]/Drafts")
+                  (mu4e-sent-folder   . "/work/[Gmail]/Sent Mail")
+                  (mu4e-rifile-folder . "/work/[Gmail]/All Mail")
+                  (mu4e-trash-folder  . "/work/[Gmail]/Trash")))
+         (make-mu4e-context
+          :name "Gmail"
+          :match-func
+          (lambda (msg)
+            (when msg
+              (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+          :vars '((user-mail-address  . "richard@carseandwaterman.com")
+                  (user-full-name     . "Richard DW Work")
+                  (mu4e-drafts-folder . "/gmail/[Gmail]/Drafts")
+                  (mu4e-sent-folder   . "/gmail/[Gmail]/Sent Mail")
+                  (mu4e-rifile-folder . "/gmail/[Gmail]/All Mail")
+                  (mu4e-trash-folder  . "/gmail/[Gmail]/Trash")))))
+
   (define-key programs-map (kbd "m") 'mu4e)
 #+end_src
 
@@ -553,19 +648,20 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 #+end_src
 
 **** Theme
+[[https://protesilaos.com/emacs/ef-themes-pictures][Ef themes]] provide good contrast
 #+begin_src emacs-lisp
   (setq custom-safe-themes t)
 
-  (use-package doom-themes
+  (use-package ef-themes
     :config
-    (load-theme 'doom-challenger-deep t))
+    (load-theme 'ef-dream t))
 
   (use-package heaven-and-hell
     :config
     (setq heaven-and-hell-theme-type 'dark
           heaven-and-hell-themes
-          '((light . doom-one-light)
-            (dark  . doom-challenger-deep))
+          '((light . ef-light)
+            (dark  . ef-cherie))
           heaven-and-hell-load-theme-no-confirm t)
     :hook (after-init . heaven-and-hell-init-hook)
     :bind ("<f5>" . heaven-and-hell-toggle-theme))

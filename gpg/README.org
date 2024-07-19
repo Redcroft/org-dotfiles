@@ -1,0 +1,25 @@
+#+Property: Header-args :tangle ~/.gnupg/gpg-agent.conf :tangle-mode (identity #o444)
+#+auto_tangle: t
+#+AUTHOR: Richard Redcroft
+
+
+* Table of Contents :TOC_4:
+  - [[#cache-ttl][Cache ttl]]
+  - [[#pinentry][Pinentry]]
+
+** Cache ttl
+
+#+begin_src conf
+  default-cache-ttl 3600
+  default-cache-ttl-ssh 3600
+  max-cache-ttl 3600
+  max-cache-ttl-ssh 3600
+#+end_src
+
+** Pinentry
+
+#+begin_src conf
+  allow-emacs-pinentry
+  allow-loopback
+  pinentry-program /usr/bin/pinentry-emacs
+#+end_src

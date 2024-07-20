@@ -57,16 +57,17 @@ Disable unneeded features of emacs (ui elements, package manager) for faster sta
 
 #+begin_src emacs-lisp :tangle ~/.emacs.d/early-init.el
   (setq comp-async-report-warnings-errors nil
-	default-frame-alist
-	'((vertical-scroll-bars . nil)
-	  (menu-bar-lines . 0)
-	  (tool-bar-lines . 0))
-	frame-inhibit-implied-resize t
-	gc-cons-threshold most-positive-fixnum
-	gc-cons-percentage 0.6
-	inhibit-startup-screen t
-	load-prefer-newer 'noninteractive
-	package-enable-at-startup nil)
+        default-frame-alist
+        '((vertical-scroll-bars . nil)
+          (menu-bar-lines . 0)
+          (tool-bar-lines . 0))
+        frame-inhibit-implied-resize t
+        gc-cons-threshold most-positive-fixnum
+        gc-cons-percentage 0.6
+        inhibit-startup-screen t
+        load-prefer-newer 'noninteractive
+        package-enable-at-startup nil)
+  (setq-default cursor-type '(bar . 3))
 #+end_src
 
 ** Init

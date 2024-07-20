@@ -20,6 +20,6 @@
 
 #+begin_src conf
   allow-emacs-pinentry
-  allow-loopback
+  allow-loopback-pinentry
   pinentry-program /usr/bin/pinentry-emacs
 #+end_src

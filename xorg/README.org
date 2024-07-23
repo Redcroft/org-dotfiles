@@ -1,4 +1,4 @@
-#+Property: Header-args :tangle-mode (identity #o666)
+#+Property: Header-args :tangle-mode (identity #o666) :mkdirp yes
 #+auto_tangle: t
 #+AUTHOR: Richard Redcroft
 
@@ -17,6 +17,7 @@
       Identifier "Keyboard"
       Driver "libinput"
       MatchIsKeyboard "on"
+      Option "XkbLayout" "us"
   EndSection
 #+end_src
 

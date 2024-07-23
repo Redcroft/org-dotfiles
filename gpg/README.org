@@ -1,4 +1,4 @@
-#+Property: Header-args :tangle ~/.gnupg/gpg-agent.conf :tangle-mode (identity #o444)
+#+Property: Header-args :tangle ~/.gnupg/gpg-agent.conf :tangle-mode (identity #o444) :mkdirp yes
 #+auto_tangle: t
 #+AUTHOR: Richard Redcroft
 

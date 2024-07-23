@@ -1,0 +1,139 @@
+#+Property: Header-args :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+#+AUTHOR: Richard Redcroft
+
+
+* Table of Contents :TOC:
+  - [[#mbsync][MBSync]]
+  - [[#msmtp][MSMTP]]
+
+** MBSync
+*** Redcroft
+#+begin_src conf :tangle "~/.mbsyncrc"
+  IMAPAccount redcroft
+  Host imap.hostinger.com
+  Port 993
+  User richard@redcroft.tech
+  PassCmd "pass hostinger.com/richard@redcroft.tech"
+  SSLType IMAPS
+
+  IMAPStore redcroft-remote
+  Account redcroft
+
+  MaildirStore redcroft-local
+  SubFolders Verbatim
+  Path ~/.mail/redcroft/
+  Inbox ~/.mail/redcroft/Inbox
+  Trash ~/.mail/redcroft/Trash
+
+  Channel redcroft
+  Far :redcroft-remote:
+  Near :redcroft-local:
+  Patterns *
+  SyncState *
+  Create Both
+  Expunge Both
+  CopyArrivalDate yes
+  Sync All
+#+end_src
+
+*** Work
+#+begin_src conf :tangle "~/.mbsyncrc"
+  IMAPAccount work
+  Host imap.gmail.com
+  Port 993
+  User richard@carseandwaterman.com
+  PassCmd "pass gmail/richard@carseandwaterman.com"
+  SSLType IMAPS
+
+  IMAPStore work-remote
+  Account work
+
+  MaildirStore work-local
+  SubFolders Verbatim
+  Path ~/.mail/work/
+  Inbox ~/.mail/work/Inbox
+  Trash ~/.mail/work/Trash
+
+  Channel work
+  Far :work-remote:
+  Near :work-local:
+  Patterns *
+  SyncState *
+  Create Both
+  Expunge Both
+  CopyArrivalDate yes
+  Sync All
+#+end_src
+
+*** Gmail
+#+begin_src conf :tangle "~/.mbsyncrc"
+  IMAPAccount gmail
+  Host imap.gmail.com
+  Port 993
+  User animationrich@gmail.com
+  PassCmd "pass gmail/animationrich@gmail.com"
+  SSLType IMAPS
+
+  IMAPStore gmail-remote
+  Account gmail
+
+  MaildirStore gmail-local
+  SubFolders Verbatim
+  Path ~/.mail/gmail/
+  Inbox ~/.mail/gmail/Inbox
+  Trash ~/.mail/gmail/Trash
+
+  Channel gmail
+  Far :gmail-remote:
+  Near :gmail-local:
+  Patterns *
+  SyncState *
+  Create Both
+  Expunge Both
+  CopyArrivalDate yes
+  Sync All
+#+end_src
+
+** MSMTP
+*** General
+#+begin_src conf :tangle "~/.msmtprc"
+  defaults
+  auth            on
+  tls             on
+  tls_turst_file  /etc/ssl/certs/ca-certificates.crt
+  logfile         ~/.msmtp.log
+#+end_src
+
+***  Redcroft
+#+begin_src conf :tangle "~/.msmtprc"
+  account         redcroft
+  host            smtp.hostinger.com
+  port            465
+  tls_starttls    off
+  from            richard@redcroft.tech
+  user            richard@redcroft.tech
+  passwordeval    "pass hostinger.com/richard@redcroft.tech"
+#+end_src
+
+***  Work
+#+begin_src conf :tangle "~/.msmtprc"
+  account         work
+  host            smtp.gmail.com
+  port            465
+  tls_starttls    off
+  from            richard@carseandwaterman.com
+  user            richard@carseandwaterman.com
+  passwordeval    "pass gmail/richard@carseandwaterman.com"
+#+end_src
+
+***  Gmail
+#+begin_src conf :tangle "~/.msmtprc"
+  account         gmail
+  host            smtp.gmail.com
+  port            465
+  tls_starttls    off
+  from            animationrich@gmail.com
+  user            animationrich@gmail.com
+  passwordeval    "pass gmail/animationrich@gmail.com"
+#+end_src

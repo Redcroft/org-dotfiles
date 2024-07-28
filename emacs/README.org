@@ -8,6 +8,7 @@
     - [[#elpaca][Elpaca]]
     - [[#backup][Backup]]
     - [[#settings][Settings]]
+    - [[#defun][Defun]]
     - [[#keybinds][Keybinds]]
     - [[#org-mode][Org-mode]]
       - [[#auto-tangle][Auto-tangle]]
@@ -18,10 +19,13 @@
       - [[#toc][TOC]]
     - [[#packages][Packages]]
       - [[#beacon][Beacon]]
+      - [[#crux][Crux]]
       - [[#diff-hl][Diff-hl]]
+      - [[#eglot][Eglot]]
       - [[#emojify][Emojify]]
       - [[#eshell][Eshell]]
       - [[#eyebrowse][Eyebrowse]]
+      - [[#exec-path-from-shell][Exec-path-from-shell]]
       - [[#exwm][EXWM]]
       - [[#focus][Focus]]
       - [[#gc][GC]]
@@ -39,6 +43,7 @@
       - [[#pinentry][Pinentry]]
       - [[#savehist][Savehist]]
       - [[#solaire][Solaire]]
+      - [[#tree-sitter][Tree-sitter]]
       - [[#treemacs][Treemacs]]
       - [[#vertico][Vertico]]
       - [[#vertico-directory][Vertico Directory]]
@@ -138,6 +143,13 @@ Testing out Elpaca package management instead of straight.el
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
 #+end_src
 
+*** Defun
+#+begin_src emacs-lisp
+  (defun red/open-emacs-config ()
+    (interactive)
+    (find-file "~/.repos/dotfiles/emacs/README.org"))
+#+end_src
+
 *** Keybinds
 #+begin_src emacs-lisp
   (keyboard-translate ?\C-x ?\C-t)
@@ -152,6 +164,7 @@ Testing out Elpaca package management instead of straight.el
   (global-set-key (kbd "C-x C-y") #'recentf-open-files)
   (define-prefix-command 'programs-map)
   (global-set-key (kbd "C-x y") 'programs-map)
+  (global-set-key (kbd "C-c I") #'red/open-emacs-config)
 #+end_src
 
 *** Org-mode
@@ -204,6 +217,19 @@ This package allows you to type `<s` then press TAB to expand a tab
     (beacon-mode))
 #+end_src
 
+**** Crux
+#+begin_src emacs-lisp
+  (load-library "recentf")
+  (use-package crux
+    :bind (("C-k" . crux-smart-kill-line)
+           ("C-S-RET" . crux-smart-open-line-above)
+           ("S-RET" . crux-smart-open-line)
+           ("C-c n" . crux-fleanup-buffer-or-region)
+           ("C-c f" . crux-recentf-find-file)
+           ("C-c F" . crux-recentf-find-directory)
+           ("C-c k" . crux-kill-other-buffers)))
+#+end_src
+
 **** Diff-hl
 #+begin_src emacs-lisp
   (use-package diff-hl
@@ -211,6 +237,13 @@ This package allows you to type `<s` then press TAB to expand a tab
     (global-diff-hl-mode)
     (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
     (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
+#+end_src
+
+**** Eglot
+#+begin_src emacs-lisp
+  (use-package eglot
+    :ensure nil
+    :hook ((python-mode . eglot-ensure)))
 #+end_src
 
 **** Emojify
@@ -245,6 +278,11 @@ This package allows you to type `<s` then press TAB to expand a tab
     :config
     (setq eyebrowse-new-workspace t)
     (eyebrowse-mode))
+#+end_src
+
+**** Exec-path-from-shell
+#+begin_src emacs-lisp
+  (use-package exec-path-from-shell)
 #+end_src
 
 **** EXWM
@@ -555,6 +593,20 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
   (use-package solaire-mode
     :config
     (solaire-global-mode))
+#+end_src
+
+**** Tree-sitter
+#+begin_src emacs-lisp
+  (use-package tree-sitter
+    :config
+    (global-tree-sitter-mode))
+
+  (use-package treesit-auto
+    :custom
+    (treesit-auto-install 'prompt)
+    :config
+    (treesit-auto-add-to-auto-mode-alist 'all)
+    (global-treesit-auto-mode))
 #+end_src
 
 **** Treemacs

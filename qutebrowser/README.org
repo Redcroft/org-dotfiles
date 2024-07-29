@@ -6,9 +6,9 @@
 * Table of Contents :TOC:
   - [[#defaults][Defaults]]
   - [[#general-configuration][General configuration]]
+  - [[#quickmarks][Quickmarks]]
   - [[#keybinds][Keybinds]]
   - [[#theme][Theme]]
-  - [[#quickmarks][Quickmarks]]
   - [[#userscripts][Userscripts]]
 
 ** Defaults
@@ -30,8 +30,29 @@ Load the default qutebrowser settings, ill override the settings i care about
       'DEFAULT':  'https://bing.com/search?hl=en&q={}',
       'az': 'https://www.amazon.co.uk/s?k={}',
       'g':  'https://google.com/search?hl=en&q={}',
-      'ff': 'http://frogfind.com/?q={}',
       'yt': 'https://youtube.com/results?search_query={}'}
+#+end_src
+
+** Quickmarks
+#+begin_src conf :tangle ~/.config/qutebrowser/quickmarks :tangle-mod (identity #o444)
+  asdf https://asdf-vm.com/guide/introduction.html
+  cg https://www.cgchannel.com/
+  chat https://chat.carseandwaterman.com
+  devbox https://www.jetify.com/devbox
+  devenv https://devenv.sh/
+  gmail https://gmail.com
+  fdm http://192.168.0.132
+  git https://git.carseandwaterman.com
+  mail https://mail.hostinger.com
+  mise https://mise.jdx.dev/dev-tools/comparison-to-asdf.html
+  phoronix https://phoronix.com
+  prime https://amazon.co.uk/gp/video/storefront
+  reddit https://reddit.com
+  yt https://youtube.com/feed/subscriptions
+  tornado https://vimeo.com/ondemand/snowflaketornado
+  lisp https://gigamonkeys.com/book/
+  hrir https://airtable.com/appayGNkn3nSuXkaz/shruimhjdSakUPg2m/tbloLjoZKWJDnLtTc
+  pwhrtf https://obito.fr/posts/2023/06/true-spatial-audio-on-linux-using-hrtf/
 #+end_src
 
 ** Keybinds
@@ -344,26 +365,6 @@ Based on ef cherie
 
   # Background color of selected even tabs.
   c.colors.tabs.selected.even.bg = base02
-#+end_src
-
-** Quickmarks
-#+begin_src conf :tangle ~/.config/qutebrowser/quickmarks :tangle-mod (identity #o444)
-  asdf https://asdf-vm.com/guide/introduction.html
-  cg https://www.cgchannel.com/
-  chat https://chat.carseandwaterman.com
-  devbox https://www.jetify.com/devbox
-  devenv https://devenv.sh/
-  gmail https://gmail.com
-  fdm http://192.168.0.132
-  frogfind http://frogfind.com/
-  git https://git.carseandwaterman.com
-  mail https://mail.hostinger.com
-  mise https://mise.jdx.dev/dev-tools/comparison-to-asdf.html
-  phoronix https://phoronix.com
-  prime https://amazon.co.uk/gp/video/storefront
-  reddit https://reddit.com
-  yt https://youtube.com/feed/subscriptions
-  tornado https://vimeo.com/ondemand/snowflaketornado
 #+end_src
 
 ** Userscripts

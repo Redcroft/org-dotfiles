@@ -1,0 +1,16 @@
+Property: Header-args :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+#+AUTHOR: Richard Redcroft
+
+
+* Table of Contents :TOC_4:
+  - [[#git-config][Git config]]
+
+** Git config
+
+#+begin_src sh :results none
+  git config --global user.name 'Richard DW Redcroft'
+  git config --global user.email 'Richard@Redcroft.tech'
+
+  git clone git@github.com:Redcroft/pass ~/.password-store
+#+end_src

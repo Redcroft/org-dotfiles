@@ -4,8 +4,21 @@
 
 
 * Table of Contents :TOC:
+  - [[#setup][Setup]]
   - [[#mbsync][MBSync]]
   - [[#msmtp][MSMTP]]
+
+** Setup
+#+begin_src sh :tangle no :results none
+  mkdir -p ~/.mail/redcroft
+  mkdir -p ~/.mail/work
+  mkdir -p ~/.mail/gmail
+#+end_src
+
+#+begin_src sh :tangle no :results none
+  mbsync -a
+  mu init --maildir=~/.mail --my-address=richard@redcroft.tech --my-address=richard@carseandwaterman.com --my-address=animationrich@gmail.com
+#+end_src
 
 ** MBSync
 *** Redcroft

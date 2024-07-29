@@ -1,3 +1,4 @@
+
 #+Property: Header-args :tangle ~/.emacs.d/init.el :tangle-mode (identity #o444) :mkdirp yes
 #+auto_tangle: t
 #+AUTHOR: Richard Redcroft
@@ -12,6 +13,7 @@
     - [[#keybinds][Keybinds]]
     - [[#org-mode][Org-mode]]
       - [[#auto-tangle][Auto-tangle]]
+      - [[#babel][Babel]]
       - [[#bullets][Bullets]]
       - [[#modern][Modern]]
       - [[#source][Source]]
@@ -19,6 +21,7 @@
       - [[#toc][TOC]]
     - [[#packages][Packages]]
       - [[#beacon][Beacon]]
+      - [[#ctrlf][Ctrlf]]
       - [[#crux][Crux]]
       - [[#diff-hl][Diff-hl]]
       - [[#eglot][Eglot]]
@@ -176,6 +179,12 @@ Automatically tangle org files
     :hook (org-mode . org-auto-tangle-mode))
 #+end_src
 
+**** Babel
+#+begin_src emacs-lisp
+  (load-library "ob-shell")
+  (load-library "ob-python")
+#+end_src
+
 **** Bullets
 
 #+begin_src emacs-lisp
@@ -215,6 +224,13 @@ This package allows you to type `<s` then press TAB to expand a tab
   (use-package beacon
     :config
     (beacon-mode))
+#+end_src
+
+**** Ctrlf
+#+begin_src emacs-lisp
+  (use-package ctrlf
+    :config
+    (ctrlf-mode +1))
 #+end_src
 
 **** Crux
@@ -361,6 +377,22 @@ This package allows you to type `<s` then press TAB to expand a tab
                         (lambda () (interactive) (start-process "" nil "light" "-S" "100")))
     (exwm-input-set-key (kbd "s-<XF86MonBrightnessDown>")
                           (lambda () (interactive) (start-process "" nil "light" "-S" "10")))
+    (exwm-input-set-key (kbd "s-<up>")
+                        (lambda () (interactive) (enlarge-window-horizontally 2)))
+    (exwm-input-set-key (kbd "s-<down>")
+                        (lambda () (interactive) (shrink-window-horizontally 2)))
+    (exwm-input-set-key (kbd "s-f")
+                        (lambda () (interactive) (windmove-right)))
+    (exwm-input-set-key (kbd "s-b")
+                        (lambda () (interactive) (windmove-left)))
+    (exwm-input-set-key (kbd "s-p")
+                        (lambda () (interactive) (windmove-up)))
+    (exwm-input-set-key (kbd "s-n")
+                        (lambda () (interactive) (windmove-down)))
+    (exwm-input-set-key (kbd "C-s-f")
+                        (lambda () (interactive) (windmove-swap-states-right)))
+    (exwm-input-set-key (kbd "C-s-b")
+                        (lambda () (interactive) (windmove-swap-states-left)))
     (exwm-input-set-key (kbd "s-z")
                         (lambda ()
                           (interactive)
@@ -436,7 +468,7 @@ Provides documentation to minibuffer completions
 #+end_src
 
 **** Minions
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package minions
     :config
     (setq minions-mode-line-lighter "..."
@@ -445,7 +477,7 @@ Provides documentation to minibuffer completions
 #+end_src
 
 **** Moody
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package moody
     :config
     (setq x-underline-at-descent-line t)

@@ -45,6 +45,7 @@
       - [[#pdf-tools][PDF-Tools]]
       - [[#pinentry][Pinentry]]
       - [[#savehist][Savehist]]
+      - [[#sly][Sly]]
       - [[#solaire][Solaire]]
       - [[#tree-sitter][Tree-sitter]]
       - [[#treemacs][Treemacs]]
@@ -385,10 +386,6 @@ This package allows you to type `<s` then press TAB to expand a tab
                         (lambda () (interactive) (windmove-right)))
     (exwm-input-set-key (kbd "s-b")
                         (lambda () (interactive) (windmove-left)))
-    (exwm-input-set-key (kbd "s-p")
-                        (lambda () (interactive) (windmove-up)))
-    (exwm-input-set-key (kbd "s-n")
-                        (lambda () (interactive) (windmove-down)))
     (exwm-input-set-key (kbd "C-s-f")
                         (lambda () (interactive) (windmove-swap-states-right)))
     (exwm-input-set-key (kbd "C-s-b")
@@ -628,6 +625,12 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
     (savehist-mode))
 #+end_src
 
+**** Sly
+#+begin_src emacs-lisp
+  (load (expand-file-name "~/.roswell/helper.el"))
+  (setq inferior-lisp-program "ros -Q run")
+#+end_src
+
 **** Solaire
 #+begin_src emacs-lisp
   (use-package solaire-mode
@@ -745,16 +748,18 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 #+begin_src emacs-lisp
   (setq custom-safe-themes t)
 
-  (use-package ef-themes
-    :config
-    (load-theme 'ef-dream t))
+  ;; (use-package ef-themes
+  ;;   :config
+  ;;   (load-theme 'ef-dream t))
+
+  (use-package base16-theme)
 
   (use-package heaven-and-hell
     :config
     (setq heaven-and-hell-theme-type 'dark
           heaven-and-hell-themes
-          '((light . ef-light)
-            (dark  . ef-cherie))
+          '((light . base16-horizon-light)
+            (dark  . base16-horizon-dark))
           heaven-and-hell-load-theme-no-confirm t)
     :hook (after-init . heaven-and-hell-init-hook)
     :bind ("<f5>" . heaven-and-hell-toggle-theme))

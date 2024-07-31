@@ -1,4 +1,3 @@
-
 #+Property: Header-args :tangle ~/.emacs.d/init.el :tangle-mode (identity #o444) :mkdirp yes
 #+auto_tangle: t
 #+AUTHOR: Richard Redcroft
@@ -333,6 +332,24 @@ This package allows you to type `<s` then press TAB to expand a tab
                             (exwm-workspace-switch-create ,i))))
                       (number-sequence 0 9))))
 
+    (defun red/inc-bright (val)
+      (interactive)
+      (with-temp-buffer
+        (insert-file-contents "/sys/class/backlight/amdgpu_bl1/brightness")
+        (let ((cur_val (string-to-number (string-trim (buffer-string)))))
+          (red/set-bright (min (+ cur_val val))))))
+
+    (defun red/dec-bright (val)
+      (interactive)
+      (with-temp-buffer
+        (insert-file-contents "/sys/class/backlight/amdgpu_bl1/brightness")
+        (let ((cur_val (string-to-number (string-trim (buffer-string)))))
+          (red/set-bright (max (- cur_val val))))))
+
+    (defun red/set-bright (val)
+      (interactive)
+      (write-region (number-to-string (min (max val 0) 255)) nil "/sys/class/backlight/amdgpu_bl1/brightness"))
+
     (defun my/exwm-startup ()
       (lambda)
       (exwm-init)
@@ -371,13 +388,13 @@ This package allows you to type `<s` then press TAB to expand a tab
     (exwm-input-set-key (kbd "<XF86AudioMute>")
                         (lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-mute" "0" "toggle")))
     (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
-                        (lambda () (interactive) (start-process "" nil "light" "-A" "5")))
+                        (lambda () (interactive) (red/inc-bright 5)))
     (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
-                        (lambda () (interactive) (start-process "" nil "light" "-U" "5")))
+                        (lambda () (interactive) (red/dec-bright 5)))
     (exwm-input-set-key (kbd "s-<XF86MonBrightnessUp>")
-                        (lambda () (interactive) (start-process "" nil "light" "-S" "100")))
+                        (lambda () (interactive) (red/set-bright 255)))
     (exwm-input-set-key (kbd "s-<XF86MonBrightnessDown>")
-                          (lambda () (interactive) (start-process "" nil "light" "-S" "10")))
+                          (lambda () (interactive) (red/set-bright 70)))
     (exwm-input-set-key (kbd "s-<up>")
                         (lambda () (interactive) (enlarge-window-horizontally 2)))
     (exwm-input-set-key (kbd "s-<down>")
@@ -627,8 +644,9 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 
 **** Sly
 #+begin_src emacs-lisp
-  (load (expand-file-name "~/.roswell/helper.el"))
-  (setq inferior-lisp-program "ros -Q run")
+  (when (file-exists-p "~/.roswell/helper.el")
+    (load (expand-file-name "~/.roswell/helper.el"))
+    (setq inferior-lisp-program "ros -Q run"))
 #+end_src
 
 **** Solaire
@@ -752,7 +770,9 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
   ;;   :config
   ;;   (load-theme 'ef-dream t))
 
-  (use-package base16-theme)
+  (use-package base16-theme
+    :config
+    (load-theme 'base16-horizon-dark))
 
   (use-package heaven-and-hell
     :config

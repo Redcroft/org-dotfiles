@@ -1,0 +1,15 @@
+#+Property: Header-args :tangle-mode (identity #o666) :mkdirp yes
+#+auto_tangle: t
+#+AUTHOR: Richard Redcroft
+
+
+* Table of Contents :TOC_4:
+  - [[#udev][Udev]]
+    - [[#backlight][backlight]]
+
+** Udev
+
+*** backlight
+#+begin_src emacs-lisp :tangle "/sudo::/etc/udev/rules.d/backlight.rules"
+  ACTION=="add", SUBSYSTEM=="backlight", RUN+="/bin/chgrp video $sys$devpath/brightness", RUN+="/bin/chmod g+w $sys$devpath/brightness"
+#+end_src

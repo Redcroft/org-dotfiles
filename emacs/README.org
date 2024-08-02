@@ -32,6 +32,7 @@
       - [[#focus][Focus]]
       - [[#gc][GC]]
       - [[#gdscript][GDScript]]
+      - [[#gnus][Gnus]]
       - [[#helm][Helm]]
       - [[#magit][Magit]]
       - [[#marginalia][Marginalia]]
@@ -52,6 +53,7 @@
       - [[#vertico-directory][Vertico Directory]]
       - [[#vertico-posframe][Vertico Posframe]]
       - [[#vterm][VTerm]]
+      - [[#w3m][w3m]]
       - [[#whichkey][Whichkey]]
       - [[#whitespace][Whitespace]]
       - [[#yasnippet][Yasnippet]]
@@ -335,20 +337,20 @@ This package allows you to type `<s` then press TAB to expand a tab
     (defun red/inc-bright (val)
       (interactive)
       (with-temp-buffer
-        (insert-file-contents "/sys/class/backlight/amdgpu_bl1/brightness")
+        (insert-file-contents "/sys/class/backlight/amdgpu_bl0/brightness")
         (let ((cur_val (string-to-number (string-trim (buffer-string)))))
           (red/set-bright (min (+ cur_val val))))))
 
     (defun red/dec-bright (val)
       (interactive)
       (with-temp-buffer
-        (insert-file-contents "/sys/class/backlight/amdgpu_bl1/brightness")
+        (insert-file-contents "/sys/class/backlight/amdgpu_bl0/brightness")
         (let ((cur_val (string-to-number (string-trim (buffer-string)))))
           (red/set-bright (max (- cur_val val))))))
 
     (defun red/set-bright (val)
       (interactive)
-      (write-region (number-to-string (min (max val 0) 255)) nil "/sys/class/backlight/amdgpu_bl1/brightness"))
+      (write-region (number-to-string (min (max val 0) 255)) nil "/sys/class/backlight/amdgpu_bl0/brightness"))
 
     (defun my/exwm-startup ()
       (lambda)
@@ -453,6 +455,124 @@ This package allows you to type `<s` then press TAB to expand a tab
                                            (untabify (point-min) (point-max)))))))
 #+end_src
 
+**** Gnus
+#+begin_src emacs-lisp
+  (load-library "gnus")
+  (load-library "gnus-async")
+  (load-library "gnus-topic")
+
+  (global-set-key (kbd "C-x y m") 'gnus)
+
+  (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
+
+  (setq user-mail-address     "Richard@redcroft.tech"
+        user-full-name        "Richard Redcroft"
+        gnus-asynchronous t
+        gnus-article-sort-functions
+        '(gnus-article-soft-by-date
+          (not gnus-article-sort-by-number))
+        gnus-large-newsgroup 'nil
+        gnus-parameters
+        '(("nnimap.*"
+           (gnus-show-threads nil)
+           (gnus-use-scoring nil)
+           (expiry-wait . 2)
+           (display . all)))
+        gnus-select-method
+        '(nnimap "Redcroft"
+                 (nnimap-address "imap.hostinger.com")
+                 (nnimap-user "richard@redcroft.tech")
+                 (nnimap-server-port 993)
+                 (nnimap-expunge t)
+                 (nnimap-stream ssl)
+                 (nnir-search-engine imap))
+        gnus-summary-thread-gathering-function 'gnus-gather-threads-by-subject
+        gnus-thread-hide-subtree t
+        gnus-thread-ignore-subject t
+        gnus-thread-sort-functions
+        '(gnus-thread-sort-by-most-recent-date
+          (not gnus-thread-sort-by-number))
+        gnus-topic-set-parameters
+        '(("Redcroft"
+           (posting-style
+            (address "richard@redcroft.tech")
+            ("X-Message-SMTP-Method" "smtp smtp.hostinger.com 587")))
+          ("Work"
+           (posting-style
+            (address "richard@carseandwaterman.com")
+            ("X-Message-SMTP-Method" "smtp smtp.gmail 587")))
+          ("Gmail"
+           (posting-style
+            (address "animationrich@gmail.com")
+            ("X-Message-SMTP-Method" "smtp smtp.gmail 587"))))
+        gnus-topic-topology '(("Mail" visible)
+                              (("Redcroft" visible nil nil))
+                              (("Work" visible nil nil))
+                              (("Gmail" visible nil nil)))
+        gnus-topic-alist '(("Mail")
+                           ("Redcroft"
+                            "nnimap+Redcroft:INBOX"
+                            "nnimap+Redcroft:INBOX.Junk"
+                            "nnimap+Redcroft:INBOX.Sent"
+                            "nnimap+Redcroft:INBOX.Trash")
+                           ("Work"
+                            "nnimap+Work:INBOX"
+                            "nnimap+Work:[Gmail]/All Mail"
+                            "nnimap+Work:[Gmail]/Sent Mail"
+                            "nnimap+Work:[Gmail]/Spam"
+                            "nnimap+Work:[Gmail]/Trash")
+                           ("Gmail"
+                            "nnimap+Gmail:INBOX"
+                            "nnimap+Gmail:[Gmail]/All Mail"
+                            "nnimap+Gmail:[Gmail]/Sent Mail"
+                            "nnimap+Gmail:[Gmail]/Spam"
+                            "nnimap+Gmail:[Gmail]/Trash"))
+        gnus-use-cache t
+        mm-text-html-renderer 'w3m
+        send-mail-function    'smtpmail-send-it
+        smtpmail-default-smtp-server "smtp.hostinger.com"
+        smtpmail-smtp-service 587
+        smtpmail-stream-type 'starttls)
+
+  (add-to-list 'gnus-secondary-select-methods
+               '(nnimap "Work"
+                        (nnimap-user "richard@carseandwaterman.com")
+                        (nnimap-address "imap.gmail.com")
+                        (nnimap-server-port 993)
+                        (nnimap-stream ssl)
+                        (nnir-search-engine imap)
+                        (nnmail-expiry-target "nnimap+Work:[Gmail]/Trash")
+                        (nnmail-expiry-wait 90)))
+  (add-to-list 'gnus-secondary-select-methods
+               '(nnimap "Gmail"
+                        (nnimap-user "animationrich@gmail.com")
+                        (nnimap-address "imap.gmail.com")
+                        (nnimap-server-port 993)
+                        (nnimap-stream ssl)
+                        (nnir-search-engine imap)
+                        (nnmail-expiry-target "nnimap+Gmail:[Gmail]/Trash")
+                        (nnmail-expiry-wait 90)))
+
+  (defun group-send-mail-from-point ()
+    (interactive)
+    ;; use the group under the point to find a posting style.
+    (gnus-group-mail t)
+    (compose-mail))
+
+  (define-key gnus-group-mode-map
+              ;; list all the subscribed groups even they contain zero un-read messages
+              (kbd "m") 'group-send-mail-from-point)
+
+  (defun my-gnus-group-list-subscribed-groups ()
+    "List all subscribed groups with or without un-read messages"
+    (interactive)
+    (gnus-group-list-all-groups 5))
+
+  (define-key gnus-group-mode-map
+              ;; list all the subscribed groups even they contain zero un-read messages
+              (kbd "o") 'my-gnus-group-list-subscribed-groups)
+#+end_src
+
 **** Helm
 ***** System Packages
 #+begin_src emacs-lisp
@@ -539,7 +659,7 @@ Provides documentation to minibuffer completions
 
 **** Mu4e
 Mu4e mail uses the locally installed mu package, so cannot be managed using use-package
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (load-library "mu4e")
   (load-library "mu4e-context")
   (setq mu4e-attachment-dir "~/Downloads"
@@ -725,6 +845,11 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 #+begin_src emacs-lisp
   (use-package vterm
     :bind ("C-x t RET" . vterm))
+#+end_src
+
+**** w3m
+#+begin_src emacs-lisp
+  (use-package w3m)
 #+end_src
 
 **** Whichkey

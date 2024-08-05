@@ -10,14 +10,14 @@
 
 ** Setup
 #+begin_src sh :tangle no :results none
-  mkdir -p ~/.mail/redcroft
-  mkdir -p ~/.mail/work
-  mkdir -p ~/.mail/gmail
+  mkdir -p ~/Mail/Redcroft
+  mkdir -p ~/Mail/Work
+  mkdir -p ~/Mail/Gmail
 #+end_src
 
 #+begin_src sh :tangle no :results none
   mbsync -a
-  mu init --maildir=~/.mail --my-address=richard@redcroft.tech --my-address=richard@carseandwaterman.com --my-address=animationrich@gmail.com
+  mu init --maildir=~/Mail --my-address=richard@redcroft.tech --my-address=richard@carseandwaterman.com --my-address=animationrich@gmail.com
 #+end_src
 
 ** MBSync
@@ -28,16 +28,16 @@
   Port 993
   User richard@redcroft.tech
   PassCmd "pass hostinger.com/richard@redcroft.tech"
-  SSLType IMAPS
+  TLSType IMAPS
 
   IMAPStore redcroft-remote
   Account redcroft
 
   MaildirStore redcroft-local
   SubFolders Verbatim
-  Path ~/.mail/redcroft/
-  Inbox ~/.mail/redcroft/Inbox
-  Trash ~/.mail/redcroft/Trash
+  Path ~/Mail/Redcroft/
+  Inbox ~/Mail/Redcroft/Inbox
+  Trash ~/Mail/Redcroft/Trash
 
   Channel redcroft
   Far :redcroft-remote:
@@ -57,16 +57,16 @@
   Port 993
   User richard@carseandwaterman.com
   PassCmd "pass gmail/richard@carseandwaterman.com"
-  SSLType IMAPS
+  TLSType IMAPS
 
   IMAPStore work-remote
   Account work
 
   MaildirStore work-local
   SubFolders Verbatim
-  Path ~/.mail/work/
-  Inbox ~/.mail/work/Inbox
-  Trash ~/.mail/work/Trash
+  Path ~/Mail/Work/
+  Inbox ~/Mail/Work/Inbox
+  Trash ~/Mail/Work/Trash
 
   Channel work
   Far :work-remote:
@@ -86,16 +86,16 @@
   Port 993
   User animationrich@gmail.com
   PassCmd "pass gmail/animationrich@gmail.com"
-  SSLType IMAPS
+  TLSType IMAPS
 
   IMAPStore gmail-remote
   Account gmail
 
   MaildirStore gmail-local
   SubFolders Verbatim
-  Path ~/.mail/gmail/
-  Inbox ~/.mail/gmail/Inbox
-  Trash ~/.mail/gmail/Trash
+  Path ~/Mail/Gmail/
+  Inbox ~/Mail/Gmail/Inbox
+  Trash ~/Mail/Gmail/Trash
 
   Channel gmail
   Far :gmail-remote:

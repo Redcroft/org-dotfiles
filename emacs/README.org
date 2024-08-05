@@ -110,7 +110,7 @@ Disable unneeded features of emacs (ui elements, package manager) for faster sta
 
   (advice-add #'display-startup-screen :override #'ignore)
 
-  (add-hook 'emacs-startup-hook (lambda () (setq gc-cons-threshold 800000)))
+  (add-hook 'emacs-startup-hook (lambda () (setq gc-cons-threshold (* 1024 1024))))
 #+end_src
 
 ** Init
@@ -590,6 +590,7 @@ This package allows you to type `<s` then press TAB to expand a tab
       (exwm-workspace-switch-create 9)
       (sleep-for 0 200)
       (exwm-workspace-switch 1)
+      (start-process "" nil "dunst&")
       ;;(dashboard-open)
       )
     (add-hook 'emacs-startup-hook 'my/exwm-startup)
@@ -686,7 +687,7 @@ This package allows you to type `<s` then press TAB to expand a tab
 #+end_src
 
 **** Gnus
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (load-library "gnus")
   (load-library "gnus-async")
   (load-library "gnus-topic")
@@ -920,7 +921,7 @@ Provides documentation to minibuffer completions
 
 **** Mu4e
 Mu4e mail uses the locally installed mu package, so cannot be managed using use-package
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (load-library "mu4e")
   (load-library "mu4e-context")
   (setq mu4e-attachment-dir "~/Downloads"
@@ -934,14 +935,14 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
                               (:mailing-list . 10)
                               (:from . 22)
                               (:subject))
-        mu4e-maildir "~/.mail"
+        mu4e-maildir "~/Mail"
         mu4e-mu-binary (executable-find "mu")
         mu4e-update-interval (* 10 60))
 
   (setq mu4e-maildir-shortcuts
-        '(("/redcroft/Inbox"  . ?i)
-          ("/work/Inbox"      . ?w)
-          ("/gmail/Inbox"     . ?g)))
+        '(("/Redcroft/Inbox"  . ?i)
+          ("/Work/Inbox"      . ?w)
+          ("/Gmail/Inbox"     . ?g)))
 
   (setq mu4e-contexts
         (list
@@ -953,9 +954,9 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
               (string-prefix-p "/redcroft" (mu4e-message-field msg :maildir))))
           :vars '((user-mail-address  . "richard@redcroft.tech")
                   (user-full-name     . "Richard DW Redcroft")
-                  (mu4e-drafts-folder . "/redcroft/Drafts")
-                  (mu4e-sent-folder   . "/redcroft/Sent")
-                  (mu4e-trash-folder  . "/redcroft/Trash")))
+                  (mu4e-drafts-folder . "/Redcroft/Drafts")
+                  (mu4e-sent-folder   . "/Redcroft/Sent")
+                  (mu4e-trash-folder  . "/Redcroft/Trash")))
          (make-mu4e-context
           :name "Work"
           :match-func
@@ -964,10 +965,10 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
               (string-prefix-p "/work" (mu4e-message-field msg :maildir))))
           :vars '((user-mail-address  . "richard@carseandwaterman.com")
                   (user-full-name     . "Richard DW Work")
-                  (mu4e-drafts-folder . "/work/[Gmail]/Drafts")
-                  (mu4e-sent-folder   . "/work/[Gmail]/Sent Mail")
-                  (mu4e-rifile-folder . "/work/[Gmail]/All Mail")
-                  (mu4e-trash-folder  . "/work/[Gmail]/Trash")))
+                  (mu4e-drafts-folder . "/Work/[Gmail]/Drafts")
+                  (mu4e-sent-folder   . "/Work/[Gmail]/Sent Mail")
+                  (mu4e-rifile-folder . "/Work/[Gmail]/All Mail")
+                  (mu4e-trash-folder  . "/Work/[Gmail]/Trash")))
          (make-mu4e-context
           :name "Gmail"
           :match-func
@@ -976,10 +977,10 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
               (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
           :vars '((user-mail-address  . "richard@carseandwaterman.com")
                   (user-full-name     . "Richard DW Work")
-                  (mu4e-drafts-folder . "/gmail/[Gmail]/Drafts")
-                  (mu4e-sent-folder   . "/gmail/[Gmail]/Sent Mail")
-                  (mu4e-rifile-folder . "/gmail/[Gmail]/All Mail")
-                  (mu4e-trash-folder  . "/gmail/[Gmail]/Trash")))))
+                  (mu4e-drafts-folder . "/Gmail/[Gmail]/Drafts")
+                  (mu4e-sent-folder   . "/Gmail/[Gmail]/Sent Mail")
+                  (mu4e-rifile-folder . "/Gmail/[Gmail]/All Mail")
+                  (mu4e-trash-folder  . "/Gmail/[Gmail]/Trash")))))
 
   (define-key programs-map (kbd "m") 'mu4e)
 #+end_src

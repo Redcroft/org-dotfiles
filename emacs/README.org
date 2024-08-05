@@ -21,7 +21,9 @@
       - [[#tempo][Tempo]]
       - [[#toc][TOC]]
     - [[#packages][Packages]]
+      - [[#auth-source][Auth Source]]
       - [[#beacon][Beacon]]
+      - [[#circe][Circe]]
       - [[#ctrlf][Ctrlf]]
       - [[#crux][Crux]]
       - [[#diff-hl][Diff-hl]]
@@ -244,12 +246,41 @@ Improves the styling and look of org-mode
 https://zwpdbh.github.io/emacs/org-to-blog-using-org-publish.htm
 https://opensource.com/article/20/3/blog-emacs
 https://thibaultmarin.github.io/blog/posts/2016-11-13-Personal_website_in_org.html
+https://taingram.org/blog/org-mode-blog.html
 #+begin_src emacs-lisp
   (load-library "ox-html")
   (load-library "ox-publish")
   (use-package htmlize)
 
-  (setq org-export-with-section-numbers nil
+  (global-set-key (kbd "C-c p") (lambda () (interactive) (org-publish-all t)))
+  (defvar this-date-format "%b %d, %Y")
+
+  (defun my/website-html-preamble (plist)
+    (with-temp-buffer
+      (insert-file-contents "~/.emacs.d/html-templates/preamble.html") (buffer-string)))
+
+  (defun my/website-html-postamble (plist)
+    (with-temp-buffer
+      (insert-file-contents "~/.emacs.d/html-templates/postamble.html") (buffer-string)))
+
+  (defun my/website-html-head (plist)
+    (with-temp-buffer
+      (insert-file-contents "~/.emacs.d/html-templates/head.html") (buffer-string)))
+
+  (defun my/website-sitemap-date-entry-format (entry style project)
+    "Format ENTRY in org-publish PROJECT Sitemap format ENTRY ENTRY STYLE format that includes date."
+    (let ((filename (org-publish-find-title entry project)))
+      (if (= (length filename) 0)
+          (format "*%s*" entry)
+        (format "{{{timestamp(%s)}}} [[file:%s][%s]]"
+                (format-time-string "%Y-%m-%d"
+                                    (org-publish-find-date entry project))
+                entry
+                filename))))
+
+  (setq org-export-global-macros
+        '(("timestamp" . "@@html:<span class=\"timestamp\">[$1]</span>@@"))
+        org-export-with-section-numbers nil
         org-export-with-smart-quotes t
         org-export-with-toc 3
         org-html-container-element "section"
@@ -264,34 +295,34 @@ https://thibaultmarin.github.io/blog/posts/2016-11-13-Personal_website_in_org.ht
         org-html-validation-link nil
         org-publish-project-alist
         '(("blog-pages"
+           :auto-sitemap nil
            :base-directory "~/.repos/blog/org/"
            :base-extension "org"
-           :html-head "<link rel='stylesheet' href='/css/style.css'/>"
-           :html-link-home "/"
-           :html-link-up "/"
-           :html-preamble nil
+           :html-head my/website-html-head
+           :html-preamble my/website-html-preamble
            :html-postamble nil
            :publishing-directory "~/.repos/blog/public_html/"
            :publishing-function org-html-publish-to-html
            :recursive nil
            :section-numbers nil
+           :sitemap-title ""
            :with-toc nil)
           ("blog-articles"
            :auto-sitemap t
            :base-directory "~/.repos/blog/org/articles/"
            :base-extension "org"
-           :html-head "<link rel='stylesheet' href='/css/style.css'/>"
-           :html-link-home "/"
-           :html-link-up "../"
-           :html-preamble nil
+           :html-head my/website-html-head
+           :html-preamble my/website-html-preamble
            :html-postamble nil
            :publishing-directory "~/.repos/blog/public_html/articles/"
            :publishing-function org-html-publish-to-html
            :recursive t
            :sitemap-title "Articles"
            :sitemap-filename "index.org"
+           :sitemap-format-entry my/website-sitemap-date-entry-format
            :sitemap-sort-files anti-chronologically
-           :sitemap-style list)
+           :sitemap-style tree
+           :with-toc nil)
           ("blog-css"
            :base-directory "~/.repos/blog/org/css/"
            :base-extension "css"
@@ -322,12 +353,27 @@ https://thibaultmarin.github.io/blog/posts/2016-11-13-Personal_website_in_org.ht
 
   (add-to-list 'org-capture-templates
                '("p" "Post" plain
-                  (file create-blog-page)
-                  (file "~/.emacs.d/org-templates/blog-page.orgcaptmpl")))
+                 (file create-blog-page)
+                 (file "~/.emacs.d/org-templates/blog-page.orgcaptmpl")))
   (add-to-list 'org-capture-templates
-                 '("a" "Article" plain
-                  (file create-blog-article)
-                  (file "~/.emacs.d/org-templates/blog-article.orgcaptmpl")))
+               '("a" "Article" plain
+                 (file create-blog-article)
+                 (file "~/.emacs.d/org-templates/blog-article.orgcaptmpl")))
+#+end_src
+
+#+begin_src html :tangle "~/.emacs.d/html-templates/head.html"
+  <link rel='stylesheet' href='/css/style.css'/>
+#+end_src
+
+#+begin_src html :tangle "~/.emacs.d/html-templates/postamble.html"
+#+end_src
+
+#+begin_src html :tangle "~/.emacs.d/html-templates/preamble.html"
+  <nav>
+    <li><a href="/">Home</a></li>
+    <li><a href="/articles/index.html">Articles</a></li>
+    <li><a href="/about.html">About</a></li>
+  </nav>
 #+end_src
 
 #+begin_src emacs-lisp :tangle "~/.emacs.d/org-templates/blog-page.orgcaptmpl"
@@ -367,12 +413,50 @@ This package allows you to type `<s` then press TAB to expand a tab
 #+end_src
 
 *** Packages
+**** Auth Source
+#+begin_src emacs-lisp
+  (load-library "auth-source")
+  (load-library "auth-source-pass")
+  (setq auth-sources '("~/.repos/dotfiles/authinfo.gpg"))
+  (auth-source-pass-enable)
+
+  (use-package password-store)
+#+end_src
 
 **** Beacon
 #+begin_src emacs-lisp
   (use-package beacon
     :config
     (beacon-mode))
+#+end_src
+
+**** Circe
+#+begin_src emacs-lisp :tangle no
+  (defun my-nickserv-password (server)
+    (password-store-get "libera.chat/LambdaExperiment"))
+
+  (use-package circe
+    :bind ("C-x y i" . irc)
+    :custom
+    (circe-format-say "{nick:-16s} {body}")
+    (circe-network-options
+     '(("Libera Chat"
+        :tls t
+        :sasl-username "LambdaExperiment"
+        :sasl-password my-nickserv-password
+        :channels (:after-auth "#emacs" "#godot"))))
+    (circe-reduce-lurker-spam t)
+    (circe-use-cycle-completion t)
+    (lui-flyspell-p t)
+    (lui-flyspell-alist '((".*" "american")))
+    :config
+    (load-library "lui-autopaste")
+    (defun irc ()
+      "Connect to IRC"
+      (interactive)
+      (circe "Libera Chat"))
+    :hook (circe-channel-mode-hook . enable-lui-autopaste)
+    )
 #+end_src
 
 **** Ctrlf
@@ -628,6 +712,7 @@ This package allows you to type `<s` then press TAB to expand a tab
         '(nnimap "Redcroft"
                  (nnimap-address "imap.hostinger.com")
                  (nnimap-user "richard@redcroft.tech")
+                 (nnimap-password (password-store-get "hostinger.com/richard@redcroft.tech"))
                  (nnimap-server-port 993)
                  (nnimap-expunge t)
                  (nnimap-stream ssl)
@@ -683,6 +768,7 @@ This package allows you to type `<s` then press TAB to expand a tab
   (add-to-list 'gnus-secondary-select-methods
                '(nnimap "Work"
                         (nnimap-user "richard@carseandwaterman.com")
+                        (nnimap-password (password-store-get "gmail/richard@carseandwaterman.com"))
                         (nnimap-address "imap.gmail.com")
                         (nnimap-server-port 993)
                         (nnimap-stream ssl)
@@ -692,6 +778,7 @@ This package allows you to type `<s` then press TAB to expand a tab
   (add-to-list 'gnus-secondary-select-methods
                '(nnimap "Gmail"
                         (nnimap-user "animationrich@gmail.com")
+                        (nnimap-password (password-store-get "gmail/animationrich@gmail.com"))
                         (nnimap-address "imap.gmail.com")
                         (nnimap-server-port 993)
                         (nnimap-stream ssl)

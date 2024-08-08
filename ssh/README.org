@@ -1,0 +1,17 @@
+#+Property: Header-args :tangle ~/.ssh/config :tangle-mode (identity #o600) :mkdirp yes
+#+auto_tangle: t
+#+AUTHOR: Richard Redcroft
+
+
+* Table of Contents :TOC_4:
+  - [[#cw][CW]]
+
+** CW
+
+#+begin_src conf
+  Host git.carseandwaterman.com
+      HostName git.carseandwaterman.com
+      User forgejo
+      Port 2222
+      IdentityFile ~/.ssh/id_cw
+#+end_src

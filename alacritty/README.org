@@ -1,0 +1,65 @@
+#+Property: Header-args :tangle ~/.config/alacritty/alacritty.toml  :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+#+AUTHOR: Richard Redcroft
+
+
+* Table of Contents :TOC_4:
+    - [[#general][General]]
+    - [[#colors][Colors]]
+    - [[#font][Font]]
+
+*** General
+
+#+begin_src toml
+#+end_src
+
+*** Colors
+#+begin_src toml
+  [colors.primary]
+  background = '#1c1e26'
+  foreground = '#cbced0'
+
+  # Normal colors
+  [colors.normal]
+  black = '#1c1e26'
+  red = '#e95678'
+  green = '#29d398'
+  yellow = '#fac29a'
+  blue = '#26bbd9'
+  magenta = '#ee64ac'
+  cyan = '#59e1e3'
+  white = '#cbced0'
+
+  # Bright colors
+  [colors.bright]
+  black = '#6f6f70'
+  red = '#e95678'
+  green = '#29d398'
+  yellow = '#fac29a'
+  blue = '#26bbd9'
+  magenta = '#ee64ac'
+  cyan = '#59e1e3'
+  white = '#e3e6ee'
+#+end_src
+
+*** Font
+#+begin_src toml
+  [font]
+  size = 11.0
+
+  [font.bold]
+  family = "Px437 IBM EGA 8x14"
+  style = "Bold"
+
+  [font.bold_italic]
+  family = "Px437 IBM EGA 8x14"
+  style = "Bold Italic"
+
+  [font.italic]
+  family = "Px437 IBM EGA 8x14"
+  style = "Italic"
+
+  [font.normal]
+  family = "Px437 IBM EGA 8x14"
+  style = "Regular"
+#+end_src

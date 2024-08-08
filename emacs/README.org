@@ -1187,7 +1187,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 **** Fonts
 #+begin_src emacs-lisp
   (set-face-attribute 'default nil
-                      :font "VictorMono Nerd Font"
+                      :font "Terminess Nerd Font"
                       :height 110
                       :weight 'semibold)
   (set-face-attribute 'variable-pitch nil

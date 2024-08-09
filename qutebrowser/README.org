@@ -54,6 +54,7 @@ Load the default qutebrowser settings, ill override the settings i care about
   hrir https://airtable.com/appayGNkn3nSuXkaz/shruimhjdSakUPg2m/tbloLjoZKWJDnLtTc
   pwhrtf https://obito.fr/posts/2023/06/true-spatial-audio-on-linux-using-hrtf/
   roswell https://roswell.github.io/Roswell-as-a-Scripting-Environment.html
+  cosmic https://github.com/edfloreshz/cosmic-app-template
 #+end_src
 
 ** Keybinds

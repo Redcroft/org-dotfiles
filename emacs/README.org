@@ -46,6 +46,7 @@
       - [[#move-text][Move text]]
       - [[#mu4e][Mu4e]]
       - [[#multiplec-cursors][Multiplec Cursors]]
+      - [[#nix][Nix]]
       - [[#orderless][Orderless]]
       - [[#pdf-tools][PDF-Tools]]
       - [[#pinentry][Pinentry]]
@@ -62,6 +63,7 @@
       - [[#whichkey][Whichkey]]
       - [[#whitespace][Whitespace]]
       - [[#yasnippet][Yasnippet]]
+      - [[#zig][Zig]]
     - [[#ui][UI]]
       - [[#all-the-icons][All-The-Icons]]
       - [[#theme][Theme]]
@@ -590,7 +592,7 @@ This package allows you to type `<s` then press TAB to expand a tab
       (exwm-workspace-switch-create 9)
       (sleep-for 0 200)
       (exwm-workspace-switch 1)
-      (start-process "" nil "dunst&")
+      (start-process "" nil "dunst" "&")
       ;;(dashboard-open)
       )
     (add-hook 'emacs-startup-hook 'my/exwm-startup)
@@ -994,6 +996,11 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
            ("C-c C->" . mc/mark-all-like-this)))
 #+end_src
 
+**** Nix
+#+begin_src emacs-lisp
+  (use-package nix-mode)
+#+end_src
+
 **** Orderless
 #+begin_src emacs-lisp
   (use-package orderless
@@ -1135,6 +1142,11 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
     (yas-global-mode 1))
 
   (use-package yasnippet-snippets)
+#+end_src
+
+**** Zig
+#+begin_src emacs-lisp
+  (use-package zig-mode)
 #+end_src
 
 *** UI

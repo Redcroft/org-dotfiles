@@ -1200,6 +1200,9 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
   (set-face-attribute 'font-lock-keyword-face nil
                       :slant 'italic)
 
+  (when (string= system-name "red")
+    (set-face-attribute 'default nil :height 120))
+
   (setq pixel-scroll-precision-mode 1)
   (setq-default line-spacing 0.12)
 

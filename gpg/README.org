@@ -9,10 +9,10 @@
 
 ** Cache ttl
 #+begin_src conf
-  default-cache-ttl 3600
-  default-cache-ttl-ssh 3600
-  max-cache-ttl 3600
-  max-cache-ttl-ssh 3600
+  default-cache-ttl 8400000
+  default-cache-ttl-ssh 8400000
+  max-cache-ttl 8400000
+  max-cache-ttl-ssh 8400000
 #+end_src
 
 ** Pinentry

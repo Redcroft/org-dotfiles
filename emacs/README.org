@@ -1175,14 +1175,14 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 
   (use-package base16-theme
     :config
-    (load-theme 'base16-horizon-dark))
+    (load-theme 'base16-rose-pine))
 
   (use-package heaven-and-hell
     :config
     (setq heaven-and-hell-theme-type 'dark
           heaven-and-hell-themes
-          '((light . base16-horizon-light)
-            (dark  . base16-horizon-dark))
+          '((light . base16-rose-pine-dawn)
+            (dark  . base16-rose-pine))
           heaven-and-hell-load-theme-no-confirm t)
     :hook (after-init . heaven-and-hell-init-hook)
     :bind ("<f5>" . heaven-and-hell-toggle-theme))
@@ -1191,7 +1191,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 **** Fonts
 #+begin_src emacs-lisp
   (set-face-attribute 'default nil
-                      :font "IntoneMono Nerd Font"
+                      :font "ZedMono Nerd Font"
                       :height 110
                       :weight 'normal)
   (set-face-attribute 'variable-pitch nil

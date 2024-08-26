@@ -47,6 +47,7 @@
       - [[#mu4e][Mu4e]]
       - [[#multiplec-cursors][Multiplec Cursors]]
       - [[#nix][Nix]]
+      - [[#notmuch][Notmuch]]
       - [[#orderless][Orderless]]
       - [[#pdf-tools][PDF-Tools]]
       - [[#pinentry][Pinentry]]
@@ -433,9 +434,11 @@ This package allows you to type `<s` then press TAB to expand a tab
 #+end_src
 
 **** Circe
-#+begin_src emacs-lisp :tangle no
-  (defun my-nickserv-password (server)
+#+begin_src emacs-lisp
+  (defun my-libera-password (server)
     (password-store-get "libera.chat/LambdaExperiment"))
+  (defun my-oftc-password (server)
+    (password-store-get "oftc.net/LambdaExperiment"))
 
   (use-package circe
     :bind ("C-x y i" . irc)
@@ -445,8 +448,13 @@ This package allows you to type `<s` then press TAB to expand a tab
      '(("Libera Chat"
         :tls t
         :sasl-username "LambdaExperiment"
-        :sasl-password my-nickserv-password
-        :channels (:after-auth "#emacs" "#godot"))))
+        :sasl-password my-libera-password
+        :channels (:after-auth "#emacs" "#godot"))
+       ("oftc"
+        :tls t
+        :sasl-username "LambdaExperiment"
+        :sasl-password my-oftc-password
+        :channels (:after-auth "#chimera-linux"))))
     (circe-reduce-lurker-spam t)
     (circe-use-cycle-completion t)
     (lui-flyspell-p t)
@@ -456,7 +464,8 @@ This package allows you to type `<s` then press TAB to expand a tab
     (defun irc ()
       "Connect to IRC"
       (interactive)
-      (circe "Libera Chat"))
+      (circe "Libera Chat")
+      (circe "otfc"))
     :hook (circe-channel-mode-hook . enable-lui-autopaste)
     )
 #+end_src
@@ -927,7 +936,7 @@ Provides documentation to minibuffer completions
 
 **** Mu4e
 Mu4e mail uses the locally installed mu package, so cannot be managed using use-package
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (load-library "mu4e")
   (load-library "mu4e-context")
   (setq mu4e-attachment-dir "~/Downloads"
@@ -1005,6 +1014,12 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
   (use-package nix-mode)
 #+end_src
 
+**** Notmuch
+#+begin_src emacs-lisp
+  (use-package notmuch
+    :bind (("C-x y m" . notmuch)))
+#+end_src
+
 **** Orderless
 #+begin_src emacs-lisp
   (use-package orderless
@@ -1015,7 +1030,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 #+End_src
 
 **** PDF-Tools
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package pdf-tools
     :config
     (pdf-loader-install))
@@ -1050,7 +1065,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 #+end_src
 
 **** Tree-sitter
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package tree-sitter
     :config
     (global-tree-sitter-mode))
@@ -1121,7 +1136,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 #+end_src
 
 **** w3m
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package w3m)
 #+end_src
 
@@ -1175,14 +1190,14 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 
   (use-package base16-theme
     :config
-    (load-theme 'base16-rose-pine))
+    (load-theme 'base16-everforest-dark-hard))
 
   (use-package heaven-and-hell
     :config
     (setq heaven-and-hell-theme-type 'dark
           heaven-and-hell-themes
-          '((light . base16-rose-pine-dawn)
-            (dark  . base16-rose-pine))
+          '((light . base16-gruvbox-material-light-hard)
+            (dark  . base16-gruvbox-material-dark-hard))
           heaven-and-hell-load-theme-no-confirm t)
     :hook (after-init . heaven-and-hell-init-hook)
     :bind ("<f5>" . heaven-and-hell-toggle-theme))
@@ -1191,12 +1206,9 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 **** Fonts
 #+begin_src emacs-lisp
   (set-face-attribute 'default nil
-                      :font "ZedMono Nerd Font"
+                      :font "MonaspiceNe Nerd Font"
                       :height 110
                       :weight 'normal)
-  (set-face-attribute 'variable-pitch nil
-                      :font "Ubuntu Nerd Font"
-                      :weight 'semibold)
   (set-face-attribute 'fixed-pitch nil
                       :weight 'bold)
   (set-face-attribute 'font-lock-comment-face nil

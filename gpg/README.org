@@ -22,5 +22,5 @@
 #+end_src
 
 #+begin_src conf :tangle (when (string= system-name "red") "~/.gnupg/gpg-agent.conf")
-  pinentry-program /usr/bin/pinentry-emacs
+  # pinentry-program /usr/bin/pinentry-emacs
 #+end_src

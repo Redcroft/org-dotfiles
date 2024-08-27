@@ -97,7 +97,7 @@ Disable unneeded features of emacs (ui elements, package manager) for faster sta
         use-dialog-box nil
         use-file-dialog nil)
 
-  (setq-default cursor-type '(bar . 3)
+  (setq-default cursor-type '(box . 3)
                 cursor-in-non-selected-windows nil
                 bidi-display-reordering 'left-to-right
                 bidi-paragraph-direction 'left-to-right)
@@ -936,7 +936,7 @@ Provides documentation to minibuffer completions
 
 **** Mu4e
 Mu4e mail uses the locally installed mu package, so cannot be managed using use-package
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (load-library "mu4e")
   (load-library "mu4e-context")
   (setq mu4e-attachment-dir "~/Downloads"
@@ -1015,7 +1015,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 #+end_src
 
 **** Notmuch
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package notmuch
     :bind (("C-x y m" . notmuch)))
 #+end_src
@@ -1184,20 +1184,20 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 #+begin_src emacs-lisp
   (setq custom-safe-themes t)
 
-  ;; (use-package ef-themes
-  ;;   :config
-  ;;   (load-theme 'ef-dream t))
-
-  (use-package base16-theme
+  (use-package ef-themes
     :config
-    (load-theme 'base16-everforest-dark-hard))
+    (load-theme 'ef-trio-dark t))
+
+  ;; (use-package base16-theme
+  ;;   :config
+  ;;   (load-theme 'base16-everforest-dark-hard))
 
   (use-package heaven-and-hell
     :config
     (setq heaven-and-hell-theme-type 'dark
           heaven-and-hell-themes
-          '((light . base16-gruvbox-material-light-hard)
-            (dark  . base16-gruvbox-material-dark-hard))
+          '((light . ef-kassio)
+            (dark  . ef-trio-dark))
           heaven-and-hell-load-theme-no-confirm t)
     :hook (after-init . heaven-and-hell-init-hook)
     :bind ("<f5>" . heaven-and-hell-toggle-theme))
@@ -1206,7 +1206,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 **** Fonts
 #+begin_src emacs-lisp
   (set-face-attribute 'default nil
-                      :font "MonaspiceNe Nerd Font"
+                      :font "MartianMono Nerd Font"
                       :height 110
                       :weight 'normal)
   (set-face-attribute 'fixed-pitch nil
@@ -1217,7 +1217,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
                       :slant 'italic)
 
   (when (string= system-name "red")
-    (set-face-attribute 'default nil :height 120))
+    (set-face-attribute 'default nil :height 100))
 
   (setq pixel-scroll-precision-mode 1)
   (setq-default line-spacing 0.12)

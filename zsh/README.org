@@ -1,0 +1,33 @@
+#+Property: Header-args :tangle ~/.zshrc :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+#+AUTHOR: Richard Redcroft
+
+* Table of Contents :TOC_4:
+  - [[#znap][Znap]]
+  - [[#prompt][Prompt]]
+  - [[#autocomplete][Autocomplete]]
+  - [[#syntax][Syntax]]
+
+** Znap
+#+begin_src zsh
+  # Download Znap, if it's not there yet.
+  [[ -r ~/.repos/znap/znap.zsh ]] ||
+      git clone --depth 1 -- \
+          https://github.com/marlonrichert/zsh-snap.git ~/.repos/znap
+  source ~/.repos/znap/znap.zsh  # Start Znap
+#+end_src
+
+** Prompt
+#+begin_src zsh
+  znap prompt sindresorhus/pure
+#+end_src
+
+** Autocomplete
+#+begin_src zsh
+  znap source marlonrichert/zsh-autocomplete
+#+end_src
+
+** Syntax
+#+begin_src zsh
+  znap source zsh-users/zsh-syntax-highlighting
+#+end_src

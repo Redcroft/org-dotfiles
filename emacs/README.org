@@ -24,6 +24,7 @@
       - [[#auth-source][Auth Source]]
       - [[#beacon][Beacon]]
       - [[#circe][Circe]]
+      - [[#cmake][CMake]]
       - [[#ctrlf][Ctrlf]]
       - [[#crux][Crux]]
       - [[#diff-hl][Diff-hl]]
@@ -470,6 +471,11 @@ This package allows you to type `<s` then press TAB to expand a tab
     )
 #+end_src
 
+**** CMake
+#+begin_src emacs-lisp
+  (use-package cmake-mode)
+#+end_src
+
 **** Ctrlf
 #+begin_src emacs-lisp
   (use-package ctrlf
@@ -696,9 +702,9 @@ This package allows you to type `<s` then press TAB to expand a tab
 #+begin_src emacs-lisp
   (use-package gdscript-mode
     :hook (gdscript-mode-hook . (lambda ()
-                               (add-hook 'before-save-hook
-                                         (lambda ()
-                                           (untabify (point-min) (point-max)))))))
+                                  (add-hook 'before-save-hook
+                                            (lambda ()
+                                              (untabify (point-min) (point-max)))))))
 #+end_src
 
 **** Gnus
@@ -1030,7 +1036,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 #+End_src
 
 **** PDF-Tools
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package pdf-tools
     :config
     (pdf-loader-install))
@@ -1065,7 +1071,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 #+end_src
 
 **** Tree-sitter
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package tree-sitter
     :config
     (global-tree-sitter-mode))
@@ -1206,8 +1212,8 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 **** Fonts
 #+begin_src emacs-lisp
   (set-face-attribute 'default nil
-                      :font "MartianMono Nerd Font"
-                      :height 110
+                      :font "IosevkaTerm Nerd Font"
+                      :height 120
                       :weight 'normal)
   (set-face-attribute 'fixed-pitch nil
                       :weight 'bold)
@@ -1217,7 +1223,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
                       :slant 'italic)
 
   (when (string= system-name "red")
-    (set-face-attribute 'default nil :height 100))
+    (set-face-attribute 'default nil :height 120))
 
   (setq pixel-scroll-precision-mode 1)
   (setq-default line-spacing 0.12)

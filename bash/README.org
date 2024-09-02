@@ -1,0 +1,18 @@
+#+Property: Header-args :tangle ~/.bashrc :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+#+AUTHOR: Richard Redcroft
+
+* Table of Contents :TOC_4:
+  - [[#plugin][Plugin]]
+
+** Plugin
+#+begin_src sh
+  if [ ! -f "$HOME/.repos/bash-git-prompt/gitprompt.sh" ]; then
+      git clone https://github.com/magicmonty/bash-git-prompt.git ~/.repos/bash-git-prompt --depth=1
+  fi
+
+  if [ -f "$HOME/.repos/bash-git-prompt/gitprompt.sh" ]; then
+      GIT_PROMPT_ONLY_IN_REPO=1
+      source "$HOME/.repos/bash-git-prompt/gitprompt.sh"
+  fi
+#+end_src

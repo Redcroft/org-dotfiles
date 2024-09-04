@@ -866,6 +866,7 @@ This package allows you to type `<s` then press TAB to expand a tab
 
 **** Magit
 #+begin_src emacs-lisp
+  (use-package transient)
   (use-package magit
     :config
     (setq magit-diff-refine-hunk t)
@@ -1190,20 +1191,20 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 #+begin_src emacs-lisp
   (setq custom-safe-themes t)
 
-  (use-package ef-themes
-    :config
-    (load-theme 'ef-trio-dark t))
-
-  ;; (use-package base16-theme
+  ;; (use-package ef-themes
   ;;   :config
-  ;;   (load-theme 'base16-everforest-dark-hard))
+  ;;   (load-theme 'ef-trio-dark t))
+
+  (use-package base16-theme
+    :config
+    (load-theme 'base16-ayu-mirage))
 
   (use-package heaven-and-hell
     :config
     (setq heaven-and-hell-theme-type 'dark
           heaven-and-hell-themes
-          '((light . ef-kassio)
-            (dark  . ef-trio-dark))
+          '((light . base16-ayu-light)
+            (dark  . base16-ayu-mirage))
           heaven-and-hell-load-theme-no-confirm t)
     :hook (after-init . heaven-and-hell-init-hook)
     :bind ("<f5>" . heaven-and-hell-toggle-theme))
@@ -1212,9 +1213,9 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 **** Fonts
 #+begin_src emacs-lisp
   (set-face-attribute 'default nil
-                      :font "IosevkaTerm Nerd Font"
+                      :font "Iosevka Term Nerd Font"
                       :height 120
-                      :weight 'normal)
+                      :weight 'SemiBold)
   (set-face-attribute 'fixed-pitch nil
                       :weight 'bold)
   (set-face-attribute 'font-lock-comment-face nil

@@ -15,31 +15,32 @@
 
 *** Colors
 #+begin_src toml
+  # Default colors
   [colors.primary]
-  background = '#1c1e26'
-  foreground = '#cbced0'
+  background = '#282A2E'
+  foreground = '#B3B1AD'
 
   # Normal colors
   [colors.normal]
-  black = '#1c1e26'
-  red = '#e95678'
-  green = '#29d398'
-  yellow = '#fac29a'
-  blue = '#26bbd9'
-  magenta = '#ee64ac'
-  cyan = '#59e1e3'
-  white = '#cbced0'
+  black   = '#01060E'
+  red     = '#EA6C73'
+  green   = '#91B362'
+  yellow  = '#F9AF4F'
+  blue    = '#53BDFA'
+  magenta = '#FAE994'
+  cyan    = '#90E1C6'
+  white   = '#C7C7C7'
 
   # Bright colors
   [colors.bright]
-  black = '#6f6f70'
-  red = '#e95678'
-  green = '#29d398'
-  yellow = '#fac29a'
-  blue = '#26bbd9'
-  magenta = '#ee64ac'
-  cyan = '#59e1e3'
-  white = '#e3e6ee'
+  black   = '#686868'
+  red     = '#F07178'
+  green   = '#C2D94C'
+  yellow  = '#FFB454'
+  blue    = '#59C2FF'
+  magenta = '#FFEE99'
+  cyan    = '#95E6CB'
+  white   = '#FFFFFF'
 #+end_src
 
 *** Font
@@ -48,18 +49,18 @@
   size = 11.0
 
   [font.bold]
-  family = "Px437 IBM EGA 8x14"
+  family = "JetBrainsMono Nerd Font"
   style = "Bold"
 
   [font.bold_italic]
-  family = "Px437 IBM EGA 8x14"
+  family = "JetBrainsMono Nerd Font"
   style = "Bold Italic"
 
   [font.italic]
-  family = "Px437 IBM EGA 8x14"
+  family = "JetBrainsMono Nerd Font"
   style = "Italic"
 
   [font.normal]
-  family = "Px437 IBM EGA 8x14"
+  family = "JetBrainsMono Nerd Font"
   style = "Regular"
 #+end_src

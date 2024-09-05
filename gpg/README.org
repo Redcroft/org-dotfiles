@@ -19,5 +19,5 @@
 #+begin_src conf
   allow-emacs-pinentry
   allow-loopback-pinentry
-  pinentry-program /usr/bin/pinentry-qt
+  # pinentry-program /usr/bin/pinentry-qt
 #+end_src

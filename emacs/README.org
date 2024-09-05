@@ -944,67 +944,69 @@ Provides documentation to minibuffer completions
 **** Mu4e
 Mu4e mail uses the locally installed mu package, so cannot be managed using use-package
 #+begin_src emacs-lisp
-  (load-library "mu4e")
-  (load-library "mu4e-context")
-  (setq mu4e-attachment-dir "~/Downloads"
-        mu4e-change-filenames-when-moving t
-        mu4e-compose-complete-addresses t
-        mu4e-compose-context-policy nil
-        mu4e-compose-dont-reply-to-self t
-        mu4e-get-mail-command "mbsync -a"
-        mu4e-headers-fields '((:human-date . 20)
-                              (:flags . 6)
-                              (:mailing-list . 10)
-                              (:from . 22)
-                              (:subject))
-        mu4e-maildir "~/Mail"
-        mu4e-mu-binary (executable-find "mu")
-        mu4e-update-interval (* 10 60))
+  (when (locate-library "mu4e")
+    (load-library "mu4e")
+    (load-library "mu4e-context")
+    (setq mu4e-attachment-dir "~/Downloads"
+          mu4e-change-filenames-when-moving t
+          mu4e-compose-complete-addresses t
+          mu4e-compose-context-policy nil
+          mu4e-compose-dont-reply-to-self t
+          mu4e-get-mail-command "mbsync -a"
+          mu4e-headers-fields '((:human-date . 20)
+                                (:flags . 6)
+                                (:mailing-list . 10)
+                                (:from . 22)
+                                (:subject))
+          mu4e-maildir "~/Mail"
+          mu4e-mu-binary (executable-find "mu")
+          mu4e-update-interval (* 10 60))
 
-  (setq mu4e-maildir-shortcuts
-        '(("/Redcroft/Inbox"  . ?i)
-          ("/Work/Inbox"      . ?w)
-          ("/Gmail/Inbox"     . ?g)))
+    (setq mu4e-maildir-shortcuts
+          '(("/Redcroft/Inbox"  . ?i)
+            ("/Work/Inbox"      . ?w)
+            ("/Gmail/Inbox"     . ?g)))
 
-  (setq mu4e-contexts
-        (list
-         (make-mu4e-context
-          :name "Redcroft"
-          :match-func
-          (lambda (msg)
-            (when msg
-              (string-prefix-p "/redcroft" (mu4e-message-field msg :maildir))))
-          :vars '((user-mail-address  . "richard@redcroft.tech")
-                  (user-full-name     . "Richard DW Redcroft")
-                  (mu4e-drafts-folder . "/Redcroft/Drafts")
-                  (mu4e-sent-folder   . "/Redcroft/Sent")
-                  (mu4e-trash-folder  . "/Redcroft/Trash")))
-         (make-mu4e-context
-          :name "Work"
-          :match-func
-          (lambda (msg)
-            (when msg
-              (string-prefix-p "/work" (mu4e-message-field msg :maildir))))
-          :vars '((user-mail-address  . "richard@carseandwaterman.com")
-                  (user-full-name     . "Richard DW Work")
-                  (mu4e-drafts-folder . "/Work/[Gmail]/Drafts")
-                  (mu4e-sent-folder   . "/Work/[Gmail]/Sent Mail")
-                  (mu4e-rifile-folder . "/Work/[Gmail]/All Mail")
-                  (mu4e-trash-folder  . "/Work/[Gmail]/Trash")))
-         (make-mu4e-context
-          :name "Gmail"
-          :match-func
-          (lambda (msg)
-            (when msg
-              (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
-          :vars '((user-mail-address  . "richard@carseandwaterman.com")
-                  (user-full-name     . "Richard DW Work")
-                  (mu4e-drafts-folder . "/Gmail/[Gmail]/Drafts")
-                  (mu4e-sent-folder   . "/Gmail/[Gmail]/Sent Mail")
-                  (mu4e-rifile-folder . "/Gmail/[Gmail]/All Mail")
-                  (mu4e-trash-folder  . "/Gmail/[Gmail]/Trash")))))
+    (setq mu4e-contexts
+          (list
+           (make-mu4e-context
+            :name "Redcroft"
+            :match-func
+            (lambda (msg)
+              (when msg
+                (string-prefix-p "/redcroft" (mu4e-message-field msg :maildir))))
+            :vars '((user-mail-address  . "richard@redcroft.tech")
+                    (user-full-name     . "Richard DW Redcroft")
+                    (mu4e-drafts-folder . "/Redcroft/Drafts")
+                    (mu4e-sent-folder   . "/Redcroft/Sent")
+                    (mu4e-trash-folder  . "/Redcroft/Trash")))
+           (make-mu4e-context
+            :name "Work"
+            :match-func
+            (lambda (msg)
+              (when msg
+                (string-prefix-p "/work" (mu4e-message-field msg :maildir))))
+            :vars '((user-mail-address  . "richard@carseandwaterman.com")
+                    (user-full-name     . "Richard DW Work")
+                    (mu4e-drafts-folder . "/Work/[Gmail]/Drafts")
+                    (mu4e-sent-folder   . "/Work/[Gmail]/Sent Mail")
+                    (mu4e-rifile-folder . "/Work/[Gmail]/All Mail")
+                    (mu4e-trash-folder  . "/Work/[Gmail]/Trash")))
+           (make-mu4e-context
+            :name "Gmail"
+            :match-func
+            (lambda (msg)
+              (when msg
+                (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+            :vars '((user-mail-address  . "richard@carseandwaterman.com")
+                    (user-full-name     . "Richard DW Work")
+                    (mu4e-drafts-folder . "/Gmail/[Gmail]/Drafts")
+                    (mu4e-sent-folder   . "/Gmail/[Gmail]/Sent Mail")
+                    (mu4e-rifile-folder . "/Gmail/[Gmail]/All Mail")
+                    (mu4e-trash-folder  . "/Gmail/[Gmail]/Trash")))))
 
-  (define-key programs-map (kbd "m") 'mu4e)
+    (define-key programs-map (kbd "m") 'mu4e)
+    )
 #+end_src
 
 **** Multiplec Cursors

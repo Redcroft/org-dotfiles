@@ -19,5 +19,8 @@
 #+begin_src conf
   allow-emacs-pinentry
   allow-loopback-pinentry
-  # pinentry-program /usr/bin/pinentry-qt
+#+end_src
+
+#+begin_src conf :tangle (when (string= system-name "red") "~/.gnupg/gpg-agent.conf")
+  pinentry-program /usr/bin/pinentry-emacs
 #+end_src

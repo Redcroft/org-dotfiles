@@ -1,0 +1,26 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(progn ;;init forms
+  (ros:ensure-asdf)
+  #+quicklisp(ql:quickload '() :silent t)
+  )
+
+(defpackage :ros.script.tangle.3935478371
+  (:use :cl))
+(in-package :ros.script.tangle.3935478371)
+
+(defun tangle-file (file)
+  (let ((path (namestring file)))
+    (sb-ext:run-program "./eval.sh" (list path) :input t :output *standard-output*)))
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (loop for f in (directory "./dotfiles/*/README.org")
+       collect (tangle-file f))
+  (loop for f in (directory (concatenate 'string "./hosts/" (machine-instance) "/*/README.org"))
+        collect (tangle-file f))
+  )
+;;; vim: set ft=lisp lisp:

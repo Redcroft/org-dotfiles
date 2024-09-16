@@ -18,17 +18,32 @@
 #+begin_src sh :tangle no :results none
   mbsync -a
   mu init --maildir=~/Mail --my-address=richard@redcroft.tech --my-address=richard@carseandwaterman.com --my-address=animationrich@gmail.com
+  mu index
+#+end_src
+
+#+name: enc-type
+#+begin_src emacs-lisp :results value :cache yes
+  (defun parse-version-number (version-string)
+  "Parse a version string and return the major.minor version."
+  (when (string-match "Version \\([0-9]+\\.[0-9]+\\)" version-string)
+    (match-string 1 version-string)))
+
+  (setq version (string-to-number (parse-version-number (shell-command-to-string "mu --version"))))
+
+  (if (> version 1.12)
+      "TLSType"
+    "SSLType")
 #+end_src
 
 ** MBSync
 *** Redcroft
-#+begin_src conf :tangle "~/.mbsyncrc"
+#+begin_src conf :tangle "~/.mbsyncrc" :noweb yes
   IMAPAccount redcroft
   Host imap.hostinger.com
   Port 993
   User richard@redcroft.tech
   PassCmd "pass hostinger.com/richard@redcroft.tech"
-  TLSType IMAPS
+  <<enc-type()>> IMAPS
 
   IMAPStore redcroft-remote
   Account redcroft
@@ -51,13 +66,13 @@
 #+end_src
 
 *** Work
-#+begin_src conf :tangle "~/.mbsyncrc"
+#+begin_src conf :tangle "~/.mbsyncrc" :noweb yes
   IMAPAccount work
   Host imap.gmail.com
   Port 993
   User richard@carseandwaterman.com
   PassCmd "pass gmail/richard@carseandwaterman.com"
-  TLSType IMAPS
+  <<enc-type()>> IMAPS
 
   IMAPStore work-remote
   Account work
@@ -80,13 +95,13 @@
 #+end_src
 
 *** Gmail
-#+begin_src conf :tangle "~/.mbsyncrc"
+#+begin_src conf :tangle "~/.mbsyncrc" :noweb yes
   IMAPAccount gmail
   Host imap.gmail.com
   Port 993
   User animationrich@gmail.com
   PassCmd "pass gmail/animationrich@gmail.com"
-  TLSType IMAPS
+  <<enc-type()>> IMAPS
 
   IMAPStore gmail-remote
   Account gmail

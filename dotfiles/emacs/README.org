@@ -191,7 +191,7 @@ Testing out Elpaca package management instead of straight.el
 #+begin_src emacs-lisp
   (defun red/open-emacs-config ()
     (interactive)
-    (find-file "~/.repos/dotfiles/emacs/README.org"))
+    (find-file "~/.repos/dotfiles/dotfiles/emacs/README.org"))
 #+end_src
 
 *** Keybinds
@@ -530,7 +530,7 @@ This package allows you to type `<s` then press TAB to expand a tab
 **** Eyebrowse
 #+begin_src emacs-lisp
   (use-package eyebrowse
-    :if (not (string= (system-name) "red"))
+    :if (not (string= (getenv "EXWM_ENABLE") "t"))
     :bind (("M-1" . eyebrowse-switch-to-window-config-1)
            ("M-2" . eyebrowse-switch-to-window-config-2)
            ("M-3" . eyebrowse-switch-to-window-config-3)
@@ -554,7 +554,7 @@ This package allows you to type `<s` then press TAB to expand a tab
 **** EXWM
 #+begin_src emacs-lisp
   (use-package exwm
-    :if (string= (system-name) "red")
+    :if (string= (getenv "EXWM_ENABLE") "t")
     :config
     (setq battery-update-interval 15
           battery-mode-line-format "[%p%% %t]"
@@ -1198,20 +1198,16 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 #+begin_src emacs-lisp
   (setq custom-safe-themes t)
 
-  ;; (use-package ef-themes
-  ;;   :config
-  ;;   (load-theme 'ef-trio-dark t))
-
-  (use-package base16-theme
+  (use-package ef-themes
     :config
-    (load-theme 'base16-ayu-mirage))
+    (load-theme 'ef-maris-dark t))
 
   (use-package heaven-and-hell
     :config
     (setq heaven-and-hell-theme-type 'dark
           heaven-and-hell-themes
-          '((light . base16-ayu-light)
-            (dark  . base16-ayu-mirage))
+          '((light . ef-maris-light)
+            (dark  . ef-maris-dark))
           heaven-and-hell-load-theme-no-confirm t)
     :hook (after-init . heaven-and-hell-init-hook)
     :bind ("<f5>" . heaven-and-hell-toggle-theme))
@@ -1220,7 +1216,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 **** Fonts
 #+begin_src emacs-lisp
   (set-face-attribute 'default nil
-                      :font "Iosevka Term Nerd Font"
+                      :font "Iosevka Comfy Wide"
                       :height 120
                       :weight 'SemiBold)
   (set-face-attribute 'fixed-pitch nil
@@ -1231,10 +1227,10 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
                       :slant 'italic)
 
   (when (string= system-name "red")
-    (set-face-attribute 'default nil :height 120))
+    (set-face-attribute 'default nil :height 110))
 
   (setq pixel-scroll-precision-mode 1)
-  (setq-default line-spacing 0.12)
+  (setq-default line-spacing 0.05)
 
   (add-to-list 'default-frame-alist '(alpha-background . 95))
   (setq global-prettify-symbols-mode t)

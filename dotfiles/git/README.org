@@ -8,10 +8,21 @@
 
 ** Git config
 
-#+begin_src sh :results none
+#+name: git-config
+#+begin_src sh
   git config --global user.name 'Richard DW Redcroft'
   git config --global user.email 'Richard@Redcroft.tech'
   git config --global init.defaultBranch main
 
   git clone git@github.com:Redcroft/pass ~/.password-store
+  git clone --depth=1 git@github.com:ryanoasis/nerd-fonts ~/.repos/nerd-fonts
+  git clone --dpeth=1 git@github.com:protesilaos/iosevka-comfy ~/.local/share/fonts/iosevka-comfy
+#+end_src
+
+#+begin_src conf :tangle "~/.gitconfig"
+  [user]
+  	name = Richard DW Redcroft
+  	email = Richard@Redcroft.tech
+  [init]
+  	defaultBranch = main
 #+end_src

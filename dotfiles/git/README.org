@@ -16,8 +16,10 @@
 
   git clone git@github.com:Redcroft/pass ~/.password-store
   git clone --depth=1 git@github.com:ryanoasis/nerd-fonts ~/.repos/nerd-fonts
-  git clone --dpeth=1 git@github.com:protesilaos/iosevka-comfy ~/.local/share/fonts/iosevka-comfy
+  git clone --depth=1 git@github.com:protesilaos/iosevka-comfy ~/.local/share/fonts/iosevka-comfy
 #+end_src
+
+#+RESULTS: git-config
 
 #+begin_src conf :tangle "~/.gitconfig"
   [user]

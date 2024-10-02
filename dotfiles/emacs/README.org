@@ -1044,7 +1044,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 #+End_src
 
 **** PDF-Tools
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package pdf-tools
     :config
     (pdf-loader-install))
@@ -1079,7 +1079,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 #+end_src
 
 **** Tree-sitter
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package tree-sitter
     :config
     (global-tree-sitter-mode))
@@ -1198,19 +1198,22 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 #+begin_src emacs-lisp
   (setq custom-safe-themes t)
 
-  (use-package ef-themes
-    :config
-    (load-theme 'ef-maris-dark t))
+  ;; (use-package ef-themes
+  ;;   :config
+  ;;   (load-theme 'ef-maris-dark t))
 
-  (use-package heaven-and-hell
-    :config
-    (setq heaven-and-hell-theme-type 'dark
-          heaven-and-hell-themes
-          '((light . ef-maris-light)
-            (dark  . ef-maris-dark))
-          heaven-and-hell-load-theme-no-confirm t)
-    :hook (after-init . heaven-and-hell-init-hook)
-    :bind ("<f5>" . heaven-and-hell-toggle-theme))
+  ;; (use-package heaven-and-hell
+  ;;   :config
+  ;;   (setq heaven-and-hell-theme-type 'dark
+  ;;         heaven-and-hell-themes
+  ;;         '((light . ef-maris-light)
+  ;;           (dark  . ef-maris-dark))
+  ;;         heaven-and-hell-load-theme-no-confirm t)
+  ;;   :hook (after-init . heaven-and-hell-init-hook)
+  ;;   :bind ("<f5>" . heaven-and-hell-toggle-theme))
+
+  (use-package dracula-theme
+    :init (load-theme 'dracula t))
 #+end_src
 
 **** Fonts

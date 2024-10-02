@@ -25,12 +25,12 @@
 #+begin_src emacs-lisp :results value :cache yes
   (defun parse-version-number (version-string)
   "Parse a version string and return the major.minor version."
-  (when (string-match "Version \\([0-9]+\\.[0-9]+\\)" version-string)
+  (when (string-match "isync \\([0-9]+\\.[0-9]+\\)" version-string)
     (match-string 1 version-string)))
 
-  (setq version (string-to-number (parse-version-number (shell-command-to-string "mu --version"))))
+  (setq version (string-to-number (parse-version-number (shell-command-to-string "mbsync --version"))))
 
-  (if (> version 1.12)
+  (if (> version 1.4)
       "TLSType"
     "SSLType")
 #+end_src

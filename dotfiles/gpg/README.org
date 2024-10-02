@@ -21,6 +21,6 @@
   allow-loopback-pinentry
 #+end_src
 
-#+begin_src conf :tangle (if (string= system-name "red") "~/.gnupg/gpg-agent.conf" "")
+#+begin_src conf :tangle (if (and (file-exists-p "/usr/bin/pinentry-emacs") (string= system-name "red")) "~/.gnupg/gpg-agent.conf" "")
   pinentry-program /usr/bin/pinentry-emacs
 #+end_src

@@ -159,4 +159,5 @@
 ** Env Variables
 #+begin_src sh
   export WEBKIT_DISABLE_DMABUF_RENDERER=1
+  export PATH=$HOME/.local/bin:$PATH
 #+end_src

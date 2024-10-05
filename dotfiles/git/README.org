@@ -14,12 +14,29 @@
   git config --global user.email 'Richard@Redcroft.tech'
   git config --global init.defaultBranch main
 
-  git clone git@github.com:Redcroft/pass ~/.password-store
-  git clone --depth=1 git@github.com:ryanoasis/nerd-fonts ~/.repos/nerd-fonts
-  git clone --depth=1 git@github.com:protesilaos/iosevka-comfy ~/.local/share/fonts/iosevka-comfy
-#+end_src
+  if [ ! -d ~/.password-store ]; then
+      git clone git@github.com:Redcroft/pass ~/.password-store
+  fi
+  if [ ! -d ~/.repos/nerd-fonts ]; then
+      git clone --depth=1 git@github.com:ryanoasis/nerd-fonts ~/.repos/nerd-fonts
+  fi
+  if [ ! -d ~/.local/share/fonts/iosevka-comfy ]; then
+      git clone --depth=1 git@github.com:protesilaos/iosevka-comfy ~/.local/share/fonts/iosevka-comfy
+  fi
+  if [ ! -d ~/.local/share/fonts/sanfran ]; then
+      git clone --depth=1 git@github.com:sahibjotsaggu/San-Francisco-Pro-Fonts ~/.local/share/fonts/sanfran
+  fi
 
-#+RESULTS: git-config
+  if [ ! -d ~/.repos/dracula ]; then
+      mkdir ~/.repos/dracula
+      git clone --depth=1 git@github.com:dracula/gtk ~/.repos/dracula/gtk
+      git clone --depth=1 git@github.com:dracula/gnome-terminal ~/.repos/dracula/gnome-terminal
+      git clone --depth=1 git@github.com:dracula/blender ~/.repos/dracula/blender
+      git clone --depth=1 git@github.com:dracula/gimp ~/.repos/dracula/gimp
+      git clone --depth=1 git@github.com:dracula/krita ~/.repos/dracula/krita
+      git clone --depth=1 git@github.com:dracula/godot ~/.repos/dracula/godot
+  fi
+#+end_src
 
 #+begin_src conf :tangle "~/.gitconfig"
   [user]
@@ -28,3 +45,10 @@
   [init]
   	defaultBranch = main
 #+end_src
+
+
+#+begin_src text :tangle "~/.cache/git-config.log" :noweb yes
+  <<git-config()>>
+#+end_src
+
+#+RESULTS:

@@ -24,11 +24,9 @@
       - [[#auth-source][Auth Source]]
       - [[#beacon][Beacon]]
       - [[#circe][Circe]]
-      - [[#cmake][CMake]]
       - [[#ctrlf][Ctrlf]]
       - [[#crux][Crux]]
       - [[#diff-hl][Diff-hl]]
-      - [[#eglot][Eglot]]
       - [[#emojify][Emojify]]
       - [[#eshell][Eshell]]
       - [[#eyebrowse][Eyebrowse]]
@@ -36,7 +34,6 @@
       - [[#exwm][EXWM]]
       - [[#focus][Focus]]
       - [[#gc][GC]]
-      - [[#gdscript][GDScript]]
       - [[#gnus][Gnus]]
       - [[#helm][Helm]]
       - [[#lambda-line][Lambda-Line]]
@@ -46,16 +43,13 @@
       - [[#moody][Moody]]
       - [[#move-text][Move text]]
       - [[#mu4e][Mu4e]]
-      - [[#multiplec-cursors][Multiplec Cursors]]
-      - [[#nix][Nix]]
+      - [[#multiple-cursors][Multiple Cursors]]
       - [[#notmuch][Notmuch]]
       - [[#orderless][Orderless]]
       - [[#pdf-tools][PDF-Tools]]
       - [[#pinentry][Pinentry]]
       - [[#savehist][Savehist]]
-      - [[#sly][Sly]]
       - [[#solaire][Solaire]]
-      - [[#tree-sitter][Tree-sitter]]
       - [[#treemacs][Treemacs]]
       - [[#vertico][Vertico]]
       - [[#vertico-directory][Vertico Directory]]
@@ -65,6 +59,16 @@
       - [[#whichkey][Whichkey]]
       - [[#whitespace][Whitespace]]
       - [[#yasnippet][Yasnippet]]
+    - [[#development][Development]]
+      - [[#lsp-mode][LSP Mode]]
+      - [[#eglot][Eglot]]
+      - [[#ccls][CCLS]]
+      - [[#cmake][CMake]]
+      - [[#c][C#]]
+      - [[#gdscript][GDScript]]
+      - [[#nix][Nix]]
+      - [[#sly][Sly]]
+      - [[#tree-sitter][Tree-sitter]]
       - [[#zig][Zig]]
     - [[#ui][UI]]
       - [[#all-the-icons][All-The-Icons]]
@@ -471,11 +475,6 @@ This package allows you to type `<s` then press TAB to expand a tab
     )
 #+end_src
 
-**** CMake
-#+begin_src emacs-lisp
-  (use-package cmake-mode)
-#+end_src
-
 **** Ctrlf
 #+begin_src emacs-lisp
   (use-package ctrlf
@@ -503,13 +502,6 @@ This package allows you to type `<s` then press TAB to expand a tab
     (global-diff-hl-mode)
     (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
     (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
-#+end_src
-
-**** Eglot
-#+begin_src emacs-lisp
-  (use-package eglot
-    :ensure nil
-    :hook ((python-mode . eglot-ensure)))
 #+end_src
 
 **** Emojify
@@ -701,15 +693,6 @@ This package allows you to type `<s` then press TAB to expand a tab
                                (float-time
                                 (time-subtract after-init-time before-init-time)))
                        gcs-done)))
-#+end_src
-
-**** GDScript
-#+begin_src emacs-lisp
-  (use-package gdscript-mode
-    :hook (gdscript-mode-hook . (lambda ()
-                                  (add-hook 'before-save-hook
-                                            (lambda ()
-                                              (untabify (point-min) (point-max)))))))
 #+end_src
 
 **** Gnus
@@ -1014,18 +997,13 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
     )
 #+end_src
 
-**** Multiplec Cursors
+**** Multiple Cursors
 #+begin_src emacs-lisp
   (use-package multiple-cursors
     :bind (("C-S-c C-S-c" . mc/edit-lines)
            ("C->" . mc/mark-next-like-this)
            ("C-<" . mc/mark-previous-like-this)
            ("C-c C->" . mc/mark-all-like-this)))
-#+end_src
-
-**** Nix
-#+begin_src emacs-lisp
-  (use-package nix-mode)
 #+end_src
 
 **** Notmuch
@@ -1064,32 +1042,11 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
     (savehist-mode))
 #+end_src
 
-**** Sly
-#+begin_src emacs-lisp
-  (when (file-exists-p "~/.roswell/helper.el")
-    (load (expand-file-name "~/.roswell/helper.el"))
-    (setq inferior-lisp-program "ros -Q run"))
-#+end_src
-
 **** Solaire
 #+begin_src emacs-lisp
   (use-package solaire-mode
     :config
     (solaire-global-mode))
-#+end_src
-
-**** Tree-sitter
-#+begin_src emacs-lisp :tangle no
-  (use-package tree-sitter
-    :config
-    (global-tree-sitter-mode))
-
-  (use-package treesit-auto
-    :custom
-    (treesit-auto-install 'prompt)
-    :config
-    (treesit-auto-add-to-auto-mode-alist 'all)
-    (global-treesit-auto-mode))
 #+end_src
 
 **** Treemacs
@@ -1177,6 +1134,89 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
   (use-package yasnippet-snippets)
 #+end_src
 
+*** Development
+
+**** LSP Mode
+#+begin_src emacs-lisp :tangle no
+    (use-package lsp-mode
+      :init
+      (setq lsp-auto-guess-root nil)
+      :hook ((c-mode . lsp-deferred)
+             (csharp-mode . lsp-deferred)
+             (nix-mode . lsp-deferred))
+      :commands lsp-deferred)
+
+    (use-package lsp-ui
+      :commands lsp-ui-mode)
+#+end_src
+
+**** Eglot
+#+begin_src emacs-lisp
+  (use-package eglot
+    :ensure nil
+    :hook ((c-mode . eglot-ensure)
+           (c++-mode . eglot-ensure)
+           (csharp-mode . eglot-ensure)
+           (python-mode . eglot-ensure)))
+#+end_src
+
+**** CCLS
+#+begin_src emacs-lisp
+  (use-package ccls
+    :config
+    (setq ccls-executable "/usr/bin/ccls"
+          ccls-use-default-rainbow-sem-highlight 'font-lock)
+    (ccls-code-lens-mode 1))
+#+end_src
+
+**** CMake
+#+begin_src emacs-lisp
+  (use-package cmake-mode)
+#+end_src
+
+**** C#
+#+begin_src emacs-lisp
+  (use-package csharp-mode
+    :ensure nil
+    :config
+    (add-to-list 'auto-mode-alist '("\\.cs\\'" . csharp-tree-sitter-mode)))
+#+end_src
+
+**** GDScript
+#+begin_src emacs-lisp
+  (use-package gdscript-mode
+    :hook (gdscript-mode-hook . (lambda ()
+                                  (add-hook 'before-save-hook
+                                            (lambda ()
+                                              (untabify (point-min) (point-max)))))))
+#+end_src
+
+**** Nix
+#+begin_src emacs-lisp
+  (use-package nix-mode)
+#+end_src
+
+**** Sly
+#+begin_src emacs-lisp
+  (when (file-exists-p "~/.roswell/helper.el")
+    (load (expand-file-name "~/.roswell/helper.el"))
+    (setq inferior-lisp-program "ros -Q run"))
+#+end_src
+
+**** Tree-sitter
+#+begin_src emacs-lisp
+  (use-package tree-sitter
+    :config
+    (global-tree-sitter-mode))
+
+  (use-package treesit-auto
+    :custom
+    (treesit-auto-install 'prompt)
+    :config
+    (treesit-auto-add-to-auto-mode-alist 'all)
+    (global-treesit-auto-mode))
+#+end_src
+
 **** Zig
 #+begin_src emacs-lisp
   (use-package zig-mode)
@@ -1202,25 +1242,27 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
   ;;   :config
   ;;   (load-theme 'ef-maris-dark t))
 
-  ;; (use-package heaven-and-hell
-  ;;   :config
-  ;;   (setq heaven-and-hell-theme-type 'dark
-  ;;         heaven-and-hell-themes
-  ;;         '((light . ef-maris-light)
-  ;;           (dark  . ef-maris-dark))
-  ;;         heaven-and-hell-load-theme-no-confirm t)
-  ;;   :hook (after-init . heaven-and-hell-init-hook)
-  ;;   :bind ("<f5>" . heaven-and-hell-toggle-theme))
+  (use-package doom-themes)
 
-  (use-package dracula-theme
-    :init (load-theme 'dracula t))
+  (use-package heaven-and-hell
+    :config
+    (setq heaven-and-hell-theme-type 'dark
+          heaven-and-hell-themes
+          '((light . doom-gruvbox-light)
+            (dark  . doom-gruvbox))
+          heaven-and-hell-load-theme-no-confirm t)
+    :hook (after-init . heaven-and-hell-init-hook)
+    :bind ("<f5>" . heaven-and-hell-toggle-theme))
+
+  ;; (use-package dracula-theme
+  ;;   :init (load-theme 'dracula t))
 #+end_src
 
 **** Fonts
 #+begin_src emacs-lisp
   (set-face-attribute 'default nil
                       :font "Iosevka Comfy Wide"
-                      :height 120
+                      :height 110
                       :weight 'SemiBold)
   (set-face-attribute 'fixed-pitch nil
                       :weight 'bold)
@@ -1230,7 +1272,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
                       :slant 'italic)
 
   (when (string= system-name "red")
-    (set-face-attribute 'default nil :height 110))
+    (set-face-attribute 'default nil :height 120))
 
   (setq pixel-scroll-precision-mode 1)
   (setq-default line-spacing 0.05)

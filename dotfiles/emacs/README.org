@@ -45,7 +45,6 @@
       - [[#mu4e][Mu4e]]
       - [[#multiple-cursors][Multiple Cursors]]
       - [[#notmuch][Notmuch]]
-      - [[#orderless][Orderless]]
       - [[#pdf-tools][PDF-Tools]]
       - [[#pinentry][Pinentry]]
       - [[#savehist][Savehist]]
@@ -60,16 +59,8 @@
       - [[#whitespace][Whitespace]]
       - [[#yasnippet][Yasnippet]]
     - [[#development][Development]]
-      - [[#lsp-mode][LSP Mode]]
-      - [[#eglot][Eglot]]
-      - [[#ccls][CCLS]]
-      - [[#cmake][CMake]]
-      - [[#c][C#]]
-      - [[#gdscript][GDScript]]
-      - [[#nix][Nix]]
-      - [[#sly][Sly]]
-      - [[#tree-sitter][Tree-sitter]]
-      - [[#zig][Zig]]
+      - [[#tools][Tools]]
+      - [[#languages][Languages]]
     - [[#ui][UI]]
       - [[#all-the-icons][All-The-Icons]]
       - [[#theme][Theme]]
@@ -1012,15 +1003,6 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
     :bind (("C-x y m" . notmuch)))
 #+end_src
 
-**** Orderless
-#+begin_src emacs-lisp
-  (use-package orderless
-    :init
-    (setq completion-styles '(orderless basic)
-	  completion-category-defaults nil
-	  completion-category-overrides '((file (styles partial-completion)))))
-#+End_src
-
 **** PDF-Tools
 #+begin_src emacs-lisp :tangle no
   (use-package pdf-tools
@@ -1136,21 +1118,19 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 
 *** Development
 
-**** LSP Mode
-#+begin_src emacs-lisp :tangle no
-    (use-package lsp-mode
-      :init
-      (setq lsp-auto-guess-root nil)
-      :hook ((c-mode . lsp-deferred)
-             (csharp-mode . lsp-deferred)
-             (nix-mode . lsp-deferred))
-      :commands lsp-deferred)
+**** Tools
 
-    (use-package lsp-ui
-      :commands lsp-ui-mode)
+***** Corfu
+#+begin_src emacs-lisp
+  (use-package corfu
+    :custom
+    (corfu-auto t)
+    :init
+    (corfu-global-mode))
+
 #+end_src
 
-**** Eglot
+***** Eglot
 #+begin_src emacs-lisp
   (use-package eglot
     :ensure nil
@@ -1158,52 +1138,29 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
            (c++-mode . eglot-ensure)
            (csharp-mode . eglot-ensure)
            (python-mode . eglot-ensure)))
+
+  (use-package eglot-booster
+    :after eglot
+    :config (eglot-booster-mode))
 #+end_src
 
-**** CCLS
+***** Orderless
 #+begin_src emacs-lisp
-  (use-package ccls
-    :config
-    (setq ccls-executable "/usr/bin/ccls"
-          ccls-use-default-rainbow-sem-highlight 'font-lock)
-    (ccls-code-lens-mode 1))
-#+end_src
+  (use-package orderless
+    :init
+    (setq completion-styles '(orderless basic)
+	  completion-category-defaults nil
+	  completion-category-overrides '((file (styles partial-completion)))))
+#+End_src
 
-**** CMake
-#+begin_src emacs-lisp
-  (use-package cmake-mode)
-#+end_src
-
-**** C#
-#+begin_src emacs-lisp
-  (use-package csharp-mode
-    :ensure nil
-    :config
-    (add-to-list 'auto-mode-alist '("\\.cs\\'" . csharp-tree-sitter-mode)))
-#+end_src
-
-**** GDScript
-#+begin_src emacs-lisp
-  (use-package gdscript-mode
-    :hook (gdscript-mode-hook . (lambda ()
-                                  (add-hook 'before-save-hook
-                                            (lambda ()
-                                              (untabify (point-min) (point-max)))))))
-#+end_src
-
-**** Nix
-#+begin_src emacs-lisp
-  (use-package nix-mode)
-#+end_src
-
-**** Sly
+***** Sly
 #+begin_src emacs-lisp
   (when (file-exists-p "~/.roswell/helper.el")
     (load (expand-file-name "~/.roswell/helper.el"))
     (setq inferior-lisp-program "ros -Q run"))
 #+end_src
 
-**** Tree-sitter
+***** Tree-sitter
 #+begin_src emacs-lisp
   (use-package tree-sitter
     :config
@@ -1217,7 +1174,46 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
     (global-treesit-auto-mode))
 #+end_src
 
-**** Zig
+
+**** Languages
+
+***** CCLS
+#+begin_src emacs-lisp
+  (use-package ccls
+    :config
+    (setq ccls-executable "/usr/bin/ccls"
+          ccls-use-default-rainbow-sem-highlight 'font-lock)
+    (ccls-code-lens-mode 1))
+#+end_src
+
+***** CMake
+#+begin_src emacs-lisp
+  (use-package cmake-mode)
+#+end_src
+
+***** C#
+#+begin_src emacs-lisp
+  (use-package csharp-mode
+    :ensure nil
+    :config
+    (add-to-list 'auto-mode-alist '("\\.cs\\'" . csharp-tree-sitter-mode)))
+#+end_src
+
+***** GDScript
+#+begin_src emacs-lisp
+  (use-package gdscript-mode
+    :hook (gdscript-mode-hook . (lambda ()
+                                  (add-hook 'before-save-hook
+                                            (lambda ()
+                                              (untabify (point-min) (point-max)))))))
+#+end_src
+
+***** Nix
+#+begin_src emacs-lisp
+  (use-package nix-mode)
+#+end_src
+
+***** Zig
 #+begin_src emacs-lisp
   (use-package zig-mode)
 #+end_src

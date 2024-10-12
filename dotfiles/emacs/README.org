@@ -1126,7 +1126,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
     :custom
     (corfu-auto t)
     :init
-    (corfu-global-mode))
+    (global-corfu-mode))
 
 #+end_src
 
@@ -1139,9 +1139,9 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
            (csharp-mode . eglot-ensure)
            (python-mode . eglot-ensure)))
 
-  (use-package eglot-booster
-    :after eglot
-    :config (eglot-booster-mode))
+  ;;(use-package eglot-booster
+  ;;  :after eglot
+  ;;  :config (eglot-booster-mode))
 #+end_src
 
 ***** Orderless
@@ -1238,7 +1238,9 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
   ;;   :config
   ;;   (load-theme 'ef-maris-dark t))
 
-  (use-package doom-themes)
+  (use-package doom-themes
+    :init
+    (load-theme 'doom-gruvbox t))
 
   (use-package heaven-and-hell
     :config

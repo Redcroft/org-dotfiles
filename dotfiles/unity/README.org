@@ -1,0 +1,23 @@
+#+Property: Header-args :tangle "/sudo::/etc/apparmor.d/unityhub" :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+#+AUTHOR: Richard Redcroft
+
+#+NAME: apparmor
+#+begin_src sh :tangle no
+  sudo systemctl restart apparmor.service
+#+end_src
+
+#+begin_src conf
+  abi <abi/4.0>,
+  include <tunables/global>
+  profile unityhub /opt/unityhub/unityhub-bin flags=(unconfined) {
+  userns,
+  # Site-specific additions and overrides. See local/README for details.
+  include if exists <local/unityhub>
+  }
+#+end_src
+
+
+#+begin_src sh :tangle "~/.cache/unity_apparmor.log" :noweb yes
+  <<apparmor()>>
+#+end_src

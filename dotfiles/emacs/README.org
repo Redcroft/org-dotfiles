@@ -1238,30 +1238,53 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
   ;;   :config
   ;;   (load-theme 'ef-maris-dark t))
 
-  (use-package doom-themes
+  ;; (use-package doom-themes
+  ;;   :init
+  ;;   (load-theme 'doom-gruvbox t))
+
+  ;; (use-package heaven-and-hell
+  ;;   :config
+  ;;   (setq heaven-and-hell-theme-type 'dark
+  ;;         heaven-and-hell-themes
+  ;;         '((light . doom-gruvbox-light)
+  ;;           (dark  . doom-gruvbox))
+  ;;         heaven-and-hell-load-theme-no-confirm t)
+  ;;   :hook (after-init . heaven-and-hell-init-hook)
+  ;;   :bind ("<f5>" . heaven-and-hell-toggle-theme))
+
+  (use-package catppuccin-theme
     :init
-    (load-theme 'doom-gruvbox t))
-
-  (use-package heaven-and-hell
+    (defvar *theme-light* nil)
+    (setq catppuccin-flavor 'mocha)
+    (catppuccin-reload)
+    (load-theme 'catppuccin)
     :config
-    (setq heaven-and-hell-theme-type 'dark
-          heaven-and-hell-themes
-          '((light . doom-gruvbox-light)
-            (dark  . doom-gruvbox))
-          heaven-and-hell-load-theme-no-confirm t)
-    :hook (after-init . heaven-and-hell-init-hook)
-    :bind ("<f5>" . heaven-and-hell-toggle-theme))
+    (defun my/toggle-theme()
+      (interactive)
+      (message "Toggle theme")
+      (if *theme-light*
+          (progn
+            (message "Setting dark")
+            (setq catppuccin-flavor 'mocha)
+            (setq *theme-light* nil))
+        (progn
+          (message "Setting light")
+          (setq catppuccin-flavor 'latte)
+          (setq *theme-light* t)))
+      (catppuccin-reload))
+    :bind ("<f5>" . my/toggle-theme)
+    )
 
-  ;; (use-package dracula-theme
-  ;;   :init (load-theme 'dracula t))
+
+
 #+end_src
 
 **** Fonts
 #+begin_src emacs-lisp
   (set-face-attribute 'default nil
-                      :font "Iosevka Comfy Wide"
+                      :font "Pragmasevka Nerd Font"
                       :height 110
-                      :weight 'SemiBold)
+                      :weight 'Semibold)
   (set-face-attribute 'fixed-pitch nil
                       :weight 'bold)
   (set-face-attribute 'font-lock-comment-face nil

@@ -17,9 +17,6 @@
   if [ ! -d ~/.password-store ]; then
       git clone git@github.com:Redcroft/pass ~/.password-store
   fi
-  if [ ! -d ~/.repos/nerd-fonts ]; then
-      git clone --depth=1 git@github.com:ryanoasis/nerd-fonts ~/.repos/nerd-fonts
-  fi
   if [ ! -d ~/.local/share/fonts/iosevka-comfy ]; then
       git clone --depth=1 git@github.com:protesilaos/iosevka-comfy ~/.local/share/fonts/iosevka-comfy
   fi

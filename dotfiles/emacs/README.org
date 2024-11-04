@@ -1234,55 +1234,41 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 #+begin_src emacs-lisp
   (setq custom-safe-themes t)
 
-  ;; (use-package ef-themes
-  ;;   :config
-  ;;   (load-theme 'ef-maris-dark t))
-
   ;; (use-package doom-themes
-  ;;   :init
-  ;;   (load-theme 'doom-gruvbox t))
-
-  ;; (use-package heaven-and-hell
   ;;   :config
-  ;;   (setq heaven-and-hell-theme-type 'dark
-  ;;         heaven-and-hell-themes
-  ;;         '((light . doom-gruvbox-light)
-  ;;           (dark  . doom-gruvbox))
-  ;;         heaven-and-hell-load-theme-no-confirm t)
-  ;;   :hook (after-init . heaven-and-hell-init-hook)
-  ;;   :bind ("<f5>" . heaven-and-hell-toggle-theme))
+  ;;   (setq custom-theme-directory "~/.doom.d/themes/"))
 
-  (use-package catppuccin-theme
-    :init
-    (defvar *theme-light* nil)
-    (setq catppuccin-flavor 'mocha)
-    (catppuccin-reload)
-    (load-theme 'catppuccin)
+  ;; (use-package doom-rose-pine-theme
+  ;;   :ensure
+  ;;   (doom-rose-pine-theme
+  ;;    :repo "donniebreve/rose-pine-doom-emacs"
+  ;;    :pre-build ("make" "install")
+  ;;    :files ("*"))
+  ;;   :config
+  ;;   (load-theme 'doom-rose-pine-moon t))
+
+  (use-package ef-themes)
+
+  (use-package timu-rouge-theme)
+
+  (use-package heaven-and-hell
     :config
-    (defun my/toggle-theme()
-      (interactive)
-      (message "Toggle theme")
-      (if *theme-light*
-          (progn
-            (message "Setting dark")
-            (setq catppuccin-flavor 'mocha)
-            (setq *theme-light* nil))
-        (progn
-          (message "Setting light")
-          (setq catppuccin-flavor 'latte)
-          (setq *theme-light* t)))
-      (catppuccin-reload))
-    :bind ("<f5>" . my/toggle-theme)
-    )
+    (setq heaven-and-hell-load-theme-no-confirm t
+          heaven-and-hell-theme-type 'dark
+          heaven-and-hell-themes
+          '((light . modus-operandi)
+            (dark  . modus-vivendi))
+          heaven-and-hell-load-theme-no-confirm t)
+    :hook (after-init . heaven-and-hell-init-hook)
+    :bind ("<f5>" . heaven-and-hell-toggle-theme))
 
-
-
+  (load-theme 'modus-vivendi t)
 #+end_src
 
 **** Fonts
 #+begin_src emacs-lisp
   (set-face-attribute 'default nil
-                      :font "Pragmasevka Nerd Font"
+                      :font "0xProto Nerd Font"
                       :height 110
                       :weight 'Semibold)
   (set-face-attribute 'fixed-pitch nil
@@ -1298,6 +1284,6 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
   (setq pixel-scroll-precision-mode 1)
   (setq-default line-spacing 0.05)
 
-  (add-to-list 'default-frame-alist '(alpha-background . 95))
+  ;;(add-to-list 'default-frame-alist '(alpha-background . 95))
   (setq global-prettify-symbols-mode t)
 #+end_src

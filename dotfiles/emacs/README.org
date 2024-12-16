@@ -1214,6 +1214,11 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
                                               (untabify (point-min) (point-max)))))))
 #+end_src
 
+***** Json
+#+begin_src emacs-lisp
+  (use-package json-mode)
+#+end_src
+
 ***** Nix
 #+begin_src emacs-lisp
   (use-package nix-mode)

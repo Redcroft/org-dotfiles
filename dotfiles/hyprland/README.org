@@ -10,6 +10,7 @@
 #+begin_src conf
   $mod = SUPER
   $mods = SUPER_SHIFT
+  $modc = SUPER_CTRL
 #+end_src
 
 ** Colors
@@ -348,9 +349,9 @@
   bind = $mods, E, exec, emacs
   bind = $mod, D, exec, bemenu-run
   bind = $mods, Y, exec, grim -m "$(slurp)"
-  bind = , XF86AudioRaiseVolume, exec, pamixer -i 5
-  bind = , XF86AudioRaiseVolume, exec, pamixer -d 5
-  bind = , XF86AudioMute, exec, pamixer -t
+  bind = ,XF86AudioRaiseVolume, exec, pamixer -i 5
+  bind = ,XF86AudioLowerVolume, exec, pamixer -d 5
+  bind = ,XF86AudioMute, exec, pamixer -t
 #+end_src
 
 *** Scratch
@@ -364,6 +365,7 @@
 
 #+begin_src conf
   bind = $mod, M, fullscreen
+  bind = $mods, space, togglefloating
   bind = $mod, J, layoutmsg, swapwithmaster
   bind = $mod, F, layoutmsg, cyclenext
   bind = $mod, B, layoutmsg, cycleprev
@@ -374,6 +376,7 @@
 *** Workspaces
 
 #+begin_src conf
+  bind = $mod, Backspace, exec, ~/.config/hypr/cyclemon
   bind = $mod, 0, workspace, 0
   bind = $mod, 1, workspace, 1
   bind = $mod, 2, workspace, 2
@@ -403,3 +406,19 @@
   bindm = $mod, mouse:272, movewindow
   bindm = $mod, mouse:273, resizewindow
 #+End_src
+
+
+* Scripts
+
+** Cyclemon
+
+#+begin_src sh :tangle "~/.config/hypr/cyclemon" :tangle-mode (identity #o777)
+  #!/usr/bin/env bash
+  CUR="$(hyprctl activeworkspace | awk '/monitorID/ {print $2}')"
+  if [ $CUR -eq "0" ]
+  then
+      hyprctl dispatch focusmonitor 1
+  else
+      hyprctl dispatch focusmonitor 0
+  fi
+#+end_src

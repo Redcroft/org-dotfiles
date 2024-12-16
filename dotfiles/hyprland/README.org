@@ -1,0 +1,408 @@
+#+Property: Header-args :tangle ~/.config/hypr/hyprland.conf :tangle-mode (identity #o744) :mkdirp yes
+#+auto_tangle: t
+#+AUTHOR: Richard Redcroft
+
+
+* Hyprland
+
+** Variables
+
+#+begin_src conf
+  $mod = SUPER
+  $mods = SUPER_SHIFT
+#+end_src
+
+** Colors
+
+#+begin_src conf
+  $rosewater = rgb(f5e0dc)
+  $rosewaterAlpha = f5e0dc
+
+  $flamingo = rgb(f2cdcd)
+  $flamingoAlpha = f2cdcd
+
+  $pink = rgb(f5c2e7)
+  $pinkAlpha = f5c2e7
+
+  $mauve = rgb(cba6f7)
+  $mauveAlpha = cba6f7
+
+  $red = rgb(f38ba8)
+  $redAlpha = f38ba8
+
+  $maroon = rgb(eba0ac)
+  $maroonAlpha = eba0ac
+
+  $peach = rgb(fab387)
+  $peachAlpha = fab387
+
+  $yellow = rgb(f9e2af)
+  $yellowAlpha = f9e2af
+
+  $green = rgb(a6e3a1)
+  $greenAlpha = a6e3a1
+
+  $teal = rgb(94e2d5)
+  $tealAlpha = 94e2d5
+
+  $sky = rgb(89dceb)
+  $skyAlpha = 89dceb
+
+  $sapphire = rgb(74c7ec)
+  $sapphireAlpha = 74c7ec
+
+  $blue = rgb(89b4fa)
+  $blueAlpha = 89b4fa
+
+  $lavender = rgb(b4befe)
+  $lavenderAlpha = b4befe
+
+  $text = rgb(cdd6f4)
+  $textAlpha = cdd6f4
+
+  $subtext1 = rgb(bac2de)
+  $subtext1Alpha = bac2de
+
+  $subtext0 = rgb(a6adc8)
+  $subtext0Alpha = a6adc8
+
+  $overlay2 = rgb(9399b2)
+  $overlay2Alpha = 9399b2
+
+  $overlay1 = rgb(7f849c)
+  $overlay1Alpha = 7f849c
+
+  $overlay0 = rgb(6c7086)
+  $overlay0Alpha = 6c7086
+
+  $surface2 = rgb(585b70)
+  $surface2Alpha = 585b70
+
+  $surface1 = rgb(45475a)
+  $surface1Alpha = 45475a
+
+  $surface0 = rgb(313244)
+  $surface0Alpha = 313244
+
+  $base = rgb(1e1e2e)
+  $baseAlpha = 1e1e2e
+
+  $mantle = rgb(181825)
+  $mantleAlpha = 181825
+
+  $crust = rgb(11111b)
+  $crustAlpha = 11111b
+#+end_src
+
+** Monitors
+
+#+begin_src conf
+  monitor = DP-2, 2560x1440@240, 0x0, 1, bitdepth, 10, vrr, 1
+  monitor = HDMI-A-2, 480x1920, 320x1440, 1, transform, 3
+#+end_src
+
+
+** Autostart
+
+#+begin_src conf
+  exec-once = waybar -c ~/.config/waybar/config-hypr &
+  exec-once = make &
+  exec-once = systemctl --user import-environment &
+  exec-once = hash dbus-update-activation-environment 2>/dev/null &
+  exec-once = dbus-update-activation-environment --systemd &
+  exec-once = hyprctl hyprpaper wallpaper "*,~/Pictures/Photos/Wallpaper/wallpaper.jpg"
+#+end_src
+
+** Config
+
+*** Animations
+
+#+begin_src conf
+  animations {
+    enabled = yes
+    bezier = ease, 0.65, 0.0, 0.35, 1.0
+    animation = border, 1, 2, ease
+    animation = fade, 1, 1, ease
+    animation = windows, 1, 2, ease, popin
+    animation = workspaces, 1, 2, ease, fade
+    animation = specialWorkspace, 1, 2, ease, fade
+  }
+#+End_src
+
+*** Binds
+
+#+begin_src conf
+  binds {
+    allow_workspace_cycles = 1
+    workspace_back_and_forth = 1
+    workspace_center_on = 1
+    movefocus_cycles_fullscreen = true
+    window_direction_monitor_fallback = true
+  }
+#+end_src
+
+*** Cursor
+
+#+begin_src conf
+  cursor {
+    no_hardware_cursors = 2
+    allow_dumb_copy = true
+    enable_hyprcursor = true
+    hide_on_touch = true
+    # default_monitor = $exter
+    sync_gsettings_theme = true
+  }
+#+end_src
+
+*** Decoration
+
+#+begin_src conf
+  decoration {
+    active_opacity = 0.98
+    inactive_opacity = 1.0
+    fullscreen_opacity = 1.0
+    rounding = 4
+    dim_inactive = false
+    dim_special = 0.0
+    #dim_around = 0.4
+    #screen_shader =
+
+    blur {
+      enabled = true
+      size = 15
+      passes = 2
+      new_optimizations = true
+      xray = true
+      ignore_opacity = false
+    }
+
+    shadow {
+      enabled = false
+      range = 24
+      render_power = 3
+      sharp = false
+      ignore_window = true
+      color = $base
+      color_inactive = $base
+      offset = 1, 1
+      scale = 1.0
+    }
+  }
+#+end_src
+
+*** Env
+
+#+begin_src conf
+  env = HYPRCURSOR_THEME,posys-cursor
+  env = HYPRCURSOR_SIZE,24
+#+end_src
+
+*** General
+
+#+begin_src conf
+  general {
+    gaps_in = 3
+    gaps_out = 5
+    border_size = 3
+    col.active_border = $green
+    col.inactive_border = $base
+    layout = master
+
+    snap {
+      enabled = true
+      window_gap = 10
+      monitor_gap = 10
+      border_overlap = false
+    }
+  }
+#+end_src
+
+*** Group
+
+#+begin_src conf
+  group {
+    auto_group = true
+    insert_after_current = true
+    focus_removed_window = true
+    col.border_active = $green
+    col.border_inactive = $green
+    col.border_locked_active = $green
+    col.border_locked_inactive = $blue
+
+    groupbar {
+      enabled = true
+      font_family = "JetBrainsMono Nerd Font"
+      font_size = 8
+      text_color = $green
+      col.active = $green
+      col.inactive = $green
+      col.locked_active = $green
+      col.locked_inactive = $blue
+    }
+  }
+#+end_src
+
+*** Input
+
+#+begin_src conf
+  input {
+    accel_profile = flat
+    kb_layout = us
+    special_fallthrough = true
+
+    touchpad {
+      natural_scroll = false
+    }
+  }
+#+end_src
+
+*** Master
+
+#+begin_src conf
+  master {
+    new_status = inherit
+    special_scale_factor = 0.75
+    inherit_fullscreen = true
+    smart_resizing = true
+    drop_at_cursor = true
+  }
+#+end_src
+*** Misc
+
+#+begin_src conf
+  misc {
+    font_family = "JetBrainsMono Nerd Font"
+    splash_font_family = "JetBrainsMono Nerd Font"
+    #disable_autoreload = true
+    disable_hyprland_logo = true
+    col.splash = $green
+    background_color = $blue
+    always_follow_on_dnd = true
+    layers_hog_keyboard_focus = true
+    animate_manual_resizes = false
+    enable_swallow = true
+    swallow_regex = ^(cachy-browser|firefox|nautilus|nemo|thunar|btrfs-assistant.)$
+    focus_on_activate = true
+    vfr = 1
+  }
+#+end_src
+
+*** OpenGL
+
+#+begin_src conf
+  opengl {
+    nvidia_anti_flicker = true
+    force_introspection = 2
+  }
+#+end_src
+
+*** Render
+
+#+begin_src conf
+  render {
+    explicit_sync = 2
+    explicit_sync_kms = 2
+    direct_scanout = true
+    expand_undersized_textures = true
+  }
+#+end_src
+
+*** Workspace
+
+#+begin_src conf
+  workspace = 0, monitor:DP-2
+  workspace = 1, monitor:DP-2
+  workspace = 2, monitor:DP-2
+  workspace = 3, monitor:DP-2
+  workspace = 4, monitor:DP-2
+  workspace = 5, monitor:DP-2
+  workspace = 6, monitor:DP-2
+  workspace = 7, monitor:HDMI-A-2
+  workspace = 8, monitor:DP-2
+  workspace = 9, monitor:DP-2
+#+end_src
+
+*** XWayland
+
+#+begin_src conf
+  xwayland {
+    enabled = true
+    use_nearest_neighbor = true
+    force_zero_scaling = true
+  }
+#+end_src
+
+
+** Keybinds
+
+*** General
+
+#+begin_src conf
+  bind = $mods, escape, exit
+  bind = $mods, Q, killactive
+#+end_src
+
+*** Binds
+
+#+begin_src conf
+  bind = $mod, Backspace, exec, ~/.config/hyprland/cyclemon
+  bind = $mod, Return, exec, foot -e tmux
+  bind = $mods, W, exec, zen-browser
+  bind = $mods, E, exec, emacs
+  bind = $mod, D, exec, bemenu-run
+  bind = $mods, Y, exec, grim -m "$(slurp)"
+  bind = , XF86AudioRaiseVolume, exec, pamixer -i 5
+  bind = , XF86AudioRaiseVolume, exec, pamixer -d 5
+  bind = , XF86AudioMute, exec, pamixer -t
+#+end_src
+
+*** Scratch
+
+#+begin_src conf
+  bind = $mod, minus, togglespecialworkspace
+  bind = $mods, minus, movetoworkspace, special
+#+end_src
+
+*** Windows
+
+#+begin_src conf
+  bind = $mod, M, fullscreen
+  bind = $mod, J, layoutmsg, swapwithmaster
+  bind = $mod, F, layoutmsg, cyclenext
+  bind = $mod, B, layoutmsg, cycleprev
+  bind = $mods, F, layoutmsg, swapnext
+  bind = $mods, B, layoutmsg, swapprev
+#+end_src
+
+*** Workspaces
+
+#+begin_src conf
+  bind = $mod, 0, workspace, 0
+  bind = $mod, 1, workspace, 1
+  bind = $mod, 2, workspace, 2
+  bind = $mod, 3, workspace, 3
+  bind = $mod, 4, workspace, 4
+  bind = $mod, 5, workspace, 5
+  bind = $mod, 6, workspace, 6
+  bind = $mod, 7, workspace, 7
+  bind = $mod, 8, workspace, 8
+  bind = $mod, 9, workspace, 9
+  bind = $mods, 0, movetoworkspace, 0
+  bind = $mods, 1, movetoworkspace, 1
+  bind = $mods, 2, movetoworkspace, 2
+  bind = $mods, 3, movetoworkspace, 3
+  bind = $mods, 4, movetoworkspace, 4
+  bind = $mods, 5, movetoworkspace, 5
+  bind = $mods, 6, movetoworkspace, 6
+  bind = $mods, 7, movetoworkspace, 7
+  bind = $mods, 8, movetoworkspace, 8
+  bind = $mods, 9, movetoworkspace, 9
+#+end_src
+
+
+*** Mouse
+
+#+begin_src conf
+  bindm = $mod, mouse:272, movewindow
+  bindm = $mod, mouse:273, resizewindow
+#+End_src

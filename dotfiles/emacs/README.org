@@ -22,6 +22,7 @@
       - [[#toc][TOC]]
     - [[#packages][Packages]]
       - [[#auth-source][Auth Source]]
+      - [[#avy][Avy]]
       - [[#beacon][Beacon]]
       - [[#circe][Circe]]
       - [[#ctrlf][Ctrlf]]
@@ -160,7 +161,7 @@ Testing out Elpaca package management instead of straight.el
     (elpaca-use-package-mode))
   (setq use-package-always-ensure t)
 
-  (use-package org :ensure (:wait t))
+  (use-package org :ensure nil)
 #+end_src
 
 *** Backup
@@ -421,7 +422,12 @@ This package allows you to type `<s` then press TAB to expand a tab
 
   (use-package password-store)
 #+end_src
-
+**** Avy
+#+begin_src emacs-lisp
+  (use-package avy
+    :bind (("C-;" . avy-goto-char)
+           ("C-:" . avy-goto-char-2)))
+#+end_src
 **** Beacon
 #+begin_src emacs-lisp
   (use-package beacon
@@ -1234,35 +1240,25 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 #+begin_src emacs-lisp
   (setq custom-safe-themes t)
 
-  ;; (use-package doom-themes
-  ;;   :config
-  ;;   (setq custom-theme-directory "~/.doom.d/themes/"))
-
-  ;; (use-package doom-rose-pine-theme
-  ;;   :ensure
-  ;;   (doom-rose-pine-theme
-  ;;    :repo "donniebreve/rose-pine-doom-emacs"
-  ;;    :pre-build ("make" "install")
-  ;;    :files ("*"))
-  ;;   :config
-  ;;   (load-theme 'doom-rose-pine-moon t))
-
-  (use-package ef-themes)
-
-  (use-package timu-rouge-theme)
-
-  (use-package heaven-and-hell
+  (use-package catppuccin-theme
     :config
-    (setq heaven-and-hell-load-theme-no-confirm t
-          heaven-and-hell-theme-type 'dark
-          heaven-and-hell-themes
-          '((light . modus-operandi)
-            (dark  . modus-vivendi))
-          heaven-and-hell-load-theme-no-confirm t)
-    :hook (after-init . heaven-and-hell-init-hook)
-    :bind ("<f5>" . heaven-and-hell-toggle-theme))
+    (setq catppuccin-flavor 'mocha)
+    (load-theme 'catppuccin t))
 
-  (load-theme 'modus-vivendi t)
+  ;; (use-package ef-themes)
+
+  ;; (use-package heaven-and-hell
+  ;;   :config
+  ;;   (setq heaven-and-hell-load-theme-no-confirm t
+  ;;         heaven-and-hell-theme-type 'dark
+  ;;         heaven-and-hell-themes
+  ;;         '((light . modus-operandi)
+  ;;           (dark  . modus-vivendi))
+  ;;         heaven-and-hell-load-theme-no-confirm t)
+  ;;   :hook (after-init . heaven-and-hell-init-hook)
+  ;;   :bind ("<f5>" . heaven-and-hell-toggle-theme))
+
+  ;; (load-theme 'modus-vivendi t)
 #+end_src
 
 **** Fonts

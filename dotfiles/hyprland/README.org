@@ -106,7 +106,7 @@
 ** Autostart
 
 #+begin_src conf
-  exec-once = waybar -c ~/.config/waybar/config-hypr &
+  exec-once = waybar -c ~/.config/waybar/config &
   exec-once = mako &
   exec-once = hyprpaper &
 #+end_src
@@ -345,7 +345,7 @@
 #+begin_src conf
   bind = $mod, Backspace, exec, ~/.config/hyprland/cyclemon
   bind = $mod, Return, exec, foot -e tmux
-  bind = $mods, W, exec, zen-browser
+  bind = $mods, W, exec, qutebrowser
   bind = $mods, E, exec, emacs
   bind = $mod, D, exec, bemenu-run
   bind = $mods, Y, exec, grim -m "$(slurp)"

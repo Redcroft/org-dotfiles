@@ -191,8 +191,9 @@
 *** Env
 
 #+begin_src conf
-  env = HYPRCURSOR_THEME,posys-cursor
-  env = HYPRCURSOR_SIZE,24
+  env = HYPRCURSOR_THEME,rose-pine-hyprcursor
+  env = HYPRCURSOR_SIZE,32
+  env = XCURSOR_THEME,BreezeX-RosePine-Linux
 #+end_src
 
 *** General

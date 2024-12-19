@@ -17,7 +17,7 @@
 
 ** Spatial Audio
 
-#+begin_src sh :tangle "~/.config/pipewire/pipewire.conf.d/99-spatial-audio.conf"
+#+begin_src sh :tangle "~/.config/pipewire/pipewire.conf.d/99-spatial-hrir.conf"
   context.modules = [
     { name = libpipewire-module-filter-chain
         args = {
@@ -117,7 +117,7 @@
 #+end_src
 
 New Sofa method seems to provide better results so far
-#+begin_src conf :tangle no :comment "~/.config/pipewire/pipewire.conf.d/20-sofa.conf"
+#+begin_src conf :tangle "~/.config/pipewire/pipewire.conf.d/99-spatial-sofa.conf"
   context.modules = [
       { name = libpipewire-module-filter-chain
           flags = [ nofail ]

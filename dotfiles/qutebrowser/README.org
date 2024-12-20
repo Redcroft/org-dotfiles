@@ -6,6 +6,7 @@
 * Table of Contents :TOC:
   - [[#defaults][Defaults]]
   - [[#general-configuration][General configuration]]
+  - [[#darkmode][Darkmode]]
   - [[#quickmarks][Quickmarks]]
   - [[#keybinds][Keybinds]]
   - [[#theme][Theme]]
@@ -33,6 +34,13 @@ Load the default qutebrowser settings, ill override the settings i care about
       'yt': 'https://youtube.com/results?search_query={}',
       'yti': 'https://yewtu.be/search?q={}'
   }
+#+end_src
+
+** Darkmode
+#+begin_src python
+  c.colors.webpage.preferred_color_scheme = "dark"
+  c.colors.webpage.darkmode.enabled = True
+  c.colors.webpage.darkmode.policy.images = "smart-simple"
 #+end_src
 
 ** Quickmarks

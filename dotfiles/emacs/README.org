@@ -1230,19 +1230,20 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 #+begin_src emacs-lisp
   (setq custom-safe-themes t)
 
-  (use-package doom-themes :ensure (:wait t))
+  ;; (use-package doom-themes :ensure (:wait t))
 
-  (add-to-list 'custom-theme-load-path
-               (concat "~/.doom.d/" "themes"))
+  ;; (add-to-list 'custom-theme-load-path
+  ;;              (concat "~/.doom.d/" "themes"))
 
-    (elpaca (rose-pine-themes
-           :host github
-           :repo "donniebreve/rose-pine-doom-emacs"
-           :pre-build ("make" "install")
-           :build (:not elpaca--queue-dependencies
-                        elpaca--check-version
-                        elpaca--byte-compile)
-           ))
+  ;; (elpaca (rose-pine-themes
+  ;;          :host github
+  ;;          :repo "donniebreve/rose-pine-doom-emacs"
+  ;;          :pre-build ("make" "install")
+  ;;          :build (:not elpaca--queue-dependencies
+  ;;                       elpaca--check-version
+  ;;                       elpaca--byte-compile)))
+
+  (use-package miasma-theme :ensure (:wait t))
 
   (use-package heaven-and-hell
     :ensure (:wait t)
@@ -1250,10 +1251,9 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
     (setq heaven-and-hell-load-theme-no-confirm t
           heaven-and-hell-theme-type 'dark
           heaven-and-hell-themes
-          '((light . doom-rose-pine-dawn)
-            (dark  . doom-rose-pine-moon))
+          '((light . modus-operandi)
+            (dark  . miasma))
           heaven-and-hell-load-theme-no-confirm t)
-
     (load-theme (cdr (assoc 'dark heaven-and-hell-themes)) t)
     :hook (after-init . heaven-and-hell-init-hook)
     :bind ("<f5>" . heaven-and-hell-toggle-theme))

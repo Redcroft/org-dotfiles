@@ -87,7 +87,7 @@
 
 ** Systemd
 
-#+begin_src conf :tangle "/sudo::/lib/systemd/system/kanata.service"
+#+begin_src conf :tangle "/sudo::/lib/systemd/system/my-kanata.service"
   [Unit]
   Description=Kanata key remapping daemon
   Requires=local-fs.target

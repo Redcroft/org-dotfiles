@@ -564,35 +564,14 @@ This package allows you to type `<s` then press TAB to expand a tab
           exwm-input-global-keys
           `(([?\s-r] . exwm-reset)
             ([?\s-w] . exwm-workspace-switch)
+            ([XF86MonBrightnessUp] . ignore)
+            ([XF86MonBrightnessDown] . ignore)
             ,@(mapcar (lambda (i)
                         `(,(kbd (format "s-%d" i)) .
                           (lambda ()
                             (interactive)
                             (exwm-workspace-switch-create ,i))))
                       (number-sequence 0 9))))
-
-    (setq red/bright-path
-        (if (file-exists-p "/sys/class/backlight/amdgpu_bl0/brightness")
-            "/sys/class/backlight/amdgpu_bl0/brightness"
-          "/sys/class/backlight/amdgpu_bl1/brightness"))
-
-    (defun red/inc-bright (val)
-      (interactive)
-      (with-temp-buffer
-        (insert-file-contents red/bright-path)
-        (let ((cur_val (string-to-number (string-trim (buffer-string)))))
-          (red/set-bright (min (+ cur_val val))))))
-
-    (defun red/dec-bright (val)
-      (interactive)
-      (with-temp-buffer
-        (insert-file-contents red/bright-path)
-        (let ((cur_val (string-to-number (string-trim (buffer-string)))))
-          (red/set-bright (max (- cur_val val))))))
-
-    (defun red/set-bright (val)
-      (interactive)
-      (write-region (number-to-string (min (max val 0) 255)) nil red/bright-path))
 
     (defun my/exwm-startup ()
       (lambda)
@@ -632,18 +611,6 @@ This package allows you to type `<s` then press TAB to expand a tab
                         (lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-volume" "0" "-2%")))
     (exwm-input-set-key (kbd "<XF86AudioMute>")
                         (lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-mute" "0" "toggle")))
-    (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
-                        (lambda () (interactive) (red/inc-bright 5)))
-    (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
-                        (lambda () (interactive) (red/dec-bright 5)))
-    (exwm-input-set-key (kbd "C-<XF86MonBrightnessUp>")
-                        (lambda () (interactive) (red/inc-bright 25)))
-    (exwm-input-set-key (kbd "C-<XF86MonBrightnessDown>")
-                        (lambda () (interactive) (red/dec-bright 25)))
-    (exwm-input-set-key (kbd "s-<XF86MonBrightnessUp>")
-                        (lambda () (interactive) (red/set-bright 255)))
-    (exwm-input-set-key (kbd "s-<XF86MonBrightnessDown>")
-                          (lambda () (interactive) (red/set-bright 70)))
     (exwm-input-set-key (kbd "s-<up>")
                         (lambda () (interactive) (enlarge-window-horizontally 2)))
     (exwm-input-set-key (kbd "s-<down>")

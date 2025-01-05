@@ -52,7 +52,11 @@ Load the default qutebrowser settings, ill override the settings i care about
   devenv https://devenv.sh/
   gmail https://gmail.com
   git https://git.carseandwaterman.com
+  gol https://gamingonlinux.com
   hrir https://airtable.com/appayGNkn3nSuXkaz/shruimhjdSakUPg2m/tbloLjoZKWJDnLtTc
+  infini https://akselmo.dev/posts/i-made-my-own-pinetime-watchface/
+  k1tm https://www.printables.com/model/891616-creality-k1-k1c-unibody-riser-frame
+  k1tm2 https://www.printables.com/model/951012-creality-k1-k1c-lid-riser-v3-frame-extension-kit
   lisp https://gigamonkeys.com/book/
   mail https://mail.hostinger.com
   mise https://mise.jdx.dev/dev-tools/comparison-to-asdf.html
@@ -61,8 +65,10 @@ Load the default qutebrowser settings, ill override the settings i care about
   pwhrtf https://obito.fr/posts/2023/06/true-spatial-audio-on-linux-using-hrtf/
   reddit https://reddit.com
   roswell https://roswell.github.io/Roswell-as-a-Scripting-Environment.html
+  rust https://fasterthanli.me/articles/a-half-hour-to-learn-rust
   tornado https://vimeo.com/ondemand/snowflaketornado
   yt https://youtube.com/feed/subscriptions
+
 #+end_src
 
 ** Keybinds

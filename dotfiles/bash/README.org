@@ -154,10 +154,12 @@
   alias mkdir='mkdir -p'
   alias nas='ssh farm@10.0.0.5'
   alias pwheimdall='pactl load-module module-tunnel-sink server=tcp:192.168.0.127'
+  alias xuu='sudo shutdown -h now'
 #+end_src
 
 ** Env Variables
 #+begin_src sh
   export WEBKIT_DISABLE_DMABUF_RENDERER=1
+  export __GLX_VENDOR_LIBRARY_NAME=nvidia
   export PATH=$HOME/.local/bin:$PATH
 #+end_src

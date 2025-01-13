@@ -15,6 +15,7 @@
       - [[#capture][Capture]]
       - [[#babel][Babel]]
       - [[#bullets][Bullets]]
+      - [[#mind-map][Mind-Map]]
       - [[#modern][Modern]]
       - [[#publish][Publish]]
       - [[#source][Source]]
@@ -248,6 +249,14 @@ Automatically tangle org files
 #+begin_src emacs-lisp
   (use-package org-bullets
     :hook (org-mode . org-bullets-mode))
+#+end_src
+
+**** Mind-Map
+#+begin_src emacs-lisp
+  (use-package org-mind-map
+    :init (load-library "ox-org")
+    :custom
+    (org-mind-map-engine "dot"))
 #+end_src
 
 **** Modern

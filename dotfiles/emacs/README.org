@@ -2,7 +2,7 @@
 #+auto_tangle: t
 #+AUTHOR: Richard Redcroft
 
-* Table of Contents :TOC_4:
+* Table of Contents :TOC_5:
   - [[#early-init][Early Init]]
   - [[#init][Init]]
     - [[#elpaca][Elpaca]]
@@ -15,6 +15,7 @@
       - [[#capture][Capture]]
       - [[#babel][Babel]]
       - [[#bullets][Bullets]]
+      - [[#mind-map][Mind-Map]]
       - [[#modern][Modern]]
       - [[#publish][Publish]]
       - [[#source][Source]]
@@ -37,6 +38,7 @@
       - [[#gc][GC]]
       - [[#gnus][Gnus]]
       - [[#helm][Helm]]
+        - [[#system-packages][System Packages]]
       - [[#lambda-line][Lambda-Line]]
       - [[#magit][Magit]]
       - [[#marginalia][Marginalia]]
@@ -62,7 +64,20 @@
       - [[#yasnippet][Yasnippet]]
     - [[#development][Development]]
       - [[#tools][Tools]]
+        - [[#corfu][Corfu]]
+        - [[#eglot][Eglot]]
+        - [[#orderless][Orderless]]
+        - [[#sly][Sly]]
       - [[#languages][Languages]]
+        - [[#ccls][CCLS]]
+        - [[#cmake][CMake]]
+        - [[#c][C#]]
+        - [[#gdscript][GDScript]]
+        - [[#json][Json]]
+        - [[#nix][Nix]]
+        - [[#toml][Toml]]
+        - [[#yaml][Yaml]]
+        - [[#zig][Zig]]
     - [[#ui][UI]]
       - [[#all-the-icons][All-The-Icons]]
       - [[#theme][Theme]]
@@ -234,6 +249,14 @@ Automatically tangle org files
 #+begin_src emacs-lisp
   (use-package org-bullets
     :hook (org-mode . org-bullets-mode))
+#+end_src
+
+**** Mind-Map
+#+begin_src emacs-lisp
+  (use-package org-mind-map
+    :init (load-library "ox-org")
+    :custom
+    (org-mind-map-engine "dot"))
 #+end_src
 
 **** Modern
@@ -565,8 +588,8 @@ This package allows you to type `<s` then press TAB to expand a tab
           exwm-input-global-keys
           `(([?\s-r] . exwm-reset)
             ([?\s-w] . exwm-workspace-switch)
-            ([XF86MonBrightnessUp] . ignore)
-            ([XF86MonBrightnessDown] . ignore)
+            ;;([XF86MonBrightnessUp] . ignore)
+            ;;([XF86MonBrightnessDown] . ignore)
             ,@(mapcar (lambda (i)
                         `(,(kbd (format "s-%d" i)) .
                           (lambda ()
@@ -1180,6 +1203,16 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 ***** Nix
 #+begin_src emacs-lisp
   (use-package nix-mode)
+#+end_src
+
+***** Toml
+#+begin_src emacs-lisp
+  (use-package toml-mode)
+#+end_src
+
+***** Yaml
+#+begin_src emacs-lisp
+  (use-package yaml-mode)
 #+end_src
 
 ***** Zig

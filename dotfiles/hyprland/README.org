@@ -2,7 +2,6 @@
 #+auto_tangle: t
 #+AUTHOR: Richard Redcroft
 
-
 * Hyprland
 
 ** Variables
@@ -97,11 +96,19 @@
 
 ** Monitors
 
-#+begin_src conf
+#+begin_src conf :tangle (if (string= system-name "heimdall") "~/.config/hypr/hyprland.conf" "no")
   monitor = DP-2, 2560x1440@240, 0x0, 1, bitdepth, 10, vrr, 1
   monitor = HDMI-A-2, 480x1920, 320x1440, 1, transform, 3
 #+end_src
 
+#+begin_src conf :tangle (if (string= system-name "poseidon") "~/.config/hypr/hyprland.conf" "no")
+  monitor = DP-2, 3840x2160@60, 0x0, 1, bitdepth, 10, vrr, 1
+  monitor = DP-0, 3840x2160@60, 0x0, 1, bitdepth, 10, vrr, 1
+#+end_src
+
+#+begin_src conf :tangle (if (string= system-name "red") "~/.config/hypr/hyprland.conf" "no")
+  monitor = eDP-1, 1920x1080@60, 0x0, 1
+#+end_src
 
 ** Autostart
 
@@ -249,7 +256,7 @@
     special_fallthrough = true
 
     touchpad {
-      natural_scroll = false
+      natural_scroll = truet
     }
   }
 #+end_src
@@ -307,7 +314,7 @@
 
 *** Workspace
 
-#+begin_src conf
+#+begin_src conf :tangle (if (string= system-name "heimdall") "~/.config/hypr/hyprland.conf" "no")
   workspace = 0, monitor:DP-2
   workspace = 1, monitor:DP-2
   workspace = 2, monitor:DP-2
@@ -318,6 +325,32 @@
   workspace = 7, monitor:HDMI-A-2
   workspace = 8, monitor:DP-2
   workspace = 9, monitor:DP-2
+#+end_src
+
+#+begin_src conf :tangle (if (string= system-name "poseidon") "~/.config/hypr/hyprland.conf" "no")
+  workspace = 0, monitor:DP-2
+  workspace = 1, monitor:DP-2
+  workspace = 2, monitor:DP-2
+  workspace = 3, monitor:DP-2
+  workspace = 4, monitor:DP-2
+  workspace = 5, monitor:DP-2
+  workspace = 6, monitor:DP-2
+  workspace = 7, monitor:DP-0
+  workspace = 8, monitor:DP-2
+  workspace = 9, monitor:DP-2
+#+end_src
+
+#+begin_src conf :tangle (if (string= system-name "red") "~/.config/hypr/hyprland.conf" "no")
+  workspace = 0
+  workspace = 1
+  workspace = 2
+  workspace = 3
+  workspace = 4
+  workspace = 5
+  workspace = 6
+  workspace = 7
+  workspace = 8
+  workspace = 9
 #+end_src
 
 *** XWayland
@@ -407,6 +440,12 @@
   bindm = $mod, mouse:273, resizewindow
 #+End_src
 
+
+* Hyprpaper
+#+begin_src conf :tangle "~/.config/hypr/hyprpaper.conf"
+  preload = ~/.repos/dotfiles/wallpaper.jpg
+  wallpaper = ,~/.repos/dotfiles/wallpaper.jpg
+#+end_src
 
 * Scripts
 

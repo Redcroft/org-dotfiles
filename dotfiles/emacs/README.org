@@ -29,7 +29,6 @@
       - [[#ctrlf][Ctrlf]]
       - [[#crux][Crux]]
       - [[#diff-hl][Diff-hl]]
-      - [[#emojify][Emojify]]
       - [[#eshell][Eshell]]
       - [[#eyebrowse][Eyebrowse]]
       - [[#exec-path-from-shell][Exec-path-from-shell]]
@@ -188,13 +187,14 @@ Testing out Elpaca package management instead of straight.el
 *** Settings
 #+begin_src emacs-lisp
   (setq ring-bell-function 'ignore
-	use-short-answers t
-	visible-bell t)
+        use-short-answers t
+        visible-bell t)
   (setq-default indent-tabs-mode nil)
   (add-hook 'prog-mode 'prettify-symbols-mode)
   (global-superword-mode)
   (global-subword-mode)
   (global-hl-line-mode)
+  (global-display-line-numbers-mode)
   (setq custom-file "~/.emacs.d/custom.el")
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
 #+end_src
@@ -523,13 +523,6 @@ This package allows you to type `<s` then press TAB to expand a tab
     (global-diff-hl-mode)
     (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
     (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
-#+end_src
-
-**** Emojify
-#+begin_src emacs-lisp
-  (use-package emojify
-    :config
-    (global-emojify-mode))
 #+end_src
 
 **** Eshell

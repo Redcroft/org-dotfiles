@@ -51,6 +51,7 @@
       - [[#rainbow-mode][Rainbow-Mode]]
       - [[#savehist][Savehist]]
       - [[#solaire][Solaire]]
+      - [[#system-packages-1][System-Packages]]
       - [[#treemacs][Treemacs]]
       - [[#vertico][Vertico]]
       - [[#vertico-directory][Vertico Directory]]
@@ -998,6 +999,11 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
   (use-package solaire-mode
     :config
     (solaire-global-mode))
+#+end_src
+
+**** System-Packages
+#+begin_src emacs-lisp
+(use-package system-packages)
 #+end_src
 
 **** Treemacs

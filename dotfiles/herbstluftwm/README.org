@@ -219,11 +219,12 @@
 #+begin_src sh
   pkill polybar
   pkill picom
-  # pipewire &
   polybar &
-  # picom &
+  picom &
   xsetroot -solid '#3D375E'
   hsetroot -solid '#3D375E'
+  xset s off
+  xset -dpms
 #+end_src
 
 #+begin_src sh :tangle "~/.local/bin/hc-scratch" :tangle-mode (identity #o777)

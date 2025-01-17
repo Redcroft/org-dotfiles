@@ -29,6 +29,7 @@
       - [[#ctrlf][Ctrlf]]
       - [[#crux][Crux]]
       - [[#diff-hl][Diff-hl]]
+      - [[#doom-modeline][Doom modeline]]
       - [[#eshell][Eshell]]
       - [[#eyebrowse][Eyebrowse]]
       - [[#exec-path-from-shell][Exec-path-from-shell]]
@@ -41,8 +42,6 @@
       - [[#lambda-line][Lambda-Line]]
       - [[#magit][Magit]]
       - [[#marginalia][Marginalia]]
-      - [[#minions][Minions]]
-      - [[#moody][Moody]]
       - [[#move-text][Move text]]
       - [[#mu4e][Mu4e]]
       - [[#multiple-cursors][Multiple Cursors]]
@@ -525,6 +524,12 @@ This package allows you to type `<s` then press TAB to expand a tab
     (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 #+end_src
 
+**** Doom modeline
+#+begin_src emacs-lisp
+  (use-package doom-modeline
+    :config (doom-modeline-mode))
+#+end_src
+
 **** Eshell
 #+begin_src emacs-lisp
   (load-library "eshell/em-tramp")
@@ -621,13 +626,21 @@ This package allows you to type `<s` then press TAB to expand a tab
     (exwm-input-set-key (kbd "s-<return>")
                         (lambda () (interactive) (eshell)))
     (exwm-input-set-key (kbd "s-W")
-                        (lambda () (interactive) (start-process "" nil "qutebrowser")))
+                        (lambda () (interactive) (start-process "" nil "app.zen_browser.zen")))
     (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
                         (lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-volume" "0" "+2%")))
     (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
                         (lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-volume" "0" "-2%")))
     (exwm-input-set-key (kbd "<XF86AudioMute>")
                         (lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-mute" "0" "toggle")))
+    (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
+                        (lambda () (interactive) (start-process "" nil "light" "-A" "5")))
+    (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
+                        (lambda () (interactive) (start-process "" nil "light" "-U" "5")))
+    (exwm-input-set-key (kbd "s-<XF86MonBrightnessUp>")
+                        (lambda () (interactive) (start-process "" nil "light" "-S" "100")))
+    (exwm-input-set-key (kbd "s-<XF86MonBrightnessDown>")
+                        (lambda () (interactive) (start-process "" nil "light" "-S" "10")))
     (exwm-input-set-key (kbd "s-<up>")
                         (lambda () (interactive) (enlarge-window-horizontally 2)))
     (exwm-input-set-key (kbd "s-<down>")
@@ -852,45 +865,6 @@ Provides documentation to minibuffer completions
 		("M-A" . marginalia-cycle))
     :init
     (marginalia-mode))
-#+end_src
-
-**** Minions
-#+begin_src emacs-lisp :tangle no
-  (use-package minions
-    :config
-    (setq minions-mode-line-lighter "..."
-          minions-mode-line-delimiters '("" . ""))
-    (minions-mode))
-#+end_src
-
-**** Moody
-#+begin_src emacs-lisp :tangle no
-  (use-package moody
-    :config
-    (setq x-underline-at-descent-line t)
-          (setq-default mode-line-format
-                        '(" "
-                          mode-line-front-space
-                          mode-line-client
-                          mode-line-frame-identification
-                          mode-line-buffer-identification
-                          (:eval
-                           (when (eq major-mode 'image-mode)
-                             (let ((size (image-size (create-image (buffer-file-name) nil nil :scale 1.0) t)))
-                               (list (format "%dx%d" (car size) (cdr size))))))
-                          " "
-                          mode-line-position
-                          (vc-mode moody-vc-mode)
-                          (multiple-cursors-mode mc/mode-line)
-                          " "
-                          mode-line-modes
-                          " "
-                          (:eval
-                           (format-time-string "%H:%m%p"))
-                          mode-line-end-spaces
-                          ))
-          (moody-replace-mode-line-buffer-identification)
-          (moody-replace-vc-mode))
 #+end_src
 
 **** Move text

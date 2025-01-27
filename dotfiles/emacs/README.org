@@ -1229,6 +1229,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
   (use-package autothemer :ensure (:wait t))
   (add-to-list 'custom-theme-load-path (expand-file-name "~/.emacs.d/themes"))
   (use-package doom-themes)
+  (use-package base16-theme)
 
   (use-package heaven-and-hell
     :ensure (:wait t)
@@ -1236,8 +1237,8 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
     (setq heaven-and-hell-load-theme-no-confirm t
           heaven-and-hell-theme-type 'dark
           heaven-and-hell-themes
-          '((light . doom-bluloco-light)
-            (dark  . doom-laserwave))
+          '((light . base16-horizon-light)
+            (dark  . base16-horizon-terminal-dark))
           heaven-and-hell-load-theme-no-confirm t)
     (load-theme (cdr (assoc 'dark heaven-and-hell-themes)) t)
     :hook (after-init . heaven-and-hell-init-hook)

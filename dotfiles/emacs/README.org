@@ -73,6 +73,7 @@
         - [[#c][C#]]
         - [[#gdscript][GDScript]]
         - [[#json][Json]]
+        - [[#odin-lang][Odin lang]]
         - [[#nix][Nix]]
         - [[#toml][Toml]]
         - [[#yaml][Yaml]]
@@ -902,14 +903,14 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
                                 (:mailing-list . 10)
                                 (:from . 22)
                                 (:subject))
-          mu4e-maildir "~/Mail"
+          mu4e-maildir "~/.mail"
           mu4e-mu-binary (executable-find "mu")
           mu4e-update-interval (* 10 60))
 
     (setq mu4e-maildir-shortcuts
-          '(("/Redcroft/Inbox"  . ?i)
-            ("/Work/Inbox"      . ?w)
-            ("/Gmail/Inbox"     . ?g)))
+          '(("/redcroft/Inbox"  . ?i)
+            ("/work/Inbox"      . ?w)
+            ("/gmail/Inbox"     . ?g)))
 
     (setq mu4e-contexts
           (list
@@ -1140,7 +1141,15 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 
   (use-package treesit-auto
     :config
-    (global-treesit-auto-mode))
+    (global-treesit-auto-mode)
+    (dolist (source treesit-language-source-alist)
+    (unless (treesit-ready-p (car source))
+      (treesit-install-language-grammar (car source))))
+    :custom
+    (treesit-auto-install 'prompt)
+    (treesit-language-source-alist
+     '((odin "https://github.com/tree-sitter-grammars/tree-sitter-odin")))
+    )
 #+end_src
 
 **** Languages
@@ -1170,6 +1179,17 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 ***** Json
 #+begin_src emacs-lisp
   (use-package json-mode)
+#+end_src
+
+***** Odin lang
+#+begin_src emacs-lisp
+  (use-package odin-ts-mode
+    :ensure (:host github :repo "Sampie159/odin-ts-mode")
+    :hook (odin-ts-mode-hook . eglot-ensure)
+    :mode ("\\.odin\\'" . odin-ts-mode)
+    :config
+    (add-to-list 'eglot-server-programs '((odin-mode odin-ts-mode) . ("ols")))
+    )
 #+end_src
 
 ***** Nix
@@ -1227,7 +1247,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 **** Fonts
 #+begin_src emacs-lisp
   (set-face-attribute 'default nil
-                      :font "IosevkaTerm Nerd Font"
+                      :font "ZedMono Nerd Font"
                       :height 110
                       :weight 'Semibold)
   (set-face-attribute 'fixed-pitch nil
@@ -1242,7 +1262,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
                       :slant 'italic)
 
   (when (string= system-name "red")
-    (set-face-attribute 'default nil :height 120))
+    (set-face-attribute 'default nil :height 130))
 
   (setq pixel-scroll-precision-mode 1)
   (setq-default line-spacing 0.05)

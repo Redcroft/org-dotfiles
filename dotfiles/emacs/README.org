@@ -37,6 +37,7 @@
       - [[#focus][Focus]]
       - [[#gc][GC]]
       - [[#gnus][Gnus]]
+      - [[#gptel][GPTel]]
       - [[#helm][Helm]]
         - [[#system-packages][System Packages]]
       - [[#lambda-line][Lambda-Line]]
@@ -812,6 +813,25 @@ This package allows you to type `<s` then press TAB to expand a tab
               (kbd "o") 'my-gnus-group-list-subscribed-groups)
 #+end_src
 
+**** GPTel
+#+begin_src emacs-lisp
+  (use-package gptel
+    :bind (:map programs-map
+                ("g" . gptel))
+    :config
+    (gptel-make-ollama "Ollama"
+      :host "localhost:11434"
+      :stream t
+      :models '(deepseek-r1:8b))
+    (setq
+     gptel-model 'deepseek-r1:8b
+     gptel-backend (gptel-make-ollama "Ollama"
+                     :host "localhost:11434"
+                     :stream t
+                     :models '(deepseek-r1:8b)))
+    )
+#+end_src
+
 **** Helm
 ***** System Packages
 #+begin_src emacs-lisp
@@ -1080,6 +1100,14 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
   (use-package whitespace
     :ensure nil
     :config
+    (setq-default whitespace-display-mappings
+     '((space-mark 32 [183]
+                   [46])
+       (space-mark 160 [164]
+                   [95])
+       ;; (newline-mark 10 [36 10])
+       (tab-mark 9 [187 9]
+                 [92 9])))
     (custom-set-faces '(whitespace-tab ((t (:background "#FF000088")))))) ;; Using invalid color disables background color
 #+end_src
 
@@ -1170,10 +1198,17 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 ***** GDScript
 #+begin_src emacs-lisp
   (use-package gdscript-mode
-    :hook (gdscript-mode-hook . (lambda ()
-                                  (add-hook 'before-save-hook
-                                            (lambda ()
-                                              (untabify (point-min) (point-max)))))))
+    :ensure (:host github :repo "godotengine/emacs-gdscript-mode")
+    :hook (gdscript-mode . red/gdscript-hooks)
+    :config
+    (defun red/gdscript-hooks ()
+      "Hook for GDScript mode."
+      (whitespace-mode t)
+      (eglot-ensure)
+      (add-hook 'before-save-hook
+                (lambda ()
+                  (indent-region (point-min) (point-max) nil))
+                nil 'local)))
 #+end_src
 
 ***** Json
@@ -1264,6 +1299,8 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 
   (when (string= system-name "red")
     (set-face-attribute 'default nil :height 130))
+  (when (string= system-name "poseidon")
+    (set-face-attribute 'default nil :height 140))
 
   (setq pixel-scroll-precision-mode 1)
   (setq-default line-spacing 0.05)

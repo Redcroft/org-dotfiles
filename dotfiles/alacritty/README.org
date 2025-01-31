@@ -17,30 +17,30 @@
 #+begin_src toml
   # Default colors
   [colors.primary]
-  background = '#282A2E'
-  foreground = '#B3B1AD'
+  background = '#172030'
+  foreground = '#FAFFF6'
 
   # Normal colors
   [colors.normal]
-  black   = '#01060E'
-  red     = '#EA6C73'
-  green   = '#91B362'
-  yellow  = '#F9AF4F'
-  blue    = '#53BDFA'
-  magenta = '#FAE994'
-  cyan    = '#90E1C6'
-  white   = '#C7C7C7'
+  black   = '#070A0E'
+  red     = '#C6797E'
+  green   = '#A3B09A'
+  yellow  = '#EABE9A'
+  blue    = '#6E94B9'
+  magenta = '#B18BB1'
+  cyan    = '#88C0D0'
+  white   = '#FAFFF6'
 
   # Bright colors
   [colors.bright]
-  black   = '#686868'
-  red     = '#F07178'
-  green   = '#C2D94C'
-  yellow  = '#FFB454'
-  blue    = '#59C2FF'
-  magenta = '#FFEE99'
-  cyan    = '#95E6CB'
-  white   = '#FFFFFF'
+  black   = '#64727D'
+  red     = '#DB6E8F'
+  green   = '#7EA9A9'
+  yellow  = '#F7E3AF'
+  blue    = '#1E6378'
+  magenta = '#5D80AE'
+  cyan    = '#507681'
+  white   = '#F9B5AC'
 #+end_src
 
 *** Font

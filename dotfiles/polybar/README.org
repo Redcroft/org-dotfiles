@@ -6,13 +6,13 @@
 
 #+begin_src conf
   [colors]
-  background = #15141B
-  background-alt = #29263C
-  foreground = #EDECEE
-  primary = #A277FF
-  secondary = #61FFCA
-  alert = #FF6767
-  disabled = #6D6D6D
+  background = #172030
+  background-alt = #5D636E
+  foreground = #FAFFF6
+  primary = #B18BB1
+  secondary = #7EA9A9
+  alert = #DB6E8F
+  disabled = #64727D
 
   [bar/main]
   width = 100%
@@ -39,7 +39,7 @@
 
   modules-left = xworkspaces
   modules-center = xwindow
-  modules-right = memory cpu date
+  modules-right = fs-root memory cpu date
 
   cursor-click = pointer
   cursor-scroll = ns-resize
@@ -69,25 +69,62 @@
   type = internal/xwindow
   label = %title:0:60:...%
 
+  [module/fs-root]
+  type = internal/fs
+  interval = 60
+  bar-used-indicator =
+  bar-used-width = 9
+  bar-used-foreground-0 = #a3b89a
+  bar-used-foreground-1 = #f7e3af
+  bar-used-foreground-2 = #eabe9a
+  bar-used-foreground-3 = #db6e8f
+  bar-used-fill = ▐
+  bar-used-empty = ▐
+  bar-used-empty-foreground = #444444
+  format-mounted = <bar-used>
+  format-mounted-prefix = "SSD "
+  format-mounted-prefix-foreground = ${colors.primary}
+  mount-0 = /
+
   [module/cpu]
   type = internal/cpu
   interval = 2
+  bar-load-indicator =
+  bar-load-width = 9
+  bar-load-foreground-0 = #a3b89a
+  bar-load-foreground-1 = #f7e3af
+  bar-load-foreground-2 = #eabe9a
+  bar-load-foreground-3 = #db6e8f
+  bar-load-fill = ▐
+  bar-load-empty = ▐
+  bar-load-empty-foreground = #444444
   format-prefix = "CPU "
   format-prefix-foreground = ${colors.primary}
+  format = <bar-load>
   label = %percentage:2%%
 
   [module/memory]
   type = internal/memory
   interval = 2
+  bar-used-indicator =
+  bar-used-width = 9
+  bar-used-foreground-0 = #a3b89a
+  bar-used-foreground-1 = #f7e3af
+  bar-used-foreground-2 = #eabe9a
+  bar-used-foreground-3 = #db6e8f
+  bar-used-fill = ▐
+  bar-used-empty = ▐
+  bar-used-empty-foreground = #444444
   format-prefix = "RAM "
   format-prefix-foreground = ${colors.primary}
+  format = <bar-used>
   label = %percentage_used:2%%
 
   [module/date]
   type = internal/date
   interval = 1
 
-  date = %a %d %b %%H:%M
+  date = %a %d %b %H:%M
   date-alt = %Y-%m-%d %H:%M:%S
 
   label = %date%

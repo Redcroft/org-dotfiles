@@ -5,6 +5,7 @@
 * Table of Contents :TOC_5:
   - [[#early-init][Early Init]]
   - [[#init][Init]]
+    - [[#size][Size]]
     - [[#elpaca][Elpaca]]
     - [[#backup][Backup]]
     - [[#settings][Settings]]
@@ -126,11 +127,15 @@ Disable unneeded features of emacs (ui elements, package manager) for faster sta
     (setq features (delq 'native-compile features)))
 
   (advice-add #'display-startup-screen :override #'ignore)
-
-  (add-hook 'emacs-startup-hook (lambda () (setq gc-cons-threshold (* 1024 1024))))
 #+end_src
 
 ** Init
+
+*** Size
+#+begin_src emacs-lisp
+  (add-to-list 'default-frame-alist '(width . 120))
+  (add-to-list 'default-frame-alist '(height . 40))
+#+end_src
 
 *** Elpaca
 Testing out Elpaca package management instead of straight.el
@@ -179,6 +184,10 @@ Testing out Elpaca package management instead of straight.el
   (setq use-package-always-ensure t)
 
   (use-package org :ensure nil)
+
+  (use-package gcmh
+    :config
+    (gcmh-mode))
 #+end_src
 
 *** Backup
@@ -566,7 +575,7 @@ This package allows you to type `<s` then press TAB to expand a tab
 #+end_src
 
 **** EXWM
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle (if (string= system-name "red") "~/.emacs.d/init.el" "no")
   (use-package exwm
     :if (string= (getenv "EXWM_ENABLE") "t")
     :config
@@ -679,7 +688,7 @@ This package allows you to type `<s` then press TAB to expand a tab
 #+end_src
 
 **** GC
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (add-hook 'minibuffer-setup-hook '(lambda () (setq gc-cons-threshold most-positive-fixnum)))
   (add-hook 'minibuffer-exit-hook  '(lambda () (setq gc-cons-threshold 800000)))
 
@@ -997,7 +1006,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 #+end_src
 
 **** Pinentry
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle (if (string= system-name "red") "~/.emacs.d/init.el" "no")
   (use-package pinentry
     :config (pinentry-start))
 #+end_src
@@ -1265,6 +1274,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
   (add-to-list 'custom-theme-load-path (expand-file-name "~/.emacs.d/themes"))
   (use-package doom-themes)
   (use-package base16-theme)
+  (use-package timu-rouge-theme)
 
   (use-package heaven-and-hell
     :ensure (:wait t)
@@ -1272,8 +1282,8 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
     (setq heaven-and-hell-load-theme-no-confirm t
           heaven-and-hell-theme-type 'dark
           heaven-and-hell-themes
-          '((light . base16-horizon-light)
-            (dark  . base16-horizon-terminal-dark))
+          '((light . doom-ayu-light)
+            (dark  . timu-rouge))
           heaven-and-hell-load-theme-no-confirm t)
     (load-theme (cdr (assoc 'dark heaven-and-hell-themes)) t)
     :hook (after-init . heaven-and-hell-init-hook)
@@ -1305,6 +1315,6 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
   (setq pixel-scroll-precision-mode 1)
   (setq-default line-spacing 0.05)
 
-  (add-to-list 'default-frame-alist '(alpha-background . 95))
+  (add-to-list 'default-frame-alist '(alpha-background . 98))
   (setq global-prettify-symbols-mode t)
 #+end_src

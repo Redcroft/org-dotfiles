@@ -10,6 +10,7 @@
   - [[#quickmarks][Quickmarks]]
   - [[#keybinds][Keybinds]]
   - [[#theme][Theme]]
+  - [[#userscripts][Userscripts]]
   - [[#greasemonkey][Greasemonkey]]
 
 ** Defaults
@@ -77,307 +78,623 @@ Load the default qutebrowser settings, ill override the settings i care about
   config.bind("<Ctrl-Shift-tab>", "tab-prev")
   config.bind("m", "spawn mpv --hwdec=auto --ytdl-format=bestvideo[height<=?720]+bestaudio/best {url}")
   config.bind("M", "hint links spawn mpv --hwdec=auto --ytdl-format=bestvideo[height<=?720]+bestaudio/best {hint-url}")
-  config.bind("<z><l>", "spawn --userscript qute-bitwarden")
-  config.bind("<z><u>", "spawn --userscript qute-bitwarden --username-only")
-  config.bind("<z><p>", "spawn --userscript qute-bitwarden --password-only")
+  config.bind("<z><l>", "spawn --userscript qute-rbw")
+  config.bind("<z><u>", "spawn --userscript qute-rbw --username-only")
+  config.bind("<z><p>", "spawn --userscript qute-rbw --password-only")
   config.bind("<Ctrl-f>", "scroll right")
   config.bind("<Ctrl-b>", "scroll left")
   config.bind("<Ctrl-n>", "scroll down")
   config.bind("<Ctrl-p>", "scroll up")
+  config.bind("<z><r>", "config-source ~/.config/qutebrowser/config.py")
 #+end_src
 
 ** Theme
 #+begin_src python
-  base00 = "#191724"
-  base01 = "#1f1d2e"
-  base02 = "#26233a"
-  base03 = "#6e6a86"
-  base04 = "#908caa"
-  base05 = "#e0def4"
-  base06 = "#e0def4"
-  base07 = "#524f67"
-  base08 = "#eb6f92"
-  base09 = "#f6c177"
-  base0A = "#ebbcba"
-  base0B = "#31748f"
-  base0C = "#9ccfd8"
-  base0D = "#c4a7e7"
-  base0E = "#f6c177"
-  base0F = "#524f67"
+  colors = {
+      "background": "#172030",
+      "foreground": "#FAFFF6",
+      "comment": "#64727d",
+      "red": "#C6797E",
+      "green": "#A3B09A",
+      "yellow": "#F7E3AF",
+      "blue": "#6E94B9",
+      "magenta": "#B18BB1",
+      "cyan": "#88C0D0",
+      }
 
   # Text color of the completion widget. May be a single color to use for
   # all columns or a list of three colors, one for each column.
-  c.colors.completion.fg = base05
+  c.colors.completion.fg = colors["comment"]
 
   # Background color of the completion widget for odd rows.
-  c.colors.completion.odd.bg = base00
+  c.colors.completion.odd.bg = colors["background"]
 
   # Background color of the completion widget for even rows.
-  c.colors.completion.even.bg = base00
+  c.colors.completion.even.bg = colors["background"]
 
   # Foreground color of completion widget category headers.
-  c.colors.completion.category.fg = base0D
+  c.colors.completion.category.fg = colors["foreground"]
 
   # Background color of the completion widget category headers.
-  c.colors.completion.category.bg = base00
+  c.colors.completion.category.bg = colors["background"]
 
   # Top border color of the completion widget category headers.
-  c.colors.completion.category.border.top = base00
+  c.colors.completion.category.border.top = colors["background"]
 
   # Bottom border color of the completion widget category headers.
-  c.colors.completion.category.border.bottom = base00
+  c.colors.completion.category.border.bottom = colors["background"]
 
   # Foreground color of the selected completion item.
-  c.colors.completion.item.selected.fg = base05
+  c.colors.completion.item.selected.fg = colors["background"]
 
   # Background color of the selected completion item.
-  c.colors.completion.item.selected.bg = base02
+  c.colors.completion.item.selected.bg = colors["green"]
 
   # Top border color of the selected completion item.
-  c.colors.completion.item.selected.border.top = base02
+  c.colors.completion.item.selected.border.top = "#FF00FF"
 
   # Bottom border color of the selected completion item.
-  c.colors.completion.item.selected.border.bottom = base02
+  c.colors.completion.item.selected.border.bottom = "#FF00FF"
 
   # Foreground color of the matched text in the selected completion item.
-  c.colors.completion.item.selected.match.fg = base05
+  c.colors.completion.item.selected.match.fg = colors["green"]
 
   # Foreground color of the matched text in the completion.
-  c.colors.completion.match.fg = base09
+  c.colors.completion.match.fg = colors["green"]
 
   # Color of the scrollbar handle in the completion view.
-  c.colors.completion.scrollbar.fg = base05
+  c.colors.completion.scrollbar.fg = colors["foreground"]
 
   # Color of the scrollbar in the completion view.
-  c.colors.completion.scrollbar.bg = base00
+  c.colors.completion.scrollbar.bg = colors["background"]
 
   # Background color of disabled items in the context menu.
-  c.colors.contextmenu.disabled.bg = base01
+  c.colors.contextmenu.disabled.bg = colors["comment"]
 
   # Foreground color of disabled items in the context menu.
-  c.colors.contextmenu.disabled.fg = base04
+  c.colors.contextmenu.disabled.fg = colors["green"]
 
   # Background color of the context menu. If set to null, the Qt default is used.
-  c.colors.contextmenu.menu.bg = base00
+  c.colors.contextmenu.menu.bg = colors["background"]
 
   # Foreground color of the context menu. If set to null, the Qt default is used.
-  c.colors.contextmenu.menu.fg =  base05
+  c.colors.contextmenu.menu.fg =  colors["comment"]
 
   # Background color of the context menu’s selected item. If set to null, the Qt default is used.
-  c.colors.contextmenu.selected.bg = base02
+  c.colors.contextmenu.selected.bg = colors["green"]
 
   #Foreground color of the context menu’s selected item. If set to null, the Qt default is used.
-  c.colors.contextmenu.selected.fg = base05
+  c.colors.contextmenu.selected.fg = colors["background"]
 
   # Background color for the download bar.
-  c.colors.downloads.bar.bg = base00
+  c.colors.downloads.bar.bg = colors["background"]
 
   # Color gradient start for download text.
-  c.colors.downloads.start.fg = base00
+  c.colors.downloads.start.fg = colors["background"]
 
   # Color gradient start for download backgrounds.
-  c.colors.downloads.start.bg = base0D
+  c.colors.downloads.start.bg = colors["foreground"]
 
   # Color gradient end for download text.
-  c.colors.downloads.stop.fg = base00
+  c.colors.downloads.stop.fg = colors["background"]
 
   # Color gradient stop for download backgrounds.
-  c.colors.downloads.stop.bg = base0C
+  c.colors.downloads.stop.bg = colors["foreground"]
 
   # Foreground color for downloads with errors.
-  c.colors.downloads.error.fg = base08
+  c.colors.downloads.error.fg = colors["red"]
 
   # Font color for hints.
-  c.colors.hints.fg = base00
+  c.colors.hints.fg = colors["background"]
 
   # Background color for hints. Note that you can use a `rgba(...)` value
   # for transparency.
-  c.colors.hints.bg = base0A
+  c.colors.hints.bg = colors["cyan"]
 
   # Font color for the matched part of hints.
-  c.colors.hints.match.fg = base05
+  c.colors.hints.match.fg = colors["magenta"]
 
   # Text color for the keyhint widget.
-  c.colors.keyhint.fg = base05
+  c.colors.keyhint.fg = colors["background"]
 
   # Highlight color for keys to complete the current keychain.
-  c.colors.keyhint.suffix.fg = base05
+  c.colors.keyhint.suffix.fg = "#FF00FF"
 
   # Background color of the keyhint widget.
-  c.colors.keyhint.bg = base00
+  c.colors.keyhint.bg = colors["background"]
 
   # Foreground color of an error message.
-  c.colors.messages.error.fg = base00
+  c.colors.messages.error.fg = colors["background"]
 
   # Background color of an error message.
-  c.colors.messages.error.bg = base08
+  c.colors.messages.error.bg = colors["red"]
 
   # Border color of an error message.
-  c.colors.messages.error.border = base08
+  c.colors.messages.error.border = colors["red"]
 
   # Foreground color of a warning message.
-  c.colors.messages.warning.fg = base00
+  c.colors.messages.warning.fg = colors["background"]
 
   # Background color of a warning message.
-  c.colors.messages.warning.bg = base0E
+  c.colors.messages.warning.bg = colors["yellow"]
 
   # Border color of a warning message.
-  c.colors.messages.warning.border = base0E
+  c.colors.messages.warning.border = colors["yellow"]
 
   # Foreground color of an info message.
-  c.colors.messages.info.fg = base05
+  c.colors.messages.info.fg = colors["background"]
 
   # Background color of an info message.
-  c.colors.messages.info.bg = base00
+  c.colors.messages.info.bg = colors["background"]
 
   # Border color of an info message.
-  c.colors.messages.info.border = base00
+  c.colors.messages.info.border = colors["background"]
 
   # Foreground color for prompts.
-  c.colors.prompts.fg = base05
+  c.colors.prompts.fg = colors["comment"]
 
   # Border used around UI elements in prompts.
-  c.colors.prompts.border = base00
+  c.colors.prompts.border = colors["background"]
 
   # Background color for prompts.
-  c.colors.prompts.bg = base00
+  c.colors.prompts.bg = colors["background"]
 
   # Background color for the selected item in filename prompts.
-  c.colors.prompts.selected.bg = base02
+  c.colors.prompts.selected.bg = colors["foreground"]
 
   # Foreground color for the selected item in filename prompts.
-  c.colors.prompts.selected.fg = base05
+  c.colors.prompts.selected.fg = colors["background"]
 
   # Foreground color of the statusbar.
-  c.colors.statusbar.normal.fg = base05
+  c.colors.statusbar.normal.fg = colors["background"]
 
   # Background color of the statusbar.
-  c.colors.statusbar.normal.bg = base00
+  c.colors.statusbar.normal.bg = colors["background"]
 
   # Foreground color of the statusbar in insert mode.
-  c.colors.statusbar.insert.fg = base0C
+  c.colors.statusbar.insert.fg = colors["green"]
 
   # Background color of the statusbar in insert mode.
-  c.colors.statusbar.insert.bg = base00
+  c.colors.statusbar.insert.bg = colors["background"]
 
   # Foreground color of the statusbar in passthrough mode.
-  c.colors.statusbar.passthrough.fg = base0A
+  c.colors.statusbar.passthrough.fg = colors["background"]
 
   # Background color of the statusbar in passthrough mode.
-  c.colors.statusbar.passthrough.bg = base00
+  c.colors.statusbar.passthrough.bg = colors["background"]
 
   # Foreground color of the statusbar in private browsing mode.
-  c.colors.statusbar.private.fg = base0E
+  c.colors.statusbar.private.fg = colors["magenta"]
 
   # Background color of the statusbar in private browsing mode.
-  c.colors.statusbar.private.bg = base00
+  c.colors.statusbar.private.bg = colors["background"]
 
   # Foreground color of the statusbar in command mode.
-  c.colors.statusbar.command.fg = base04
+  c.colors.statusbar.command.fg = colors["green"]
 
   # Background color of the statusbar in command mode.
-  c.colors.statusbar.command.bg = base01
+  c.colors.statusbar.command.bg = colors["background"]
 
   # Foreground color of the statusbar in private browsing + command mode.
-  c.colors.statusbar.command.private.fg = base0E
+  c.colors.statusbar.command.private.fg = colors["magenta"]
 
   # Background color of the statusbar in private browsing + command mode.
-  c.colors.statusbar.command.private.bg = base01
+  c.colors.statusbar.command.private.bg = colors["comment"]
 
   # Foreground color of the statusbar in caret mode.
-  c.colors.statusbar.caret.fg = base0D
+  c.colors.statusbar.caret.fg = colors["background"]
 
   # Background color of the statusbar in caret mode.
-  c.colors.statusbar.caret.bg = base00
+  c.colors.statusbar.caret.bg = colors["yellow"]
 
   # Foreground color of the statusbar in caret mode with a selection.
-  c.colors.statusbar.caret.selection.fg = base0D
+  c.colors.statusbar.caret.selection.fg = colors["yellow"]
 
   # Background color of the statusbar in caret mode with a selection.
-  c.colors.statusbar.caret.selection.bg = base00
+  c.colors.statusbar.caret.selection.bg = colors["background"]
 
   # Background color of the progress bar.
-  c.colors.statusbar.progress.bg = base0D
+  c.colors.statusbar.progress.bg = colors["background"]
 
   # Default foreground color of the URL in the statusbar.
-  c.colors.statusbar.url.fg = base05
+  c.colors.statusbar.url.fg = colors["comment"]
 
   # Foreground color of the URL in the statusbar on error.
-  c.colors.statusbar.url.error.fg = base08
+  c.colors.statusbar.url.error.fg = colors["red"]
 
   # Foreground color of the URL in the statusbar for hovered links.
-  c.colors.statusbar.url.hover.fg = base09
+  c.colors.statusbar.url.hover.fg = colors["blue"]
 
   # Foreground color of the URL in the statusbar on successful load
   # (http).
-  c.colors.statusbar.url.success.http.fg = base0B
+  c.colors.statusbar.url.success.http.fg = colors["cyan"]
 
   # Foreground color of the URL in the statusbar on successful load
   # (https).
-  c.colors.statusbar.url.success.https.fg = base0B
+  c.colors.statusbar.url.success.https.fg = colors["green"]
 
   # Foreground color of the URL in the statusbar when there's a warning.
-  c.colors.statusbar.url.warn.fg = base0E
+  c.colors.statusbar.url.warn.fg = colors["red"]
 
   # Background color of the tab bar.
-  c.colors.tabs.bar.bg = base00
+  c.colors.tabs.bar.bg = colors["background"]
 
   # Color gradient start for the tab indicator.
-  c.colors.tabs.indicator.start = base0D
+  c.colors.tabs.indicator.start = colors["background"]
 
   # Color gradient end for the tab indicator.
-  c.colors.tabs.indicator.stop = base0C
+  c.colors.tabs.indicator.stop = colors["background"]
 
   # Color for the tab indicator on errors.
-  c.colors.tabs.indicator.error = base08
+  c.colors.tabs.indicator.error = colors["red"]
 
   # Foreground color of unselected odd tabs.
-  c.colors.tabs.odd.fg = base05
+  c.colors.tabs.odd.fg = colors["foreground"]
 
   # Background color of unselected odd tabs.
-  c.colors.tabs.odd.bg = base00
+  c.colors.tabs.odd.bg = colors["background"]
 
   # Foreground color of unselected even tabs.
-  c.colors.tabs.even.fg = base05
+  c.colors.tabs.even.fg = colors["foreground"]
 
   # Background color of unselected even tabs.
-  c.colors.tabs.even.bg = base00
+  c.colors.tabs.even.bg = colors["background"]
 
   # Background color of pinned unselected even tabs.
-  c.colors.tabs.pinned.even.bg = base0B
+  c.colors.tabs.pinned.even.bg = colors["cyan"]
 
   # Foreground color of pinned unselected even tabs.
-  c.colors.tabs.pinned.even.fg = base00
+  c.colors.tabs.pinned.even.fg = colors["background"]
 
   # Background color of pinned unselected odd tabs.
-  c.colors.tabs.pinned.odd.bg = base0B
+  c.colors.tabs.pinned.odd.bg = colors["cyan"]
 
   # Foreground color of pinned unselected odd tabs.
-  c.colors.tabs.pinned.odd.fg = base00
+  c.colors.tabs.pinned.odd.fg = colors["background"]
 
   # Background color of pinned selected even tabs.
-  c.colors.tabs.pinned.selected.even.bg = base02
+  c.colors.tabs.pinned.selected.even.bg = colors["background"]
 
   # Foreground color of pinned selected even tabs.
-  c.colors.tabs.pinned.selected.even.fg = base05
+  c.colors.tabs.pinned.selected.even.fg = colors["green"]
 
   # Background color of pinned selected odd tabs.
-  c.colors.tabs.pinned.selected.odd.bg = base02
+  c.colors.tabs.pinned.selected.odd.bg = colors["background"]
 
   # Foreground color of pinned selected odd tabs.
-  c.colors.tabs.pinned.selected.odd.fg = base05
+  c.colors.tabs.pinned.selected.odd.fg = colors["green"]
 
   # Foreground color of selected odd tabs.
-  c.colors.tabs.selected.odd.fg = base05
+  c.colors.tabs.selected.odd.fg = colors["background"]
 
   # Background color of selected odd tabs.
-  c.colors.tabs.selected.odd.bg = base02
+  c.colors.tabs.selected.odd.bg = colors["blue"]
 
   # Foreground color of selected even tabs.
-  c.colors.tabs.selected.even.fg = base05
+  c.colors.tabs.selected.even.fg = colors["background"]
 
   # Background color of selected even tabs.
-  c.colors.tabs.selected.even.bg = base02
+  c.colors.tabs.selected.even.bg = colors["blue"]
+#+end_src
+
+** Userscripts
+#+begin_src sh :tangle "~/.local/share/qutebrowser/userscripts/qute-rbw" :tangle-mode (identity #o777) :mkdirp yes
+#!/usr/bin/env python3
+
+# Copyright 2017 Chris Braun (cryzed) <cryzed@googlemail.com>
+# Adapted for rbw by Marek Bogusovsky (proxict) <marek.bogusovsky@protonmail.com>,
+# Adapted for rbw unlock by Wings Zeng (WingsZeng) <wings.xiangyi.zeng@gmail.com>
+# Jiri Kozusznik (JKPaladin) <jirkakozusznik@seznam.cz>
+#
+# This file is part of qutebrowser.
+#
+# qutebrowser is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published bjy
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# qutebrowser is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with qutebrowser.  If not, see <https://www.gnu.org/licenses/>.
+
+"""
+Insert login information using rbw CLI and a dmenu-compatible application
+(e.g. dmenu, rofi -dmenu, ...).
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import shlex
+import subprocess
+import sys
+
+from dataclasses import dataclass
+from enum import Enum, IntEnum, unique
+from io import TextIOWrapper
+from types import TracebackType
+
+import tldextract
+
+argument_parser = argparse.ArgumentParser(
+    description=__doc__,
+)
+argument_parser.add_argument("url", nargs="?", default=os.getenv("QUTE_URL"))
+argument_parser.add_argument("--folder", "-f", default=None, help="Specify folder to search for the credentials")
+argument_parser.add_argument(
+    "--terminal",
+    "-t",
+    default="kitty",
+    help="Terminal used to execute rbw unlock",
+)
+argument_parser.add_argument(
+    "--dmenu-invocation",
+    "-d",
+    default="rofi -dmenu -i -p Bitwarden",
+    help="Invocation used to execute a dmenu-provider",
+)
+argument_parser.add_argument(
+    "--no-insert-mode",
+    "-n",
+    dest="insert_mode",
+    action="store_false",
+    help="Don't automatically enter insert mode",
+)
+argument_parser.add_argument(
+    "--io-encoding",
+    "-i",
+    default="UTF-8",
+    help="Encoding used to communicate with subprocesses",
+)
+group = argument_parser.add_mutually_exclusive_group()
+group.add_argument("--username-only", "-e", action="store_true", help="Only insert username")
+group.add_argument("--password-only", "-w", action="store_true", help="Only insert password")
+
+
+@unique
+class ExitCodes(IntEnum):
+    """Represents process exit codes"""
+
+    SUCCESS = 0
+    FAILURE = 1
+
+
+class QuteFifo:
+    """Pipe for writing commands to qutebrowser"""
+
+    def __init__(self, encoding: str) -> None:
+        self.fifo: TextIOWrapper | None = None
+        self.encoding = encoding
+
+    def __enter__(self) -> QuteFifo:
+        self.fifo = open(os.environ["QUTE_FIFO"], "w", encoding=self.encoding)
+        return self
+
+    def __exit__(
+        self,
+        _exc_type: type[BaseException] | None,
+        _exc_val: BaseException | None,
+        _exc_tb: TracebackType | None,
+    ) -> None:
+        if self.fifo:
+            self.fifo.close()
+
+    def command(self, command: str) -> None:
+        """Executes the given command in qutebrowser"""
+        if not self.fifo:
+            raise RuntimeError("FIFO not open")
+        self.fifo.write(command + "\n")
+        self.fifo.flush()
+
+    def fake_key(self, text: str) -> None:
+        """Fakes a key-press in qutebrowser"""
+        for key in text:
+            # Escape all characters by default, space requires special handling
+            sequence = '" "' if key == " " else f"\\{key}"
+            self.command(f"fake-key {sequence}")
+
+    def message_error(self, text: str) -> None:
+        """Shows an error-message in qutebrowser"""
+        self.command(f"message-error '{text}'")
+
+    def message_info(self, text: str) -> None:
+        """Shows an info-message in qutebrowser"""
+        self.command(f"message-info '{text}'")
+
+    def message_warning(self, text: str) -> None:
+        """Shows a warning-message in qutebrowser"""
+        self.command(f"message-warning '{text}'")
+
+
+def rbw_get(args: list[str]) -> list[str] | tuple[str, str]:
+    """
+    Gets login credentials for the given domain
+
+            Parameters:
+                    args: The following command arguments
+
+            Returns:
+                    A tuple containing username and password, or a list of possible usernames for
+                    whom there were credentials found for the given domain.
+    """
+    args = ["rbw", "get", "--raw"] + args
+    process = subprocess.run(
+        args,
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+
+    if err := process.stderr.decode(arguments.io_encoding).strip():
+        if err.endswith("no entry found"):
+            return []
+
+        multiple_entries_str = ": multiple entries found: "
+        if (pos := err.find(multiple_entries_str)) != -1:
+            usernames = err[pos + len(multiple_entries_str) :].split(", ")
+            return [u.rpartition("@")[0] for u in usernames]
+
+        raise RuntimeError(f"rbw failed: {err}")
+
+    if credentials_data := json.loads(process.stdout.decode(arguments.io_encoding).strip()).get("data"):
+        return credentials_data.get("username"), credentials_data.get("password")
+
+    raise RuntimeError("Unexpected json output from rbw")
+
+
+def rbw_list() -> list[str]:
+    """List all items."""
+    args = ["rbw", "list"]
+    process = subprocess.run(
+        args,
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    return process.stdout.decode(arguments.io_encoding).splitlines()
+
+
+def dmenu(items: list[str]) -> str:
+    """Runs dmenu with given arguments."""
+    print(arguments.dmenu_invocation)
+    process = subprocess.run(
+        shlex.split(arguments.dmenu_invocation),
+        input="\n".join(items).encode(arguments.io_encoding),
+        check=False,
+        stdout=subprocess.PIPE,
+    )
+    return process.stdout.decode(arguments.io_encoding).strip()
+
+
+@unique
+class MessageType(Enum):
+    """Represents message type"""
+
+    ERROR = 0
+    INFO = 1
+
+
+@dataclass
+class Message:
+    """Represents a string of a given type"""
+
+    message: str
+    message_type: MessageType
+
+
+def rbw_get_credential(args: list[str]) -> tuple[str, str]:
+    """
+    A wrapper of rbw_get, retrieves a single credential using the provided arguments.
+
+            Parameters:
+                    args: The following command arguments
+
+            Returns:
+                    A tuple containing username and password
+    """
+    try:
+        credential = rbw_get(args)
+    except (RuntimeError, OSError) as err:
+        return Message(str(err), MessageType.ERROR)
+    if not isinstance(credential, tuple):
+        return Message("Unexpected: multiple results encountered", MessageType.ERROR)
+    return credential
+
+
+def get_credential(uri: str) -> tuple[str, str]:
+    """
+    Gets login credentials for the given domain
+
+            Parameters:
+                    uri: The uri to get the credential for
+
+            Returns:
+                    A tuple containing username and password, or a list of possible usernames for
+                    whom there were credentials found for the given domain.
+    """
+    extract_result = tldextract.extract(arguments.url)
+    scheme = ("https" if arguments.url.startswith("https") else "http") + "://"
+
+    uri_candidates = [extract_result.fqdn, extract_result.registered_domain, extract_result.domain]
+    targets = [scheme + candidate for candidate in uri_candidates if candidate]
+    if extract_result.ipv4:
+        targets.append(extract_result.ipv4)
+
+    for target in targets:
+        try:
+            credentials = rbw_get([target])
+        except (RuntimeError, OSError) as err:
+            return Message(str(err), MessageType.ERROR)
+
+        if isinstance(credentials, tuple):  # We found exactly one match, return it immediately
+            return credentials
+        if isinstance(credentials, list):  # We either found multiple or no credentials
+            # If no credentials were found for this target, continue searching in other targets
+            if not credentials:
+                continue
+            # For multiple matches, let the user decide which one to fill, if any
+            if not (username := dmenu(credentials)):
+                return Message("Canceled by user", MessageType.INFO)
+
+            return rbw_get_credential([uri, username])
+
+    # If no credentials were found for all targets, display a dmenu with all items for the user to choose from
+    if not (name := dmenu(rbw_list())):
+        return Message("Canceled by user", MessageType.INFO)
+    return rbw_get_credential([name])
+
+
+def try_unlock() -> bool:
+    if subprocess.run(['rbw', 'unlocked'], stderr=subprocess.DEVNULL).returncode != 0:
+        subprocess.run([arguments.terminal, '--title', 'rbw', 'rbw', 'unlock'])
+    return subprocess.run(['rbw', 'unlocked'], stderr=subprocess.DEVNULL).returncode == 0
+
+
+def main() -> int:
+    """main"""
+    if not arguments.url:
+        argument_parser.print_help()
+        return ExitCodes.FAILURE
+
+    with QuteFifo(arguments.io_encoding) as fifo:
+        if not try_unlock():
+            fifo.message_info('rbw unlock failed!')
+            return ExitCodes.SUCCESS
+        credential = get_credential(uri=arguments.url)
+        if isinstance(credential, Message):
+            if credential.message_type == MessageType.ERROR:
+                fifo.message_error(credential.message)
+                return ExitCodes.FAILURE
+
+            fifo.message_info(credential.message)
+            return ExitCodes.SUCCESS
+
+        username, password = credential
+
+        if arguments.username_only:
+            fifo.fake_key(username)
+        elif arguments.password_only:
+            fifo.fake_key(password)
+        else:
+            fifo.fake_key(username)
+            fifo.command("fake-key <Tab>")
+            fifo.fake_key(password)
+
+        if arguments.insert_mode:
+            fifo.command("mode-enter insert")
+
+    return ExitCodes.SUCCESS
+
+
+if __name__ == "__main__":
+    arguments = argument_parser.parse_args()
+    sys.exit(main())
 #+end_src
 
 ** Greasemonkey
@@ -1395,3 +1712,4 @@ Load the default qutebrowser settings, ill override the settings i care about
 **** Youtube ADB
 #+begin_src javascript :tangle "~/.config/qutebrowser/greasemonkey/yt-ad.js"
 #+end_src
+g

@@ -44,7 +44,7 @@
   hc keybind $Mod-Shift-w spawn qutebrowser
   hc keybind $Mod-Shift-e spawn emacs
   hc keybind $Mod-d spawn dmenu_run
-  hc keybind $Mod-z spawn rofi-pass
+  hc keybind $Mod-z spawn rofi-rbw
   hc keybind $Mod-minus spawn ~/.local/bin/hc-scratch
 #+end_src
 
@@ -223,6 +223,7 @@
   picom &
   xsetroot -solid '#3D375E'
   hsetroot -solid '#3D375E'
+  ~/.fehbg &
   xset s off
   xset -dpms
 #+end_src

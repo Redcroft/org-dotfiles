@@ -195,10 +195,10 @@ Load the default qutebrowser settings, ill override the settings i care about
   c.colors.hints.match.fg = colors["magenta"]
 
   # Text color for the keyhint widget.
-  c.colors.keyhint.fg = colors["background"]
+  c.colors.keyhint.fg = colors["foreground"]
 
   # Highlight color for keys to complete the current keychain.
-  c.colors.keyhint.suffix.fg = "#FF00FF"
+  c.colors.keyhint.suffix.fg = colors["magenta"]
 
   # Background color of the keyhint widget.
   c.colors.keyhint.bg = colors["background"]

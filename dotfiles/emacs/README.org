@@ -23,6 +23,7 @@
       - [[#tempo][Tempo]]
       - [[#toc][TOC]]
     - [[#packages][Packages]]
+      - [[#ace-window][Ace window]]
       - [[#auth-source][Auth Source]]
       - [[#avy][Avy]]
       - [[#beacon][Beacon]]
@@ -30,6 +31,7 @@
       - [[#ctrlf][Ctrlf]]
       - [[#crux][Crux]]
       - [[#diff-hl][Diff-hl]]
+      - [[#dimmer][Dimmer]]
       - [[#doom-modeline][Doom modeline]]
       - [[#eshell][Eshell]]
       - [[#eyebrowse][Eyebrowse]]
@@ -208,6 +210,7 @@ Testing out Elpaca package management instead of straight.el
   (global-display-line-numbers-mode)
   (setq custom-file "~/.emacs.d/custom.el")
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
+  (add-hook 'prog-mode-hook 'prettify-symbols-mode)
 #+end_src
 
 *** Defun
@@ -448,6 +451,14 @@ This package allows you to type `<s` then press TAB to expand a tab
 #+end_src
 
 *** Packages
+**** Ace window
+#+begin_src emacs-lisp
+  (use-package ace-window
+    :bind ("C-x o" . ace-window)
+    :config
+    (setq aw-keys '(?a ?r ?s ?t ?n ?e ?i ?o)))
+#+end_src
+
 **** Auth Source
 #+begin_src emacs-lisp
   (load-library "auth-source")
@@ -534,6 +545,16 @@ This package allows you to type `<s` then press TAB to expand a tab
     (global-diff-hl-mode)
     (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
     (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
+#+end_src
+
+**** Dimmer
+#+begin_src emacs-lisp
+  (use-package dimmer
+    :config
+    (dimmer-mode)
+    :custom
+    (dimmer-adjustment-mode :foreground)
+    (dimmer-fraction 0.6))
 #+end_src
 
 **** Doom modeline
@@ -831,13 +852,13 @@ This package allows you to type `<s` then press TAB to expand a tab
     (gptel-make-ollama "Ollama"
       :host "localhost:11434"
       :stream t
-      :models '(deepseek-r1:8b))
+      :models '(qwen2.5-coder:7b))
     (setq
-     gptel-model 'deepseek-r1:8b
+     gptel-model 'qwen2.5-coder:7b
      gptel-backend (gptel-make-ollama "Ollama"
                      :host "localhost:11434"
                      :stream t
-                     :models '(deepseek-r1:8b)))
+                     :models '(qwen2.5-coder:7b)))
     )
 #+end_src
 
@@ -1282,8 +1303,8 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
     (setq heaven-and-hell-load-theme-no-confirm t
           heaven-and-hell-theme-type 'dark
           heaven-and-hell-themes
-          '((light . doom-ayu-light)
-            (dark  . timu-rouge))
+          '((light . doom-gruvbox-light)
+            (dark  . doom-gruvbox))
           heaven-and-hell-load-theme-no-confirm t)
     (load-theme (cdr (assoc 'dark heaven-and-hell-themes)) t)
     :hook (after-init . heaven-and-hell-init-hook)
@@ -1293,8 +1314,8 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 **** Fonts
 #+begin_src emacs-lisp
   (set-face-attribute 'default nil
-                      :font "ZedMono Nerd Font"
-                      :height 110
+                      :font "IosevkaTermSlab Nerd Font"
+                      :height 100
                       :weight 'Semibold)
   (set-face-attribute 'fixed-pitch nil
                       :weight 'bold)

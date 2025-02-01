@@ -6,26 +6,30 @@
 
 #+begin_src conf
   [colors]
-  background = #172030
-  background-alt = #5D636E
-  foreground = #FAFFF6
-  primary = #B18BB1
-  secondary = #7EA9A9
-  alert = #DB6E8F
-  disabled = #64727D
+  background = #3c3836
+  background-alt = #282828
+  foreground = #ebdbb2
+  primary = #83a598
+  secondary = #d3869b
+  alert = #fb4934
+  disabled = #7c6f64
+  green = #b8bb26
+  yellow = #fabd2f
+  orange = #fe8019
+  red = #fb4934
 
   [bar/main]
   width = 100%
   height = 24
-  radius = 6
+  radius = 0
 
   background = ${colors.background}
   foreground = ${colors.foreground}
 
   line-size = 3pt
 
-  border-size = 4pt
-  border-color = #00000000
+  border-size = 6pt
+  border-color = ${colors.background-alt}00
 
   padding-left = 0
   padding-right = 1
@@ -33,13 +37,13 @@
   module-margin = 1
 
   separator = |
-  separator-foreground = ${colors.disabled}
+  separator-foreground = ${colors.secondary}
 
   font-0 = Terminus;2
 
   modules-left = xworkspaces
   modules-center = xwindow
-  modules-right = fs-root memory cpu date
+  modules-right = volume fs-root memory cpu date
 
   cursor-click = pointer
   cursor-scroll = ns-resize
@@ -69,18 +73,34 @@
   type = internal/xwindow
   label = %title:0:60:...%
 
+  [module/volume]
+  type = internal/pulseaudio
+  interval = 4
+  bar-volume-indicator =
+  bar-volume-width = 9
+  bar-volume-foreground-0 = ${colors.green}
+  bar-volume-foreground-1 = ${colors.yellow}
+  bar-volume-foreground-2 = ${colors.orange}
+  bar-volume-foreground-3 = ${colors.red}
+  bar-volume-fill = ▐
+  bar-volume-empty = ▐
+  bar-volume-empty-foreground = ${colors.background-alt}
+  format-volume = <bar-volume>
+  format-volume-prefix = "VOL "
+  format-volume-prefix-foreground = ${colors.primary}
+
   [module/fs-root]
   type = internal/fs
   interval = 60
   bar-used-indicator =
   bar-used-width = 9
-  bar-used-foreground-0 = #a3b89a
-  bar-used-foreground-1 = #f7e3af
-  bar-used-foreground-2 = #eabe9a
-  bar-used-foreground-3 = #db6e8f
+  bar-used-foreground-0 = ${colors.green}
+  bar-used-foreground-1 = ${colors.yellow}
+  bar-used-foreground-2 = ${colors.orange}
+  bar-used-foreground-3 = ${colors.red}
   bar-used-fill = ▐
   bar-used-empty = ▐
-  bar-used-empty-foreground = #444444
+  bar-used-empty-foreground = ${colors.background-alt}
   format-mounted = <bar-used>
   format-mounted-prefix = "SSD "
   format-mounted-prefix-foreground = ${colors.primary}
@@ -91,13 +111,13 @@
   interval = 2
   bar-load-indicator =
   bar-load-width = 9
-  bar-load-foreground-0 = #a3b89a
-  bar-load-foreground-1 = #f7e3af
-  bar-load-foreground-2 = #eabe9a
-  bar-load-foreground-3 = #db6e8f
+  bar-load-foreground-0 = ${colors.green}
+  bar-load-foreground-1 = ${colors.yellow}
+  bar-load-foreground-2 = ${colors.orange}
+  bar-load-foreground-3 = ${colors.red}
   bar-load-fill = ▐
   bar-load-empty = ▐
-  bar-load-empty-foreground = #444444
+  bar-load-empty-foreground = ${colors.background-alt}
   format-prefix = "CPU "
   format-prefix-foreground = ${colors.primary}
   format = <bar-load>
@@ -108,13 +128,13 @@
   interval = 2
   bar-used-indicator =
   bar-used-width = 9
-  bar-used-foreground-0 = #a3b89a
-  bar-used-foreground-1 = #f7e3af
-  bar-used-foreground-2 = #eabe9a
-  bar-used-foreground-3 = #db6e8f
+  bar-used-foreground-0 = ${colors.green}
+  bar-used-foreground-1 = ${colors.yellow}
+  bar-used-foreground-2 = ${colors.orange}
+  bar-used-foreground-3 = ${colors.red}
   bar-used-fill = ▐
   bar-used-empty = ▐
-  bar-used-empty-foreground = #444444
+  bar-used-empty-foreground = ${colors.background-alt}
   format-prefix = "RAM "
   format-prefix-foreground = ${colors.primary}
   format = <bar-used>

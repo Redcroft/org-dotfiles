@@ -24,3 +24,7 @@
 #+begin_src conf :tangle (if (and (file-exists-p "/usr/bin/pinentry-emacs") (string= system-name "red")) "~/.gnupg/gpg-agent.conf" "")
   pinentry-program /usr/bin/pinentry-emacs
 #+end_src
+
+#+begin_src conf :tangle (if (and (file-exists-p "/usr/bin/pinentry-qt") (string= system-name "heimdall")) "~/.gnupg/gpg-agent.conf" "")
+  pinentry-program /usr/bin/pinentry-qt
+#+end_src

@@ -91,15 +91,15 @@ Load the default qutebrowser settings, ill override the settings i care about
 ** Theme
 #+begin_src python
   colors = {
-      "background": "#172030",
-      "foreground": "#FAFFF6",
-      "comment": "#64727d",
-      "red": "#C6797E",
-      "green": "#A3B09A",
-      "yellow": "#F7E3AF",
-      "blue": "#6E94B9",
-      "magenta": "#B18BB1",
-      "cyan": "#88C0D0",
+      "background": "#3c3836",
+      "foreground": "#edbdd2",
+      "comment": "#a89984",
+      "red": "#fb4934",
+      "green": "#b8bb26",
+      "yellow": "#fabd2f",
+      "blue": "#83a598",
+      "magenta": "#d3869b",
+      "cyan": "#8ec07c",
       }
 
   # Text color of the completion widget. May be a single color to use for

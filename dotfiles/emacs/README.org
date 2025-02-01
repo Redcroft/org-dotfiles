@@ -1320,7 +1320,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
     (interactive)
     (dolist (theme custom-enabled-themes)
       (disable-theme theme))
-    (set-face-attribute 'default nil :font "MxPlus IBM CGA\-2y" :height 120 :weight 'Regular)
+    (set-face-attribute 'default nil :font "BigBlueTerm437 Nerd Font" :height 120 :weight 'Regular)
     (load-theme 'c64)
     )
 

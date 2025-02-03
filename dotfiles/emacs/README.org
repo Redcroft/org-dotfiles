@@ -98,11 +98,10 @@ Disable unneeded features of emacs (ui elements, package manager) for faster sta
         comp-async-report-warnings-errors nil
         default-frame-alist '((vertical-scroll-bars . nil)
                               (menu-bar-lines . 0)
-                              (tool-bar-lines . 0))
+                              (tool-bar-lines . 0)
+                              (internal-border-width . 5)
+                              )
         frame-inhibit-implied-resize t
-        garbage-collection-messages t
-        gc-cons-threshold most-positive-fixnum
-        gc-cons-percentage 0.6
         highlight-nonselected-windows nil
         idle-update-delay 1.0
         inhibit-compacting-font-caches t
@@ -1320,7 +1319,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
     (interactive)
     (dolist (theme custom-enabled-themes)
       (disable-theme theme))
-    (set-face-attribute 'default nil :font "BigBlueTerm437 Nerd Font" :height 120 :weight 'Regular)
+    (set-face-attribute 'default nil :font "BigBlueTerm437 Nerd Font" :height 130 :weight 'Regular)
     (load-theme 'c64)
     )
 
@@ -1332,7 +1331,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
   (defun red/default-font ()
     (interactive)
     (set-face-attribute 'default nil
-                        :font "IosevkaTermSlab Nerd Font"
+                        :font "IosevkaTerm Nerd Font"
                         :height 110
                         :weight 'Regular)
     (set-face-attribute 'fixed-pitch nil
@@ -1743,11 +1742,11 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
      `(isearch-fail ((t (:background ,c64-2 :foreground ,c64-1))))
      `(italic ((t (:background unspecified :foreground unspecified :italic t))))
      `(lazy-highlight ((t (:background ,c64-12 :foreground ,c64-1))))
-     `(line-number ((t (:background unspecified :foreground ,c64-15))))
+     `(line-number ((t (:background ,c64-14 :foreground ,c64-6))))
      `(line-number-current-line ((t (:background unspecified :foreground ,c64-1))))
      `(link ((t (:background unspecified :foreground ,c64-3 :underline t))))
      `(link-visited ((t (:background unspecified :foreground ,c64-4 :underline t))))
-     `(linum ((t (:background ,c64-6 :foreground ,c64-14))))
+     `(linum ((t (:background ,c64-14 :foreground ,c64-6))))
      `(match ((t (:background ,c64-13 :foreground ,c64-0))))
      `(menu ((t (:background unspecified :foreground ,c64-1))))
      `(message-cited-text ((t (:background unspecified :foreground ,c64-15 :italic t))))

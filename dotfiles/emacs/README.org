@@ -1332,7 +1332,7 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
     (interactive)
     (set-face-attribute 'default nil
                         :font "IosevkaTerm Nerd Font"
-                        :height 110
+                        :height 120
                         :weight 'Regular)
     (set-face-attribute 'fixed-pitch nil
                         :weight 'bold)
@@ -1367,32 +1367,10 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
   ;; Copyright (C) 2019-2020 Nahuel Jesús Sacchetti
 
   ;; Author: Nahuel Jesús Sacchetti <me@nsacchetti.com>
+  ;; Author: Richard Redcroft <Richard@redcroft.tech>
   ;; URL: http://github.com/elnawe/c64-theme
-  ;; Package-Version: 20191208
-  ;; Version: 1.0
-
-  ;; This program is free software; you can redistribute it and/or modify it under
-  ;; the terms of the GNU General Public License as published by the Free Software
-  ;; Foundation, either version 3 of the License, or (at your option) any later
-  ;; version.
-
-  ;; This program is distributed in the hope that it will be useful,
-  ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ;; GNU General Public License for more details.
-
-  ;; You should have received a copy of the GNU General Public License
-  ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-  ;;; Commentary:
-
-  ;; A simple theme based on the Commodore64 and the QBasic editor. Emacs 24+
-  ;; needed. This theme is only available for the X (GUI) version of Emacs.
-
-  ;;; Credits:
-
-  ;; Inspiration from http://www.ryocentral.info/2017/03/i3wm-as-c64-lookalike.html
-  ;; Resources from https://www.c64-wiki.com/wiki/Color
+  ;; Package-Version: 20250202
+  ;; Version: 1.1
 
   ;;; Code:
 

@@ -217,6 +217,8 @@
 
 ** Autostart
 #+begin_src sh
+  sudo zpool import -fa
+  sudo zfs mount photos
   pkill polybar
   pkill picom
   polybar &

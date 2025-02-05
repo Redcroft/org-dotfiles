@@ -1393,20 +1393,20 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
   (defvar c64-colors-alist
     '(("c64-0"  . "#000000")   ; black
       ("c64-1"  . "#FFFFFF")   ; white
-      ("c64-2"  . "#924a40")   ; red
-      ("c64-3"  . "#84c5cc")   ; cyan
-      ("c64-4"  . "#9351b6")   ; violet
-      ("c64-5"  . "#72b14b")   ; green
-      ("c64-6"  . "#483aaa")   ; blue
-      ("c64-7"  . "#d5df7c")   ; yellow
-      ("c64-8"  . "#99692d")   ; orange
-      ("c64-9"  . "#657200")   ; brown
-      ("c64-10" . "#c18178")   ; light red
-      ("c64-11" . "#606060")   ; dark grey
-      ("c64-12" . "#8a8a8a")   ; grey
-      ("c64-13" . "#b3ec91")   ; light green
-      ("c64-14" . "#867ade")   ; light blue
-      ("c64-15" . "#b3b3b3"))  ; light grey
+      ("c64-2"  . "#9f4e44")   ; red
+      ("c64-3"  . "#6abfc6")   ; cyan
+      ("c64-4"  . "#a057a3")   ; violet
+      ("c64-5"  . "#5cab5e")   ; green
+      ("c64-6"  . "#50459b")   ; blue
+      ("c64-7"  . "#c9d487")   ; yellow
+      ("c64-8"  . "#a1683c")   ; orange
+      ("c64-9"  . "#6d5412")   ; brown
+      ("c64-10" . "#cb7e75")   ; light red
+      ("c64-11" . "#626262")   ; dark grey
+      ("c64-12" . "#898989")   ; grey
+      ("c64-13" . "#9ae29b")   ; light green
+      ("c64-14" . "#887ecb")   ; light blue
+      ("c64-15" . "#adadad"))  ; light grey
     "List of colors for the Commodore64 theme.")
 
   (defmacro with-c64-color-variables (&rest body)

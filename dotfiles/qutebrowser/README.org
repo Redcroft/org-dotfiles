@@ -72,6 +72,7 @@ Load the default qutebrowser settings, ill override the settings i care about
   cable_03 https://www.printables.com/model/842990-gridfinity-cable-storage
   cable_04 https://www.printables.com/model/154307-universal-cable-organizer
   cable_05 https://www.printables.com/model/833200-gridfinity-cable-storage
+  dxvk_dlss https://github.com/jp7677/dxvk-nvapi/issues/254#issuecomment-2629379273
 #+end_src
 
 ** Keybinds

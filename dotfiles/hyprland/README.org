@@ -128,9 +128,9 @@
 *** Env
 
 #+begin_src conf
-  env = HYPRCURSOR_THEME,rose-pine-hyprcursor
+  env = HYPRCURSOR_THEME,Posy_Black
   env = HYPRCURSOR_SIZE,32
-  env = XCURSOR_THEME,BreezeX-RosePine-Linux
+  env = XCURSOR_THEME,Posy_Black
 #+end_src
 
 #+begin_src conf :tangle (if (string= system-name "heimdall") "~/.config/hypr/hyprland.conf" "no")
@@ -173,7 +173,7 @@
 
     groupbar {
       enabled = true
-      font_family = "IosevkaTermSlab Nerd Font"
+      font_family = "IosevkaTerm Nerd Font"
       font_size = 8
       text_color = $green
       col.active = $green
@@ -193,7 +193,7 @@
     special_fallthrough = true
 
     touchpad {
-      natural_scroll = truet
+      natural_scroll = true
     }
   }
 #+end_src
@@ -213,8 +213,8 @@
 
 #+begin_src conf
   misc {
-    font_family = "IosevkaTermSlab Nerd Font"
-    splash_font_family = "IosevkaTermSlab Nerd Font"
+    font_family = "IosevkaTerm Nerd Font"
+    splash_font_family = "IosevkaTerm Nerd Font"
     #disable_autoreload = true
     disable_hyprland_logo = true
     col.splash = $green
@@ -231,7 +231,7 @@
 
 *** OpenGL
 
-#+begin_src conf
+#+begin_src conf :tangle (if (string= system-name "heimdall") "~/.config/hypr/hyprland.conf" "no")
   opengl {
     nvidia_anti_flicker = true
     force_introspection = 2
@@ -314,7 +314,7 @@
 
 #+begin_src conf
   bind = $mod, Backspace, exec, ~/.config/hyprland/cyclemon
-  bind = $mod, Return, exec, ghostty
+  bind = $mod, Return, exec, foot -e tmux
   bind = $mods, W, exec, qutebrowser
   bind = $mods, E, exec, emacs
   bind = $mod, D, exec, bemenu-run

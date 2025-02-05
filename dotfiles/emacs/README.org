@@ -23,7 +23,6 @@
       - [[#tempo][Tempo]]
       - [[#toc][TOC]]
     - [[#packages][Packages]]
-      - [[#ace-window][Ace window]]
       - [[#auth-source][Auth Source]]
       - [[#avy][Avy]]
       - [[#beacon][Beacon]]
@@ -55,6 +54,7 @@
       - [[#rainbow-mode][Rainbow-Mode]]
       - [[#savehist][Savehist]]
       - [[#solaire][Solaire]]
+      - [[#switch-window][Switch Window]]
       - [[#system-packages-1][System-Packages]]
       - [[#treemacs][Treemacs]]
       - [[#vertico][Vertico]]
@@ -451,14 +451,6 @@ This package allows you to type `<s` then press TAB to expand a tab
 #+end_src
 
 *** Packages
-**** Ace window
-#+begin_src emacs-lisp
-  (use-package ace-window
-    :bind ("C-x o" . ace-window)
-    :config
-    (setq aw-keys '(?a ?r ?s ?t ?n ?e ?i ?o)))
-#+end_src
-
 **** Auth Source
 #+begin_src emacs-lisp
   (load-library "auth-source")
@@ -852,13 +844,13 @@ This package allows you to type `<s` then press TAB to expand a tab
     (gptel-make-ollama "Ollama"
       :host "localhost:11434"
       :stream t
-      :models '(qwen2.5-coder:7b))
+      :models '(qwen2.5-coder:1.5b))
     (setq
-     gptel-model 'qwen2.5-coder:7b
+     gptel-model 'qwen2.5-coder:1.5b
      gptel-backend (gptel-make-ollama "Ollama"
                      :host "localhost:11434"
                      :stream t
-                     :models '(qwen2.5-coder:7b)))
+                     :models '(qwen2.5-coder:1.5b)))
     )
 #+end_src
 
@@ -1052,6 +1044,16 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
     (solaire-global-mode))
 #+end_src
 
+**** Switch Window
+#+begin_src emacs-lisp
+  (use-package switch-window
+    :bind ("C-x o" . switch-window)
+    :custom
+    (switch-window-shortcut-style 'qwerty)
+    (switch-window-qwerty-shortcuts
+     '("a" "r" "s" "t" "n" "e" "i" "o")))
+#+end_src
+
 **** System-Packages
 #+begin_src emacs-lisp
 (use-package system-packages)
@@ -1131,14 +1133,14 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
     :ensure nil
     :config
     (setq-default whitespace-display-mappings
-     '((space-mark 32 [183]
-                   [46])
-       (space-mark 160 [164]
-                   [95])
+     '(;; (space-mark 32 [183] [46])
+       ;; (space-mark 160 [164] [95])
        ;; (newline-mark 10 [36 10])
        (tab-mark 9 [187 9]
                  [92 9])))
-    (custom-set-faces '(whitespace-tab ((t (:background "#FF000088")))))) ;; Using invalid color disables background color
+    (custom-set-faces '(whitespace-tab ((t (:background "#FF000088")))))
+    (custom-set-faces '(whitespace-space ((t (:background "#FF000000")))))
+    )
 #+end_src
 
 **** Yasnippet

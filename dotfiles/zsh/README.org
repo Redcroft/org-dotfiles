@@ -6,28 +6,64 @@
   - [[#znap][Znap]]
   - [[#prompt][Prompt]]
   - [[#autocomplete][Autocomplete]]
+  - [[#direnv][Direnv]]
+  - [[#eza][Eza]]
+  - [[#git-fuzzy][Git-fuzzy]]
   - [[#syntax][Syntax]]
+  - [[#fzf][Fzf]]
+  - [[#zoxide][Zoxide]]
+    - [[#aliases][Aliases]]
 
 ** Znap
-#+begin_src zsh
+#+begin_src sh
   # Download Znap, if it's not there yet.
   [[ -r ~/.repos/znap/znap.zsh ]] ||
       git clone --depth 1 -- \
-          https://github.com/marlonrichert/zsh-snap.git ~/.repos/znap
+          git@github.com:marlonrichert/zsh-snap.git ~/.repos/znap
   source ~/.repos/znap/znap.zsh  # Start Znap
 #+end_src
 
 ** Prompt
-#+begin_src zsh
+#+begin_src sh
   znap prompt sindresorhus/pure
 #+end_src
 
 ** Autocomplete
-#+begin_src zsh
+#+begin_src sh
   znap source marlonrichert/zsh-autocomplete
 #+end_src
 
+** Direnv
+#+begin_src sh
+  znap install ptavares/zsh-direnv
+#+end_src
+
+** Eza
+#+begin_src sh
+  znap source z-shell/zsh-eza
+#+end_src
+
+** Git-fuzzy
+#+begin_src sh
+  znap install bigH/git-fuzzy
+#+end_src
+
 ** Syntax
-#+begin_src zsh
+#+begin_src sh
   znap source zsh-users/zsh-syntax-highlighting
+#+end_src
+
+** Fzf
+#+begin_src sh
+  source <(fzf --zsh)
+#+end_src
+
+** Zoxide
+#+begin_src sh
+  eval "$(zoxide init zsh)"
+#+end_src
+
+*** Aliases
+#+begin_src sh
+  alias hyprland='uwsm start -- hyprland.desktop'
 #+end_src

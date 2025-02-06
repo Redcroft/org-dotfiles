@@ -13,6 +13,7 @@
   - [[#fzf][Fzf]]
   - [[#zoxide][Zoxide]]
     - [[#aliases][Aliases]]
+    - [[#env-vars][Env Vars]]
 
 ** Znap
 #+begin_src sh
@@ -65,5 +66,19 @@
 
 *** Aliases
 #+begin_src sh
+  alias mkdir='mkdir -p'
+  alias nas='ssh farm@10.0.0.5'
+  alias pwheimdall='pactl load-module module-tunnel-sink server=tcp:192.168.0.127'
+  alias xuu='sudo shutdown -h now'
   alias hyprland='uwsm start -- hyprland.desktop'
+#+end_src
+
+*** Env Vars
+#+begin_src sh
+  #export VKD3D_CONFIG=dxr11,dxr
+  #export PROTON_ENABLE_NVAPI=1
+  #export PROTON_ENABLE_NGX_UPDATER=1
+  #export WEBKIT_DISABLE_DMABUF_RENDERER=1
+  #export __GLX_VENDOR_LIBRARY_NAME=nvidia
+  export PATH=$HOME/.local/bin:/var/lib/flatpak/exports/bin:$PATH
 #+end_src

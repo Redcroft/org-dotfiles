@@ -69,6 +69,7 @@
       - [[#tools][Tools]]
         - [[#corfu][Corfu]]
         - [[#eglot][Eglot]]
+        - [[#flycheck][Flycheck]]
         - [[#orderless][Orderless]]
         - [[#sly][Sly]]
         - [[#tree-sitter][Tree-sitter]]
@@ -79,6 +80,7 @@
         - [[#json][Json]]
         - [[#odin-lang][Odin lang]]
         - [[#nix][Nix]]
+        - [[#rust][Rust]]
         - [[#toml][Toml]]
         - [[#yaml][Yaml]]
         - [[#zig][Zig]]
@@ -1174,7 +1176,14 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
            (c++-mode . eglot-ensure)
            (csharp-mode . eglot-ensure)
            (python-mode . eglot-ensure)
+           (rust-mode . eglot-ensure)
            (zig-mode . eglot-ensure)))
+#+end_src
+
+***** Flycheck
+#+begin_src emacs-lisp :tangle no
+  (use-package flycheck
+    :ensure (:host github :repo "flycheck/flycheck"))
 #+end_src
 
 ***** Orderless
@@ -1262,6 +1271,23 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
 ***** Nix
 #+begin_src emacs-lisp
   (use-package nix-mode)
+#+end_src
+
+***** Rust
+#+begin_src emacs-lisp
+  (use-package rust-mode
+    :defer t
+    :custom
+    (rust-format-on-save t)
+    (lsp-rust-server 'rust-analyzer))
+
+  (use-package rustic
+    :bind (:map rustic-mode-map
+                ("C-c a t" . rustic-cargo-current-test)
+                ("C-c m" . rustic-compile))
+    :custom
+    (rustic-lsp-client 'eglot)
+    (rustic-format-on-save t))
 #+end_src
 
 ***** Toml

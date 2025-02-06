@@ -159,7 +159,7 @@
 
 ** Env Variables
 #+begin_src sh
-  export WEBKIT_DISABLE_DMABUF_RENDERER=1
-  export __GLX_VENDOR_LIBRARY_NAME=nvidia
+  #export WEBKIT_DISABLE_DMABUF_RENDERER=1
+  #export __GLX_VENDOR_LIBRARY_NAME=nvidia
   export PATH=$HOME/.local/bin:/var/lib/flatpak/exports/bin:$PATH
 #+end_src

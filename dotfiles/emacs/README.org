@@ -2,180 +2,95 @@
 #+auto_tangle: t
 #+AUTHOR: Richard Redcroft
 
-* Table of Contents :TOC_5:
+* Table of Contents :TOC_4:
   - [[#early-init][Early Init]]
   - [[#init][Init]]
-    - [[#size][Size]]
     - [[#elpaca][Elpaca]]
-    - [[#backup][Backup]]
-    - [[#settings][Settings]]
-    - [[#defun][Defun]]
-    - [[#keybinds][Keybinds]]
-    - [[#org-mode][Org-mode]]
-      - [[#auto-tangle][Auto-tangle]]
-      - [[#capture][Capture]]
-      - [[#babel][Babel]]
-      - [[#bullets][Bullets]]
-      - [[#mind-map][Mind-Map]]
-      - [[#modern][Modern]]
-      - [[#publish][Publish]]
-      - [[#source][Source]]
-      - [[#tempo][Tempo]]
-      - [[#toc][TOC]]
+    - [[#emacs][Emacs]]
     - [[#packages][Packages]]
-      - [[#auth-source][Auth Source]]
-      - [[#avy][Avy]]
-      - [[#beacon][Beacon]]
-      - [[#circe][Circe]]
+      - [[#completion][Completion]]
       - [[#ctrlf][Ctrlf]]
-      - [[#crux][Crux]]
-      - [[#diff-hl][Diff-hl]]
-      - [[#dimmer][Dimmer]]
-      - [[#doom-modeline][Doom modeline]]
-      - [[#eshell][Eshell]]
-      - [[#eyebrowse][Eyebrowse]]
-      - [[#exec-path-from-shell][Exec-path-from-shell]]
-      - [[#exwm][EXWM]]
-      - [[#focus][Focus]]
-      - [[#gc][GC]]
-      - [[#gnus][Gnus]]
-      - [[#gptel][GPTel]]
-      - [[#helm][Helm]]
-        - [[#system-packages][System Packages]]
-      - [[#lambda-line][Lambda-Line]]
-      - [[#magit][Magit]]
-      - [[#marginalia][Marginalia]]
-      - [[#move-text][Move text]]
-      - [[#mu4e][Mu4e]]
-      - [[#multiple-cursors][Multiple Cursors]]
-      - [[#notmuch][Notmuch]]
-      - [[#pdf-tools][PDF-Tools]]
-      - [[#pinentry][Pinentry]]
-      - [[#rainbow-mode][Rainbow-Mode]]
-      - [[#savehist][Savehist]]
-      - [[#solaire][Solaire]]
-      - [[#switch-window][Switch Window]]
-      - [[#system-packages-1][System-Packages]]
-      - [[#treemacs][Treemacs]]
-      - [[#vertico][Vertico]]
-      - [[#vertico-directory][Vertico Directory]]
-      - [[#vertico-posframe][Vertico Posframe]]
-      - [[#vterm][VTerm]]
-      - [[#w3m][w3m]]
-      - [[#whichkey][Whichkey]]
-      - [[#whitespace][Whitespace]]
-      - [[#yasnippet][Yasnippet]]
-    - [[#development][Development]]
-      - [[#tools][Tools]]
-        - [[#corfu][Corfu]]
-        - [[#eglot][Eglot]]
-        - [[#flycheck][Flycheck]]
-        - [[#orderless][Orderless]]
-        - [[#sly][Sly]]
-        - [[#tree-sitter][Tree-sitter]]
+      - [[#git][Git]]
       - [[#languages][Languages]]
-        - [[#cmake][CMake]]
-        - [[#c][C#]]
-        - [[#gdscript][GDScript]]
-        - [[#json][Json]]
-        - [[#odin-lang][Odin lang]]
-        - [[#nix][Nix]]
-        - [[#rust][Rust]]
-        - [[#toml][Toml]]
-        - [[#yaml][Yaml]]
-        - [[#zig][Zig]]
-    - [[#ui][UI]]
-      - [[#all-the-icons][All-The-Icons]]
-      - [[#theme][Theme]]
-      - [[#fonts][Fonts]]
-  - [[#c64-theme][C64 Theme]]
+      - [[#minibuffer][Minibuffer]]
+      - [[#move-text][Move-text]]
+      - [[#org][Org]]
+      - [[#programming][Programming]]
+      - [[#rainbow][Rainbow]]
+      - [[#rainbow-delimiters][Rainbow Delimiters]]
+      - [[#terminal][Terminal]]
+      - [[#vundo][Vundo]]
+      - [[#which-key][Which-key]]
+      - [[#window-management][Window Management]]
+    - [[#theme][Theme]]
+      - [[#all-the-icons][All-the-icons]]
+      - [[#font][Font]]
+      - [[#theme-1][Theme]]
+    - [[#gc][GC]]
 
 ** Early Init
-Disable unneeded features of emacs (ui elements, package manager) for faster startup but also i will be replacing them anyway.
+
+Disable UI and Package Manager
 
 #+begin_src emacs-lisp :tangle ~/.emacs.d/early-init.el
-  (setq ad-redefinition-action 'accept
-        auto-mode-case-fold nil
-        bidi-inhibit-bpa t
-        comp-async-report-warnings-errors nil
-        default-frame-alist '((vertical-scroll-bars . nil)
-                              (menu-bar-lines . 0)
-                              (tool-bar-lines . 0)
-                              (internal-border-width . 5)
-                              )
-        frame-inhibit-implied-resize t
-        highlight-nonselected-windows nil
-        idle-update-delay 1.0
-        inhibit-compacting-font-caches t
-        inhibit-startup-screen t
-        inhibit-startup-splash t
-        initial-scratch-message nil
-        load-prefer-newer 'noninteractive
-        package-enable-at-startup nil
-        read-process-output-max (* 128 1024)
-        use-dialog-box nil
-        use-file-dialog nil)
+  (setq default-frame-alist
+	'((vertical-scroll-bars . nil)
+	  (menu-bar-lines . 0)
+	  (scroll-bar-lines . 0)
+	  (tool-bar-lines . 0))
+	frame-inhibit-implied-resize t
+	frame-resize-pixelwise t
+	gc-cons-threshold most-positive-fixnum ; 2^61
+	gc-cons-percentage 0.6
+	load-prefer-newer 'noninteractive
+	native-comp-jit-compilation nil
+	mode-line-format nil
+	package-enable-at-startup nil
+	package-native-compile t)
 
-  (setq-default cursor-type '(box . 3)
-                cursor-in-non-selected-windows nil
-                bidi-display-reordering 'left-to-right
-                bidi-paragraph-direction 'left-to-right)
-
-  (if (and (featurep 'native-compile)
-           (fboundp 'native-comp-available-p)
-           (native-comp-available-p))
-      ;; Activate `native-compile'
-      (setq native-comp-deferred-compilation t
-            package-native-compile t)
-    ;; Deactivate the `native-compile' feature if it is not available
-    (setq features (delq 'native-compile features)))
-
-  (advice-add #'display-startup-screen :override #'ignore)
+  ;; Garbage Collector Optimization Hack
+  (add-hook 'emacs-startup-hook
+	    (lambda ()
+	      (setq gc-cons-threshold (* 16 1024 1024) ; 16mb
+		    gc-cons-percentage 0.1)))
 #+end_src
 
 ** Init
-
-*** Size
-#+begin_src emacs-lisp
-  (add-to-list 'default-frame-alist '(width . 120))
-  (add-to-list 'default-frame-alist '(height . 40))
-#+end_src
-
 *** Elpaca
-Testing out Elpaca package management instead of straight.el
+
 #+begin_src emacs-lisp
   (defvar elpaca-installer-version 0.9)
   (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
   (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
   (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
   (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-                                :ref nil :depth 1
-                                :files (:defaults "elpaca-test.el" (:exclude "extensions"))
-                                :build (:not elpaca--activate-package)))
+				:ref nil :depth 1 :inherit ignore
+				:files (:defaults "elpaca-test.el" (:exclude "extensions"))
+				:build (:not elpaca--activate-package)))
   (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
-         (build (expand-file-name "elpaca/" elpaca-builds-directory))
-         (order (cdr elpaca-order))
-         (default-directory repo))
+	 (build (expand-file-name "elpaca/" elpaca-builds-directory))
+	 (order (cdr elpaca-order))
+	 (default-directory repo))
     (add-to-list 'load-path (if (file-exists-p build) build repo))
     (unless (file-exists-p repo)
       (make-directory repo t)
       (when (< emacs-major-version 28) (require 'subr-x))
       (condition-case-unless-debug err
-          (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-                   ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
-                                                   ,@(when-let ((depth (plist-get order :depth)))
-                                                       (list (format "--depth=%d" depth) "--no-single-branch"))
-                                                   ,(plist-get order :repo) ,repo))))
-                   ((zerop (call-process "git" nil buffer t "checkout"
-                                         (or (plist-get order :ref) "--"))))
-                   (emacs (concat invocation-directory invocation-name))
-                   ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-                                         "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-                   ((require 'elpaca))
-                   ((elpaca-generate-autoloads "elpaca" repo)))
-              (progn (message "%s" (buffer-string)) (kill-buffer buffer))
-            (error "%s" (with-current-buffer buffer (buffer-string))))
-        ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+	  (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+		    ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+						    ,@(when-let* ((depth (plist-get order :depth)))
+							(list (format "--depth=%d" depth) "--no-single-branch"))
+						    ,(plist-get order :repo) ,repo))))
+		    ((zerop (call-process "git" nil buffer t "checkout"
+					  (or (plist-get order :ref) "--"))))
+		    (emacs (concat invocation-directory invocation-name))
+		    ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+					  "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+		    ((require 'elpaca))
+		    ((elpaca-generate-autoloads "elpaca" repo)))
+	      (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+	    (error "%s" (with-current-buffer buffer (buffer-string))))
+	((error) (warn "%s" err) (delete-directory repo 'recursive))))
     (unless (require 'elpaca-autoloads nil t)
       (require 'elpaca)
       (elpaca-generate-autoloads "elpaca" repo)
@@ -185,1071 +100,162 @@ Testing out Elpaca package management instead of straight.el
 
   (elpaca elpaca-use-package
     (elpaca-use-package-mode))
+
   (setq use-package-always-ensure t)
 
-  (use-package org :ensure nil)
+  (add-to-list 'elpaca-ignored-dependencies 'eldoc)
+#+end_src
 
-  (use-package gcmh
+*** Emacs
+Configure base emacs
+#+begin_src emacs-lisp
+  (use-package emacs
+    :ensure nil
+    :bind
+    (("C-+" . text-scale-increase)
+     ("C--" . text-scale-decrease)
+     ("C-c I" . my/open-emacs-config)
+     ("C-c r" . eval-buffer)
+     ("C-c m" . eval-region)
+     ("C-x r s" . replace-string)
+     ("M-#" . comment-or-uncomment-region))
     :config
-    (gcmh-mode))
-#+end_src
-
-*** Backup
-#+begin_src emacs-lisp
-  (setq backup-directory-alist '((".*" . "~/.emacs.d/backup-files")))
-#+end_src
-
-*** Settings
-#+begin_src emacs-lisp
-  (setq ring-bell-function 'ignore
-        use-short-answers t
-        visible-bell t)
-  (setq-default indent-tabs-mode nil)
-  (add-hook 'prog-mode 'prettify-symbols-mode)
-  (global-superword-mode)
-  (global-subword-mode)
-  (global-hl-line-mode)
-  (global-display-line-numbers-mode)
-  (setq custom-file "~/.emacs.d/custom.el")
-  (add-hook 'before-save-hook 'delete-trailing-whitespace)
-  (add-hook 'prog-mode-hook 'prettify-symbols-mode)
-#+end_src
-
-*** Defun
-#+begin_src emacs-lisp
-  (defun red/open-emacs-config ()
-    (interactive)
-    (find-file "~/.repos/dotfiles/dotfiles/emacs/README.org"))
-#+end_src
-
-*** Keybinds
-#+begin_src emacs-lisp
-  (keyboard-translate ?\C-x ?\C-t)
-  (keyboard-translate ?\C-t ?\C-x)
-  (global-set-key (kbd "M-#") #'comment-or-uncomment-region)
-  (global-set-key (kbd "C-c r") #'eval-buffer)
-  (global-set-key (kbd "C-c m") #'eval-region)
-  (global-set-key (kbd "C-x r s") #'replace-string)
-  (global-set-key (kbd "C-x C-c") #'save-buffers-kill-emacs)
-  (global-set-key (kbd "C-x c") #'compile)
-  (global-set-key (kbd "C-x RET") #'eshell)
-  (global-set-key (kbd "C-x C-y") #'recentf-open-files)
-  (define-prefix-command 'programs-map)
-  (global-set-key (kbd "C-x y") 'programs-map)
-  (global-set-key (kbd "C-c I") #'red/open-emacs-config)
-#+end_src
-
-*** Org-mode
-
-**** Auto-tangle
-Automatically tangle org files
-#+begin_src emacs-lisp
-  (use-package org-auto-tangle
-    :hook (org-mode . org-auto-tangle-mode))
-#+end_src
-
-**** Capture
-#+begin_src emacs-lisp
-  (load-library "org-capture")
-  (global-set-key (kbd "C-c c") #'org-capture)
-#+end_src
-
-**** Babel
-#+begin_src emacs-lisp
-  (load-library "ob-shell")
-  (load-library "ob-python")
-#+end_src
-
-**** Bullets
-
-#+begin_src emacs-lisp
-  (use-package org-bullets
-    :hook (org-mode . org-bullets-mode))
-#+end_src
-
-**** Mind-Map
-#+begin_src emacs-lisp
-  (use-package org-mind-map
-    :init (load-library "ox-org")
+    (flymake-mode -1)
+    (global-set-key (kbd "C-x C-c") #'save-buffers-kill-emacs)
+    (global-auto-revert-mode t)
+    (global-display-fill-column-indicator-mode t)
+    (global-display-line-numbers-mode)
+    (global-prettify-symbols-mode)
+    (global-subword-mode t)
+    (global-superword-mode t)
+    (keyboard-translate ?\C-x ?\C-t)
+    (keyboard-translate ?\C-t ?\C-x)
+    (setopt use-short-answers t)
+    (defun my/open-emacs-config ()
+      (interactive)
+      (find-file "~/.repos/dotfiles/dotfiles/emacs/README.org"))
     :custom
-    (org-mind-map-engine "dot"))
-#+end_src
-
-**** Modern
-Improves the styling and look of org-mode
-#+begin_src emacs-lisp
-  (use-package org-modern
-    :hook (org-mode . org-modern-mode))
-#+end_src
-
-**** Publish
-https://zwpdbh.github.io/emacs/org-to-blog-using-org-publish.htm
-https://opensource.com/article/20/3/blog-emacs
-https://thibaultmarin.github.io/blog/posts/2016-11-13-Personal_website_in_org.html
-https://taingram.org/blog/org-mode-blog.html
-#+begin_src emacs-lisp
-  (load-library "ox-html")
-  (load-library "ox-publish")
-  (use-package htmlize)
-
-  (global-set-key (kbd "C-c p") (lambda () (interactive) (org-publish-all t)))
-  (defvar this-date-format "%b %d, %Y")
-
-  (defun my/website-html-preamble (plist)
-    (with-temp-buffer
-      (insert-file-contents "~/.emacs.d/html-templates/preamble.html") (buffer-string)))
-
-  (defun my/website-html-postamble (plist)
-    (with-temp-buffer
-      (insert-file-contents "~/.emacs.d/html-templates/postamble.html") (buffer-string)))
-
-  (defun my/website-html-head (plist)
-    (with-temp-buffer
-      (insert-file-contents "~/.emacs.d/html-templates/head.html") (buffer-string)))
-
-  (defun my/website-sitemap-date-entry-format (entry style project)
-    "Format ENTRY in org-publish PROJECT Sitemap format ENTRY ENTRY STYLE format that includes date."
-    (let ((filename (org-publish-find-title entry project)))
-      (if (= (length filename) 0)
-          (format "*%s*" entry)
-        (format "{{{timestamp(%s)}}} [[file:%s][%s]]"
-                (format-time-string "%Y-%m-%d"
-                                    (org-publish-find-date entry project))
-                entry
-                filename))))
-
-  (setq org-export-global-macros
-        '(("timestamp" . "@@html:<span class=\"timestamp\">[$1]</span>@@"))
-        org-export-with-section-numbers nil
-        org-export-with-smart-quotes t
-        org-export-with-toc 3
-        org-html-container-element "section"
-        org-html-checkbox-type 'html
-        org-html-divs '((preamble "header" "top")
-                        (content "main" "content")
-                        (postamble "footer" "postamble"))
-        org-html-doctype "html5"
-        org-html-head-include-scripts nil
-        org-html-head-include-default-style nil
-        org-html-htmlize-output-type 'css
-        org-html-validation-link nil
-        org-publish-project-alist
-        '(("blog-pages"
-           :auto-sitemap nil
-           :base-directory "~/.repos/blog/org/"
-           :base-extension "org"
-           :html-head my/website-html-head
-           :html-preamble my/website-html-preamble
-           :html-postamble nil
-           :publishing-directory "~/.repos/blog/public_html/"
-           :publishing-function org-html-publish-to-html
-           :recursive nil
-           :section-numbers nil
-           :sitemap-title ""
-           :with-toc nil)
-          ("blog-articles"
-           :auto-sitemap t
-           :base-directory "~/.repos/blog/org/articles/"
-           :base-extension "org"
-           :html-head my/website-html-head
-           :html-preamble my/website-html-preamble
-           :html-postamble nil
-           :publishing-directory "~/.repos/blog/public_html/articles/"
-           :publishing-function org-html-publish-to-html
-           :recursive t
-           :sitemap-title "Articles"
-           :sitemap-filename "index.org"
-           :sitemap-format-entry my/website-sitemap-date-entry-format
-           :sitemap-sort-files anti-chronologically
-           :sitemap-style tree
-           :with-toc nil)
-          ("blog-css"
-           :base-directory "~/.repos/blog/org/css/"
-           :base-extension "css"
-           :publishing-directory "~/.repos/blog/public_html/css/"
-           :publishing-function org-publish-attachment
-           :recursive t)
-          ("blog-img"
-           :base-directory "~/.repos/blog/org/images/"
-           :base-extension "png\\|jpg\\|gif\\|webp"
-           :publishing-directory "~/.repos/blog/public_html/images/"
-           :publishing-function org-publish-attachment
-           :recursive t)
-          ("blog"
-           :components ("blog-pages" "blog-articles" "blog-css" "blog-img")))
-        org-src-fontify-natively t)
-
-  (defun create-blog-page ()
-    "Create a blog page in ~/.repos/blog/org"
-    (interactive)
-    (let ((name (read-string "Filename: ")))
-      (expand-file-name (format "%s.org" name) "~/.repos/blog/org/")))
-
-  (defun create-blog-article ()
-    "Create a blog article in ~/.repos/blog/org/articles"
-    (interactive)
-    (let ((name (read-string "Filename: ")))
-      (expand-file-name (format "%s.org" name) "~/.repos/blog/org/articles/")))
-
-  (add-to-list 'org-capture-templates
-               '("p" "Post" plain
-                 (file create-blog-page)
-                 (file "~/.emacs.d/org-templates/blog-page.orgcaptmpl")))
-  (add-to-list 'org-capture-templates
-               '("a" "Article" plain
-                 (file create-blog-article)
-                 (file "~/.emacs.d/org-templates/blog-article.orgcaptmpl")))
-#+end_src
-
-#+begin_src html :tangle "~/.emacs.d/html-templates/head.html"
-  <link rel='stylesheet' href='/css/style.css'/>
-#+end_src
-
-#+begin_src html :tangle "~/.emacs.d/html-templates/postamble.html"
-#+end_src
-
-#+begin_src html :tangle "~/.emacs.d/html-templates/preamble.html"
-  <nav>
-    <li><a href="/">Home</a></li>
-    <li><a href="/articles/index.html">Articles</a></li>
-    <li><a href="/about.html">About</a></li>
-  </nav>
-#+end_src
-
-#+begin_src emacs-lisp :tangle "~/.emacs.d/org-templates/blog-page.orgcaptmpl"
-  ,#+TITLE: %^{Name}
-  ,#+DATE: <%<%Y-%m-%d>>
-  ,#+AUTHOR: Richard Redcroft
-  ,#+EMAIL: Richard@Redcroft.Tech
-
-  %?
-#+end_src
-
-#+begin_src emacs-lisp :tangle "~/.emacs.d/org-templates/blog-article.orgcaptmpl"
-  ,#+TITLE: %^{Name}
-  ,#+DATE: <%<%Y-%m-%d>>
-  ,#+AUTHOR: Richard Redcroft
-  ,#+EMAIL: Richard@Redcroft.Tech
-
-  %?
-#+end_src
-
-**** Source
-#+begin_src emacs-lisp
-  (setq org-src-window-setup 'current-window)
-#+end_src
-
-**** Tempo
-This package allows you to type `<s` then press TAB to expand a tab
-#+begin_src emacs-lisp
-  (use-package org-tempo
-    :ensure nil)
-#+end_src
-
-**** TOC
-#+begin_src emacs-lisp
-  (use-package toc-org
-    :hook (org-mode . toc-org-mode))
+    (auto-save-default t)
+    (backup-by-copying t)
+    (backup-directory-alist `(("." . ,(expand-file-name ".tmp/backups/"
+							user-emacs-directory))))
+    (create-lockfiles nil)
+    (flymake-start-on-flymake-mode nil)
+    (frame-resize-pixelwise t)
+    (frame-title-format '(:eval
+			  (concat (if (buffer-file-name)
+				      (abbreviate-file-name (buffer-file-name))
+				    "%b")
+				  " - Emacs")))
+    (ring-bell-function #'ignore)
+    (sentence-end-double-space nil)
+    (undo-limit 100000000)
+    (use-dialog-box nil)
+    (use-file-dialog nil)
+    (user-file-name "Richard DW Redcroft")
+    (user-real-login-name "Richard DW Redcroft")
+    (user-login-name "lambda")
+    (user-mail-address "richard@redcroft.tech")
+    (x-gtk-use-system-tooltips nil)
+    (visible-bell nil)
+    :init
+    (define-prefix-command 'programs-map)
+    (global-set-key (kbd "C-x y") 'programs-map)
+    (setq-default bidi-display-reordering nil
+		  custom-safe-themes t
+		  fill-column 80
+		  initial-scratch-message nil
+		  line-spacing 0.05
+		  truncate-lines t
+		  truncate-partial-width-windows nil
+		  x-stretch-cursor nil)
+    :hook ((before-save-hook . whitespace-cleanup)))
 #+end_src
 
 *** Packages
-**** Auth Source
+**** Completion
+***** Cape
 #+begin_src emacs-lisp
-  (load-library "auth-source")
-  (load-library "auth-source-pass")
-  (setq auth-sources '("~/.repos/dotfiles/authinfo.gpg"))
-  (auth-source-pass-enable)
-
-  (use-package password-store)
-#+end_src
-**** Avy
-#+begin_src emacs-lisp
-  (use-package avy
-    :bind (("C-;" . avy-goto-char)
-           ("C-:" . avy-goto-char-2)))
-#+end_src
-**** Beacon
-#+begin_src emacs-lisp
-  (use-package beacon
-    :config
-    (beacon-mode))
+  (use-package cape
+    :after corfu
+    :init
+    (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+    (add-to-list 'completion-at-point-functions #'cape-dict)
+    (add-to-list 'completion-at-point-functions #'cape-file)
+    (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+    (add-to-list 'completion-at-point-functions #'cape-keyword))
 #+end_src
 
-**** Circe
+***** Corfu
 #+begin_src emacs-lisp
-  (defun my-libera-password (server)
-    (password-store-get "libera.chat/LambdaExperiment"))
-  (defun my-oftc-password (server)
-    (password-store-get "oftc.net/LambdaExperiment"))
-
-  (use-package circe
-    :bind ("C-x y i" . irc)
+  (use-package corfu
+    :config (global-corfu-mode)
     :custom
-    (circe-format-say "{nick:-16s} {body}")
-    (circe-network-options
-     '(("Libera Chat"
-        :tls t
-        :sasl-username "LambdaExperiment"
-        :sasl-password my-libera-password
-        :channels (:after-auth "#emacs" "#godot"))
-       ("oftc"
-        :tls t
-        :sasl-username "LambdaExperiment"
-        :sasl-password my-oftc-password
-        :channels (:after-auth "#chimera-linux"))))
-    (circe-reduce-lurker-spam t)
-    (circe-use-cycle-completion t)
-    (lui-flyspell-p t)
-    (lui-flyspell-alist '((".*" "american")))
-    :config
-    (load-library "lui-autopaste")
-    (defun irc ()
-      "Connect to IRC"
-      (interactive)
-      (circe "Libera Chat")
-      (circe "otfc"))
-    :hook (circe-channel-mode-hook . enable-lui-autopaste)
+    (completion-ignore-case t)
+    (corfu-auto t)
+    (corfu-auto-prefix 2)
+    (corfu-cycle t)
+    (corfu-popupinfo-mode t)
+    (corfu-popupinfo-delay 0.5)
+    (corfu-quit-no-match t)
+    (corfu-quit-at-boundary 'separator)
+    (tab-always-indent 'complete)
     )
+
+  (use-package corfu-terminal
+    :init (corfu-terminal-mode))
 #+end_src
 
 **** Ctrlf
 #+begin_src emacs-lisp
   (use-package ctrlf
-    :config
-    (ctrlf-mode +1))
+    :config (ctrlf-mode t))
 #+end_src
 
-**** Crux
-#+begin_src emacs-lisp
-  (load-library "recentf")
-  (use-package crux
-    :bind (("C-k" . crux-smart-kill-line)
-           ("C-S-RET" . crux-smart-open-line-above)
-           ("S-RET" . crux-smart-open-line)
-           ("C-c n" . crux-fleanup-buffer-or-region)
-           ("C-c f" . crux-recentf-find-file)
-           ("C-c F" . crux-recentf-find-directory)
-           ("C-c k" . crux-kill-other-buffers)))
-#+end_src
-
-**** Diff-hl
+**** Git
+***** Diff-hl
 #+begin_src emacs-lisp
   (use-package diff-hl
-    :config
-    (global-diff-hl-mode)
-    (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
-    (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
+    :config (global-diff-hl-mode)
+    :hook ((dired-mode         . diff-hl-dired-mode-unless-remote)
+	   (magit-pre-refresh  . diff-hl-magit-pre-refresh)
+	   (magit-post-refresh . diff-hl-magit-post-refresh)))
 #+end_src
 
-**** Dimmer
+***** Magit
 #+begin_src emacs-lisp
-  (use-package dimmer
-    :config
-    (dimmer-mode)
-    :custom
-    (dimmer-adjustment-mode :foreground)
-    (dimmer-fraction 0.6))
-#+end_src
-
-**** Doom modeline
-#+begin_src emacs-lisp
-  (use-package doom-modeline
-    :config (doom-modeline-mode))
-#+end_src
-
-**** Eshell
-#+begin_src emacs-lisp
-  (load-library "eshell/em-tramp")
-  (add-to-list 'eshell-modules-list 'eshell-tramp)
-  (setq password-cache t
-        password-cache-expiry 3600)
-#+end_src
-
-**** Eyebrowse
-#+begin_src emacs-lisp
-  (use-package eyebrowse
-    :if (not (string= (getenv "EXWM_ENABLE") "t"))
-    :bind (("M-1" . eyebrowse-switch-to-window-config-1)
-           ("M-2" . eyebrowse-switch-to-window-config-2)
-           ("M-3" . eyebrowse-switch-to-window-config-3)
-           ("M-4" . eyebrowse-switch-to-window-config-4)
-           ("M-5" . eyebrowse-switch-to-window-config-5)
-           ("M-6" . eyebrowse-switch-to-window-config-6)
-           ("M-7" . eyebrowse-switch-to-window-config-7)
-           ("M-8" . eyebrowse-switch-to-window-config-8)
-           ("M-9" . eyebrowse-switch-to-window-config-9)
-           ("M-0" . eyebrowse-switch-to-window-config-0))
-    :config
-    (setq eyebrowse-new-workspace t)
-    (eyebrowse-mode))
-#+end_src
-
-**** Exec-path-from-shell
-#+begin_src emacs-lisp
-  (use-package exec-path-from-shell)
-#+end_src
-
-**** EXWM
-#+begin_src emacs-lisp :tangle (if (string= system-name "red") "~/.emacs.d/init.el" "no")
-  (use-package exwm
-    :if (string= (getenv "EXWM_ENABLE") "t")
-    :config
-    (setq battery-update-interval 15
-          battery-mode-line-format "[%p%% %t]"
-          display-time-default-load-average nil
-          display-time-format "[%b %d %I:%M%p]"
-          exwm-workspace-number 10
-          exwm-input-simulation-keys
-          '(([?\C-b] . [left])
-            ([?\C-f] . [right])
-            ([?\C-p] . [up])
-            ([?\C-n] . [down])
-            ([?\C-a] . [home])
-            ([?\C-e] . [end])
-            ([?\M-v] . [prior])
-            ([?\C-v] . [next])
-            ([?\C-d] . [delete])
-            ([?\C-k] . [S-end delete]))
-          exwm-input-global-keys
-          `(([?\s-r] . exwm-reset)
-            ([?\s-w] . exwm-workspace-switch)
-            ;;([XF86MonBrightnessUp] . ignore)
-            ;;([XF86MonBrightnessDown] . ignore)
-            ,@(mapcar (lambda (i)
-                        `(,(kbd (format "s-%d" i)) .
-                          (lambda ()
-                            (interactive)
-                            (exwm-workspace-switch-create ,i))))
-                      (number-sequence 0 9))))
-
-    (defun my/exwm-startup ()
-      (lambda)
-      (exwm-init)
-      (sleep-for 0 200)
-      (exwm-workspace-switch-create 9)
-      (sleep-for 0 200)
-      (exwm-workspace-switch 1)
-      (start-process "" nil "dunst" "&")
-      ;;(dashboard-open)
-      )
-    (add-hook 'emacs-startup-hook 'my/exwm-startup)
-    (add-hook 'exwm-update-class-hook
-              (lambda ()
-                (unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
-                            (string= "gimp" exwm-instance-name))
-                  (exwm-workspace-rename-buffer (concat "*EXWM* " exwm-class-name)))))
-    (add-hook 'exwm-update-title-hook
-              (lambda ()
-                (when (or (not exwm-instance-name)
-                          (string-prefix-p "sun-awt-X11-" exwm-instance-name)
-                          (string= "gimp" exwm-instance-name))
-                  (exwm-workspace-rename-buffer exwm-title))))
-    (add-hook 'exwm-floating-setup-hook 'exwm-layout-hide-mode-line)
-    (add-hook 'exwm-floating-exit-hook  'exwm-layout-show-mode-line)
-    (exwm-input-set-key (kbd "s-p")
-                        (lambda (command)
-                          (interactive (list (read-shell-command "$ ")))
-                          (start-process-shell-command command nil command)))
-    (exwm-input-set-key (kbd "s-<return>")
-                        (lambda () (interactive) (eshell)))
-    (exwm-input-set-key (kbd "s-W")
-                        (lambda () (interactive) (start-process "" nil "qutebrowser")))
-    (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
-                        (lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-volume" "0" "+2%")))
-    (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
-                        (lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-volume" "0" "-2%")))
-    (exwm-input-set-key (kbd "<XF86AudioMute>")
-                        (lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-mute" "0" "toggle")))
-    (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
-                        (lambda () (interactive) (start-process "" nil "light" "-A" "5")))
-    (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
-                        (lambda () (interactive) (start-process "" nil "light" "-U" "5")))
-    (exwm-input-set-key (kbd "s-<XF86MonBrightnessUp>")
-                        (lambda () (interactive) (start-process "" nil "light" "-S" "100")))
-    (exwm-input-set-key (kbd "s-<XF86MonBrightnessDown>")
-                        (lambda () (interactive) (start-process "" nil "light" "-S" "10")))
-    (exwm-input-set-key (kbd "s-<up>")
-                        (lambda () (interactive) (enlarge-window-horizontally 2)))
-    (exwm-input-set-key (kbd "s-<down>")
-                        (lambda () (interactive) (shrink-window-horizontally 2)))
-    (exwm-input-set-key (kbd "s-f")
-                        (lambda () (interactive) (windmove-right)))
-    (exwm-input-set-key (kbd "s-b")
-                        (lambda () (interactive) (windmove-left)))
-    (exwm-input-set-key (kbd "C-s-f")
-                        (lambda () (interactive) (windmove-swap-states-right)))
-    (exwm-input-set-key (kbd "C-s-b")
-                        (lambda () (interactive) (windmove-swap-states-left)))
-    (exwm-input-set-key (kbd "s-z")
-                        (lambda ()
-                          (interactive)
-                          (let ((d (format-time-string "%H:%m%p"))
-                                (b (battery-format battery-echo-area-format (funcall battery-status-function))))
-                            (message "%s\t%s" d b))))
-    (display-time-mode 1)
-    (display-battery-mode 1)
-    (exwm-input--update-global-prefix-keys)
-    )
-#+end_src
-
-**** Focus
-#+begin_src emacs-lisp
-  (use-package focus
-    :bind ("C-c f" . focus-mode)
-    :config
-    (setq focus-mode-to-thing
-          '((prog-mode . defun)
-            (text-mode . sentence))))
-#+end_src
-
-**** GC
-#+begin_src emacs-lisp :tangle no
-  (add-hook 'minibuffer-setup-hook '(lambda () (setq gc-cons-threshold most-positive-fixnum)))
-  (add-hook 'minibuffer-exit-hook  '(lambda () (setq gc-cons-threshold 800000)))
-
-  (add-hook 'emacs-startup-hook
-            (lambda ()
-              (message "*** Emacs loaded in %s with %d garbage collections."
-                       (format "%.2f seconds"
-                               (float-time
-                                (time-subtract after-init-time before-init-time)))
-                       gcs-done)))
-#+end_src
-
-**** Gnus
-#+begin_src emacs-lisp :tangle no
-  (load-library "gnus")
-  (load-library "gnus-async")
-  (load-library "gnus-topic")
-
-  (global-set-key (kbd "C-x y m") 'gnus)
-
-  (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
-
-  (setq user-mail-address     "Richard@redcroft.tech"
-        user-full-name        "Richard Redcroft"
-        gnus-asynchronous t
-        gnus-article-sort-functions
-        '(gnus-article-soft-by-date
-          (not gnus-article-sort-by-number))
-        gnus-large-newsgroup 'nil
-        gnus-parameters
-        '(("nnimap.*"
-           (gnus-show-threads nil)
-           (gnus-use-scoring nil)
-           (expiry-wait . 2)
-           (display . all)))
-        gnus-select-method
-        '(nnimap "Redcroft"
-                 (nnimap-address "imap.hostinger.com")
-                 (nnimap-user "richard@redcroft.tech")
-                 (nnimap-password (password-store-get "hostinger.com/richard@redcroft.tech"))
-                 (nnimap-server-port 993)
-                 (nnimap-expunge t)
-                 (nnimap-stream ssl)
-                 (nnir-search-engine imap))
-        gnus-summary-thread-gathering-function 'gnus-gather-threads-by-subject
-        gnus-thread-hide-subtree t
-        gnus-thread-ignore-subject t
-        gnus-thread-sort-functions
-        '(gnus-thread-sort-by-most-recent-date
-          (not gnus-thread-sort-by-number))
-        gnus-topic-set-parameters
-        '(("Redcroft"
-           (posting-style
-            (address "richard@redcroft.tech")
-            ("X-Message-SMTP-Method" "smtp smtp.hostinger.com 587")))
-          ("Work"
-           (posting-style
-            (address "richard@carseandwaterman.com")
-            ("X-Message-SMTP-Method" "smtp smtp.gmail 587")))
-          ("Gmail"
-           (posting-style
-            (address "animationrich@gmail.com")
-            ("X-Message-SMTP-Method" "smtp smtp.gmail 587"))))
-        gnus-topic-topology '(("Mail" visible)
-                              (("Redcroft" visible nil nil))
-                              (("Work" visible nil nil))
-                              (("Gmail" visible nil nil)))
-        gnus-topic-alist '(("Mail")
-                           ("Redcroft"
-                            "nnimap+Redcroft:INBOX"
-                            "nnimap+Redcroft:INBOX.Junk"
-                            "nnimap+Redcroft:INBOX.Sent"
-                            "nnimap+Redcroft:INBOX.Trash")
-                           ("Work"
-                            "nnimap+Work:INBOX"
-                            "nnimap+Work:[Gmail]/All Mail"
-                            "nnimap+Work:[Gmail]/Sent Mail"
-                            "nnimap+Work:[Gmail]/Spam"
-                            "nnimap+Work:[Gmail]/Trash")
-                           ("Gmail"
-                            "nnimap+Gmail:INBOX"
-                            "nnimap+Gmail:[Gmail]/All Mail"
-                            "nnimap+Gmail:[Gmail]/Sent Mail"
-                            "nnimap+Gmail:[Gmail]/Spam"
-                            "nnimap+Gmail:[Gmail]/Trash"))
-        gnus-use-cache t
-        mm-text-html-renderer 'w3m
-        send-mail-function    'smtpmail-send-it
-        smtpmail-default-smtp-server "smtp.hostinger.com"
-        smtpmail-smtp-service 587
-        smtpmail-stream-type 'starttls)
-
-  (add-to-list 'gnus-secondary-select-methods
-               '(nnimap "Work"
-                        (nnimap-user "richard@carseandwaterman.com")
-                        (nnimap-password (password-store-get "gmail/richard@carseandwaterman.com"))
-                        (nnimap-address "imap.gmail.com")
-                        (nnimap-server-port 993)
-                        (nnimap-stream ssl)
-                        (nnir-search-engine imap)
-                        (nnmail-expiry-target "nnimap+Work:[Gmail]/Trash")
-                        (nnmail-expiry-wait 90)))
-  (add-to-list 'gnus-secondary-select-methods
-               '(nnimap "Gmail"
-                        (nnimap-user "animationrich@gmail.com")
-                        (nnimap-password (password-store-get "gmail/animationrich@gmail.com"))
-                        (nnimap-address "imap.gmail.com")
-                        (nnimap-server-port 993)
-                        (nnimap-stream ssl)
-                        (nnir-search-engine imap)
-                        (nnmail-expiry-target "nnimap+Gmail:[Gmail]/Trash")
-                        (nnmail-expiry-wait 90)))
-
-  (defun group-send-mail-from-point ()
-    (interactive)
-    ;; use the group under the point to find a posting style.
-    (gnus-group-mail t)
-    (compose-mail))
-
-  (define-key gnus-group-mode-map
-              ;; list all the subscribed groups even they contain zero un-read messages
-              (kbd "m") 'group-send-mail-from-point)
-
-  (defun my-gnus-group-list-subscribed-groups ()
-    "List all subscribed groups with or without un-read messages"
-    (interactive)
-    (gnus-group-list-all-groups 5))
-
-  (define-key gnus-group-mode-map
-              ;; list all the subscribed groups even they contain zero un-read messages
-              (kbd "o") 'my-gnus-group-list-subscribed-groups)
-#+end_src
-
-**** GPTel
-#+begin_src emacs-lisp
-  (use-package gptel
-    :bind (:map programs-map
-                ("g" . gptel))
-    :config
-    (gptel-make-ollama "Ollama"
-      :host "localhost:11434"
-      :stream t
-      :models '(qwen2.5-coder:1.5b))
-    (setq
-     gptel-model 'qwen2.5-coder:1.5b
-     gptel-backend (gptel-make-ollama "Ollama"
-                     :host "localhost:11434"
-                     :stream t
-                     :models '(qwen2.5-coder:1.5b)))
-    )
-#+end_src
-
-**** Helm
-***** System Packages
-#+begin_src emacs-lisp
-  (use-package helm-system-packages
-    :bind (:map programs-map
-                ("p" . helm-system-packages)))
-#+end_src
-
-**** Lambda-Line
-#+begin_src emacs-lisp
-  (use-package lambda-line
-    :ensure (:host github :repo "lambda-emacs/lambda-line")
-    :custom
-    (lambda-line-icon-time t) ;; requires ClockFace font (see below)
-    (lambda-line-clockface-update-fontset "ClockFaceRect") ;; set clock icon
-    (lambda-line-position 'bottom) ;; Set position of status-line
-    (lambda-line-abbrev t) ;; abbreviate major modes
-    (lambda-line-hspace "  ")  ;; add some cushion
-    (lambda-line-prefix t) ;; use a prefix symbol
-    (lambda-line-prefix-padding nil) ;; no extra space for prefix
-    (lambda-line-status-invert nil)  ;; no invert colors
-    (lambda-line-gui-ro-symbol  " ⨂") ;; symbols
-    (lambda-line-gui-mod-symbol " ⬤")
-    (lambda-line-gui-rw-symbol  " ◯")
-    (lambda-line-space-top +.25)  ;; padding on top and bottom of line
-    (lambda-line-space-bottom -.25)
-    (lambda-line-symbol-position 0.1) ;; adjust the vertical placement of symbol
-    :config
-    ;; activate lambda-line
-    (lambda-line-mode)
-    ;; set divider line in footer
-    (when (eq lambda-line-position 'top)
-      (setq-default mode-line-format (list "%_"))
-      (setq mode-line-format (list "%_"))))
-#+end_src
-
-**** Magit
-#+begin_src emacs-lisp
-  (use-package transient)
   (use-package magit
-    :config
-    (setq magit-diff-refine-hunk t)
-    (global-set-key (kbd "C-x g") 'magit-status))
+    :bind ("C-x g" . magit-status)
+    :custom (magit-diff-refine-hunk t))
 
   (use-package magit-lfs)
 #+end_src
 
-**** Marginalia
-Provides documentation to minibuffer completions
+***** Transient
 #+begin_src emacs-lisp
-  (use-package marginalia
-    :bind (:map minibuffer-local-map
-		("M-A" . marginalia-cycle))
-    :init
-    (marginalia-mode))
-#+end_src
-
-**** Move text
-#+begin_src emacs-lisp
-  (use-package move-text
-    :config
-    (move-text-default-bindings)
-    (defun indent-region-advice (&rest ignored)
-      (let ((deactivate deactivate-mark))
-        (if (region-active-p)
-            (indent-region (region-beginning) (region-end))
-          (indent-region (line-beginning-position) (line-end-position)))
-        (setq deactivate-mark deactivate)))
-
-    (advice-add 'move-text-up :after 'indent-region-advice)
-    (advice-add 'move-text-down :after 'indent-region-advice)
-    )
-#+end_src
-
-**** Mu4e
-Mu4e mail uses the locally installed mu package, so cannot be managed using use-package
-#+begin_src emacs-lisp
-  (when (locate-library "mu4e")
-    (load-library "mu4e")
-    (load-library "mu4e-context")
-    (setq mu4e-attachment-dir "~/Downloads"
-          mu4e-change-filenames-when-moving t
-          mu4e-compose-complete-addresses t
-          mu4e-compose-context-policy nil
-          mu4e-compose-dont-reply-to-self t
-          mu4e-get-mail-command "mbsync -a"
-          mu4e-headers-fields '((:human-date . 20)
-                                (:flags . 6)
-                                (:mailing-list . 10)
-                                (:from . 22)
-                                (:subject))
-          mu4e-maildir "~/.mail"
-          mu4e-mu-binary (executable-find "mu")
-          mu4e-update-interval (* 10 60))
-
-    (setq mu4e-maildir-shortcuts
-          '(("/redcroft/Inbox"  . ?i)
-            ("/work/Inbox"      . ?w)
-            ("/gmail/Inbox"     . ?g)))
-
-    (setq mu4e-contexts
-          (list
-           (make-mu4e-context
-            :name "Redcroft"
-            :match-func
-            (lambda (msg)
-              (when msg
-                (string-prefix-p "/redcroft" (mu4e-message-field msg :maildir))))
-            :vars '((user-mail-address  . "richard@redcroft.tech")
-                    (user-full-name     . "Richard DW Redcroft")
-                    (mu4e-drafts-folder . "/Redcroft/Drafts")
-                    (mu4e-sent-folder   . "/Redcroft/Sent")
-                    (mu4e-trash-folder  . "/Redcroft/Trash")))
-           (make-mu4e-context
-            :name "Work"
-            :match-func
-            (lambda (msg)
-              (when msg
-                (string-prefix-p "/work" (mu4e-message-field msg :maildir))))
-            :vars '((user-mail-address  . "richard@carseandwaterman.com")
-                    (user-full-name     . "Richard DW Work")
-                    (mu4e-drafts-folder . "/Work/[Gmail]/Drafts")
-                    (mu4e-sent-folder   . "/Work/[Gmail]/Sent Mail")
-                    (mu4e-rifile-folder . "/Work/[Gmail]/All Mail")
-                    (mu4e-trash-folder  . "/Work/[Gmail]/Trash")))
-           (make-mu4e-context
-            :name "Gmail"
-            :match-func
-            (lambda (msg)
-              (when msg
-                (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
-            :vars '((user-mail-address  . "richard@carseandwaterman.com")
-                    (user-full-name     . "Richard DW Work")
-                    (mu4e-drafts-folder . "/Gmail/[Gmail]/Drafts")
-                    (mu4e-sent-folder   . "/Gmail/[Gmail]/Sent Mail")
-                    (mu4e-rifile-folder . "/Gmail/[Gmail]/All Mail")
-                    (mu4e-trash-folder  . "/Gmail/[Gmail]/Trash")))))
-
-    (define-key programs-map (kbd "m") 'mu4e)
-    )
-#+end_src
-
-**** Multiple Cursors
-#+begin_src emacs-lisp
-  (use-package multiple-cursors
-    :bind (("C-S-c C-S-c" . mc/edit-lines)
-           ("C->" . mc/mark-next-like-this)
-           ("C-<" . mc/mark-previous-like-this)
-           ("C-c C->" . mc/mark-all-like-this)))
-#+end_src
-
-**** Notmuch
-#+begin_src emacs-lisp :tangle no
-  (use-package notmuch
-    :bind (("C-x y m" . notmuch)))
-#+end_src
-
-**** PDF-Tools
-#+begin_src emacs-lisp :tangle no
-  (use-package pdf-tools
-    :config
-    (pdf-loader-install))
-#+end_src
-
-**** Pinentry
-#+begin_src emacs-lisp :tangle (if (string= system-name "red") "~/.emacs.d/init.el" "no")
-  (use-package pinentry
-    :config (pinentry-start))
-#+end_src
-
-**** Rainbow-Mode
-#+begin_src emacs-lisp
-  (use-package rainbow-mode)
-#+end_src
-
-**** Savehist
-#+begin_src emacs-lisp
-  (use-package savehist
-    :ensure nil
-    :init
-    (savehist-mode))
-#+end_src
-
-**** Solaire
-#+begin_src emacs-lisp
-  (use-package solaire-mode
-    :config
-    (solaire-global-mode))
-#+end_src
-
-**** Switch Window
-#+begin_src emacs-lisp
-  (use-package switch-window
-    :bind ("C-x o" . switch-window)
-    :custom
-    (switch-window-shortcut-style 'qwerty)
-    (switch-window-qwerty-shortcuts
-     '("a" "r" "s" "t" "n" "e" "i" "o")))
-#+end_src
-
-**** System-Packages
-#+begin_src emacs-lisp
-(use-package system-packages)
-#+end_src
-
-**** Treemacs
-#+begin_src emacs-lisp
-  (use-package treemacs
-    :bind (("C-x t o" . treemacs-select-window)
-	   ("C-x t t" . treemacs)
-	   ("C-x t d" . treemacs-select-directory)
-	   ("C-x t C-f" . treemacs-find-file))
-    :defer t)
-
-  (use-package treemacs-icons-dired
-    :hook (dired-mode . treemacs-icons-dired-enable-once))
-
-  (use-package treemacs-magit)
-  (use-package treemacs-projectile)
-#+end_src
-
-**** Vertico
-#+begin_src emacs-lisp
-  (use-package vertico
-    :hook (minibuffer-setup-hook . cursor-intangible-mode)
-    :init
-    (vertico-mode)
-    (setq enable-recursive-minibuffers t
-	  minibuffer-prompt-properties
-	  '(read-only t cursor-intangible t face minibuffer-prompt)
-	  read-extended-command-predicate #'command-completion-default-include-p
-	  vertico-count 20
-	  vertico-cycle t
-	  vertico-resize t
-	  vertico-scroll-margin 0))
-#+end_src
-
-**** Vertico Directory
-#+begin_src emacs-lisp
-  (use-package vertico-directory
-    :after vertico
-    :ensure nil
-    :bind (:map vertico-map
-		("RET" . vertico-directory-enter)
-		("DEL" . vertico-directory-delete-char)
-		("M-DEL" . vertico-directory-delete-word))
-    :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
-#+End_src
-
-**** Vertico Posframe
-#+begin_src emacs-lisp
-  (use-package vertico-posframe
-    :config
-    (vertico-posframe-mode))
-#+End_src
-
-**** VTerm
-#+begin_src emacs-lisp
-  (use-package vterm
-    :bind ("C-x t RET" . vterm))
-#+end_src
-
-**** w3m
-#+begin_src emacs-lisp :tangle no
-  (use-package w3m)
-#+end_src
-
-**** Whichkey
-#+begin_src emacs-lisp
-  (use-package which-key
-    :config (which-key-mode))
-#+end_src
-
-**** Whitespace
-#+begin_src emacs-lisp
-  (use-package whitespace
-    :ensure nil
-    :config
-    (setq-default whitespace-display-mappings
-     '(;; (space-mark 32 [183] [46])
-       ;; (space-mark 160 [164] [95])
-       ;; (newline-mark 10 [36 10])
-       (tab-mark 9 [187 9]
-                 [92 9])))
-    (custom-set-faces '(whitespace-tab ((t (:background "#FF000088")))))
-    (custom-set-faces '(whitespace-space ((t (:background "#FF000000")))))
-    )
-#+end_src
-
-**** Yasnippet
-#+begin_src emacs-lisp
-  (use-package yasnippet
-    :config
-    (yas-global-mode 1))
-
-  (use-package yasnippet-snippets)
-#+end_src
-
-*** Development
-
-**** Tools
-
-***** Corfu
-#+begin_src emacs-lisp
-  (use-package corfu
-    :custom
-    (corfu-auto t)
-    :init
-    (global-corfu-mode))
-
-#+end_src
-
-***** Eglot
-#+begin_src emacs-lisp
-  (use-package eglot
-    :ensure nil
-    :hook ((c-mode . eglot-ensure)
-           (c++-mode . eglot-ensure)
-           (csharp-mode . eglot-ensure)
-           (python-mode . eglot-ensure)
-           (rust-mode . eglot-ensure)
-           (zig-mode . eglot-ensure)))
-#+end_src
-
-***** Flycheck
-#+begin_src emacs-lisp :tangle no
-  (use-package flycheck
-    :ensure (:host github :repo "flycheck/flycheck"))
-#+end_src
-
-***** Orderless
-#+begin_src emacs-lisp
-  (use-package orderless
-    :init
-    (setq completion-styles '(orderless basic)
-	  completion-category-defaults nil
-	  completion-category-overrides '((file (styles partial-completion)))))
-#+End_src
-
-***** Sly
-#+begin_src emacs-lisp
-  (when (file-exists-p "~/.roswell/helper.el")
-    (load (expand-file-name "~/.roswell/helper.el"))
-    (setq inferior-lisp-program "ros -Q run"))
-#+end_src
-
-***** Tree-sitter
-#+begin_src emacs-lisp
-  (use-package tree-sitter
-    :config
-    (global-tree-sitter-mode))
-
-  (use-package treesit-auto
-    :config
-    (global-treesit-auto-mode)
-    (dolist (source treesit-language-source-alist)
-    (unless (treesit-ready-p (car source))
-      (treesit-install-language-grammar (car source))))
-    :custom
-    (treesit-auto-install 'prompt)
-    (treesit-language-source-alist
-     '((odin "https://github.com/tree-sitter-grammars/tree-sitter-odin")))
-    )
+  (use-package transient
+    :after magit)
 #+end_src
 
 **** Languages
-
 ***** CMake
 #+begin_src emacs-lisp
   (use-package cmake-mode)
-#+end_src
-
-***** C#
-#+begin_src emacs-lisp
-  (use-package csharp-mode
-    :ensure nil
-    :config
-    (add-to-list 'auto-mode-alist '("\\.cs\\'" . csharp-tree-sitter-mode)))
 #+end_src
 
 ***** GDScript
 #+begin_src emacs-lisp
   (use-package gdscript-mode
     :ensure (:host github :repo "godotengine/emacs-gdscript-mode")
-    :hook (gdscript-mode . red/gdscript-hooks)
+    :hook (gdscript-mode . my/gdscript-hooks)
     :config
-    (defun red/gdscript-hooks ()
+    (defun my/gdscript-hooks ()
       "Hook for GDScript mode."
       (whitespace-mode t)
-      (eglot-ensure)
       (add-hook 'before-save-hook
-                (lambda ()
-                  (indent-region (point-min) (point-max) nil))
-                nil 'local)))
+		(lambda ()
+		  (indent-region (point-min) (point-max) nil))
+		nil 'local)))
 #+end_src
 
 ***** Json
@@ -1257,37 +263,20 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
   (use-package json-mode)
 #+end_src
 
-***** Odin lang
+***** Markdown
 #+begin_src emacs-lisp
-  (use-package odin-ts-mode
-    :ensure (:host github :repo "Sampie159/odin-ts-mode")
-    :hook (odin-ts-mode-hook . eglot-ensure)
-    :mode ("\\.odin\\'" . odin-ts-mode)
-    :config
-    (add-to-list 'eglot-server-programs '((odin-mode odin-ts-mode) . ("ols")))
-    )
+  (use-package markdown-mode)
 #+end_src
 
-***** Nix
+***** Python
 #+begin_src emacs-lisp
-  (use-package nix-mode)
+  (use-package python-mode)
 #+end_src
 
 ***** Rust
 #+begin_src emacs-lisp
-  (use-package rust-mode
-    :defer t
-    :custom
-    (rust-format-on-save t)
-    (lsp-rust-server 'rust-analyzer))
-
   (use-package rustic
-    :bind (:map rustic-mode-map
-                ("C-c a t" . rustic-cargo-current-test)
-                ("C-c m" . rustic-compile))
-    :custom
-    (rustic-lsp-client 'eglot)
-    (rustic-format-on-save t))
+    :after (flycheck))
 #+end_src
 
 ***** Toml
@@ -1305,622 +294,329 @@ Mu4e mail uses the locally installed mu package, so cannot be managed using use-
   (use-package zig-mode)
 #+end_src
 
-*** UI
-
-**** All-The-Icons
+**** Minibuffer
+***** consult
 #+begin_src emacs-lisp
-  (use-package all-the-icons
-    :if (display-graphic-p))
-
-  (use-package all-the-icons-dired
-    :hook (dired-mode . all-the-icons-dired-mode))
-#+end_src
-
-**** Theme
-#+begin_src emacs-lisp
-  (setq custom-safe-themes t)
-  (use-package autothemer :ensure (:wait t))
-  (add-to-list 'custom-theme-load-path (expand-file-name "~/.emacs.d/themes"))
-  (use-package doom-themes)
-  (use-package base16-theme)
-  (use-package timu-rouge-theme)
-
-  (use-package heaven-and-hell
-    :ensure (:wait t)
-    :config
-    (setq heaven-and-hell-load-theme-no-confirm t
-          heaven-and-hell-theme-type 'dark
-          heaven-and-hell-themes
-          '((light . doom-gruvbox-light)
-            (dark  . doom-gruvbox))
-          heaven-and-hell-load-theme-no-confirm t)
-    (load-theme (cdr (assoc 'dark heaven-and-hell-themes)) t)
-    :hook (after-init . heaven-and-hell-init-hook)
-    :bind ("<f5>" . red/toggle-theme))
-
-  (defun red/toggle-theme ()
-    (interactive)
-      (red/default-font)
-      (heaven-and-hell-toggle-theme))
-
-  (defun red/c64-theme ()
-    (interactive)
-    (dolist (theme custom-enabled-themes)
-      (disable-theme theme))
-    (set-face-attribute 'default nil :font "BigBlueTerm437 Nerd Font" :height 130 :weight 'Regular)
-    (load-theme 'c64)
+  (use-package consult
+    :hook (completion-list-mode . consult-preview-at-point-mode)
+    :init (advice-add #'register-preview :override #'consult-register-window)
+    :custom
+    (register-preview-delay 0.5)
+    (register-preview-function #'consult-register-format)
+    (xref-show-xrefs-function #'consult-xref)
+    (xref-show-definitions-function #'consult-xref)
     )
-
-  (global-set-key (kbd "<f6>") 'red/c64-theme)
 #+end_src
 
-**** Fonts
+***** orderless
 #+begin_src emacs-lisp
-  (defun red/default-font ()
+  (use-package orderless
+    :custom
+    (completion-styles '(orderless basic))
+    (completion-category-defaults nil)
+    (completion-category-overrides '((file (styles basic partial-completion)))))
+#+end_src
+
+***** Marginalia
+#+begin_src emacs-lisp
+  (use-package marginalia
+    :after vertico
+    :init (marginalia-mode))
+#+end_src
+
+***** Savehist
+#+begin_src emacs-lisp
+  (use-package savehist
+    :ensure nil
+    :init (savehist-mode))
+#+end_src
+
+***** Vertico
+#+begin_src emacs-lisp
+  (use-package vertico
+    :hook (minibuffer-setup-hook . cursor-intangible-mode)
+    :init (vertico-mode)
+    :custom
+    (enable-recursive-minibuffers t)
+    (minibuffer-prompt-properties
+     '(read-only t cursor-intangible t face minibuffer-prompt))
+    (read-extended-command-predicate #'command-completion-default-include-p)
+    (vertico-count 20)
+    (vertico-cycle t)
+    (vertico-resize t)
+    (vertico-scroll-margin 0))
+
+  (use-package vertico-posframe
+    :config
+    (vertico-posframe-mode))
+#+end_src
+
+**** Move-text
+#+begin_src emacs-lisp
+  (use-package move-text
+    :config (move-text-default-bindings))
+#+end_src
+
+**** Org
+#+begin_src emacs-lisp
+  (use-package org
+    :ensure nil
+    :config (load-library "org-tempo"))
+#+end_src
+
+***** Auto Tangle
+#+begin_src emacs-lisp
+  (use-package org-auto-tangle
+    :hook (org-mode . org-auto-tangle-mode))
+#+end_Src
+
+***** Modern
+Make org documents prettier
+#+begin_src emacs-lisp
+  (use-package org-modern
+    :hook (org-mode . org-modern-mode))
+#+end_src
+
+***** Superstar
+Replaces org-bullets
+#+begin_src emacs-lisp
+  (use-package org-superstar
+    :hook (org-mode . org-superstar-mode))
+#+end_src
+
+***** TOC
+#+begin_src emacs-lisp
+  (use-package toc-org
+    :hook (org-mode . toc-org-mode))
+#+end_src
+
+**** Programming
+***** Eglot
+#+begin_src emacs-lisp
+  (use-package jsonrpc :ensure (:wait t))
+
+  (use-package eglot
+    :commands eglot-ensure
+    :after (eldoc project flycheck jsonrpc)
+    :config
+    (advice-add 'jsonrpc--log-event :override #'ignore)
+    (setopt eglot-events-buffer-size 10)
+    :custom
+    (eglot-autoshutdown t)
+    (eglot-sync-connect nil)
+    (eglot-extend-to-xref t)
+    (eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
+    :defer t
+    :hook
+    ((eglot--managed-mode-hook . (lambda () (flymake-mode -1)))
+     (c-ts-mode . eglot-ensure)
+     (c++-ts-mode . eglot-ensure)
+     (cmake-ts-mode-hook . eglot-ensure)
+     (gdscript-mode . eglot-ensure)
+     (go-ts-mode . eglot-ensure)
+     (js-ts-mode . eglot-ensure)
+     (python-ts-mode . eglot-ensure)
+     (rustic-mode . eglot-ensure)
+     (typescript-ts-mode . eglot-ensure)))
+
+  (use-package flycheck-eglot
+    :after (eglot)
+    :config (global-flycheck-eglot-mode t))
+#+end_src
+
+***** Eldoc
+Strange workaround for loading before elpaca activation
+#+begin_src emacs-lisp
+  (unload-feature 'eldoc t)
+  (setq custom-delayed-init-variables '())
+  (defvar global-eldoc-mode nil)
+  (elpaca eldoc
+    (require 'eldoc)
+    (global-eldoc-mode)
+    (provide 'eldoc))
+
+  (use-package eldoc-box
+    :hook
+    (eglot-managed-mode . eldoc-box-hover-mode)
+    :custom
+    (eldoc-box-max-pixel-width 1024))
+#+end_src
+
+***** Folding
+#+begin_src emacs-lisp
+  (use-package ts-fold
+    :after tree-sitter
+    :ensure (:host github :repo "emacs-tree-sitter/ts-fold")
+    :init (global-ts-fold-mode)
+    :bind
+    (:map global-map
+	  ("C-c f O" . ts-fold-open-all)
+	  ("C-c f o" . ts-fold-open-recursively)
+	  ("C-c f C" . ts-fold-close-all)
+	  ("C-c f c" . ts-fold-close)
+	  ("C-c f z" . ts-fold-toggle)))
+#+end_src
+
+***** Projectile
+#+begin_src emacs-lisp
+  (use-package projectile
+    :bind-keymap ("C-c p" . projectile-command-map)
+    :config (projectile-global-mode)
+    :custom
+    (projectile-mode-line nil)
+    (projectile-project-root-file-bottom-up
+     '(".git" ".projectile"))
+    (projectile-indexing-method 'alien)
+    (projectile-enable-caching nil)
+    (projectile-verbose nil)
+    )
+#+end_src
+
+***** Tree-Sitter
+#+begin_src emacs-lisp
+  (use-package tree-sitter
+    :config (global-tree-sitter-mode))
+
+  (use-package tree-sitter-langs)
+
+  (use-package treesit-auto
+    :config
+    (global-treesit-auto-mode)
+    (dolist (source treesit-language-source-alist)
+    (unless (treesit-ready-p (car source))
+      (treesit-install-language-grammar (car source))))
+    :custom
+    (css-folding-definitions
+	(block   . ts-fold-range-seq)
+	(comment . ts-fold-range-c-like-comment))
+    (treesit-auto-install 'prompt))
+#+end_src
+
+**** Rainbow
+#+begin_src emacs-lisp
+  (use-package rainbow-mode
+    :hook (prog-mode . rainbow-mode))
+#+end_src
+
+**** Rainbow Delimiters
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+    :hook (prog-mode . rainbow-delimiters-mode))
+#+end_src
+
+**** Terminal
+***** Eshell
+#+begin_src emacs-lisp
+  (use-package eshell
+    :ensure nil
+    :bind ("C-x RET" . eshell))
+#+end_src
+
+***** VTerm
+#+begin_src emacs-lisp
+  (use-package vterm
+    :bind ("C-x t RET" . vterm))
+#+end_src
+
+**** Vundo
+#+begin_src emacs-lisp
+  (use-package vundo
+    :bind ("C-x u" . vundo)
+    :custom (vundo-glyph-alist vundo-unicode-symbols))
+#+end_src
+
+**** Which-key
+#+begin_src emacs-lisp
+  (use-package which-key
+    :defer t
+    :init (which-key-mode)
+    :custom
+    (which-key-idle-delay 1))
+#+end_Src
+
+**** Window Management
+***** Eyebrowse
+#+begin_src emacs-lisp
+  (use-package eyebrowse
+    :if (not (string= (getenv "EXWM_ENABLE") "t"))
+    :bind (("M-1" . eyebrowse-switch-to-window-config-1)
+	   ("M-2" . eyebrowse-switch-to-window-config-2)
+	   ("M-3" . eyebrowse-switch-to-window-config-3)
+	   ("M-4" . eyebrowse-switch-to-window-config-4)
+	   ("M-5" . eyebrowse-switch-to-window-config-5)
+	   ("M-6" . eyebrowse-switch-to-window-config-6)
+	   ("M-7" . eyebrowse-switch-to-window-config-7)
+	   ("M-8" . eyebrowse-switch-to-window-config-8)
+	   ("M-9" . eyebrowse-switch-to-window-config-9)
+	   ("M-0" . eyebrowse-switch-to-window-config-0))
+    :config
+    (setq eyebrowse-new-workspace t)
+    (eyebrowse-mode))
+#+end_src
+
+***** Swith Window
+#+begin_src emacs-lisp
+  (use-package switch-window
+    :bind ("C-x o" . switch-window)
+    :custom
+    (switch-window-shortcut-style 'qwerty)
+    (switch-window-qwerty-shortcuts
+     '("a" "r" "s" "t" "n" "e" "i" "o")))
+#+end_src
+
+*** Theme
+**** All-the-icons
+#+begin_src emacs-lisp
+  (use-package all-the-icons)
+  (use-package all-the-icons-dired :hook (dired-mode . all-the-icons-dired-mode))
+  (use-package all-the-icons-nerd-fonts)
+#+end_Src
+
+**** Font
+#+begin_src emacs-lisp
+  (defun my/default-font ()
     (interactive)
     (set-face-attribute 'default nil
-                        :font "IosevkaTerm Nerd Font"
-                        :height 120
-                        :weight 'Regular)
+			:font "BlexMono Nerd Font"
+			:height 100
+			:weight 'Medium)
     (set-face-attribute 'fixed-pitch nil
-                        :weight 'bold)
+			:weight 'bold)
     (set-face-attribute 'font-lock-comment-face nil
-                        :slant 'italic)
+			:slant 'italic)
     (set-face-attribute 'font-lock-keyword-face nil
-                        :slant 'italic)
+			:slant 'italic)
     (set-face-attribute 'font-lock-string-face nil
-                        :slant 'italic)
+			:slant 'italic)
     (set-face-attribute 'org-quote nil
-                        :slant 'italic)
+			:slant 'italic)
 
     (when (string= system-name "red")
       (set-face-attribute 'default nil :height 130))
     (when (string= system-name "poseidon")
-      (set-face-attribute 'default nil :height 140))
+      (set-face-attribute 'default nil :height 140)))
 
-    (setq pixel-scroll-precision-mode 1)
-    (setq-default line-spacing 0.05)
-
-    (add-to-list 'default-frame-alist '(alpha-background . 98))
-    (setq global-prettify-symbols-mode t))
-
-  (red/default-font)
+  (my/default-font)
 #+end_src
 
-** C64 Theme
-#+begin_src emacs-lisp :tangle "~/.emacs.d/themes/c64-theme.el"
+**** Theme
+#+begin_src emacs-lisp
+  (use-package gruvbox-theme
+    :init (load-theme 'gruvbox-dark-soft))
 
-  ;;; c64-theme.el --- A theme based on the Commodore64
+  (use-package heaven-and-hell
+    :bind ("<f5>" . heaven-and-hell-toggle-theme)
+    :config
+    (load-theme (cdr (assoc 'dark heaven-and-hell-themes)) t)
+    (setq heaven-and-hell-load-theme-no-confirm t
+	  heaven-and-hell-theme-type 'dark
+	  heaven-and-hell-themes '((light . gruvbox-light-soft)
+				   (dark  . gruvbox-dark-soft)))
+    :hook (after-init . heaven-and-hell-init-hook))
+#+end_src
 
-  ;; Copyright (C) 2019-2020 Nahuel Jesús Sacchetti
-
-  ;; Author: Nahuel Jesús Sacchetti <me@nsacchetti.com>
-  ;; Author: Richard Redcroft <Richard@redcroft.tech>
-  ;; URL: http://github.com/elnawe/c64-theme
-  ;; Package-Version: 20250202
-  ;; Version: 1.1
-
-  ;;; Code:
-
-  (deftheme c64 "The Commodore64 inspired color theme")
-
-  (defgroup c64-theme nil
-    "Commodore64 theme."
-    :group 'faces
-    :prefix "c64-theme-"
-    :link '(url-link :tag "GitHub" "https://github.com/elnawe/c64-theme")
-    :tag "Commodore64 theme")
-
-  (defface org-bullets '()
-    "Custom face to be used in `org-bullets-mode'. Use this face in
-  `org-bullets-face-name' to activate. "
-    :group 'org-bullets-mode)
-
-  ;;; Colors from: https://www.c64-wiki.com/wiki/Color
-
-  (defvar c64-colors-alist
-    '(("c64-0"  . "#000000")   ; black
-      ("c64-1"  . "#FFFFFF")   ; white
-      ("c64-2"  . "#9f4e44")   ; red
-      ("c64-3"  . "#6abfc6")   ; cyan
-      ("c64-4"  . "#a057a3")   ; violet
-      ("c64-5"  . "#5cab5e")   ; green
-      ("c64-6"  . "#50459b")   ; blue
-      ("c64-7"  . "#c9d487")   ; yellow
-      ("c64-8"  . "#a1683c")   ; orange
-      ("c64-9"  . "#6d5412")   ; brown
-      ("c64-10" . "#cb7e75")   ; light red
-      ("c64-11" . "#626262")   ; dark grey
-      ("c64-12" . "#898989")   ; grey
-      ("c64-13" . "#9ae29b")   ; light green
-      ("c64-14" . "#887ecb")   ; light blue
-      ("c64-15" . "#adadad"))  ; light grey
-    "List of colors for the Commodore64 theme.")
-
-  (defmacro with-c64-color-variables (&rest body)
-    "Binds all the colors from `c64-colors-alist' around
-  `body'. Use this macro to wrap the `custom-set-faces' in order to
-  access the `c64' theme color variables."
-    (declare (indent 0))
-    `(let (,@(mapcar (lambda (cons)
-                       (list (intern (car cons)) (cdr cons)))
-                     c64-colors-alist))
-       ,@body))
-
-  ;;; Theme
-
-  (with-c64-color-variables
-   (custom-theme-set-faces
-    'c64
-     `(beacon-fallback-background ((t (:background ,c64-1 :foreground unspecified))))
-     `(bold ((t (:background unspecified :bold t :foreground unspecified))))
-     `(bold-italic ((t (:background unspecified :bold t :foreground unspecified :italic t))))
-     `(bookmark-menu-bookmark ((t (:bold t))))
-     `(bookmark-menu-heading ((t (:foreground ,c64-7))))
-     `(border ((t (:foreground ,c64-15))))
-     `(buffer-menu-buffer ((t (:bold t :foreground ,c64-1))))
-     `(button ((t (:bold t :foreground ,c64-3 :underline nil))))
-     `(calendar-month-header ((t (:foreground ,c64-1))))
-     `(calendar-today ((t (:bold t :foreground ,c64-1))))
-     `(calendar-weekday-header ((t (:foreground ,c64-1))))
-     `(calendar-weekend-header ((t (:foreground ,c64-15))))
-     `(comint-highlight-input ((t (:bold t :foreground ,c64-1))))
-     `(comint-highlight-prompt ((t (:foreground ,c64-3))))
-     `(company-echo ((t (:foreground ,c64-1))))
-     `(company-echo-common ((t (:foreground ,c64-7))))
-     `(company-preview ((t (:background unspecified :foreground ,c64-7))))
-     `(company-preview-common ((t (:background unspecified :foreground ,c64-7))))
-     `(company-preview-search ((t (:background ,c64-14 :foreground ,c64-1))))
-     `(company-scrollbar-bg ((t (:background ,c64-12 :foreground ,c64-12))))
-     `(company-scrollbar-fg ((t (:background ,c64-11 :foreground ,c64-11))))
-     `(company-tooltip ((t (:background ,c64-15 :foreground ,c64-0))))
-     `(company-tooltip-annotation ((t (:background unspecified :foreground ,c64-9))))
-     `(company-tooltip-annotation-selection ((t (:background unspecified :foreground ,c64-9))))
-     `(company-tooltip-common ((t (:background unspecified :foreground ,c64-11))))
-     `(company-tooltip-common-selection ((t (:background unspecified :foreground ,c64-11))))
-     `(company-tooltip-mouse ((t (:background ,c64-7))))
-     `(company-tooltip-search ((t (:background ,c64-7))))
-     `(company-tooltip-search-selection ((t (:background ,c64-7))))
-     `(company-tooltip-selection ((t (:background ,c64-1))))
-     `(compilation-column-number ((t (:foreground ,c64-15))))
-     `(compilation-error ((t (:bold t :foreground ,c64-10))))
-     `(compilation-info (( t (:bold t :foreground ,c64-5))))
-     `(compilation-line-number ((t (:bold t :foreground ,c64-1))))
-     `(compilation-mode-line-exit ((t (:bold t :foreground ,c64-5))))
-     `(compilation-mode-line-fail ((t (:bold t :foreground ,c64-10))))
-     `(compilation-mode-line-run ((t (:bold t :foreground ,c64-8))))
-     `(compilation-warning ((t (:bold t :foreground ,c64-8))))
-     `(completions-annotations ((t (:italic t))))
-     `(completions-common-part ((t (:foreground ,c64-1))))
-     `(completions-first-difference ((t (:bold t :foreground ,c64-1))))
-     `(cursor ((t (:inherit default :inverse-video t))))
-     `(custom-button
-       ((t (:background ,c64-15 :box (:color ,c64-0 :line-width 2 :style released-button)
-                        :foreground ,c64-0))))
-     `(custom-button-mouse
-       ((t (:background ,c64-1 :box (:color ,c64-0 :line-width 1 :style nil)
-                        :foreground ,c64-0))))
-     `(custom-button-pressed
-       ((t (:background ,c64-15 :box (:color ,c64-0 :line-width 3 :style pressed-button)
-                        :foreground ,c64-0))))
-     `(custom-button-pressed-unraised
-       ((t (:background unspecified :box nil :foreground ,c64-4 :underline t))))
-     `(custom-button-unraised
-       ((t (:background unspecified :box nil :foreground ,c64-1 :underline t))))
-     `(custom-changed ((t (:background ,c64-14 :foreground ,c64-1))))
-     `(custom-comment ((t (:background ,c64-12 :foreground ,c64-1))))
-     `(custom-comment-tag ((t (:background unspecified :foreground ,c64-12))))
-     `(custom-documentation ((t (:background unspecified :foreground ,c64-1))))
-     `(custom-face-tag ((t (:background unspecified :bold t :foreground ,c64-3))))
-     `(custom-group-subtitle ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(custom-group-tag ((t (:background unspecified :bold t :foreground ,c64-3 :height 150))))
-     `(custom-group-tag-1 ((t (:background unspecified :bold t :foreground ,c64-10 :height 150))))
-     `(custom-invalid ((t (:background ,c64-15 :foreground ,c64-2))))
-     `(custom-link ((t (:background unspecified :foreground ,c64-3 :underline t))))
-     `(custom-modified ((t (:background ,c64-14 :foreground ,c64-1))))
-     `(custom-rogue ((t (:background ,c64-0 :foreground ,c64-8))))
-     `(custom-saved ((t (:background unspecified :foreground ,c64-15 :underline t))))
-     `(custom-set ((t (:background ,c64-1 :foreground ,c64-6))))
-     `(custom-state ((t (:background unspecified :foreground ,c64-5))))
-     `(custom-themed ((t (:background ,c64-14 :foreground ,c64-6))))
-     `(custom-variable-button
-       ((t (:background unspecified :bold t :foreground ,c64-1 :underline t))))
-     `(custom-variable-tag ((t (:background unspecified :bold t :foreground ,c64-3))))
-     `(custom-visibility
-       ((t (:background unspecified :foreground ,c64-14 :height 90 :underline t))))
-     `(dashboard-banner-logo-title ((t (:background unspecified :foreground ,c64-1 :height 140))))
-     `(dashboard-footer ((t (:background unspecified :foreground ,c64-15))))
-     `(dashboard-heading ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(dashboard-navigator ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(dashboard-text-banner ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(default ((t (:background ,c64-6 :foreground ,c64-14))))
-     `(diary ((t (:background unspecified :foreground ,c64-7))))
-     `(diary-anniversary ((t (:background unspecified :bold t :foreground ,c64-7))))
-     `(diary-button
-       ((t (:background ,c64-15 :box (:color ,c64-0) :foreground ,c64-0))))
-     `(diary-time ((t (:background unspecified :foreground ,c64-1))))
-     `(diff-added ((t (:background ,c64-13 :foreground ,c64-0))))
-     `(diff-changed ((t (:background unspecified :foreground ,c64-1))))
-     `(diff-context ((t (:background unspecified :foreground ,c64-15))))
-     `(diff-file-header ((t (:background ,c64-15 :bold t :foreground ,c64-1))))
-     `(diff-function ((t (:background ,c64-12 :foreground ,c64-1))))
-     `(diff-header ((t (:background ,c64-12 :foreground ,c64-1))))
-     `(diff-hunk-header ((t (:background ,c64-12 :foreground ,c64-1))))
-     `(diff-index ((t (:background ,c64-15 :bold t :foreground ,c64-1))))
-     `(diff-indicator-added ((t (:background ,c64-13 :foreground ,c64-0))))
-     `(diff-indicator-changed ((t (:background unspecified :foreground ,c64-1))))
-     `(diff-indicator-removed ((t (:background ,c64-10 :foreground ,c64-0))))
-     `(diff-nonexistent ((t (:background ,c64-15 :bold t :foreground ,c64-1))))
-     `(diff-refine-added ((t (:background ,c64-13 :foreground ,c64-0))))
-     `(diff-refine-changed ((t (:background ,c64-7 :foreground ,c64-0))))
-     `(diff-refine-removed ((t (:background ,c64-10 :foreground ,c64-0))))
-     `(diff-removed ((t (:background ,c64-10 :foreground ,c64-0))))
-     `(dired-directory ((t (:background ,c64-1 :bold t :foreground ,c64-6))))
-     `(dired-flagged ((t (:background unspecified :bold t :foreground ,c64-7))))
-     `(dired-header ((t (:background unspecified :bold t :foreground ,c64-5 :height 130))))
-     `(dired-ignored ((t (:background unspecified :foreground ,c64-15))))
-     `(dired-mark ((t (:background unspecified :foreground ,c64-4))))
-     `(dired-marked ((t (:background unspecified :bold t :foreground ,c64-4))))
-     `(dired-perm-write ((t (:background unspecified :foreground ,c64-14))))
-     `(dired-symlink ((t (:background unspecified :bold nil :foreground ,c64-1 :italic t))))
-     `(dired-warning ((t (:background unspecified :bold t :foreground ,c64-10))))
-     `(eldoc-highlight-function-argument ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(epa-field-body ((t (:background unspecified :foreground ,c64-3 :italic t))))
-     `(epa-field-name ((t (:background unspecified :bold t :foreground ,c64-3))))
-     `(epa-mark ((t (:background unspecified :bold t :foreground ,c64-4))))
-     `(epa-string ((t (:background unspecified :foreground ,c64-1))))
-     `(epa-validity-disabled ((t (:background ,c64-15 :foreground ,c64-11 :italic t))))
-     `(epa-validity-high ((t (:background unspecified :bold t :foreground ,c64-3))))
-     `(epa-validity-low ((t (:background unspecified :foreground ,c64-1 :italic t))))
-     `(epa-validity-medium ((t (:background unspecified :foreground ,c64-3 :italic t))))
-     `(error ((t (:background unspecified :bold t :foreground ,c64-10))))
-     `(escape-glyph ((t (:background unspecified :foreground ,c64-3))))
-     `(fancy-battery-charging ((t (:background ,c64-5 :bold t :foreground ,c64-0))))
-     `(fancy-battery-critical ((t (:background ,c64-10 :bold t :foreground ,c64-0))))
-     `(fancy-battery-discharging ((t (:background unspecified :foreground unspecified))))
-     `(file-name-shadow ((t (:background unspecified :foreground ,c64-15))))
-     `(fixed-pitch ((t (:background unspecified :foreground ,c64-15))))
-     `(fixed-pitch-serif ((t (:background unspecified :family "Monospace Serif" :foreground ,c64-1))))
-     `(flyspell-duplicate ((t (:background unspecified :foreground unspecified :underline (:color ,c64-10 :style wave)))))
-     `(flyspell-incorrect ((t (:background unspecified :foreground unspecified :color (:underline ,c64-10 :style wave)))))
-     `(font-lock-builtin-face ((t (:background unspecified :bold nil :foreground ,c64-15))))
-     `(font-lock-comment-delimiter-face ((t (:background unspecified :foreground ,c64-12))))
-     `(font-lock-comment-face ((t (:background unspecified :foreground ,c64-12))))
-     `(font-lock-constant-face ((t (:background unspecified :foreground ,c64-3))))
-     `(font-lock-doc-face ((t (:background unspecified :foreground ,c64-14))))
-     `(font-lock-function-name-face ((t (:background unspecified :foreground ,c64-7))))
-     `(font-lock-keyword-face ((t (:background unspecified :bold t :foreground ,c64-3))))
-     `(font-lock-negation-char-face ((t (:background unspecified :foreground ,c64-10))))
-     `(font-lock-preprocessor-face ((t (:background unspecified :bold t :foreground ,c64-14))))
-     `(font-lock-regexp-grouping-backslash ((t (:background unspecified :bold t :foreground ,c64-14))))
-     `(font-lock-regexp-grouping-construct ((t (:background unspecified :bold t :foreground ,c64-14))))
-     `(font-lock-string-face ((t (:background unspecified :foreground ,c64-14))))
-     `(font-lock-type-face ((t (:background unspecified :foreground ,c64-13))))
-     `(font-lock-variable-name-face ((t (:background unspecified :foreground ,c64-15))))
-     `(font-lock-warning-face ((t (:background unspecified :bold t :foreground ,c64-10))))
-     `(fringe ((t (:background ,c64-6 :foreground ,c64-0))))
-     `(glyphless-char ((t (:background unspecified :foreground unspecified :height 80))))
-     `(gnus-button ((t (:background unspecified :bold t :foreground unspecified))))
-     `(gnus-emphasis-bold ((t (:background unspecified :bold t :foreground unspecified))))
-     `(gnus-emphasis-bold-italic ((t (:background unspecified :bold t :foreground unspecified :italic t))))
-     `(gnus-emphasis-highlight-words ((t (:background ,c64-7 :foreground ,c64-0))))
-     `(gnus-emphasis-italic ((t (:background unspecified :foreground unspecified :italic t))))
-     `(gnus-emphasis-strikethru ((t (:background unspecified :foreground unspecified :strike-through t))))
-     `(gnus-emphasis-underline ((t (:background unspecified :foreground unspecified :underline t))))
-     `(gnus-emphasis-underline-bold ((t (:background unspecified :bold t :foreground unspecified :underline t))))
-     `(gnus-emphasis-underline-bold-italic ((t (:background unspecified :bold t :foreground unspecified :italic t :underline t))))
-     `(gnus-emphasis-underline-italic ((t (:background unspecified :foreground unspecified :italic t :underline t))))
-     `(gnus-group-mail-1 ((t (:background unspecified :bold t :foreground ,c64-7))))
-     `(gnus-group-mail-1-empty ((t (:background unspecified :foreground ,c64-7))))
-     `(gnus-group-mail-2 ((t (:background unspecified :bold t :foreground ,c64-13))))
-     `(gnus-group-mail-2-empty ((t (:background unspecified :foreground ,c64-13))))
-     `(gnus-group-mail-3 ((t (:background unspecified :bold t :foreground ,c64-3))))
-     `(gnus-group-mail-3-empty ((t (:background unspecified :foreground ,c64-3))))
-     `(gnus-group-mail-low ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(gnus-group-mail-low-empty ((t (:background unspecified :foreground ,c64-1))))
-     `(gnus-group-news-1 ((t (:background unspecified :bold t :foreground ,c64-7))))
-     `(gnus-group-news-1-empty ((t (:background unspecified :foreground ,c64-7))))
-     `(gnus-group-news-2 ((t (:background unspecified :bold t :foreground ,c64-13))))
-     `(gnus-group-news-2-empty ((t (:background unspecified :foreground ,c64-13))))
-     `(gnus-group-news-3 ((t (:background unspecified :bold t :foreground ,c64-3))))
-     `(gnus-group-news-3-empty ((t (:background unspecified :foreground ,c64-3))))
-     `(gnus-group-news-4 ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(gnus-group-news-4-empty ((t (:background unspecified :foreground ,c64-1))))
-     `(gnus-group-news-5 ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(gnus-group-news-5-empty ((t (:background unspecified :foreground ,c64-1))))
-     `(gnus-group-news-6 ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(gnus-group-news-6-empty ((t (:background unspecified :foreground ,c64-1))))
-     `(gnus-group-news-low ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(gnus-group-news-low-empty ((t (:background unspecified :foreground ,c64-1))))
-     `(gnus-header-content ((t (:background unspecified :foreground ,c64-15 :italic t))))
-     `(gnus-header-from ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(gnus-header-name ((t (:background unspecified :bold t :foreground ,c64-15))))
-     `(gnus-header-newsgroups ((t (:background unspecified :foreground ,c64-7 :italic t))))
-     `(gnus-header-subject ((t (:background unspecified :bold t :foreground ,c64-3))))
-     `(gnus-server-agent ((t (:background unspecified :foreground ,c64-14))))
-     `(gnus-server-closed ((t (:background unspecified :foreground ,c64-15 :italic t))))
-     `(gnus-server-cloud ((t (:background unspecified :bold t :foreground ,c64-13))))
-     `(gnus-server-cloud-host ((t (:background ,c64-13 :foreground ,c64-6 :italic t))))
-     `(gnus-server-denied ((t (:background unspecified :bold t :foreground ,c64-10))))
-     `(gnus-server-offline ((t (:background unspecified :bold t :foreground ,c64-12))))
-     `(gnus-server-opened ((t (:background unspecified :bold t :foreground ,c64-13))))
-     `(gnus-signature ((t (:background unspecified :foreground ,c64-15))))
-     `(gnus-splash ((t (:background unspecified :foreground ,c64-15))))
-     `(gnus-summary-cancelled ((t (:background ,c64-0 :foreground ,c64-7))))
-     `(gnus-summary-high-ancient ((t (:background unspecified :bold t :foreground ,c64-14))))
-     `(gnus-summary-high-read ((t (:background unspecified :bold t :foreground ,c64-13))))
-     `(gnus-summary-high-ticked ((t (:background unspecified :bold t :foreground ,c64-7))))
-     `(gnus-summary-high-undownloaded ((t (:background unspecified :bold t :foreground ,c64-15))))
-     `(gnus-summary-high-unread ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(gnus-summary-low-ancient ((t (:background unspecified :foreground ,c64-14 :italic t))))
-     `(gnus-summary-low-read ((t (:background unspecified :foreground ,c64-13 :italic t))))
-     `(gnus-summary-low-ticked ((t (:background unspecified :foreground ,c64-7 :italic t))))
-     `(gnus-summary-low-undownloaded ((t (:background unspecified :foreground ,c64-15 :italic t))))
-     `(gnus-summary-low-unread ((t (:background unspecified :foreground ,c64-1 :italic t))))
-     `(gnus-summary-normal-ancient ((t (:background unspecified :foreground ,c64-14))))
-     `(gnus-summary-normal-read ((t (:background unspecified :foreground ,c64-13))))
-     `(gnus-summary-normal-ticked ((t (:background unspecified :foreground ,c64-7))))
-     `(gnus-summary-normal-undownloaded ((t (:background unspecified :foreground ,c64-15))))
-     `(gnus-summary-normal-unread ((t (:background unspecified :foreground ,c64-1))))
-     `(gnus-summary-selected ((t (:background unspecified :foreground unspecified :underline t))))
-     `(header-line ((t (:background ,c64-6 :foreground ,c64-1))))
-     `(header-line-highlight ((t (:background ,c64-7 :foreground ,c64-0))))
-     `(helm-M-x-key ((t (:background unspecified :foreground ,c64-13 :underline t))))
-     `(helm-action ((t (:background unspecified :foreground ,c64-1 :underline t))))
-     `(helm-bookmark-addressbook ((t (:background unspecified :foreground ,c64-7))))
-     `(helm-bookmark-directory ((t (:inherit dired-directory))))
-     `(helm-bookmark-file ((t (:background unspecified :foreground ,c64-7))))
-     `(helm-bookmark-file-not-found ((t (:background unspecified :foreground ,c64-15))))
-     `(helm-bookmark-gnus ((t (:background unspecified :foreground ,c64-4))))
-     `(helm-bookmark-info ((t (:background unspecified :foreground ,c64-13))))
-     `(helm-bookmark-man ((t (:background unspecified :foreground ,c64-8))))
-     `(helm-bookmark-w3m ((t (:background unspecified :foreground ,c64-14))))
-     `(helm-buffer-archive ((t (:background unspecified :foreground ,c64-8))))
-     `(helm-buffer-directory ((t (:inherit dired-directory))))
-     `(helm-buffer-file ((t (:background unspecified :bold nil :foreground ,c64-1))))
-     `(helm-buffer-modified ((t (:background unspecified :bold nil :foreground ,c64-13))))
-     `(helm-buffer-not-saved ((t (:background unspecified :foreground ,c64-10))))
-     `(helm-buffer-process ((t (:background unspecified :foreground ,c64-14))))
-     `(helm-buffer-saved-out ((t (:background ,c64-0 :foreground ,c64-10))))
-     `(helm-buffer-size ((t (:background unspecified :foreground ,c64-4))))
-     `(helm-candidate-number ((t (:background ,c64-15 :bold t :foreground ,c64-0))))
-     `(helm-candidate-number-suspended ((t (:bold t :inherit mode-line-inactive))))
-     `(helm-delete-async-message ((t (:background unspecified :foreground ,c64-7))))
-     `(helm-eob-line ((t (:background unspecified :foreground ,c64-1))))
-     `(helm-etags-file ((t (:background unspecified :foreground ,c64-12 :underline t))))
-     `(helm-ff-denied ((t (:background ,c64-0 :foreground ,c64-10))))
-     `(helm-ff-directory ((t (:inherit dired-directory))))
-     `(helm-ff-dirs ((t (:inherit default))))
-     `(helm-ff-dotted-directory ((t (:background unspecified :foreground ,c64-15))))
-     `(helm-ff-dotted-symlink-directory ((t (:background ,c64-15 :foreground ,c64-11))))
-     `(helm-ff-executable ((t (:background unspecified :foreground ,c64-13))))
-     `(helm-ff-file ((t (:background unspecified :bold nil :foreground ,c64-1))))
-     `(helm-ff-invalid-symlink ((t (:background ,c64-2 :foreground ,c64-1))))
-     `(helm-ff-pipe ((t (:background ,c64-0 :foreground ,c64-7))))
-     `(helm-ff-prefix ((t (:background ,c64-7 :foreground ,c64-0))))
-     `(helm-ff-socket ((t (:background unspecified :foreground ,c64-10))))
-     `(helm-ff-suid ((t (:background ,c64-10 :foreground ,c64-1))))
-     `(helm-ff-symlink ((t (:background unspecified :foreground ,c64-1 :italic t))))
-     `(helm-ff-truename ((t (:background unspecified :foreground ,c64-15))))
-     `(helm-grep-cmd-line ((t (:background unspecified :foreground ,c64-15))))
-     `(helm-grep-file ((t (:backgound unspecified :foreground ,c64-7 :underline t))))
-     `(helm-grep-finish ((t (:background unspecified :foreground ,c64-13))))
-     `(helm-grep-lineno ((t (:backgound unspecified :foreground ,c64-8))))
-     `(helm-grep-match ((t (:background unspecified :foreground ,c64-7))))
-     `(helm-header ((t (:background unspecified :foreground ,c64-1))))
-     `(helm-header-line-left-margin ((t (:background ,c64-7 :foreground ,c64-0))))
-     `(helm-helper ((t (:background unspecified :foreground unspecified))))
-     `(helm-history-delete ((t (:background ,c64-10 :foreground ,c64-1))))
-     `(helm-history-remote ((t (:background unspecified :foreground ,c64-4))))
-     `(helm-lisp-completion-info ((t (:background unspecified :foreground ,c64-10))))
-     `(helm-lisp-show-completion ((t (:background ,c64-11 :foreground ,c64-1))))
-     `(helm-locate-finish ((t (:background unspecified :foreground ,c64-13))))
-     `(helm-match ((t (:background unspecified :foreground ,c64-5))))
-     `(helm-match-item ((t (:background ,c64-10 :foreground ,c64-2))))
-     `(helm-minibuffer-prompt ((t (:background unspecified :foreground ,c64-3))))
-     `(helm-moccur-buffer ((t (:background unspecified :foreground ,c64-3 :underline t))))
-     `(helm-mode-prefix ((t (:background ,c64-2 :foreground ,c64-1))))
-     `(helm-non-file-buffer ((t (:background unspecified :foreground ,c64-15 :italic t))))
-     `(helm-prefarg ((t (:background unspecified :foreground ,c64-13))))
-     `(helm-resume-need-update ((t (:background ,c64-10 :foreground ,c64-0))))
-     `(helm-selection ((t (:background ,c64-1 :bold t :foreground ,c64-0))))
-     `(helm-selection-line ((t (:background ,c64-12 :foreground ,c64-1))))
-     `(helm-separator ((t (:background unspecified :foreground ,c64-10))))
-     `(helm-source-header ((t (:background ,c64-11 :box nil :foreground ,c64-1 :height 130))))
-     `(helm-visible-mark ((t (:background ,c64-13 :foreground ,c64-0))))
-     `(helm-argument-name ((t (:background unspecified :foreground unspecified :italic t))))
-     `(hi-black-b ((t (:background unspecified :bold t :foreground unspecified))))
-     `(hi-black-hb ((t (:background unspecified :bold t :foreground unspecified :height 150))))
-     `(hi-blue ((t (:background ,c64-14 :foreground ,c64-0))))
-     `(hi-blue-b ((t (:background unspecified :foreground ,c64-14))))
-     `(hi-green ((t (:background ,c64-5 :foreground ,c64-0))))
-     `(hi-green-b ((t (:background unspecified :foreground ,c64-5))))
-     `(hi-pink ((t (:background ,c64-10 :foreground ,c64-0))))
-     `(hi-red-b ((t (:background unspecified :foreground ,c64-10))))
-     `(hi-yellow ((t (:background ,c64-7 :foreground ,c64-0))))
-     `(highlight ((t (:background ,c64-1 :foreground ,c64-6))))
-     `(hl-line ((t (:background ,c64-14 :foreground ,c64-6))))
-     `(holiday ((t (:background ,c64-9 :foreground ,c64-1))))
-     `(homoglyph ((t (:background unspecified :foreground ,c64-3))))
-     `(ibuffer-locked-buffer ((t (:background unspecified :foreground ,c64-8))))
-     `(internal-border ((t (:background unspecified :foreground ,c64-1))))
-     `(isearch ((t (:background ,c64-13 :foreground ,c64-6))))
-     `(isearch-fail ((t (:background ,c64-2 :foreground ,c64-1))))
-     `(italic ((t (:background unspecified :foreground unspecified :italic t))))
-     `(lazy-highlight ((t (:background ,c64-12 :foreground ,c64-1))))
-     `(line-number ((t (:background ,c64-14 :foreground ,c64-6))))
-     `(line-number-current-line ((t (:background unspecified :foreground ,c64-1))))
-     `(link ((t (:background unspecified :foreground ,c64-3 :underline t))))
-     `(link-visited ((t (:background unspecified :foreground ,c64-4 :underline t))))
-     `(linum ((t (:background ,c64-14 :foreground ,c64-6))))
-     `(match ((t (:background ,c64-13 :foreground ,c64-0))))
-     `(menu ((t (:background unspecified :foreground ,c64-1))))
-     `(message-cited-text ((t (:background unspecified :foreground ,c64-15 :italic t))))
-     `(message-header-cc (( t (:background unspecified :foreground ,c64-1))))
-     `(message-header-name ((t (:background unspecified :bold t :foreground ,c64-15))))
-     `(message-header-newsgroups ((t (:background unspecified :foreground ,c64-7 :italic t))))
-     `(message-header-other ((t (:background unspecified :foreground ,c64-15))))
-     `(message-header-subject ((t (:background unspecified :bold t :foreground ,c64-3))))
-     `(message-header-to ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(message-header-xheader ((t (:background unspecified :foreground ,c64-14))))
-     `(message-mml ((t (:background unspecified :foreground ,c64-8))))
-     `(message-separator ((t (:background unspecified :foreground ,c64-5))))
-     `(minibuffer-prompt ((t (:background unspecified :bold t :foreground ,c64-3))))
-     `(mm-command-output ((t (:background unspecified :foreground ,c64-5))))
-     `(mm-uu-extract ((t (:background ,c64-5 :foreground ,c64-1))))
-     `(mode-line
-       ((t (:background ,c64-15 :box (:color ,c64-15 :line-width 2)
-                        :foreground ,c64-0))))
-     `(mode-line-buffer-id ((t (:background unspecified :bold t :foreground unspecified))))
-     `(mode-line-emphasis ((t (:background unspecified :bold t :foreground unspecified))))
-     `(mode-line-highlight ((t (:background ,c64-7 :bold t :foreground ,c64-0))))
-     `(mode-line-inactive
-       ((t (:background ,c64-11 :box (:color ,c64-11 :line-width 2)
-                        :foreground ,c64-1))))
-     `(mouse ((t (:inherit default))))
-     `(mouse-drag-and-drop-region ((t (:inherit default :inverse-video t))))
-     `(next-error ((t (:inherit error :inverse-video t))))
-     `(nobreak-hyphen ((t (:background unspecified :foreground ,c64-3))))
-     `(nobreak-space ((t (:background unspecified :foreground ,c64-3 :underline t))))
-
-     `(org-agenda-calendar-event ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(org-agenda-calendar-sexp ((t (:background unspecified :foreground unspecified))))
-     `(org-agenda-clocking
-       ((t (:background ,c64-7 :box (:color ,c64-7 :line-width 3)
-                        :distant-foreground ,c64-0 :foreground ,c64-0))))
-     `(org-agenda-column-dateline ((t (:background ,c64-12 :foreground ,c64-1))))
-     `(org-agenda-current-time ((t (:background unspecified :foreground ,c64-1 :italic t))))
-     `(org-agenda-date ((t (:background unspecified :bold t :foreground ,c64-3))))
-     `(org-agenda-date-today ((t (:height 140 :inherit org-agenda-date))))
-     `(org-agenda-date-weekend ((t (:bold nil :inherit org-agenda-date))))
-     `(org-agenda-diary ((t (:background unspecified :foreground ,c64-1))))
-     `(org-agenda-dimmed-todo-face ((t (:background unspecified :foreground ,c64-12))))
-     `(org-agenda-done ((t (:background unspecified :foreground ,c64-5 :strike-through t))))
-     `(org-agenda-filter-category ((t (:background ,c64-15 :foreground ,c64-0))))
-     `(org-agenda-filter-effort ((t (:background ,c64-15 :foreground ,c64-0))))
-     `(org-agenda-filter-regexp ((t (:background ,c64-15 :foreground ,c64-0))))
-     `(org-agenda-filter-tags ((t (:background ,c64-15 :foreground ,c64-0))))
-     `(org-agenda-restriction-lock ((t (:background ,c64-0 :foreground ,c64-1))))
-     `(org-agenda-structure ((t (:background unspecified :foreground ,c64-14 :height 180))))
-     `(org-archived ((t (:background unspecified :foreground ,c64-12))))
-     `(org-block ((t (:foreground ,c64-15))))
-     `(org-block-begin-line ((t (:foreground ,c64-14))))
-     `(org-block-end-line ((t (:foreground ,c64-14))))
-     `(org-bullets ((t (:height 60 :inherit default))))
-     `(org-checkbox ((t (:background ,c64-14 :bold t :foreground ,c64-1))))
-     `(org-checkbox-statistics-done ((t (:background ,c64-5 :bold t :foreground ,c64-1))))
-     `(org-checkbox-statistics-todo ((t (:background ,c64-2 :bold t :foreground ,c64-1))))
-     `(org-clock-overlay ((t (:background ,c64-14 :foreground ,c64-1))))
-     `(org-code ((t (:background ,c64-14 :foreground ,c64-7))))
-     `(org-column ((t (:background ,c64-11 :foreground ,c64-1))))
-     `(org-column-title ((t (:background ,c64-11 :bold t :foreground ,c64-1 :underline t))))
-     `(org-date ((t (:background unspecified :foreground ,c64-15))))
-     `(org-date-selected ((t (:background ,c64-3 :foreground ,c64-0))))
-     `(org-default ((t (:background unspecified :foreground ,c64-15))))
-     `(org-document-info ((t (:background unspecified :foreground ,c64-15))))
-     `(org-document-info-keyword ((t (:background unspecified :foreground ,c64-3))))
-     `(org-document-title ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(org-done ((t (:background unspecified :bold t :foreground ,c64-5))))
-     `(org-drawer ((t (:background unspecified :foreground ,c64-3))))
-     `(org-ellipsis ((t (:background unspecified :foreground ,c64-15 :underline nil))))
-     `(org-footnote ((t (:background unspecified :foreground ,c64-3 :underline t))))
-     `(org-formula ((t (:background unspecified :foreground ,c64-8))))
-     `(org-headline-done ((t (:background unspecified :foreground ,c64-15 :strike-through t))))
-     `(org-hide ((t (:background ,c64-6 :foreground ,c64-6))))
-     `(org-indent ((t (:background ,c64-6 :foreground ,c64-6))))
-     `(org-latex-and-related ((t (:background unspecified :foreground ,c64-8))))
-     `(org-level-1 ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(org-level-2 ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(org-level-3 ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(org-level-4 ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(org-level-5 ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(org-level-6 ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(org-level-7 ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(org-level-8 ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(org-link ((t (:background unspecified :foreground ,c64-3 :underline t))))
-     `(org-list-dt ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(org-macro ((t (:background unspecified :foreground ,c64-8))))
-     `(org-meta-line ((t (:background unspecified :foreground ,c64-15))))
-     `(org-mode-line-clock ((t (:inherit mode-line))))
-     `(org-mode-line-clock-overrun
-       ((t (:background ,c64-2 :box (:color ,c64-2) :foreground ,c64-1
-                        :inherit mode-line))))
-     `(org-priority ((t (:background unspecified :bold t :foreground ,c64-7))))
-     `(org-property-value ((t (:background unspecified :foreground ,c64-15))))
-     `(org-quote ((t (:background unspecified :foreground ,c64-15))))
-     `(org-recur ((t (:background unspecified :bold t :box t :foreground ,c64-15))))
-     `(org-scheduled ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(org-scheduled-previously ((t (:background unspecified :bold t :foreground ,c64-10))))
-     `(org-scheduled-today ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(org-sexp-date ((t (:inherit org-date))))
-     `(org-special-keyword ((t (:background unspecified :foreground ,c64-5))))
-     `(org-super-agenda-header ((t (:inherit org-agenda-structure))))
-     `(org-table ((t (:background unspecified :foreground ,c64-5))))
-     `(org-tag ((t (:background unspecified :bold nil :foreground ,c64-5))))
-     `(org-tag-group ((t (:inherit org-tag))))
-     `(org-target ((t (:background unspecified :foreground ,c64-1 :underline t))))
-     `(org-time-grid ((t (:background unspecified :foreground ,c64-15))))
-     `(org-todo ((t (:background unspecified :bold t :foreground ,c64-10))))
-     `(org-upcoming-deadline ((t (:background unspecified :foreground ,c64-10))))
-     `(org-verbatim ((t (:background unspecified :bold t :foreground ,c64-15))))
-     `(org-verse ((t (:background unspecified :foreground ,c64-15))))
-     `(org-warning ((t (:background unspecified :bold t :foreground ,c64-10))))
-     `(outline-1 ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(outline-2 ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(outline-3 ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(outline-4 ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(outline-5 ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(outline-6 ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(outline-7 ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(outline-8 ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(package-description ((t (:background unspecified :foreground ,c64-1))))
-     `(package-help-section-name ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(package-name ((t (:background unspecified :foreground ,c64-3 :underline t))))
-     `(package-status-avail-obso ((t (:background unspecified :bold t :foreground ,c64-10))))
-     `(package-status-available ((t (:background unspecified :foreground ,c64-1))))
-     `(package-status-built-in ((t (:background unspecified :bold t :foreground ,c64-15))))
-     `(package-status-dependency ((t (:background unspecified :foreground ,c64-5))))
-     `(package-status-disabled ((t (:background ,c64-15 :bold t :foreground ,c64-2))))
-     `(package-status-external ((t (:background unspecified :bold t :foreground ,c64-7))))
-     `(package-status-held ((t (:background unspecified :foreground ,c64-4))))
-     `(package-status-incompat ((t (:background ,c64-10 :bold t :foreground ,c64-0))))
-     `(package-status-installed ((t (:background ,c64-5 :foreground ,c64-1))))
-     `(package-status-new ((t (:background unspecified :foreground ,c64-13 :italic t))))
-     `(package-status-unsigned ((t (:background unspecified :foreground ,c64-10 :italic t))))
-     `(page-break-lines ((t (:background unspecified :foreground ,c64-15))))
-     `(query-replace ((t (:inherit isearch))))
-     `(read-multiple-choice-face ((t (:background unspecified :bold t :foreground ,c64-1))))
-     `(region ((t (:background unspecified :extend t :foreground unspecified :inverse-video t))))
-     `(rmail-header-name ((t (:inherit default))))
-     `(rmail-highlight ((t (:inherit default :inverse-video t))))
-     `(scroll-bar ((t (:inherit default))))
-     `(secondary-selection ((t (:background ,c64-12 :foreground ,c64-1))))
-     `(shadow ((t (:background unspecified :foreground ,c64-12))))
-     `(show-paren-match ((t (:background unspecified :bold t :foreground ,c64-5))))
-     `(show-paren-match-expression ((t (:inherit show-paren-match))))
-     `(show-paren-mismatch ((t (:background unspecified :bold t :foreground ,c64-10))))
-     `(success ((t (:background unspecified :bold t :foreground ,c64-13))))
-     `(term ((t (:background unspecified :foreground ,c64-14))))
-     `(term-bold ((t (:background unspecified :bold t :foreground unspecified))))
-     `(term-color-black ((t (:background ,c64-0 :foreground ,c64-0))))
-     `(term-color-blue ((t (:background ,c64-6 :foreground ,c64-6))))
-     `(term-color-cyan ((t (:background ,c64-3 :foreground ,c64-3))))
-     `(term-color-green ((t (:background ,c64-5 :foreground ,c64-5))))
-     `(term-color-magenta ((t (:background ,c64-4 :foreground ,c64-4))))
-     `(term-color-red ((t (:background ,c64-2 :foreground ,c64-2))))
-     `(term-color-white ((t (:background ,c64-1 :foreground ,c64-1))))
-     `(term-color-yellow ((t (:background ,c64-7 :foreground ,c64-7))))
-     `(term-underline ((t (:background unspecified :foreground unspecified :underline t))))
-     `(tool-bar ((t (:background ,c64-12 :foreground ,c64-0))))
-     `(tooltip ((t (:background ,c64-15 :foreground ,c64-0))))
-     `(trailing-whitespace ((t (:background ,c64-2 :foreground ,c64-1))))
-     `(underline ((t (:background unspecified :foreground unspecified :underline t))))
-     `(variable-pitch ((t (:background unspecified :family "Sans Serif" :foreground unspecified))))
-     `(vertical-border ((t (:background unspecified :foreground ,c64-1))))
-     `(warning ((t (:background unspecified :bold t :foreground ,c64-10))))
-     `(whitespace-trailing ((t (:background ,c64-2 :foreground ,c64-1))))
-     `(whitespace-space ((t (:background ,c64-6 :foreground ,c64-14))))
-     `(window-divider ((t (:background unspecified :foreground ,c64-15))))
-     `(window-divider-first-pixel ((t (:background unspecified :foreground ,c64-12))))
-     `(window-divider-last-pixel ((t (:background unspecified :foreground ,c64-11))))))
+*** GC
+#+begin_src emacs-lisp
+  (setq gc-cons-threshold (* 2 1000 1000))
+  (setq read-process-output-max (* 1024 1024))
 #+end_src

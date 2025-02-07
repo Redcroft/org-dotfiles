@@ -117,7 +117,7 @@
 #+end_src
 
 New Sofa method seems to provide better results so far
-#+begin_src conf :tangle "~/.config/pipewire/pipewire.conf.d/99-spatial-sofa.conf"
+#+begin_src conf :tangle no :comment "~/.config/pipewire/pipewire.conf.d/99-spatial-sofa.conf"
   context.modules = [
       { name = libpipewire-module-filter-chain
           flags = [ nofail ]

@@ -40,7 +40,7 @@
 
 *** App Binds
 #+begin_src sh
-  hc keybind $Mod-Return spawn st -e tmux
+  hc keybind $Mod-Return spawn kitty
   hc keybind $Mod-Shift-w spawn qutebrowser
   hc keybind $Mod-Shift-e spawn emacs
   hc keybind $Mod-d spawn dmenu_run
@@ -226,6 +226,7 @@
   xsetroot -solid '#3D375E'
   hsetroot -solid '#3D375E'
   ~/.fehbg &
+  xrdb -merge ~/.Xresources
   xset s off
   xset -dpms
 #+end_src

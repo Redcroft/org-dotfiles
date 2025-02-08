@@ -7,13 +7,17 @@
   - [[#init][Init]]
     - [[#elpaca][Elpaca]]
     - [[#emacs][Emacs]]
+    - [[#exwm][EXWM]]
     - [[#packages][Packages]]
+      - [[#avy][Avy]]
       - [[#completion][Completion]]
       - [[#ctrlf][Ctrlf]]
+      - [[#focus][Focus]]
       - [[#git][Git]]
       - [[#languages][Languages]]
       - [[#minibuffer][Minibuffer]]
       - [[#move-text][Move-text]]
+      - [[#multiple-cursors][Multiple Cursors]]
       - [[#org][Org]]
       - [[#programming][Programming]]
       - [[#rainbow][Rainbow]]
@@ -130,7 +134,6 @@ Configure base emacs
     (global-superword-mode t)
     (keyboard-translate ?\C-x ?\C-t)
     (keyboard-translate ?\C-t ?\C-x)
-    (setopt use-short-answers t)
     (defun my/open-emacs-config ()
       (interactive)
       (find-file "~/.repos/dotfiles/dotfiles/emacs/README.org"))
@@ -152,6 +155,7 @@ Configure base emacs
     (undo-limit 100000000)
     (use-dialog-box nil)
     (use-file-dialog nil)
+    (use-short-answers t)
     (user-file-name "Richard DW Redcroft")
     (user-real-login-name "Richard DW Redcroft")
     (user-login-name "lambda")
@@ -172,7 +176,117 @@ Configure base emacs
     :hook ((before-save-hook . whitespace-cleanup)))
 #+end_src
 
+*** EXWM
+#+begin_src emacs-lisp :tangle (if (string= system-name "red") "~/.emacs.d/init.el" "no")
+  (use-package exwm
+    :if (string= (getenv "EXWM_ENABLE") "t")
+    :config
+    (setq battery-update-interval 15
+	  battery-mode-line-format "[%p%% %t]"
+	  display-time-default-load-average nil
+	  display-time-format "[%b %d %I:%M%p]"
+	  exwm-workspace-number 10
+	  exwm-input-simulation-keys
+	  '(([?\C-b] . [left])
+	    ([?\C-f] . [right])
+	    ([?\C-p] . [up])
+	    ([?\C-n] . [down])
+	    ([?\C-a] . [home])
+	    ([?\C-e] . [end])
+	    ([?\M-v] . [prior])
+	    ([?\C-v] . [next])
+	    ([?\C-d] . [delete])
+	    ([?\C-k] . [S-end delete]))
+	  exwm-input-global-keys
+	  `(([?\s-r] . exwm-reset)
+	    ([?\s-w] . exwm-workspace-switch)
+	    ;;([XF86MonBrightnessUp] . ignore)
+	    ;;([XF86MonBrightnessDown] . ignore)
+	    ,@(mapcar (lambda (i)
+			`(,(kbd (format "s-%d" i)) .
+			  (lambda ()
+			    (interactive)
+			    (exwm-workspace-switch-create ,i))))
+		      (number-sequence 0 9))))
+
+    (defun my/exwm-startup ()
+      (lambda)
+      (exwm-init)
+      (sleep-for 0 200)
+      (exwm-workspace-switch-create 9)
+      (sleep-for 0 200)
+      (exwm-workspace-switch 1)
+      (start-process "" nil "dunst" "&")
+      ;;(dashboard-open)
+      )
+    (add-hook 'emacs-startup-hook 'my/exwm-startup)
+    (add-hook 'exwm-update-class-hook
+	      (lambda ()
+		(unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+			    (string= "gimp" exwm-instance-name))
+		  (exwm-workspace-rename-buffer (concat "*EXWM* " exwm-class-name)))))
+    (add-hook 'exwm-update-title-hook
+	      (lambda ()
+		(when (or (not exwm-instance-name)
+			  (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+			  (string= "gimp" exwm-instance-name))
+		  (exwm-workspace-rename-buffer exwm-title))))
+    (add-hook 'exwm-floating-setup-hook 'exwm-layout-hide-mode-line)
+    (add-hook 'exwm-floating-exit-hook  'exwm-layout-show-mode-line)
+    (exwm-input-set-key (kbd "s-p")
+			(lambda (command)
+			  (interactive (list (read-shell-command "$ ")))
+			  (start-process-shell-command command nil command)))
+    (exwm-input-set-key (kbd "s-<return>")
+			(lambda () (interactive) (eshell)))
+    (exwm-input-set-key (kbd "s-W")
+			(lambda () (interactive) (start-process "" nil "qutebrowser")))
+    (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
+			(lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-volume" "0" "+2%")))
+    (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
+			(lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-volume" "0" "-2%")))
+    (exwm-input-set-key (kbd "<XF86AudioMute>")
+			(lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-mute" "0" "toggle")))
+    (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
+			(lambda () (interactive) (start-process "" nil "light" "-A" "5")))
+    (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
+			(lambda () (interactive) (start-process "" nil "light" "-U" "5")))
+    (exwm-input-set-key (kbd "s-<XF86MonBrightnessUp>")
+			(lambda () (interactive) (start-process "" nil "light" "-S" "100")))
+    (exwm-input-set-key (kbd "s-<XF86MonBrightnessDown>")
+			(lambda () (interactive) (start-process "" nil "light" "-S" "10")))
+    (exwm-input-set-key (kbd "s-<up>")
+			(lambda () (interactive) (enlarge-window-horizontally 2)))
+    (exwm-input-set-key (kbd "s-<down>")
+			(lambda () (interactive) (shrink-window-horizontally 2)))
+    (exwm-input-set-key (kbd "s-f")
+			(lambda () (interactive) (windmove-right)))
+    (exwm-input-set-key (kbd "s-b")
+			(lambda () (interactive) (windmove-left)))
+    (exwm-input-set-key (kbd "C-s-f")
+			(lambda () (interactive) (windmove-swap-states-right)))
+    (exwm-input-set-key (kbd "C-s-b")
+			(lambda () (interactive) (windmove-swap-states-left)))
+    (exwm-input-set-key (kbd "s-z")
+			(lambda ()
+			  (interactive)
+			  (let ((d (format-time-string "%H:%m%p"))
+				(b (battery-format battery-echo-area-format (funcall battery-status-function))))
+			    (message "%s\t%s" d b))))
+    (display-time-mode 1)
+    (display-battery-mode 1)
+    (exwm-input--update-global-prefix-keys)
+    )
+#+end_src
+
 *** Packages
+**** Avy
+#+begin_src emacs-lisp
+  (use-package avy
+    :bind (("C-;" . avy-goto-char)
+	   ("C-:" . avy-goto-char-2)))
+#+end_src
+
 **** Completion
 ***** Cape
 #+begin_src emacs-lisp
@@ -199,8 +313,7 @@ Configure base emacs
     (corfu-popupinfo-delay 0.5)
     (corfu-quit-no-match t)
     (corfu-quit-at-boundary 'separator)
-    (tab-always-indent 'complete)
-    )
+    (tab-always-indent 'complete))
 
   (use-package corfu-terminal
     :init (corfu-terminal-mode))
@@ -210,6 +323,15 @@ Configure base emacs
 #+begin_src emacs-lisp
   (use-package ctrlf
     :config (ctrlf-mode t))
+#+end_src
+
+**** Focus
+#+begin_src emacs-lisp
+  (use-package focus
+    :bind ("C-c f f" . focus-mode)
+    :custom
+    (focus-mode-to-thing '((prog-mode . defun)
+			   (text-mode . sentence))))
 #+end_src
 
 **** Git
@@ -263,9 +385,26 @@ Configure base emacs
   (use-package json-mode)
 #+end_src
 
+***** Lisp
+#+begin_src emacs-lisp
+  (when (file-exists-p "~/.roswell/helper.el")
+    (load (expand-file-name "~/.roswell/helper.el"))
+    (setq inferior-lisp-program "ros -Q run"))
+#+end_src
+
 ***** Markdown
 #+begin_src emacs-lisp
   (use-package markdown-mode)
+#+end_src
+
+***** Odin
+#+begin_src emacs-lisp
+  (use-package odin-ts-mode
+    :ensure (:host github :repo "Sampie159/odin-ts-mode")
+    :hook (odin-ts-mode-hook . eglot-ensure)
+    :mode ("\\.odin\\'" . odin-ts-mode)
+    :config
+    (add-to-list 'eglot-server-programs '((odin-mode odin-ts-mode) . ("ols"))))
 #+end_src
 
 ***** Python
@@ -275,8 +414,16 @@ Configure base emacs
 
 ***** Rust
 #+begin_src emacs-lisp
+  (use-package rust-mode)
+
   (use-package rustic
-    :after (flycheck))
+    :after (flycheck)
+    :bind (:map rustic-mode-map
+		("C-c a t" . rustic-cargo-current-test)
+		("C-c m" . rustic-compile))
+    :custom
+    (rustic-lsp-client 'eglot)
+    (rustic-format-onsave t))
 #+end_src
 
 ***** Toml
@@ -295,7 +442,7 @@ Configure base emacs
 #+end_src
 
 **** Minibuffer
-***** consult
+***** Consult
 #+begin_src emacs-lisp
   (use-package consult
     :hook (completion-list-mode . consult-preview-at-point-mode)
@@ -308,7 +455,7 @@ Configure base emacs
     )
 #+end_src
 
-***** orderless
+***** Orderless
 #+begin_src emacs-lisp
   (use-package orderless
     :custom
@@ -355,6 +502,15 @@ Configure base emacs
 #+begin_src emacs-lisp
   (use-package move-text
     :config (move-text-default-bindings))
+#+end_src
+
+**** Multiple Cursors
+#+begin_src emacs-lisp
+  (use-package multiple-cursors
+    :bind (("C-S-c C-S-c" . mc/edit-lines)
+	   ("C->" . mc/mark-next-like-this)
+	   ("C-<" . mc/mark-previous-like-this)
+	   ("C-c C->" . mc/mark-all-like-this)))
 #+end_src
 
 **** Org
@@ -489,7 +645,24 @@ Strange workaround for loading before elpaca activation
     (css-folding-definitions
 	(block   . ts-fold-range-seq)
 	(comment . ts-fold-range-c-like-comment))
-    (treesit-auto-install 'prompt))
+    (treesit-auto-install 'prompt)
+    (treesit-language-source-alist
+     '((odin "https://github.com/tree-sitter-grammars/tree-sitter-odin"))))
+#+end_src
+
+***** Treemacs
+#+begin_src emacs-lisp
+  (use-package treemacs
+    :bind (("C-x t o" . treemacs-select-window)
+	   ("C-x t t" . treemacs)
+	   ("C-x t d" . treemacs-select-directory)
+	   ("C-x t C-f" . treemacs-find-file))
+    :defer t)
+
+  (use-package treemacs-icons-dired
+    :hook (dired-mode . treemacs-icons-dired-enable-once))
+  (use-package treemacs-magit)
+  (use-package treemacs-projectile)
 #+end_src
 
 **** Rainbow
@@ -578,7 +751,7 @@ Strange workaround for loading before elpaca activation
     (interactive)
     (set-face-attribute 'default nil
 			:font "BlexMono Nerd Font"
-			:height 100
+			:height 120
 			:weight 'Medium)
     (set-face-attribute 'fixed-pitch nil
 			:weight 'bold)

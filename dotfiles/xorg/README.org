@@ -8,6 +8,7 @@
     - [[#keyboard][Keyboard]]
     - [[#mouse][Mouse]]
     - [[#touchpad][Touchpad]]
+  - [[#xresources][Xresources]]
 
 ** Libinput
 
@@ -43,4 +44,14 @@
       Option "DisableWhileTyping" "false"
       Option "Tapping" "on"
   EndSection
+#+end_src
+
+** Xresources
+
+#+begin_src conf :tangle "~/.Xresources"
+  Xft.antialias:    true
+  Xft.autohint:     0
+  Xft.hinting:      1
+  Xft.hintstyle:    hintslight
+  Xft.rgba:         1
 #+end_src

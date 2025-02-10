@@ -8,14 +8,18 @@
     - [[#elpaca][Elpaca]]
     - [[#emacs][Emacs]]
     - [[#exwm][EXWM]]
+    - [[#mail][Mail]]
+      - [[#gnus][Gnus]]
     - [[#packages][Packages]]
       - [[#avy][Avy]]
       - [[#completion][Completion]]
       - [[#ctrlf][Ctrlf]]
+      - [[#dimmer][Dimmer]]
       - [[#focus][Focus]]
       - [[#git][Git]]
       - [[#languages][Languages]]
       - [[#minibuffer][Minibuffer]]
+      - [[#modeline][Modeline]]
       - [[#move-text][Move-text]]
       - [[#multiple-cursors][Multiple Cursors]]
       - [[#org][Org]]
@@ -25,6 +29,7 @@
       - [[#terminal][Terminal]]
       - [[#vundo][Vundo]]
       - [[#which-key][Which-key]]
+      - [[#whitespace][Whitespace]]
       - [[#window-management][Window Management]]
     - [[#theme][Theme]]
       - [[#all-the-icons][All-the-icons]]
@@ -33,19 +38,27 @@
     - [[#gc][GC]]
 
 ** Early Init
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
 
 Disable UI and Package Manager
 
 #+begin_src emacs-lisp :tangle ~/.emacs.d/early-init.el
   (setq default-frame-alist
-	'((vertical-scroll-bars . nil)
+	'((internal-border-width . 10)
 	  (menu-bar-lines . 0)
 	  (scroll-bar-lines . 0)
-	  (tool-bar-lines . 0))
+	  (tool-bar-lines . 0)
+	  (vertical-scroll-bars . nil))
 	frame-inhibit-implied-resize t
 	frame-resize-pixelwise t
 	gc-cons-threshold most-positive-fixnum ; 2^61
 	gc-cons-percentage 0.6
+	inhibit-compacting-font-caches t
+	initial-scratch-message nil
+	inhibit-startup-screen t
+	inhibit-startup-splash t
 	load-prefer-newer 'noninteractive
 	native-comp-jit-compilation nil
 	mode-line-format nil
@@ -61,7 +74,6 @@ Disable UI and Package Manager
 
 ** Init
 *** Elpaca
-
 #+begin_src emacs-lisp
   (defvar elpaca-installer-version 0.9)
   (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
@@ -124,20 +136,11 @@ Configure base emacs
      ("C-x r s" . replace-string)
      ("M-#" . comment-or-uncomment-region))
     :config
-    (flymake-mode -1)
-    (global-set-key (kbd "C-x C-c") #'save-buffers-kill-emacs)
-    (global-auto-revert-mode t)
-    (global-display-fill-column-indicator-mode t)
-    (global-display-line-numbers-mode)
-    (global-prettify-symbols-mode)
-    (global-subword-mode t)
-    (global-superword-mode t)
-    (keyboard-translate ?\C-x ?\C-t)
-    (keyboard-translate ?\C-t ?\C-x)
     (defun my/open-emacs-config ()
       (interactive)
       (find-file "~/.repos/dotfiles/dotfiles/emacs/README.org"))
     :custom
+    (auth-sources '("~/.authinfo" "~/.authinfo.gpg" "~/.repos/dotfiles/authinfo.gpg"))
     (auto-save-default t)
     (backup-by-copying t)
     (backup-directory-alist `(("." . ,(expand-file-name ".tmp/backups/"
@@ -164,7 +167,17 @@ Configure base emacs
     (visible-bell nil)
     :init
     (define-prefix-command 'programs-map)
+    (flymake-mode -1)
+    (global-auto-revert-mode t)
+    (global-display-fill-column-indicator-mode t)
+    (global-display-line-numbers-mode t)
+    (global-prettify-symbols-mode t)
     (global-set-key (kbd "C-x y") 'programs-map)
+    (global-set-key (kbd "C-x C-c") #'save-buffers-kill-emacs)
+    (global-subword-mode t)
+    (global-superword-mode t)
+    (keyboard-translate ?\C-x ?\C-t)
+    (keyboard-translate ?\C-t ?\C-x)
     (setq-default bidi-display-reordering nil
 		  custom-safe-themes t
 		  fill-column 80
@@ -279,6 +292,122 @@ Configure base emacs
     )
 #+end_src
 
+*** Mail
+**** Gnus
+#+begin_src emacs-lisp
+  (use-package gnus
+    :bind ("C-x y m" . gnus)
+    :ensure nil
+    :hook
+    ((gnus-group-mode . gnus-topic-mode)
+     (gnus-summary-exit . gnus-summary-bubble-group)
+     (gnus-suspend-gnus . gnus-group-sort-groups-by-rank)
+     (gnus-exit-gnus . gnus-group-sort-groups-by-rank))
+    :custom
+    (gnus-active-level 2)
+    (gnus-article-browse-delete-temp t)
+    (gnus-article-sort-functions '((not gnus-article-sort-by-date)
+				   (not gnus-article-sort-by-number)))
+    (gnus-asynchronous t)
+    (gnus-buttonized-mime-types '("multipart/alternative"))
+    (gnus-cache-enter-articles '(ticked dormant unread))
+    (gnus-cache-remove-articles '(read))
+    (gnus-cacheable-groups "^\\(nntp\\|nnimap\\)")
+    (gnus-check-new-newsgsoups t)
+    (gnus-fetch-old-ephemeral-headers 200)
+    (gnus-fetch-old-headers 200)
+    (gnus-expert-user t)
+    (gnus-inhibit-mime-unbuttonizing t)
+    (gnus-ignored-newsgroups "^to\\.\\|^[0-9. ]+\\( \\|$\\)\\|^[\"]\"[#'()]")
+    (gnus-inhibit-stratup-message t)
+    (gnus-interactive-catchup nil)
+    (gnus-interactive-exit 'quiet)
+    (gnus-mime-display-multipart-related-as-mixed t)
+    (gnus-novice-user nil)
+    (gnus-parameters
+     '((".*"
+	(gnus-show-threads t)
+	(gnus-use-scoring nil)
+	(display . all))))
+    (gnus-read-newsrc-file nil)
+    (gnus-save-killed-list nil)
+    (gnus-save-newsrc-file nil)
+    (gnus-search-use-parsed-queries t)
+    (gnus-secondary-select-methods '((nnimap "Redcroft"
+					     (nnimap-inbox "INBOX")
+					     (nnimap-address "imap.hostinger.com")
+					     (nnimap-server-port "imaps")
+					     (nnimap-stream ssl)
+					     (nnimap-expunge 'never))
+				     (nnimap "Work"
+					     (nnimap-inbox "INBOX")
+					     (nnimap-address "imap.gmail.com")
+					     (nnimap-sever-port "imaps")
+					     (nnimap-stream ssl)
+					     (nnimap-expunge 'never))))
+
+    (gnus-select-method '(nnnil ""))
+    (gnus-show-threads t)
+    (gnus-subscripe-newsgroup-method 'gnus-subscripe-interactively)
+    (gnus-subthread-sort-functions '(gnus-thread-sort-by-date))
+    (gnus-summary-line-format (concat "%*%0{%U%R%z%d%}"
+				      "%0{ %}(%2t)"
+				      "%2{ %}%-23,23n"
+				      "%1{ %}%1{%B%}%2{%-102,102s%}%-140="
+				      "\n"))
+    (gnus-suppress-duplicates t)
+    (gnus-thread-indent-level 2)
+    (gnus-thread-sort-functions '(gnus-thread-sort-by-most-recent-date))
+    (gnus-use-cache t)
+    (gnus-use-header-prefetch t)
+    (gnus-view-pseudos 'automatic)
+    (gnus-view-pseudos-separately t)
+    (gnus-view-pseudo-asynchronously t)
+    (gnus-visible-headers "^From:\\|^Subject:\\|^X-Mailer:\\|^X-Newsreader:\\|^Date:\\|^To:\\|^Cc:\\|^User-agent:\\|^Newsgroups:\\|^Comments:")
+    :config
+    (progn
+      (gnus-add-configuration
+       '(article
+	 (horizontal 1.0
+		     (vertical 60 (group 1.0))
+		     (vertical 1.0
+			       (summary 0.40 point)
+			       (article 1.0)))))
+
+      (gnus-add-configuration
+       '(summary
+	 (horizontal 1.0
+		     (vertical 60 (group 1.0))
+		     (vertical 1.0 (summary 1.0 point)))))))
+
+  (use-package gnus-group
+    :ensure nil
+    :hook (gnus-group-mode . gnus-topic-mode)
+    :custom
+    ;;          indentation ------------.
+    ;;  #      process mark ----------. |
+    ;;                level --------. | |
+    ;;           subscribed ------. | | |
+    ;;  %          new mail ----. | | | |
+    ;;  *   marked articles --. | | | | |
+    ;;                        | | | | | |  Ticked    New     Unread  open-status Group
+    (gnus-group-line-format "%M%m%S%L%p%P %1(%7i%) %3(%7U%) %3(%7y%) %4(%B%-45G%) %d\n")
+    (gnus-group-sort-function '(gnus-group-sort-by-level gnus-group-sort-by-alphabet)))
+
+  (use-package gnus-sum
+    :ensure nil
+    :hook (gnus-select-group . gnus-group-set-timestamp)
+    :custom
+    (gnus-sum-thread-tree-root            "┌ ")
+    (gnus-sum-thread-tree-false-root      "◌ ")
+    (gnus-sum-thread-tree-single-indent   "◎ ")
+    (gnus-sum-thread-tree-vertical        "│")
+    (gnus-sum-thread-tree-indent          "  ")
+    (gnus-sum-thread-tree-leaf-with-other "├─►")
+    (gnus-sum-thread-tree-single-leaf     "╰─►")
+    (gnus-summary-line-format "%U%R %3d %[%-23,23f%] %B %s\n"))
+#+end_src
+
 *** Packages
 **** Avy
 #+begin_src emacs-lisp
@@ -325,6 +454,16 @@ Configure base emacs
     :config (ctrlf-mode t))
 #+end_src
 
+**** Dimmer
+#+begin_src emacs-lisp
+  (use-package dimmer
+    :config
+    (dimmer-mode)
+    :custom
+    (dimmer-adjustment-mode :foreground)
+    (dimmer-fraction 0.6))
+#+end_src
+
 **** Focus
 #+begin_src emacs-lisp
   (use-package focus
@@ -369,15 +508,11 @@ Configure base emacs
 #+begin_src emacs-lisp
   (use-package gdscript-mode
     :ensure (:host github :repo "godotengine/emacs-gdscript-mode")
-    :hook (gdscript-mode . my/gdscript-hooks)
+    :hook (gdscript-mode . my/tabify-on-save)
     :config
-    (defun my/gdscript-hooks ()
-      "Hook for GDScript mode."
-      (whitespace-mode t)
-      (add-hook 'before-save-hook
-		(lambda ()
-		  (indent-region (point-min) (point-max) nil))
-		nil 'local)))
+    (defun my/tabify-on-save ()
+      (interactive)
+      (tabify (point-min) (point-max))))
 #+end_src
 
 ***** Json
@@ -398,7 +533,7 @@ Configure base emacs
 #+end_src
 
 ***** Odin
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package odin-ts-mode
     :ensure (:host github :repo "Sampie159/odin-ts-mode")
     :hook (odin-ts-mode-hook . eglot-ensure)
@@ -422,7 +557,6 @@ Configure base emacs
 		("C-c a t" . rustic-cargo-current-test)
 		("C-c m" . rustic-compile))
     :custom
-    (rustic-lsp-client 'eglot)
     (rustic-format-onsave t))
 #+end_src
 
@@ -498,6 +632,43 @@ Configure base emacs
     (vertico-posframe-mode))
 #+end_src
 
+**** Modeline
+#+begin_src emacs-lisp
+  (use-package lambda-line
+    :ensure (:type git :host github :repo "lambda-emacs/lambda-line")
+    :after all-the-icons
+    :custom
+    (lambda-line-icon-time t) ;; requires ClockFace font (see below)
+    (lambda-line-clockface-update-fontset "ClockFaceRect") ;; set clock icon
+    (lambda-line-position 'bottom) ;; Set position of status-line 
+    (lambda-line-abbrev t) ;; abbreviate major modes
+    (lambda-line-hspace "  ")  ;; add some cushion
+    (lambda-line-prefix t) ;; use a prefix symbol
+    (lambda-line-prefix-padding nil) ;; no extra space for prefix 
+    (lambda-line-status-invert nil)  ;; no invert colors
+    (lambda-line-gui-ro-symbol  " ⨂") ;; symbols
+    (lambda-line-gui-mod-symbol " ⬤") 
+    (lambda-line-gui-rw-symbol  " ◯") 
+    (lambda-line-space-top +.50)  ;; padding on top and bottom of line
+    (lambda-line-space-bottom -.50)
+    (lambda-line-symbol-position 0.1) ;; adjust the vertical placement of symbol
+    :config
+    ;; activate lambda-line 
+    (lambda-line-mode) 
+    ;; set divider line in footer
+    (when (eq lambda-line-position 'top)
+      (setq-default mode-line-format (list "%_"))
+      (setq mode-line-format (list "%_"))))
+
+  (use-package fontset
+    :ensure nil
+    :config
+    ;; Use symbola for proper unicode
+    (when (member "Symbola" (font-family-list))
+      (set-fontset-font
+       t 'symbol "Symbola" nil)))
+#+end_src
+
 **** Move-text
 #+begin_src emacs-lisp
   (use-package move-text
@@ -517,7 +688,13 @@ Configure base emacs
 #+begin_src emacs-lisp
   (use-package org
     :ensure nil
-    :config (load-library "org-tempo"))
+    :custom
+    (org-fold-core-style 'overlays)
+    (org-src-window-setup 'current-window))
+
+  (use-package org-tempo :ensure nil)
+  (use-package ob-shell :ensure nil)
+  (use-package ob-python :ensure nil)
 #+end_src
 
 ***** Auto Tangle
@@ -548,7 +725,7 @@ Replaces org-bullets
 
 **** Programming
 ***** Eglot
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package jsonrpc :ensure (:wait t))
 
   (use-package eglot
@@ -564,7 +741,12 @@ Replaces org-bullets
     (eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
     :defer t
     :hook
-    ((eglot--managed-mode-hook . (lambda () (flymake-mode -1)))
+    ((eglot--managed-mode-hook . (lambda ()
+				   (flymake-mode -1)
+				   (when (derived-mode-p 'rust-mode)
+				     (let ((project-root (projectile-project-root)))
+				       (setq-local eglot-workspace-configuration
+						   `((:rust-analyzer . ((linkedProjects . (,(expand-file-name "Cargo.toml" project-root)))))))))))
      (c-ts-mode . eglot-ensure)
      (c++-ts-mode . eglot-ensure)
      (cmake-ts-mode-hook . eglot-ensure)
@@ -573,16 +755,16 @@ Replaces org-bullets
      (js-ts-mode . eglot-ensure)
      (python-ts-mode . eglot-ensure)
      (rustic-mode . eglot-ensure)
-     (typescript-ts-mode . eglot-ensure)))
+     (typescript-ts-mode . eglot-ensure))
+    )
 
   (use-package flycheck-eglot
     :after (eglot)
     :config (global-flycheck-eglot-mode t))
 #+end_src
-
 ***** Eldoc
 Strange workaround for loading before elpaca activation
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (unload-feature 'eldoc t)
   (setq custom-delayed-init-variables '())
   (defvar global-eldoc-mode nil)
@@ -596,6 +778,12 @@ Strange workaround for loading before elpaca activation
     (eglot-managed-mode . eldoc-box-hover-mode)
     :custom
     (eldoc-box-max-pixel-width 1024))
+#+end_src
+
+***** Envrc
+#+begin_src emacs-lisp
+  (use-package envrc
+    :hook (after-init . envrc-global-mode))
 #+end_src
 
 ***** Folding
@@ -613,11 +801,28 @@ Strange workaround for loading before elpaca activation
 	  ("C-c f z" . ts-fold-toggle)))
 #+end_src
 
+***** LSP
+#+begin_src emacs-lisp
+  (use-package lsp-mode
+    :custom
+    (lsp-keymap-prefix "C-c l")
+    :hook ((c-mode . lsp-deferred)
+	   (c++-mode . lsp-deferred)
+	   (rust-mode . lsp-deferred))
+    :commands (lsp lsp-deferred))
+
+  (use-package lsp-ui :commands lsp-ui-mode)
+  (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+  (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+  (use-package dap-mode)
+#+end_src
+
 ***** Projectile
 #+begin_src emacs-lisp
   (use-package projectile
     :bind-keymap ("C-c p" . projectile-command-map)
-    :config (projectile-global-mode)
+    :config
+    (projectile-global-mode)
     :custom
     (projectile-mode-line nil)
     (projectile-project-root-file-bottom-up
@@ -707,6 +912,22 @@ Strange workaround for loading before elpaca activation
     (which-key-idle-delay 1))
 #+end_Src
 
+**** Whitespace
+#+begin_src emacs-lisp
+(use-package whitespace
+  :ensure nil
+  :config
+  (setq-default whitespace-display-mappings
+   '(;; (space-mark 32 [183] [46])
+     ;; (space-mark 160 [164] [95])
+     ;; (newline-mark 10 [36 10])
+     (tab-mark 9 [187 9]
+               [92 9])))
+  (custom-set-faces '(whitespace-tab ((t (:background "#FF000088")))))
+  (custom-set-faces '(whitespace-space ((t (:background "#FF000000")))))
+  )
+#+end_src
+
 **** Window Management
 ***** Eyebrowse
 #+begin_src emacs-lisp
@@ -740,7 +961,6 @@ Strange workaround for loading before elpaca activation
 *** Theme
 **** All-the-icons
 #+begin_src emacs-lisp
-  (use-package all-the-icons)
   (use-package all-the-icons-dired :hook (dired-mode . all-the-icons-dired-mode))
   (use-package all-the-icons-nerd-fonts)
 #+end_Src
@@ -751,7 +971,7 @@ Strange workaround for loading before elpaca activation
     (interactive)
     (set-face-attribute 'default nil
 			:font "BlexMono Nerd Font"
-			:height 120
+			:height 100
 			:weight 'Medium)
     (set-face-attribute 'fixed-pitch nil
 			:weight 'bold)
@@ -774,18 +994,22 @@ Strange workaround for loading before elpaca activation
 
 **** Theme
 #+begin_src emacs-lisp
-  (use-package gruvbox-theme
-    :init (load-theme 'gruvbox-dark-soft))
+  (use-package base16-theme)
+  (use-package gruvbox-theme)
+  (use-package dracula-theme)
 
   (use-package heaven-and-hell
     :bind ("<f5>" . heaven-and-hell-toggle-theme)
+    :ensure (:wait t)
     :config
     (load-theme (cdr (assoc 'dark heaven-and-hell-themes)) t)
     (setq heaven-and-hell-load-theme-no-confirm t
 	  heaven-and-hell-theme-type 'dark
-	  heaven-and-hell-themes '((light . gruvbox-light-soft)
-				   (dark  . gruvbox-dark-soft)))
+	  heaven-and-hell-themes '((light . base16-atelier-cave-light)
+				   (dark  . base16-atelier-cave)))
     :hook (after-init . heaven-and-hell-init-hook))
+
+  (my/default-font)
 #+end_src
 
 *** GC

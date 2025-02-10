@@ -155,7 +155,7 @@
   hc attr theme.title_height 15
   hc attr theme.title_when multiple_tabs
   hc attr theme.floating.title_when multiple_tabs
-  hc attr theme.title_font 'Terminus:pixelsize=10'
+  hc attr theme.title_font 'IosevkaTerm Nerd Font:size=10:style=Medium'
   hc attr theme.title_depth 6
   hc attr theme.active.color '#8ec07c'
   hc attr theme.title_color '#3C3836'

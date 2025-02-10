@@ -23,6 +23,12 @@
   if [ ! -d ~/.local/share/fonts/sanfran ]; then
       git clone --depth=1 git@github.com:sahibjotsaggu/San-Francisco-Pro-Fonts ~/.local/share/fonts/sanfran
   fi
+  if [ ! -d ~/.local/share/fonts/SF-Mono ]; then
+      git clone --depth=1 git@github.com:supercomputra/SF-Mono-Font ~/.local/share/fonts/SF-Mono
+  fi
+  if [ ! -d ~/.config/godot/text_editor_themes/godot-syntax-themes ]; then
+       git clone https://github.com/godotengine/godot-syntax-themes.git ~/.config/godot/text_editor_themes
+  fi
 
   if [ ! -d ~/.repos/dracula ]; then
       mkdir ~/.repos/dracula

@@ -73,3 +73,9 @@
   bold_italic_font	auto
   font_size		11.0
 #+end_src
+
+** Window
+
+#+begin_src conf
+  window_margin_width 10
+#+end_src

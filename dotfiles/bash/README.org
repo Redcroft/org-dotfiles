@@ -8,6 +8,7 @@
     - [[#configuration][Configuration]]
   - [[#aliases][Aliases]]
   - [[#env-variables][Env Variables]]
+  - [[#direnv][Direnv]]
 
 ** Oh-my-bash
 
@@ -164,4 +165,9 @@
   export PATH=$HOME/.local/bin:$HOME/.cargo/bin:/var/lib/flatpak/exports/bin:$PATH
 
   . "$HOME/.cargo/env"
+#+end_src
+
+** Direnv
+#+begin_src sh
+  eval "$(direnv hook bash)"
 #+end_src

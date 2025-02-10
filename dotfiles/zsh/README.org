@@ -14,6 +14,7 @@
   - [[#zoxide][Zoxide]]
     - [[#aliases][Aliases]]
     - [[#env-vars][Env Vars]]
+    - [[#direnv-1][Direnv]]
 
 ** Znap
 #+begin_src sh
@@ -81,4 +82,9 @@
   #export WEBKIT_DISABLE_DMABUF_RENDERER=1
   #export __GLX_VENDOR_LIBRARY_NAME=nvidia
   export PATH=$HOME/.local/bin:/var/lib/flatpak/exports/bin:$PATH
+#+end_src
+
+*** Direnv
+#+begin_src sh
+  eval "$(direnv hook zsh)"
 #+end_src

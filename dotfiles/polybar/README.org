@@ -39,7 +39,7 @@
   separator = |
   separator-foreground = ${colors.secondary}
 
-  font-0 = Terminus;2
+  font-0 = "IosevkaTerm Nerd Font:size=9:weight=Medium;2"
 
   modules-left = xworkspaces
   modules-center = xwindow

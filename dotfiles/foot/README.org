@@ -8,7 +8,7 @@
 #+begin_src conf
   [main]
   dpi-aware=no
-  font=JetBrainsMono Nerd Font:size=12
+  font=BlexMono Nerd Font:size=10
   pad=25x25 center
 #+end_src
 
@@ -23,39 +23,39 @@
 
 #+begin_src conf
   [cursor]
-  color=11111b f5e0dc
+  color=19171c aa573c
 
   [colors]
-  foreground=cdd6f4
-  background=1e1e2e
+  foreground=8b8792
+  background=19171c
 
-  regular0=45475a
-  regular1=f38ba8
-  regular2=a6e3a1
-  regular3=f9e2af
-  regular4=89b4fa
-  regular5=f5c2e7
-  regular6=94e2d5
-  regular7=bac2de
+  regular0=19171c
+  regular1=be4678
+  regular2=2a9292
+  regular3=a06e3b
+  regular4=576ddb
+  regular5=995ae7
+  regular6=398bc6
+  regular7=8b8792
 
-  bright0=585b70
-  bright1=f38ba8
-  bright2=a6e3a1
-  bright3=f9e2af
-  bright4=89b4fa
-  bright5=f5c2e7
-  bright6=94e2d5
-  bright7=a6adc8
+  bright0=655f6d
+  bright1=be4678
+  bright2=2a9292
+  bright3=a06e3b
+  bright4=576ddb
+  bright5=955ae7
+  bright6=398bc6
+  bright7=efecf4
 
-  16=fab387
-  17=f5e0dc
+  16=aa573c
+  17=bf40bf
 
-  selection-foreground=cdd6f4
-  selection-background=414356
+  selection-foreground=19171c
+  selection-background=8b8792
 
-  search-box-no-match=11111b f38ba8
-  search-box-match=cdd6f4 313244
+  search-box-no-match=19171c be5678
+  search-box-match=8b8792 2a9292
 
-  jump-labels=11111b fab387
-  urls=89b4fa
+  jump-labels=19171c a06e3b
+  urls=398bc6
 #+end_src

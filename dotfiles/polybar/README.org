@@ -6,17 +6,17 @@
 
 #+begin_src conf
   [colors]
-  background = #3c3836
-  background-alt = #282828
-  foreground = #ebdbb2
-  primary = #83a598
-  secondary = #d3869b
-  alert = #fb4934
-  disabled = #7c6f64
-  green = #b8bb26
-  yellow = #fabd2f
-  orange = #fe8019
-  red = #fb4934
+  background = #19171c
+  background-alt = #26232a
+  foreground = #8b8792
+  primary = #955ae7
+  secondary = #576ddb
+  alert = #be4678
+  disabled = #655f6d
+  green = #2a9292
+  yellow = #a06e3b
+  orange = #aa573c
+  red = #be4678
 
   [bar/main]
   width = 100%

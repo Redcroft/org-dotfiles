@@ -94,15 +94,15 @@ Load the default qutebrowser settings, ill override the settings i care about
 ** Theme
 #+begin_src python
   colors = {
-      "background": "#3c3836",
-      "foreground": "#edbdd2",
-      "comment": "#a89984",
-      "red": "#fb4934",
-      "green": "#b8bb26",
-      "yellow": "#fabd2f",
-      "blue": "#83a598",
-      "magenta": "#d3869b",
-      "cyan": "#8ec07c",
+      "background": "#19171c",
+      "foreground": "#8b8792",
+      "comment": "#655f6d",
+      "red": "#be4678",
+      "green": "#2a9292",
+      "yellow": "#a06e3b",
+      "blue": "#576ddb",
+      "magenta": "#955ae7",
+      "cyan": "#398bc6",
       }
 
   # Text color of the completion widget. May be a single color to use for
@@ -371,13 +371,13 @@ Load the default qutebrowser settings, ill override the settings i care about
   c.colors.tabs.selected.odd.fg = colors["background"]
 
   # Background color of selected odd tabs.
-  c.colors.tabs.selected.odd.bg = colors["blue"]
+  c.colors.tabs.selected.odd.bg = colors["magenta"]
 
   # Foreground color of selected even tabs.
   c.colors.tabs.selected.even.fg = colors["background"]
 
   # Background color of selected even tabs.
-  c.colors.tabs.selected.even.bg = colors["blue"]
+  c.colors.tabs.selected.even.bg = colors["magenta"]
 #+end_src
 
 ** Userscripts

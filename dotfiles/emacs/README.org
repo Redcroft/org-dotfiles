@@ -174,8 +174,8 @@ Configure base emacs
     (global-prettify-symbols-mode t)
     (global-set-key (kbd "C-x y") 'programs-map)
     (global-set-key (kbd "C-x C-c") #'save-buffers-kill-emacs)
-    (global-subword-mode t)
     (global-superword-mode t)
+    (global-subword-mode t)
     (keyboard-translate ?\C-x ?\C-t)
     (keyboard-translate ?\C-t ?\C-x)
     (setq-default bidi-display-reordering nil

@@ -5,16 +5,15 @@
 * Table of Contents :TOC_4:
   - [[#znap][Znap]]
   - [[#prompt][Prompt]]
-  - [[#autocomplete][Autocomplete]]
   - [[#direnv][Direnv]]
   - [[#eza][Eza]]
   - [[#git-fuzzy][Git-fuzzy]]
   - [[#syntax][Syntax]]
   - [[#fzf][Fzf]]
-  - [[#zoxide][Zoxide]]
     - [[#aliases][Aliases]]
     - [[#env-vars][Env Vars]]
-    - [[#direnv-1][Direnv]]
+  - [[#zoxide][Zoxide]]
+  - [[#direnv-1][Direnv]]
 
 ** Znap
 #+begin_src sh
@@ -28,11 +27,6 @@
 ** Prompt
 #+begin_src sh
   znap prompt sindresorhus/pure
-#+end_src
-
-** Autocomplete
-#+begin_src sh
-  znap source marlonrichert/zsh-autocomplete
 #+end_src
 
 ** Direnv
@@ -60,10 +54,6 @@
   source <(fzf --zsh)
 #+end_src
 
-** Zoxide
-#+begin_src sh
-  eval "$(zoxide init zsh)"
-#+end_src
 
 *** Aliases
 #+begin_src sh
@@ -84,7 +74,12 @@
   export PATH=$HOME/.local/bin:/var/lib/flatpak/exports/bin:$PATH
 #+end_src
 
-*** Direnv
+** Zoxide
+#+begin_src sh
+  eval "$(zoxide init --cmd cd zsh)"
+#+end_src
+
+** Direnv
 #+begin_src sh
   eval "$(direnv hook zsh)"
 #+end_src

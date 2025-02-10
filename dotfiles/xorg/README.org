@@ -49,9 +49,12 @@
 ** Xresources
 
 #+begin_src conf :tangle "~/.Xresources"
-  Xft.antialias:    true
-  Xft.autohint:     0
-  Xft.hinting:      1
-  Xft.hintstyle:    hintslight
-  Xft.rgba:         1
+  Xft.antialias: true
+  Xft.autohint:  0
+  Xft.hinting:   1
+  Xft.hintstyle: hintslight
+  Xft.rgba:      1
+
+  Xcursor.theme: posy-black
+  Xcursor.size:  32
 #+end_src

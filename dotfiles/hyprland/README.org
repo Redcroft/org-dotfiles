@@ -15,14 +15,14 @@
 ** Colors
 
 #+begin_src conf
-  $base = rgb(3c3836)
-  $fg = rgb(ebdbb2)
-  $red = rgb(fb4934)
-  $green = rgb(b8bb26)
-  $yellow = rgb(fabd2f)
-  $blue = rgb(83a598)
-  $purple = rgb(d3869b)
-  $aqua = rgb(8ec07c)
+  $base = rgb(19171c)
+  $fg = rgb(8b8792)
+  $red = rgb(be4678)
+  $green = rgb(2a9898)
+  $yellow = rgb(a06e3b)
+  $blue = rgb(576ddb)
+  $purple = rgb(955ae7)
+  $aqua = rgb(398bc6)
 #+end_src
 
 ** Monitors

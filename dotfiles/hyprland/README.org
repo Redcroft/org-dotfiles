@@ -319,9 +319,9 @@
   bind = $mods, E, exec, emacs
   bind = $mod, D, exec, bemenu-run
   bind = $mods, Y, exec, grim -m "$(slurp)"
-  bind = ,XF86AudioRaiseVolume, exec, pamixer -i 5
-  bind = ,XF86AudioLowerVolume, exec, pamixer -d 5
-  bind = ,XF86AudioMute, exec, pamixer -t
+  bind = ,XF86AudioRaiseVolume, exec, pactl set-sink-volume 0 +2%
+  bind = ,XF86AudioLowerVolume, exec, pactl set-sink-volume 0 -2%
+  bind = ,XF86AudioMute, exec, pactl set-sink-mute 0 toggle
 #+end_src
 
 *** Scratch

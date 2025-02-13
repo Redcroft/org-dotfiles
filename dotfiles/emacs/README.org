@@ -17,6 +17,7 @@
       - [[#dimmer][Dimmer]]
       - [[#focus][Focus]]
       - [[#git][Git]]
+      - [[#helm-system-packages][Helm System Packages]]
       - [[#languages][Languages]]
       - [[#minibuffer][Minibuffer]]
       - [[#modeline][Modeline]]
@@ -26,6 +27,7 @@
       - [[#programming][Programming]]
       - [[#rainbow][Rainbow]]
       - [[#rainbow-delimiters][Rainbow Delimiters]]
+      - [[#system-packages][System-packages]]
       - [[#terminal][Terminal]]
       - [[#vundo][Vundo]]
       - [[#which-key][Which-key]]
@@ -118,6 +120,7 @@ Disable UI and Package Manager
     (elpaca-use-package-mode))
 
   (setq use-package-always-ensure t)
+  (use-package use-package-ensure-system-package :ensure nil)
 
   (add-to-list 'elpaca-ignored-dependencies 'eldoc)
 #+end_src
@@ -194,6 +197,8 @@ Configure base emacs
   (use-package exwm
     :if (string= (getenv "EXWM_ENABLE") "t")
     :config
+    (use-package pinentry
+      :config (pinentry-start))
     (setq battery-update-interval 15
 	  battery-mode-line-format "[%p%% %t]"
 	  display-time-default-load-average nil
@@ -213,8 +218,8 @@ Configure base emacs
 	  exwm-input-global-keys
 	  `(([?\s-r] . exwm-reset)
 	    ([?\s-w] . exwm-workspace-switch)
-	    ;;([XF86MonBrightnessUp] . ignore)
-	    ;;([XF86MonBrightnessDown] . ignore)
+	    ([XF86MonBrightnessUp] . ignore)
+	    ([XF86MonBrightnessDown] . ignore)
 	    ,@(mapcar (lambda (i)
 			`(,(kbd (format "s-%d" i)) .
 			  (lambda ()
@@ -260,14 +265,15 @@ Configure base emacs
 			(lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-volume" "0" "-2%")))
     (exwm-input-set-key (kbd "<XF86AudioMute>")
 			(lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-mute" "0" "toggle")))
-    (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
-			(lambda () (interactive) (start-process "" nil "light" "-A" "5")))
-    (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
-			(lambda () (interactive) (start-process "" nil "light" "-U" "5")))
-    (exwm-input-set-key (kbd "s-<XF86MonBrightnessUp>")
-			(lambda () (interactive) (start-process "" nil "light" "-S" "100")))
-    (exwm-input-set-key (kbd "s-<XF86MonBrightnessDown>")
-			(lambda () (interactive) (start-process "" nil "light" "-S" "10")))
+    (when (file-exists-p "/usr/bin/light")
+      (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
+			  (lambda () (interactive) (start-process "" nil "light" "-A" "5")))
+      (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
+			  (lambda () (interactive) (start-process "" nil "light" "-U" "5")))
+      (exwm-input-set-key (kbd "s-<XF86MonBrightnessUp>")
+			  (lambda () (interactive) (start-process "" nil "light" "-S" "100")))
+      (exwm-input-set-key (kbd "s-<XF86MonBrightnessDown>")
+			  (lambda () (interactive) (start-process "" nil "light" "-S" "10"))))
     (exwm-input-set-key (kbd "s-<up>")
 			(lambda () (interactive) (enlarge-window-horizontally 2)))
     (exwm-input-set-key (kbd "s-<down>")
@@ -306,8 +312,7 @@ Configure base emacs
     :custom
     (gnus-active-level 2)
     (gnus-article-browse-delete-temp t)
-    (gnus-article-sort-functions '((not gnus-article-sort-by-date)
-				   (not gnus-article-sort-by-number)))
+    (gnus-article-sort-functions '((not gnus-article-sort-by-date)))
     (gnus-asynchronous t)
     (gnus-buttonized-mime-types '("multipart/alternative"))
     (gnus-cache-enter-articles '(ticked dormant unread))
@@ -461,7 +466,7 @@ Configure base emacs
     (dimmer-mode)
     :custom
     (dimmer-adjustment-mode :foreground)
-    (dimmer-fraction 0.6))
+    (dimmer-fraction 0.4))
 #+end_src
 
 **** Focus
@@ -496,6 +501,12 @@ Configure base emacs
 #+begin_src emacs-lisp
   (use-package transient
     :after magit)
+#+end_src
+
+**** Helm System Packages
+#+begin_src emacs-lisp
+  (use-package helm-system-packages
+    :bind ("C-x y p" . helm-system-packages))
 #+end_src
 
 **** Languages
@@ -552,6 +563,7 @@ Configure base emacs
   (use-package rust-mode)
 
   (use-package rustic
+    :ensure-system-package (rust-analyzer)
     :after (flycheck)
     :bind (:map rustic-mode-map
 		("C-c a t" . rustic-cargo-current-test)
@@ -629,7 +641,17 @@ Configure base emacs
 
   (use-package vertico-posframe
     :config
-    (vertico-posframe-mode))
+    (vertico-posframe-mode)
+    (vertico-multiform-mode)
+    :custom
+    (setq vertico-multiform-commands
+	  '((consult-line
+	     posframe
+	     (vertico-posframe-poshandler . posframe-poshandler-frame-top-center)
+	     (vertico-posframe-border-width . 10)
+	     (vertico-posframe-fallback-mode . vertico-buffer-mode))
+	    (t posframe)))
+    )
 #+end_src
 
 **** Modeline
@@ -829,8 +851,9 @@ Strange workaround for loading before elpaca activation
      '(".git" ".projectile"))
     (projectile-indexing-method 'alien)
     (projectile-enable-caching nil)
-    (projectile-verbose nil)
-    )
+    (projectile-verbose nil))
+
+  (use-package projectile-ripgrep)
 #+end_src
 
 ***** Tree-Sitter
@@ -880,6 +903,11 @@ Strange workaround for loading before elpaca activation
 #+begin_src emacs-lisp
   (use-package rainbow-delimiters
     :hook (prog-mode . rainbow-delimiters-mode))
+#+end_src
+
+**** System-packages
+#+begin_src emacs-lisp
+  (use-package system-packages)
 #+end_src
 
 **** Terminal
@@ -951,7 +979,7 @@ Strange workaround for loading before elpaca activation
 ***** Swith Window
 #+begin_src emacs-lisp
   (use-package switch-window
-    :bind ("C-x o" . switch-window)
+    :bind ("C-x j" . switch-window)
     :custom
     (switch-window-shortcut-style 'qwerty)
     (switch-window-qwerty-shortcuts
@@ -970,7 +998,7 @@ Strange workaround for loading before elpaca activation
   (defun my/default-font ()
     (interactive)
     (set-face-attribute 'default nil
-			:font "BlexMono Nerd Font"
+			:font "FiraCode Nerd Font"
 			:height 100
 			:weight 'Medium)
     (set-face-attribute 'fixed-pitch nil
@@ -985,7 +1013,7 @@ Strange workaround for loading before elpaca activation
 			:slant 'italic)
 
     (when (string= system-name "red")
-      (set-face-attribute 'default nil :height 130))
+      (set-face-attribute 'default nil :height 110))
     (when (string= system-name "poseidon")
       (set-face-attribute 'default nil :height 140)))
 
@@ -995,8 +1023,9 @@ Strange workaround for loading before elpaca activation
 **** Theme
 #+begin_src emacs-lisp
   (use-package base16-theme)
+  (use-package doom-themes)
+  (use-package ef-themes)
   (use-package gruvbox-theme)
-  (use-package dracula-theme)
 
   (use-package heaven-and-hell
     :bind ("<f5>" . heaven-and-hell-toggle-theme)
@@ -1007,6 +1036,9 @@ Strange workaround for loading before elpaca activation
 	  heaven-and-hell-theme-type 'dark
 	  heaven-and-hell-themes '((light . base16-atelier-cave-light)
 				   (dark  . base16-atelier-cave)))
+    (when (string= system-name "red")
+      (setq heaven-and-hell-themes '((light . base16-gruvbox-material-light-soft)
+				     (dark  . base16-gruvbox-material-dark-soft))))
     :hook (after-init . heaven-and-hell-init-hook))
 
   (my/default-font)

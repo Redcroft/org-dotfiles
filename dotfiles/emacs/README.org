@@ -1034,8 +1034,8 @@ Strange workaround for loading before elpaca activation
     (load-theme (cdr (assoc 'dark heaven-and-hell-themes)) t)
     (setq heaven-and-hell-load-theme-no-confirm t
 	  heaven-and-hell-theme-type 'dark
-	  heaven-and-hell-themes '((light . base16-atelier-cave-light)
-				   (dark  . base16-atelier-cave)))
+	  heaven-and-hell-themes '((light . base16-horizon-terminal-light)
+				   (dark  . base16-horizon-terminal-dark)))
     (when (string= system-name "red")
       (setq heaven-and-hell-themes '((light . base16-gruvbox-material-light-soft)
 				     (dark  . base16-gruvbox-material-dark-soft))))

@@ -1011,9 +1011,9 @@ workaround for loading before elpaca activation
   (defun my/default-font ()
     (interactive)
     (set-face-attribute 'default nil
-			:font "FiraCode Nerd Font"
-			:height 100
-			:weight 'Medium)
+			:font "MartianMono Nerd Font"
+			:height 90
+			:weight 'Regular)
     (set-face-attribute 'fixed-pitch nil
 			:weight 'bold)
     (set-face-attribute 'font-lock-comment-face nil
@@ -1047,8 +1047,8 @@ workaround for loading before elpaca activation
     (load-theme (cdr (assoc 'dark heaven-and-hell-themes)) t)
     (setq heaven-and-hell-load-theme-no-confirm t
 	  heaven-and-hell-theme-type 'dark
-	  heaven-and-hell-themes '((light . base16-horizon-terminal-light)
-				   (dark  . base16-horizon-terminal-dark)))
+	  heaven-and-hell-themes '((light . gruvbox-light-soft)
+				   (dark  . gruvbox-dark-soft)))
     (when (string= system-name "red")
       (setq heaven-and-hell-themes '((light . base16-gruvbox-material-light-soft)
 				     (dark  . base16-gruvbox-material-dark-soft))))

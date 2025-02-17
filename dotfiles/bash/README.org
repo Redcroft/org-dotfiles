@@ -9,6 +9,7 @@
   - [[#aliases][Aliases]]
   - [[#env-variables][Env Variables]]
   - [[#direnv][Direnv]]
+  - [[#zoxide][Zoxide]]
 
 ** Oh-my-bash
 
@@ -30,7 +31,7 @@
 
   export OSH=~/.repos/oh-my-bash
 
-  OSH_THEME="zork"
+  OSH_THEME="rr"
   # Uncomment the following line to use case-sensitive completion.
   # OMB_CASE_SENSITIVE="true"
 
@@ -164,10 +165,17 @@
   #export __GLX_VENDOR_LIBRARY_NAME=nvidia
   export PATH=$HOME/.local/bin:$HOME/.cargo/bin:/var/lib/flatpak/exports/bin:$PATH
 
-  . "$HOME/.cargo/env"
+  if [ -e ~/.cargo/env ]; then
+      . "$HOME/.cargo/env"
+  fi
 #+end_src
 
 ** Direnv
 #+begin_src sh
   eval "$(direnv hook bash)"
+#+end_src
+
+** Zoxide
+#+begin_src sh
+eval "$(zoxide init --cmd cd bash)"
 #+end_src

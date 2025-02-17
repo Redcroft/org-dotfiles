@@ -423,7 +423,7 @@ Configure base emacs
 
 **** Completion
 ***** Cape
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package cape
     :after corfu
     :init
@@ -435,7 +435,7 @@ Configure base emacs
 #+end_src
 
 ***** Corfu
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package corfu
     :config (global-corfu-mode)
     :custom
@@ -444,13 +444,22 @@ Configure base emacs
     (corfu-auto-prefix 2)
     (corfu-cycle t)
     (corfu-popupinfo-mode t)
-    (corfu-popupinfo-delay 0.5)
+    (corfu-popupinfo-delay 0.1)
     (corfu-quit-no-match t)
     (corfu-quit-at-boundary 'separator)
     (tab-always-indent 'complete))
 
   (use-package corfu-terminal
     :init (corfu-terminal-mode))
+#+end_src
+
+***** Company
+#+begin_src emacs-lisp
+  (use-package company
+    :config (global-company-mode)
+    :custom
+    (company-idle-delay 0.0)
+    (company-minimum-prefix-length 1))
 #+end_src
 
 **** Ctrlf
@@ -547,10 +556,7 @@ Configure base emacs
 #+begin_src emacs-lisp :tangle no
   (use-package odin-ts-mode
     :ensure (:host github :repo "Sampie159/odin-ts-mode")
-    :hook (odin-ts-mode-hook . eglot-ensure)
-    :mode ("\\.odin\\'" . odin-ts-mode)
-    :config
-    (add-to-list 'eglot-server-programs '((odin-mode odin-ts-mode) . ("ols"))))
+    :mode ("\\.odin\\'" . odin-ts-mode))
 #+end_src
 
 ***** Python
@@ -560,16 +566,21 @@ Configure base emacs
 
 ***** Rust
 #+begin_src emacs-lisp
-  (use-package rust-mode)
+  (use-package rust-mode :custom (rust-mode-treesitter-derive t))
 
   (use-package rustic
     :ensure-system-package (rust-analyzer)
-    :after (flycheck)
+    :after (flycheck rust-mode)
     :bind (:map rustic-mode-map
 		("C-c a t" . rustic-cargo-current-test)
 		("C-c m" . rustic-compile))
     :custom
-    (rustic-format-onsave t))
+    (rustic-cargo-auto-add-missing-dependencies t)
+    (rustic-format-onsave t)
+    :hook ((rustic-mode . (lambda ()
+			    (when buffer-file-name
+			      (setq-local compilation-ask-about-save nil)))))
+    )
 #+end_src
 
 ***** Toml
@@ -761,7 +772,9 @@ Replaces org-bullets
     (eglot-sync-connect nil)
     (eglot-extend-to-xref t)
     (eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
+    (rustic-lsp-client 'eglot)
     :defer t
+    :ensure nil
     :hook
     ((eglot--managed-mode-hook . (lambda ()
 				   (flymake-mode -1)
@@ -785,7 +798,7 @@ Replaces org-bullets
     :config (global-flycheck-eglot-mode t))
 #+end_src
 ***** Eldoc
-Strange workaround for loading before elpaca activation
+workaround for loading before elpaca activation
 #+begin_src emacs-lisp :tangle no
   (unload-feature 'eldoc t)
   (setq custom-delayed-init-variables '())

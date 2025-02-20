@@ -18,6 +18,7 @@
       - [[#focus][Focus]]
       - [[#git][Git]]
       - [[#helm-system-packages][Helm System Packages]]
+      - [[#hungry-delete][Hungry Delete]]
       - [[#languages][Languages]]
       - [[#minibuffer][Minibuffer]]
       - [[#modeline][Modeline]]
@@ -458,7 +459,7 @@ Configure base emacs
   (use-package company
     :config (global-company-mode)
     :custom
-    (company-idle-delay 0.0)
+    (company-idle-delay 1.0)
     (company-minimum-prefix-length 1))
 #+end_src
 
@@ -518,6 +519,11 @@ Configure base emacs
     :bind ("C-x y p" . helm-system-packages))
 #+end_src
 
+**** Hungry Delete
+#+begin_src emacs-lisp
+  (use-package hungry-delete :init (global-hungry-delete-mode t))
+#+end_src
+
 **** Languages
 ***** CMake
 #+begin_src emacs-lisp
@@ -566,21 +572,19 @@ Configure base emacs
 
 ***** Rust
 #+begin_src emacs-lisp
-  (use-package rust-mode :custom (rust-mode-treesitter-derive t))
-
   (use-package rustic
     :ensure-system-package (rust-analyzer)
     :after (flycheck rust-mode)
     :bind (:map rustic-mode-map
 		("C-c a t" . rustic-cargo-current-test)
 		("C-c m" . rustic-compile))
+    :mode ("\\.rs\\'" . rustic-mode)
     :custom
     (rustic-cargo-auto-add-missing-dependencies t)
     (rustic-format-onsave t)
     :hook ((rustic-mode . (lambda ()
 			    (when buffer-file-name
-			      (setq-local compilation-ask-about-save nil)))))
-    )
+			      (setq-local compilation-ask-about-save nil))))))
 #+end_src
 
 ***** Toml
@@ -789,7 +793,6 @@ Replaces org-bullets
      (go-ts-mode . eglot-ensure)
      (js-ts-mode . eglot-ensure)
      (python-ts-mode . eglot-ensure)
-     (rustic-mode . eglot-ensure)
      (typescript-ts-mode . eglot-ensure))
     )
 
@@ -830,10 +833,16 @@ workaround for loading before elpaca activation
     :bind
     (:map global-map
 	  ("C-c f O" . ts-fold-open-all)
-	  ("C-c f o" . ts-fold-open-recursively)
+	  ("C-c f o" . ts-fold-open)
+	  ("C-c f r" . ts-fold-open-recursively)
 	  ("C-c f C" . ts-fold-close-all)
 	  ("C-c f c" . ts-fold-close)
 	  ("C-c f z" . ts-fold-toggle)))
+
+  (use-package ts-fold-indicators
+    :ensure (:type git :host github :repo "emacs-tree-sitter/ts-fold")
+    :hook (ts-fold . ts-fold-indicagors-mode))
+
 #+end_src
 
 ***** LSP
@@ -842,8 +851,7 @@ workaround for loading before elpaca activation
     :custom
     (lsp-keymap-prefix "C-c l")
     :hook ((c-mode . lsp-deferred)
-	   (c++-mode . lsp-deferred)
-	   (rust-mode . lsp-deferred))
+	   (c++-mode . lsp-deferred))
     :commands (lsp lsp-deferred))
 
   (use-package lsp-ui :commands lsp-ui-mode)
@@ -1026,7 +1034,7 @@ workaround for loading before elpaca activation
 			:slant 'italic)
 
     (when (string= system-name "red")
-      (set-face-attribute 'default nil :height 110))
+      (set-face-attribute 'default nil :height 100))
     (when (string= system-name "poseidon")
       (set-face-attribute 'default nil :height 140)))
 
@@ -1051,7 +1059,7 @@ workaround for loading before elpaca activation
 				   (dark  . gruvbox-dark-soft)))
     (when (string= system-name "red")
       (setq heaven-and-hell-themes '((light . base16-gruvbox-material-light-soft)
-				     (dark  . base16-gruvbox-material-dark-soft))))
+				     (dark  . gruvbox-dark-soft))))
     :hook (after-init . heaven-and-hell-init-hook))
 
   (my/default-font)

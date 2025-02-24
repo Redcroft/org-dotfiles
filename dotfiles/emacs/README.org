@@ -34,6 +34,7 @@
       - [[#which-key][Which-key]]
       - [[#whitespace][Whitespace]]
       - [[#window-management][Window Management]]
+    - [[#spelling][Spelling]]
     - [[#theme][Theme]]
       - [[#all-the-icons][All-the-icons]]
       - [[#font][Font]]
@@ -186,7 +187,7 @@ Configure base emacs
 		  custom-safe-themes t
 		  fill-column 80
 		  initial-scratch-message nil
-		  line-spacing 0.05
+		  line-spacing 0.15
 		  truncate-lines t
 		  truncate-partial-width-windows nil
 		  x-stretch-cursor nil)
@@ -459,12 +460,12 @@ Configure base emacs
   (use-package company
     :config (global-company-mode)
     :custom
-    (company-idle-delay 1.0)
+    (company-idle-delay 0.25)
     (company-minimum-prefix-length 1))
 #+end_src
 
 **** Ctrlf
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package ctrlf
     :config (ctrlf-mode t))
 #+end_src
@@ -476,7 +477,7 @@ Configure base emacs
     (dimmer-mode)
     :custom
     (dimmer-adjustment-mode :foreground)
-    (dimmer-fraction 0.4))
+    (dimmer-fraction 0.6))
 #+end_src
 
 **** Focus
@@ -612,8 +613,7 @@ Configure base emacs
     (register-preview-delay 0.5)
     (register-preview-function #'consult-register-format)
     (xref-show-xrefs-function #'consult-xref)
-    (xref-show-definitions-function #'consult-xref)
-    )
+    (xref-show-definitions-function #'consult-xref))
 #+end_src
 
 ***** Orderless
@@ -665,8 +665,8 @@ Configure base emacs
 	     (vertico-posframe-poshandler . posframe-poshandler-frame-top-center)
 	     (vertico-posframe-border-width . 10)
 	     (vertico-posframe-fallback-mode . vertico-buffer-mode))
-	    (t posframe)))
-    )
+	    (t posframe))))
+  
 #+end_src
 
 **** Modeline
@@ -762,7 +762,7 @@ Replaces org-bullets
 
 **** Programming
 ***** Eglot
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package jsonrpc :ensure (:wait t))
 
   (use-package eglot
@@ -776,7 +776,7 @@ Replaces org-bullets
     (eglot-sync-connect nil)
     (eglot-extend-to-xref t)
     (eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
-    (rustic-lsp-client 'eglot)
+    (rustic-client 'eglot)
     :defer t
     :ensure nil
     :hook
@@ -800,6 +800,7 @@ Replaces org-bullets
     :after (eglot)
     :config (global-flycheck-eglot-mode t))
 #+end_src
+
 ***** Eldoc
 workaround for loading before elpaca activation
 #+begin_src emacs-lisp :tangle no
@@ -845,11 +846,18 @@ workaround for loading before elpaca activation
 
 #+end_src
 
+***** Indent-bars
+#+begin_src emacs-lisp
+  (use-package indent-bars
+    :hook (prog-mode . indent-bars-mode))
+#+end_src
+
 ***** LSP
 #+begin_src emacs-lisp
   (use-package lsp-mode
     :custom
     (lsp-keymap-prefix "C-c l")
+    (rustic-lsp-client 'lsp-mode)
     :hook ((c-mode . lsp-deferred)
 	   (c++-mode . lsp-deferred))
     :commands (lsp lsp-deferred))
@@ -1007,6 +1015,17 @@ workaround for loading before elpaca activation
      '("a" "r" "s" "t" "n" "e" "i" "o")))
 #+end_src
 
+*** Spelling
+#+begin_src emacs-lisp
+  (use-package ispell
+    :ensure nil
+    :custom
+    (ispell-program-name "hunspell")
+    (ispell-local-dictionary "en_US")
+    (ispell-local-dictionary-alist '(("en_US" "en_GB")))
+    )
+#+end_src
+
 *** Theme
 **** All-the-icons
 #+begin_src emacs-lisp
@@ -1055,8 +1074,8 @@ workaround for loading before elpaca activation
     (load-theme (cdr (assoc 'dark heaven-and-hell-themes)) t)
     (setq heaven-and-hell-load-theme-no-confirm t
 	  heaven-and-hell-theme-type 'dark
-	  heaven-and-hell-themes '((light . gruvbox-light-soft)
-				   (dark  . gruvbox-dark-soft)))
+	  heaven-and-hell-themes '((light . base16-nord-light)
+				   (dark  . base16-nord)))
     (when (string= system-name "red")
       (setq heaven-and-hell-themes '((light . base16-gruvbox-material-light-soft)
 				     (dark  . gruvbox-dark-soft))))

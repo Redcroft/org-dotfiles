@@ -1,0 +1,855 @@
+#+TITLE: Emacs Configuration
+#+AUTHOR: Richard Redcroft
+#+EMAIL: Richard@Redcroft.tech
+#+OPTIONS: toc:nil num:nil
+#+PROPERTY: Header-args :tangle ~/.emacs.d/init.el :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+
+* Early Init
+This config is mostly to optimize startup time and reduce the UI to the bare minimum before loading the emacs window.
+
+The following settings customize the initial appearance of the Emacs frame.
+I like to have a small internal border and disable the menu bar, scroll bars, and tool bar
+for a cleaner, minimalist interface.
+#+begin_src emacs-lisp :tangle ~/.emacs.d/early-init.el
+  (setq default-frame-alist
+	'((internal-border-width . 6)
+	(menu-bar-lines . 0)
+	(scroll-bar-lines . 0)
+	(tool-bar-lines . 0)
+	(vertical-scroll-bars . nil))
+	frame-resize-pixelwise t
+	frame-inhibit-implied-resize t
+	frame-title-format '("%b")
+	gc-cons-threshold most-positive-fixnum
+	gc-cons-percentage 0.6
+	inhibit-compacting-font-caches t
+	inhibit-splash-screen t
+	inhibit-startup-screen t
+	inhibit-x-resources t
+	initial-scratch-message nil
+	inhibit-startup-echo-area-message user-login-name
+	inhibit-startup-buffer-menu t
+	load-prefer-newer 'noninteractive
+	mode-line-format nil
+	package-enable-at-startup nil
+	ring-bell-function 'ignore
+	visual-bell nil
+	use-dialog-box t
+	use-file-dialog nil
+	use-short-answers t
+	x-gtk-use-system-tooltips nil)
+#+end_src
+
+* Init
+** Elpaca
+
+I prefer to use [[https://github.com/progfolio/elpaca][Elpaca]] for package management. I can load packages from git directly, but also async load packages. I also use Elpaca-try quite often to just test packages.
+#+begin_src emacs-lisp
+  (defvar elpaca-installer-version 0.10)
+  (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
+  (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+  (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+  (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+				    :ref nil :depth 1 :inherit ignore
+				    :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+				    :build (:not elpaca--activate-package)))
+  (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+	     (build (expand-file-name "elpaca/" elpaca-builds-directory))
+	     (order (cdr elpaca-order))
+	     (default-directory repo))
+    (add-to-list 'load-path (if (file-exists-p build) build repo))
+    (unless (file-exists-p repo)
+      (make-directory repo t)
+      (when (<= emacs-major-version 28) (require 'subr-x))
+      (condition-case-unless-debug err
+	      (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+			((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+							,@(when-let* ((depth (plist-get order :depth)))
+							    (list (format "--depth=%d" depth) "--no-single-branch"))
+							,(plist-get order :repo) ,repo))))
+			((zerop (call-process "git" nil buffer t "checkout"
+					      (or (plist-get order :ref) "--"))))
+			(emacs (concat invocation-directory invocation-name))
+			((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+					      "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+			((require 'elpaca))
+			((elpaca-generate-autoloads "elpaca" repo)))
+		  (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+		(error "%s" (with-current-buffer buffer (buffer-string))))
+	    ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+    (unless (require 'elpaca-autoloads nil t)
+      (require 'elpaca)
+      (elpaca-generate-autoloads "elpaca" repo)
+      (load "./elpaca-autoloads")))
+  (add-hook 'after-init-hook #'elpaca-process-queues)
+  (elpaca `(,@elpaca-order))
+
+  (elpaca elpaca-use-package
+    (elpaca-use-package-mode))
+
+  (setq use-package-always-ensure t)
+#+end_src
+
+** Base
+*** Emacs
+#+NAME: dotfile-location
+#+begin_src emacs-lisp :tangle no
+  (expand-file-name "README.org" default-directory)
+#+end_src
+Configure base emacs with use-package as i find it cleaner, make sure that ~ensure~ is set to ~nil~
+#+begin_src emacs-lisp :noweb yes
+  (use-package emacs
+    :ensure nil
+    :bind
+    (("C-+" . text-scale-increase)
+     ("C--" . text-scale-decrease)
+     ("C-c I" . my/open-emacs-config)
+     ("C-c r" . eval-buffer)
+     ("C-c m" . eval-region)
+     ("C-x r s" . replace-string)
+     ("M-#" . comment-or-uncomment-region))
+    :config
+    (defun my/open-emacs-config ()
+      (interactive)
+      (find-file "<<dotfile-location()>>"))
+    :custom
+    (auth-sources '("~/.repos/dotfiles/authinfo.gpg"))
+    (byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
+    (byte-compile--use-old-handlers nil)
+    (custom-file (concat user-emacs-directory "custom.el"))
+    (create-lockfiles nil)
+    (default-directory "~")
+    (file-name-handler-alist nil)
+    (flymake-start-on-flymake-mode nil)
+    (site-run-file nil)
+    (undo-limit 100000000)
+    (user-file-name "Richard DW Redcroft")
+    (user-real-login-name "Richard DW Redcroft")
+    (user-login-name "lambda")
+    (user-mail-address "richard@redcroft.tech")
+    :init
+    (define-prefix-command 'programs-map)
+    (flymake-mode -1)
+    (global-auto-revert-mode t)
+    (global-display-fill-column-indicator-mode t)
+    (global-display-line-numbers-mode t)
+    (global-prettify-symbols-mode t)
+    (global-set-key (kbd "C-x y") 'programs-map)
+    (global-set-key (kbd "C-x C-c") #'save-buffers-kill-emacs)
+    (global-superword-mode t)
+    (global-subword-mode t)
+    (keyboard-translate ?\C-x ?\C-t)
+    (keyboard-translate ?\C-t ?\C-x)
+    (setq-default apropos-do-all t
+		    bidi-display-reordering nil
+		    custom-safe-themes t
+		    fill-column 80
+		    highlight-nonselected-windows nil
+		    inhibit-tabs-mode nil
+		    initial-scratch-message nil
+		    line-spacing 0.15
+		    truncate-lines t
+		    truncate-partial-width-windows nil
+		    x-stretch-cursor nil))
+#+end_src
+*** EShell
+#+begin_src emacs-lisp
+  (use-package eshell
+    :ensure nil
+    :bind (("C-x RET" . eshell))
+    :custom
+    (eshell-bad-command-tolerance 1)
+    (eshell-cmpl-autlist t)
+    (eshell-cmpl-cycle-completions nil)
+    (eshell-cmpl-cycle-cutoff-length 2)
+    (eshell-cmpl-ignore-case t)
+    (eshell-cp-overwrite-files nil)
+    (eshell-default-target-is-dot t)
+    (eshell-destroy-buffer-when-process-dies t)
+    (eshell-hist-ignoredups t)
+    (eshell-list-files-after-cd t)
+    (eshell-review-quick-commands t)
+    (eshell-save-history-on-exit t)
+    (eshell-scroll-show-maximize-output nil)
+    (eshell-visual-options nil))
+#+end_src
+*** Files
+#+begin_src emacs-lisp
+  (use-package files
+    :ensure nil
+    :after no-littering
+    :custom
+    (auto-mode-case-fold nil)
+    (auto-save-default nil)
+    (auto-save-list-file-prefix nil)
+    (backup-by-copying t)
+    (backup-by-copying-when-linked t)
+    (backup-directory-alist `(("." . ,(expand-file-name ".tmp/backups/" user-emacs-directory))))
+    (delete-old-versions t)
+    (kept-new-versions 6)
+    (kept-old-versions 2)
+    (large-file-warning-threshold nil)
+    (make-backup-files t)
+    (version-control t))
+#+end_src
+
+*** Minibuffer
+#+begin_src emacs-lisp
+  (use-package minibuffer
+    :ensure nil
+    :hook (minibuffer-setup-hook . minibuffer-electric-default-mode)
+    :custom
+    (enable-recursive-minibuffers t)
+    (minibuffer-prompt-properties
+     '(read-only t cursor-intangible t face minibuffer-prompt))
+    (read-answer-short t)
+    (read-buffer-completion-ignore-case t)
+    (read-file-name-completion-ignore-case t)
+    (resize-mini-windows t))
+#+end_src
+
+*** Savehist
+#+begin_src emacs-lisp
+  (use-package savehist
+    :ensure nil
+    :init (savehist-mode))
+#+end_src
+*** Simple
+#+begin_src emacs-lisp
+  (use-package simple
+    :ensure nil
+    :config
+    (setq-default async-shell-command-buffer 'new-buffer
+		  backward-delete-char-untabify-method 'hungry
+		  eval-expression-print-level nil
+		  idle-update-delay 1.0
+		  jit-lock-defer-time 0
+		  kill-whote-line t
+		  line-move-visual nil
+		  suggest-key-bindings t
+		  track-eol t
+		  yank-pop-change-selection t))
+#+end_src
+*** Whitespace
+#+begin_src emacs-lisp
+  (use-package whitespace
+    :ensure nil
+    :config
+    (setq-default whitespace-display-mappings
+		  '((tab-mark 9 [187 9] [92 9])))
+    :custom-face
+    (whitespace-tab ((t (:background "#FF000088"))))
+    (whitespace-space ((t (:background "#FF000000")))))
+#+end_src
+*** Whitespace-cleanup
+#+begin_src emacs-lisp
+  (use-package whitespace-cleanup-mode
+    :hook (prog-mode . whitespace-cleanup-mode)
+    :custom
+    (whitespace-cleanup-mode-only-if-initially-clean nil))
+#+end_src
+** EXWM
+#+begin_src emacs-lisp
+  (use-package exwm
+    :if (string= (getenv "EXWM_ENABLE") "t")
+    :config
+    (use-package pinentry
+      :config (pinentry-start))
+    (setq battery-update-interval 15
+	  battery-mode-line-format "[%p%% %t]"
+	  display-time-default-load-average nil
+	  display-time-format "[%b %d %I:%M%p]"
+	  exwm-workspace-number 10
+	  exwm-input-simulation-keys
+	  '(([?\C-b] . [left])
+	    ([?\C-f] . [right])
+	    ([?\C-p] . [up])
+	    ([?\C-n] . [down])
+	    ([?\C-a] . [home])
+	    ([?\C-e] . [end])
+	    ([?\M-v] . [prior])
+	    ([?\C-v] . [next])
+	    ([?\C-d] . [delete])
+	    ([?\C-k] . [S-end delete]))
+	  exwm-input-global-keys
+	  `(([?\s-r] . exwm-reset)
+	    ([?\s-w] . exwm-workspace-switch)
+	    ;; ([XF86MonBrightnessUp] . ignore)
+	    ;; ([XF86MonBrightnessDown] . ignore)
+	    ,@(mapcar (lambda (i)
+			`(,(kbd (format "s-%d" i)) .
+			  (lambda ()
+			    (interactive)
+			    (exwm-workspace-switch-create ,i))))
+		      (number-sequence 0 9))))
+
+    (defun my/exwm-startup ()
+      (lambda)
+      (exwm-init)
+      (sleep-for 0 200)
+      (exwm-workspace-switch-create 9)
+      (sleep-for 0 200)
+      (exwm-workspace-switch 1)
+      (start-process "" nil "dunst" "&")
+      ;;(dashboard-open)
+      )
+    (add-hook 'emacs-startup-hook 'my/exwm-startup)
+    (add-hook 'exwm-update-class-hook
+	      (lambda ()
+		(unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+			    (string= "gimp" exwm-instance-name))
+		  (exwm-workspace-rename-buffer (concat "*EXWM* " exwm-class-name)))))
+    (add-hook 'exwm-update-title-hook
+	      (lambda ()
+		(when (or (not exwm-instance-name)
+			  (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+			  (string= "gimp" exwm-instance-name))
+		  (exwm-workspace-rename-buffer exwm-title))))
+    (add-hook 'exwm-floating-setup-hook 'exwm-layout-hide-mode-line)
+    (add-hook 'exwm-floating-exit-hook  'exwm-layout-show-mode-line)
+    (exwm-input-set-key (kbd "s-p")
+			(lambda (command)
+			  (interactive (list (read-shell-command "$ ")))
+			  (start-process-shell-command command nil command)))
+    (exwm-input-set-key (kbd "s-<return>")
+			(lambda () (interactive) (eshell)))
+    (exwm-input-set-key (kbd "s-W")
+			(lambda () (interactive) (start-process "" nil "qutebrowser")))
+    (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
+			(lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-volume" "0" "+2%")))
+    (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
+			(lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-volume" "0" "-2%")))
+    (exwm-input-set-key (kbd "<XF86AudioMute>")
+			(lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-mute" "0" "toggle")))
+    (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
+			(lambda () (interactive) (start-process "" nil "blight" "inc" "5")))
+    (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
+			(lambda () (interactive) (start-process "" nil "blight" "dec" "5")))
+    (exwm-input-set-key (kbd "s-<XF86MonBrightnessUp>")
+			(lambda () (interactive) (start-process "" nil "blight" "set" "255")))
+    (exwm-input-set-key (kbd "s-<XF86MonBrightnessDown>")
+			(lambda () (interactive) (start-process "" nil "blight" "set" "25")))
+    (exwm-input-set-key (kbd "s-<up>")
+			(lambda () (interactive) (enlarge-window-horizontally 2)))
+    (exwm-input-set-key (kbd "s-<down>")
+			(lambda () (interactive) (shrink-window-horizontally 2)))
+    (exwm-input-set-key (kbd "s-f")
+			(lambda () (interactive) (windmove-right)))
+    (exwm-input-set-key (kbd "s-b")
+			(lambda () (interactive) (windmove-left)))
+    (exwm-input-set-key (kbd "C-s-f")
+			(lambda () (interactive) (windmove-swap-states-right)))
+    (exwm-input-set-key (kbd "C-s-b")
+			(lambda () (interactive) (windmove-swap-states-left)))
+    (exwm-input-set-key (kbd "s-z")
+			(lambda ()
+			  (interactive)
+			  (let ((d (format-time-string "%H:%m%p"))
+				(b (battery-format battery-echo-area-format (funcall battery-status-function))))
+			    (message "%s\t%s" d b))))
+    (display-time-mode 1)
+    (display-battery-mode 1)
+    (exwm-input--update-global-prefix-keys)
+    )
+#+end_src
+
+** Org
+*** Core
+#+begin_src emacs-lisp
+  (use-package org
+    :ensure nil
+    :custom
+    (org-fold-core-style 'overlays)
+    (org-src-window-setup 'current-window)
+    :custom-face
+    (org-quote ((t (:slant italic)))))
+
+  (use-package org-tempo :ensure nil)
+#+end_src
+*** Auto Tangle
+#+begin_src emacs-lisp
+  (use-package org-auto-tangle
+    :hook (org-mode . org-auto-tangle-mode))
+#+end_src
+*** Modern
+#+begin_src emacs-lisp
+  (use-package org-modern
+    :after (org)
+    :hook (org-mode . org-modern-mode))
+#+end_src
+*** Publish
+#+begin_src emacs-lisp
+  (setq org-html-validation-link nil
+        org-publish-project-alist
+        '(("redcroft-posts"
+  	 :base-directory "~/projects/redcroft/org/posts/"
+  	 :base-extension "org"
+  	 :publishing-directory "~/projects/redcroft/public_html/posts/"
+  	 :recursive t
+  	 :publishing-function org-html-publish-to-html
+  	 :org-html-preamble nil
+  	 )
+  	("redcroft-pages"
+  	 :base-directory "~/projects/redcroft/org/"
+  	 :base-extension "org"
+  	 :publishing-directory "~/projects/redcroft/public_html/"
+  	 :recursive t
+  	 :publishing-function org-html-publish-to-html
+  	 :org-html-preamble nil
+  	 )
+  	("redcroft-static"
+  	 :base-directory "~/projects/redcroft/org/"
+  	 :base-extension "css\\|js\\|\\webm|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg"
+  	 :publishing-directory "public_html/"
+  	 :recursive t
+  	 :publishing-function org-publish-attachment
+  	 )
+  	("redcroft"
+  	 :components ("redcroft-posts" "redcroft-pages" "redcroft-static"))))
+#+end_src
+*** Superstar
+#+begin_src emacs-lisp
+  (use-package org-superstar
+    :after (org)
+    :hook (org-mode . org-superstar-mode))
+#+end_src
+*** TOC
+#+begin_src emacs-lisp
+  (use-package toc-org
+    :after (org)
+    :hook (org-mode . toc-org-mode))
+#+end_src
+** Languages
+*** Common Lisp
+#+begin_src emacs-lisp
+  (when (file-exists-p "~/.roswell/helper.el")
+    (load (expand-file-name "~/.roswell/helper.el"))
+    (setq inferior-lisp-program "ros -Q run"))
+#+end_src
+*** ELisp
+#+begin_src emacs-lisp
+  (use-package elisp-mode
+    :ensure nil
+    :hook (emacs-lisp-mode . eldoc-mode))
+#+end_src
+*** Python
+#+begin_src emacs-lisp :tangle no
+  (use-package python-mode)
+#+end_src
+*** Rust
+#+begin_src emacs-lisp
+#+end_src
+*** Toml
+#+begin_src emacs-lisp
+  (use-package toml-mode)
+#+end_src
+*** Yaml
+#+begin_src emacs-lisp
+  (use-package yaml-mode)
+#+end_src
+** Packages
+*** Avy
+[[https://github.com/abo-abo/avy][Avy]] is a GNU emacs packge for jumping to visible text using a char-based decision tree.
+#+begin_src emacs-lisp
+  (use-package avy
+    :bind (("C-;" . avy-goto-char)
+	   ("C-:" . avy-goto-char-2)))
+#+end_src
+
+*** Cape
+[[https://github.com/minad/cape][Cape]] provides completion at point extensions such as dictionary completion.
+#+begin_src emacs-lisp
+  (use-package cape
+    :after corfu
+    :bind ("C-c p" . cape-prefix-map)
+    :init
+    (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+    (add-to-list 'completion-at-point-functions #'cape-dict)
+    (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+    (add-to-list 'completion-at-point-functions #'cape-elisp-symbol)
+    (add-to-list 'completion-at-point-functions #'cape-file)
+    (add-to-list 'completion-at-point-functions #'cape-history)
+    (add-to-list 'completion-at-point-functions #'cape-keyword))
+#+end_src
+
+*** Compilation
+#+begin_src emacs-lisp
+  (use-package compile
+    :ensure nil
+    :custom
+    (compilation-always-kill t)
+    (compilation-scroll-output t)
+    (compilation-ask-about-save nil)
+    (compilation-skip-threshold 2))
+#+end_src
+
+*** Consult
+#+begin_src emacs-lisp
+  (use-package consult
+    :hook (completion-list-mode . consult-preview-at-point-mode)
+    :init (advice-add #'register-preview :override #'consult-register-window)
+    :custom
+    (register-preview-delay 0.5)
+    (register-preview-functions #'consult-register-format)
+    (xref-show-xrefs-function #'consult-xref)
+    (xref-show-definitinos-function #'consult-xref))
+#+end_src
+
+*** Corfu
+[[https://github.com/minad/corfu][Corfu]] enhances in-buffer completion with a small completion popup. The current candidates are shown in a popup below or above the point, and can be selected by moving up and down.
+#+begin_src emacs-lisp
+  (use-package corfu
+    :config (global-corfu-mode)
+    :custom
+    (completion-ignore-case t)
+    (corfu-auto t)
+    (corfu-auto-prefix 2)
+    (corfu-cycle t)
+    (corfu-popupinfo-mode t)
+    (corfu-popupinfo-delay 0.1)
+    (corfu-quit-no-match t)
+    (corfu-quit-at-boundary 'separator)
+    (tab-always-indent 'complete))
+
+  (use-package corfu-terminal
+    :init (corfu-terminal-mode))
+#+end_src
+
+*** CtrlF
+[[https://github.com/radian-software/ctrlf][CTRLF]] is an intuitive and efficient solution for single-buffer text search in Emacs, replacing packages such as Isearch, Swiper, and helm-swoop.
+#+begin_src emacs-lisp
+  (use-package ctrlf
+    :config (ctrlf-mode t))
+#+end_src
+
+*** Diff-hl
+[[https://github.com/dgutov/diff-hl][diff-hl]] diff-hl-mode highlights uncommitted changes on the side of the window (area also known as the "gutter"), allows you to jump between and revert them selectively.
+#+begin_src emacs-lisp
+  (use-package diff-hl
+    :config (global-diff-hl-mode)
+    :hook ((dired-mode         . diff-hl-dired-mode-unless-remote)
+	   (magit-pre-refresh  . diff-hl-magit-pre-refresh)
+	   (magit-post-refresh . diff-hl-magit-post-refresh)))
+#+end_src
+
+*** GCMH
+#+begin_src emacs-lisp
+  (use-package gcmh
+    :hook (elpaca-after-init . gcmh-mode)
+    :custom
+    (gcmh-verbose nil)
+    (gcmh-idle-delay 15)
+    (gc-const-percentage 0.1))
+#+end_src
+
+*** Eglot
+#+begin_src emacs-lisp
+  (use-package eglot
+    :ensure nil
+    :after (eldoc)
+    :hook (eglot--managed-mode . (lambda () (flymake-mode -1) (eglot-inlay-hints-mode -1)))
+    :config
+    (setq eglot-autoshutdown t
+          eglot-confirm-server-initiated-edits nil
+          rustic-lsp-client 'eglot))
+#+end_src
+*** Eldoc
+#+begin_src emacs-lisp
+  (use-package jsonrpc :ensure nil)
+
+  (use-package eldoc
+    :ensure nil
+    :hook (prog-mode-hook . eldoc-mode)
+    :config
+    (global-eldoc-mode -1)
+    :custom
+    (eldoc-idle-delay 1.0))
+
+  (use-package eldoc-box
+    :ensure t
+    :after eglot
+    :hook (eglot-managed-mode . eldoc-box-hover-mode)
+    :custom-face (eldoc-box-body ((t (:family "Terminus" :height 80))))
+    :custom
+    (eldoc-box-only-multi-line t)
+    (eldoc-box-max-pixel-width 600))
+#+end_src
+*** Eyebrowse
+#+begin_src emacs-lisp
+  (use-package eyebrowse
+    :if (not (string= (getenv "EXWM_ENABLE") "t"))
+    :bind (("M-1" . eyebrowse-switch-to-window-config-1)
+	       ("M-2" . eyebrowse-switch-to-window-config-2)
+	       ("M-3" . eyebrowse-switch-to-window-config-3)
+	       ("M-4" . eyebrowse-switch-to-window-config-4)
+	       ("M-5" . eyebrowse-switch-to-window-config-5)
+	       ("M-6" . eyebrowse-switch-to-window-config-6)
+	       ("M-7" . eyebrowse-switch-to-window-config-7)
+	       ("M-8" . eyebrowse-switch-to-window-config-8)
+	       ("M-9" . eyebrowse-switch-to-window-config-9)
+	       ("M-0" . eyebrowse-switch-to-window-config-0))
+    :config
+    (eyebrowse-mode)
+    :custom
+    (eyebrowse-new-workspace t))
+#+end_src
+
+*** Indent bars
+#+begin_src emacs-lisp
+  (use-package indent-bars
+    :hook (prog-mode . indent-bars-mode))
+#+end_src
+
+*** Lambda Line
+#+begin_src emacs-lisp
+  (use-package lambda-line
+    :ensure (:type git :host github :repo "lambda-emacs/lambda-line")
+    :after all-the-icons
+    :init (lambda-line-mode)
+    :config
+    (when (eq lambda-line-position 'top)
+      (setq-default mode-line-format (list "%_"))
+      (setq mode-line-format (list "%_")))
+    :custom
+    (lambda-line-icon-time t)
+    (lambda-line-clockface-update-fontset "ClockFaceRect")
+    (lambda-line-position 'bottom)
+    (lambda-line-abbrev t)
+    (lambda-line-hspace "  ")
+    (lambda-line-prefix t)
+    (lambda-line-prefix-padding nil)
+    (lambda-line-status-invert nil)
+    (lambda-line-gui-ro-symbol  " ⨂")
+    (lambda-line-gui-mod-symbol " ⬤")
+    (lambda-line-gui-rw-symbol  " ◯")
+    (lambda-line-space-top +.50)
+    (lambda-line-space-bottom -.50)
+    (lambda-line-symbol-position 0.1))
+#+end_src
+
+*** Magit
+[[https://github.com/magit/magit][Magit]] is an interface to the version control system Git, implemented as an Emacs package. Magit aspires to be a complete Git porcelain.
+#+begin_src emacs-lisp
+  (use-package transient)
+
+  (use-package magit
+    :bind ("C-x g" . magit-status)
+    :custom (magit-diff-refine-hunk t))
+
+  (use-package magit-lfs)
+#+end_src
+*** Marginalia
+#+begin_src emacs-lisp
+  (use-package marginalia
+    :after vertico
+    :init (marginalia-mode t))
+#+end_src
+*** Move Text
+#+begin_src emacs-lisp
+  (use-package move-text
+    :config (move-text-default-bindings))
+#+end_src
+*** No Littering
+#+begin_src emacs-lisp
+  (use-package no-littering
+    :demand t
+    :custom
+    (auto-save-file-name-transforms
+     `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
+#+end_src
+
+*** Orderless
+#+begin_src emacs-lisp
+  (use-package orderless
+    :ensure t
+    :custom
+    (completion-styles '(orderless basic))
+    (completion-category-overrides '((file (styles basic partial-completion)))))
+#+end_src
+
+*** Prescient
+#+begin_src emacs-lisp
+  (use-package prescient
+    :after (corfu)
+    :hook (elpaca-after-ini . precient-persist-mode)
+    :custom
+    (prescient-history-length 200)
+    (prescient-filter-method '(literal regexp initialism prefix)))
+#+end_src
+
+*** Projectile
+#+begin_src emacs-lisp
+  (use-package project :ensure nil :defer t)
+
+  (use-package projectile
+    :bind ("C-c p" . projectile-command-map)
+    :init (projectile-global-mode t)
+    :custom
+    (projectile-dynamic-mode-line nil)
+    (projectile-enable-caching nil)
+    (projectile-index-method 'alien)
+    (projectile-mode-line nil)
+    (projectile-project-root-file-bottom-up
+     '(".git" ".projectile"))
+    (projectile-verbose nil))
+#+end_src
+
+*** Rainbow
+#+begin_src emacs-lisp
+  (use-package rainbow-mode
+    :hook (prog-mode . rainbow-mode))
+#+end_src
+*** Rainbow Delimiters
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+    :hook (prog-mode . rainbow-delimiters-mode))
+#+end_src
+*** Recentf
+#+begin_src emacs-lisp
+  (use-package recentf
+    :ensure nil
+    :after no-littering
+    :hook ((elpaca-after-init . recentf-mode)
+	   (kill-emacs . recentf-save-list)))
+#+end_src
+*** Solaire
+#+begin_src emacs-lisp
+  (use-package solaire-mode
+    :config
+    (push '(treemacs-window-background-face . solaire-default-face) solaire-mode-remap-alist)
+    (push '(treemacs-hl-line-face . solaire-hl-line-face) solaire-mode-remap-alist)
+    :init (solaire-global-mode))
+#+end_src
+*** Tree Sitter
+#+begin_src emacs-lisp
+  (use-package tree-sitter)
+
+  (use-package tree-sitter-langs)
+
+  (use-package treesit-auto
+    :custom
+    (treesit-auto-install 'prompt)
+    :config
+    (global-treesit-auto-mode t))
+#+end_src
+*** Tree Sitter Fold
+#+begin_src emacs-lisp
+  (use-package ts-fold
+    :ensure (:host github :repo "emacs-tree-sitter/ts-fold")
+    :init (global-ts-fold-mode)
+    :bind
+    (:map global-map
+	  ("C-c f O" . ts-fold-open-all)
+	  ("C-c f o" . ts-fold-open)
+	  ("C-c f r" . ts-fold-open-recursively)
+	  ("C-c f C" . ts-fold-close-all)
+	  ("C-c f c" . ts-fold-close)
+	  ("C-c f z" . ts-fold-toggle)))
+
+  (use-package ts-fold-indicators
+    :ensure (:type git :host github :repo "emacs-tree-sitter/ts-fold")
+    :hook (ts-fold . ts-fold-indicagors-mode))
+#+end_src
+*** Treemacs
+#+begin_src emacs-lisp
+  (use-package treemacs
+    :bind (("C-x t o" . treemacs-select-window)
+	   ("C-x t t" . treemacs)
+	   ("C-x t d" . treemacs-select-directory)
+	   ("C-x t C-f" . treemacs-find-file))
+    :commands (treemacs treemacs-create-theme treemacs-create-icon treemacs-load-theme)
+    :config
+    (treemacs-indent-guide-mode t)
+    :custom
+    (treemacs-file-event-delay 1000)
+    (treemacs-filewatch-mode t)
+    (treemacs-follow-after-init t)
+    (treemacs-git-mode t)
+    (treemacs-show-hidden-files t)
+    (treemacs-silent-refresh t)
+    (treemacs-width 30)
+    :defer t)
+
+  (use-package treemacs-icons-dired
+    :hook (dired-mode . treemacs-icons-dired-mode))
+
+  (use-package treemacs-magit
+    :after (treemacs magit))
+
+  (use-package treemacs-projectile
+    :after (treemacs magit))
+#+end_src
+*** Vertico
+#+begin_src emacs-lisp
+  (use-package vertico
+    :init (vertico-mode t)
+    :custom
+    (vertico-count 20)
+    (vertico-cycle t)
+    (vertico-resize t)
+    (vertico-scroll-margin 0))
+
+  (use-package vertico-posframe
+    :init
+    (vertico-posframe-mode t)
+    (vertico-multiform-mode t)
+    :custom
+    (vertico-multiform-commands
+     '((consult-line
+	posframe
+	(vertico-posframe-poshandler . posframe-poshandler-frame-top-center)
+	(vertico-posframe-border-width . 10)
+	(vertico-posframe-fallback-mode . vertico-buffer-mode))
+       (t posframe))))
+#+end_src
+*** VTerm
+#+begin_src emacs-lisp
+  (use-package vterm
+    :bind ("C-x t RET" . vterm)
+    :commands (vterm))
+#+end_src
+*** Vundo
+#+begin_src emacs-lisp
+  (use-package vundo
+    :bind ("C-x u" . vundo)
+    :custom (vundo-glyph-alist vundo-unicode-symbols))
+#+end_src
+*** Which Key
+#+begin_src emacs-lisp
+  (use-package which-key
+    :hook (elpaca-after-init . which-key-mode)
+    :config
+    (which-key-setup-side-window-bottom))
+#+end_src
+** Theme
+#+begin_src emacs-lisp
+  (use-package all-the-icons)
+  (use-package all-the-icons-completion
+    :after (marginalia all-the-icons)
+    :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
+    :init
+    (all-the-icons-completion-mode))
+  (use-package all-the-icons-dired :hook (dired-mode . all-the-icons-dired-Mode))
+  (use-package all-the-icons-nerd-fonts)
+  (use-package doom-themes :ensure (:wait t))
+
+  (use-package heaven-and-hell
+    :config
+    (setq heaven-and-hell-theme-type 'dark
+  	heaven-and-hell-themes
+  	'((light . doom-flatwhite)
+  	  (dark  . doom-horizon))
+  	heaven-and-hell-load-theme-no-confirm t)
+    (load-theme (cdr (assoc 'dark heaven-and-hell-themes)) t)
+    :custom-face
+    (default ((t (:family "Dank Mono" :height 120 :weight bold))))
+    (fixed-pitch ((t (:weight bold))))
+    (font-lock-comment-face ((t (:slant italic))))
+    (font-lock-keyword-face ((t (:slant italic))))
+    (font-lock-string-face ((t (:slant italic))))
+    :ensure (:wait t)
+    :hook (after-init  . heaven-and-hell-init-hook)
+    :bind (("C-c <f6>" . heaven-and-hell-load-default-theme)
+  	 ("<f6>"     . heaven-and-hell-toggle-theme)))
+#+end_src

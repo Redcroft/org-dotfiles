@@ -1,0 +1,56 @@
+#+TITLE: Qutebrowser Configuration
+#+AUTHOR: Richard Redcroft
+#+EMAIL: Richard@Redcroft.tech
+#+OPTIONS: toc:nil num:nil
+#+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+
+* Config
+** Theme
+#+NAME: base16-theme
+#+begin_src emacs-lisp
+  (start-process "my-process" "curl" "curl" "-fsSL" "--create-dirs" "-o" "~/.config/qutebrowser/theme.py" "https://raw.githubusercontent.com/theova/base16-qutebrowser/master/themes/default/base16-horizon-terminal-dark.config.py")
+  ""
+#+end_src
+
+#+begin_src python :tangle "~/.config/qutebrowser/config.py" :noweb yes
+  # <<base16-theme()>>
+  config.load_autoconfig()
+  config.source("theme.py")
+#+end_src
+
+** Settings
+#+begin_src python :tangle "~/.config/qutebrowser/config.py"
+  c.auto_save.session = True
+  c.completion.shrink = True
+  c.content.notifications.enabled = True
+  c.content.blocking.whitelist = ["youtube.com"]
+  c.downloads.location.prompt = False
+  c.scrolling.smooth = False
+  c.window.title_format = "qutebrowser"
+  c.hints.chars = "arstneio"
+  c.url.searchengines = {
+      'DEFAULT':  'https://bing.com/search?q={}',
+      'az': 'https://www.amazon.co.uk/s?k={}',
+      'g':  'https://google.com/search?hl=en&q={}',
+      'yt': 'https://youtube.com/results?search_query={}',
+      'yti': 'https://yewtu.be/search?q={}'
+  }
+
+  c.colors.webpage.preferred_color_scheme = "dark"
+  c.colors.webpage.darkmode.enabled = False
+  c.colors.webpage.darkmode.policy.images = "smart-simple"
+
+  config.bind("<Ctrl-tab>", "tab-next")
+  config.bind("<Ctrl-Shift-tab>", "tab-prev")
+  config.bind("m", "spawn mpv --hwdec=auto --ytdl-format=bestvideo[height<=?720]+bestaudio/best {url}")
+  config.bind("M", "hint links spawn mpv --hwdec=auto --ytdl-format=bestvideo[height<=?720]+bestaudio/best {hint-url}")
+  config.bind("<z><l>", "spawn --userscript qute-rbw")
+  config.bind("<z><u>", "spawn --userscript qute-rbw --username-only")
+  config.bind("<z><p>", "spawn --userscript qute-rbw --password-only")
+  config.bind("<Ctrl-f>", "scroll right")
+  config.bind("<Ctrl-b>", "scroll left")
+  config.bind("<Ctrl-n>", "scroll down")
+  config.bind("<Ctrl-p>", "scroll up")
+  config.bind("<z><r>", "config-source ~/.config/qutebrowser/config.py")
+#+end_src

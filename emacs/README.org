@@ -434,6 +434,10 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     :ensure nil
     :hook (emacs-lisp-mode . eldoc-mode))
 #+end_src
+*** Json
+#+begin_src emacs-lisp
+  (use-package json-mode)
+#+end_src
 *** Python
 #+begin_src emacs-lisp :tangle no
   (use-package python-mode)

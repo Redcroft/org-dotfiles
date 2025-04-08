@@ -1,0 +1,23 @@
+#+TITLE: RBW Configuration
+#+AUTHOR: Richard Redcroft
+#+EMAIL: Richard@Redcroft.tech
+#+OPTIONS: toc:nil num:nil
+#+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+
+* Config
+
+#+begin_src json :tangle "~/.config/rbw/config.json"
+  {
+      "email":"Richard@redcroft.tech",
+      "sso_id":null,
+      "base_url":null,
+      "identity_url":null,
+      "ui_url":null,
+      "notifications_url":null,
+      "lock_timeout":3600,
+      "sync_interval":3600,
+      "pinentry":"pinentry",
+      "client_cert_path":null
+  }
+#+end_src

@@ -365,6 +365,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     :custom-face
     (org-quote ((t (:slant italic)))))
 
+  (use-package ob-shell :ensure nil)
   (use-package org-tempo :ensure nil)
 #+end_src
 *** Auto Tangle
@@ -439,6 +440,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
 #+end_src
 *** Rust
 #+begin_src emacs-lisp
+  (use-package rustic)
 #+end_src
 *** Toml
 #+begin_src emacs-lisp
@@ -721,36 +723,6 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (push '(treemacs-hl-line-face . solaire-hl-line-face) solaire-mode-remap-alist)
     :init (solaire-global-mode))
 #+end_src
-*** Tree Sitter
-#+begin_src emacs-lisp
-  (use-package tree-sitter)
-
-  (use-package tree-sitter-langs)
-
-  (use-package treesit-auto
-    :custom
-    (treesit-auto-install 'prompt)
-    :config
-    (global-treesit-auto-mode t))
-#+end_src
-*** Tree Sitter Fold
-#+begin_src emacs-lisp
-  (use-package ts-fold
-    :ensure (:host github :repo "emacs-tree-sitter/ts-fold")
-    :init (global-ts-fold-mode)
-    :bind
-    (:map global-map
-	  ("C-c f O" . ts-fold-open-all)
-	  ("C-c f o" . ts-fold-open)
-	  ("C-c f r" . ts-fold-open-recursively)
-	  ("C-c f C" . ts-fold-close-all)
-	  ("C-c f c" . ts-fold-close)
-	  ("C-c f z" . ts-fold-toggle)))
-
-  (use-package ts-fold-indicators
-    :ensure (:type git :host github :repo "emacs-tree-sitter/ts-fold")
-    :hook (ts-fold . ts-fold-indicagors-mode))
-#+end_src
 *** Treemacs
 #+begin_src emacs-lisp
   (use-package treemacs
@@ -838,12 +810,12 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     :config
     (setq heaven-and-hell-theme-type 'dark
   	heaven-and-hell-themes
-  	'((light . doom-flatwhite)
-  	  (dark  . doom-horizon))
+  	'((light . doom-gruvbox-light)
+  	  (dark  . doom-gruvbox))
   	heaven-and-hell-load-theme-no-confirm t)
     (load-theme (cdr (assoc 'dark heaven-and-hell-themes)) t)
     :custom-face
-    (default ((t (:family "Dank Mono" :height 120 :weight bold))))
+    (default ((t (:family "Dank Mono" :height 130 :weight regular))))
     (fixed-pitch ((t (:weight bold))))
     (font-lock-comment-face ((t (:slant italic))))
     (font-lock-keyword-face ((t (:slant italic))))

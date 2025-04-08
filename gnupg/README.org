@@ -1,0 +1,26 @@
+#+TITLE: GNUPG Configuration
+#+AUTHOR: Richard Redcroft
+#+EMAIL: Richard@Redcroft.tech
+#+OPTIONS: toc:nil num:nil
+#+PROPERTY: Header-args :tangle ~/.gnupg/gpg-agent.conf :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+
+* Config
+
+#+NAME:pinentry
+#+begin_src emacs-lisp
+    (when (string= system-name "red")
+      (if (file-exists-p "/usr/bin/pinentry-emacs")
+      "pinentry-program /usr/bin/pinentry-emacs" "")
+      )
+#+end_src
+
+#+begin_src conf :noweb yes
+  default-cache-ttl 8400000
+  default-cache-ttl-ssh 8400000
+  max-cache-ttl 8400000
+  max-cache-ttl-ssh 8400000
+  allow-loopback-pinentry
+  allow-emacs-pinentry
+  <<pinentry()>>
+#+end_src

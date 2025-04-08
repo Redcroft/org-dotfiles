@@ -1,0 +1,24 @@
+#+TITLE: X11 Configuration
+#+AUTHOR: Richard Redcroft
+#+EMAIL: Richard@Redcroft.tech
+#+OPTIONS: toc:nil num:nil
+#+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+
+#+begin_src conf :tangle "/sudo::/etc/X11/xorg.conf.d/50-libinput.conf"
+  Section "InputClass"
+    Identifier "Touchpad"
+    MatchIsTouchpad "on"
+    Driver "libinput"
+    Option "AccelProfile" "flat"
+    Option "DisableWhileTyping" "0"
+    Option "NaturalScrolling" "true"
+EndSection
+
+Section "InputClass"
+    Identifier "Mouse"
+    MatchIsPointer "on"
+    Driver "libinput"
+    Option "AccelProfile" "flat"
+EndSection
+#+end_src

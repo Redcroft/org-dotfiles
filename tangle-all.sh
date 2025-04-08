@@ -14,7 +14,10 @@ echo "=== Tangling all README.org files in $DOTFILES_ROOT ==="
 # Find all README.org files and tangle them
 find "$DOTFILES_ROOT" -name "README.org" -type f | while read -r org_file; do
     echo "Tangling: $org_file"
-    emacs --batch --eval "(require 'org)" --eval "(setq org-confirm-babel-evaluate nil)" --eval "(org-babel-tangle-file \"$org_file\")"
+    emacs --batch --eval "(require 'org)" \
+	  --eval "(require 'ob-shell)" \
+	  --eval "(setq org-confirm-babel-evaluate nil)" \
+	  --eval "(org-babel-tangle-file \"$org_file\")"
 done
 
 echo "=== Tangling complete ==="

@@ -1,0 +1,14 @@
+#+TITLE: Git Configuration
+#+AUTHOR: Richard Redcroft
+#+EMAIL: Richard@Redcroft.tech
+#+OPTIONS: toc:nil num:nil
+#+PROPERTY: Header-args :tangle ~/.gitconfig :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+
+* User config
+
+#+begin_src conf
+  [user]
+  	email = Richard@redcroft.tech
+  	name = Richard DW Redcroft
+#+end_src

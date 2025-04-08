@@ -8,9 +8,8 @@
 * Config
 ** Theme
 #+NAME: base16-theme
-#+begin_src emacs-lisp
-  (start-process "my-process" "curl" "curl" "-fsSL" "--create-dirs" "-o" "~/.config/qutebrowser/theme.py" "https://raw.githubusercontent.com/theova/base16-qutebrowser/master/themes/default/base16-horizon-terminal-dark.config.py")
-  ""
+#+begin_src sh
+  curl -fsSL --create-dirs -o ~/.config/qutebrowser/theme.py https://raw.githubusercontent.com/theova/base16-qutebrowser/master/themes/default/base16-horizon-terminal-dark.config.py
 #+end_src
 
 #+begin_src python :tangle "~/.config/qutebrowser/config.py" :noweb yes

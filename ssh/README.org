@@ -1,0 +1,17 @@
+#+TITLE: SSH Configuration
+#+AUTHOR: Richard Redcroft
+#+EMAIL: Richard@Redcroft.tech
+#+OPTIONS: toc:nil num:nil
+#+PROPERTY: Header-args :tangle ~/.ssh/config :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+
+* Config
+
+** CW Git
+#+begin_src conf
+  Host git.carseandwaterman.com
+      HostName git.carseandwaterman.com
+      User forgejo
+      Port 2222
+      IdentityFile ~/.ssh/id_cw
+#+end_src

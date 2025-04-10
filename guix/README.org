@@ -1,0 +1,168 @@
+#+TITLE: GUIX Configuration
+#+AUTHOR: Richard Redcroft
+#+EMAIL: Richard@Redcroft.tech
+#+OPTIONS: toc:nil num:nil
+#+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+
+#+begin_src scheme :tangle (if (file-exists-p "/etc/config.scm") "/sudo::/etc/config.scm" "")
+  (use-modules (gnu)
+	       (gnu packages compression)
+	       (gnu packages game-development)  
+	       (gnu packages fonts)
+	       (gnu packages lisp)
+	       (gnu packages package-management)
+	       (gnu system keyboard)
+	       (gnu system nss)
+	       (nongnu packages game-client)
+	       (nongnu packages fonts)
+	       (nongnu packages linux)
+	       (nongnu system linux-initrd))
+  (use-service-modules desktop pm xorg)
+  (use-package-modules autotools
+		       bootloaders
+		       certs
+		       cmake
+		       curl
+		       emacs emacs-xyz
+		       gnupg
+		       python python-xyz
+		       rust rust-apps
+		       shells shellutils
+		       ssh
+		       terminals
+		       version-control
+		       vim
+		       web-browsers
+		       wget
+		       wm
+		       xorg xdisorg)
+
+  (define keyboard-layout (keyboard-layout "us" "colemak_dh" #:options '("ctrl:nocaps")))
+
+  (define %backlight-udev-rule
+    (udev-rule
+     "90-backlight.rules"
+     (string-append "ACTION==\"add\", SUBSYSTEM==\"backlight\", "
+		    "RUN+=\"/run/current-system/profile/bin/chgrp video $sys$devpath/brightness\""
+		    "\n"
+		    "ACTION==\"add\", SUBSYSTEM==\"backlight\", "
+		    "RUN+=\"/run/current-system/profile/bin/chmod g+w $sys$devpath/brightness\"")))
+
+  (define %xorg-libinput-config
+    "Section \"InputClass\"
+    Identifier \"Touchpads\"
+    Driver \"libinput\"
+    MatchDevicePath \"/dev/input/event*\"
+    MatchIsTouchpad \"on\"
+    Option \"Tapping\" \"on\"
+    Option \"TappingButtonMap\" \"lmr\"
+    Option \"TappingDrag\" \"on\"
+    Option \"DisableWhileTyping\" \"off\"
+    Option \"MiddleEmulation\" \"on\"
+    Option \"ScrollMethod\" \"twofinger\"
+    Option \"NaturalScrolling\" \"true\"
+  EndSection")
+
+  (operating-system
+   (host-name "red")
+   (timezone "Europe/London")
+   (locale "en_US.utf8")
+   (kernel linux)
+   (initrd microcode-initrd)
+   (firmware (list linux-firmware))
+   (keyboard-layout keyboard-layout)
+
+   (bootloader (bootloader-configuration
+		(bootloader grub-efi-bootloader)
+		(targets '("/boot"))))
+
+   (file-systems (append
+		  (list (file-system
+			 (device "/dev/nvme0n1p2")
+			 (mount-point "/")
+			 (type "btrfs"))
+			(file-system
+			 (device "/dev/nvme0n1p1")
+			 (mount-point "/boot")
+			 (type "vfat")))
+		  %base-file-systems))
+
+   (users (cons (user-account
+		 (name "lambda")
+		 (comment "Richard DW Redcroft")
+		 (group "users")
+		 (shell (file-append zsh "/bin/zsh"))
+		 (supplementary-groups '("wheel" "netdev" "input" "dialout"
+					 "audio" "video")))
+		%base-user-accounts))
+
+   (packages (append (list
+		      cmake
+		      curl
+		      direnv
+		      dunst
+		      emacs
+		      emacs-all-the-icons emacs-all-the-icons-dired emacs-nerd-icons
+		      emacs-blight emacs-exwm emacs-desktop-environment emacs-vterm
+		      emacs-gdscript-mode
+		      emacs-pinentry
+		      eza
+		      flatpak
+		      font-apple-sf-pro font-apple-sf-mono font-apple-sf-symbols font-apple-sf-compact font-apple-new-york
+		      font-awesome-nonfree
+		      font-liberation font-bitstream-vera
+		      fzf
+		      git
+		      godot
+		      gnupg
+		      kitty
+		      libtool
+		      neovim
+		      openssh
+		      pinentry-emacs
+		      python python-tldextract
+		      qutebrowser
+		      rbw
+		      ripgrep
+		      rofi
+		      roswell
+		      rust rust-cargo rust-cargo-c
+		      steam
+		      unzip
+		      vim
+		      wget
+		      xmodmap
+		      zip
+		      zoxide
+		      zsh)
+		     %base-packages))
+
+   (services
+    (append
+     (list
+      (service bluetooth-service-type)
+      (service tlp-service-type
+	       (tlp-configuration
+		(cpu-scaling-governor-on-ac (list "performance"))))
+      (set-xorg-configuration
+       (xorg-configuration
+	(extra-config (list %xorg-libinput-config))
+	(keyboard-layout keyboard-layout))))
+     (modify-services %desktop-services
+		      (udev-service-type config =>
+					 (udev-configuration
+					  (inherit config)
+					  (rules (append (udev-configuration-rules config)
+							 (list %backlight-udev-rule)))))
+		      (guix-service-type config => (guix-configuration
+						    (inherit config)
+						    (substitute-urls
+						     (append (list "https://substitutes.nonguix.org")
+							     %default-substitute-urls))
+						    (authorized-keys
+						     (append (list (local-file "./signing-key.pub"))
+							     %default-authorized-guix-keys)))))))
+
+   (name-service-switch %mdns-host-lookup-nss))
+#+end_src

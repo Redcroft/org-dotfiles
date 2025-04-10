@@ -93,12 +93,8 @@ I prefer to use [[https://github.com/progfolio/elpaca][Elpaca]] for package mana
 
 ** Base
 *** Emacs
-#+NAME: dotfile-location
-#+begin_src emacs-lisp :tangle no
-  (expand-file-name "README.org" default-directory)
-#+end_src
 Configure base emacs with use-package as i find it cleaner, make sure that ~ensure~ is set to ~nil~
-#+begin_src emacs-lisp :noweb yes
+#+begin_src emacs-lisp
   (use-package emacs
     :ensure nil
     :bind
@@ -112,9 +108,9 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     :config
     (defun my/open-emacs-config ()
       (interactive)
-      (find-file "<<dotfile-location()>>"))
+      (find-file "~/.repos/org-dotfiles/emacs/README.org"))
     :custom
-    (auth-sources '("~/.repos/dotfiles/authinfo.gpg"))
+    (auth-sources '("~/.authinfo.gpg"))
     (byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
     (byte-compile--use-old-handlers nil)
     (custom-file (concat user-emacs-directory "custom.el"))
@@ -153,8 +149,17 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
 		    truncate-partial-width-windows nil
 		    x-stretch-cursor nil))
 #+end_src
+
+*** Ansi Term
+#+begin_src emacs-lisp :tangle no
+  (use-package ashell
+    :ensure nil
+    :bind ("C-x t RET" . ansi-term))
+#+end_src
+
 *** EShell
 #+begin_src emacs-lisp
+  (use-package tramp :ensure nil)
   (use-package eshell
     :ensure nil
     :bind (("C-x RET" . eshell))
@@ -174,6 +179,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (eshell-scroll-show-maximize-output nil)
     (eshell-visual-options nil))
 #+end_src
+
 *** Files
 #+begin_src emacs-lisp
   (use-package files
@@ -215,6 +221,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     :ensure nil
     :init (savehist-mode))
 #+end_src
+
 *** Simple
 #+begin_src emacs-lisp
   (use-package simple
@@ -231,6 +238,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
 		  track-eol t
 		  yank-pop-change-selection t))
 #+end_src
+
 *** Whitespace
 #+begin_src emacs-lisp
   (use-package whitespace
@@ -242,17 +250,19 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (whitespace-tab ((t (:background "#FF000088"))))
     (whitespace-space ((t (:background "#FF000000")))))
 #+end_src
-*** Whitespace-cleanup
+
+*** Whitespace cleanup
 #+begin_src emacs-lisp
   (use-package whitespace-cleanup-mode
     :hook (prog-mode . whitespace-cleanup-mode)
     :custom
     (whitespace-cleanup-mode-only-if-initially-clean nil))
 #+end_src
+
 ** EXWM
 #+begin_src emacs-lisp
   (use-package exwm
-    :if (string= (getenv "EXWM_ENABLE") "t")
+    ;;:if (string= (getenv "EXWM_ENABLE") "t")
     :config
     (use-package pinentry
       :config (pinentry-start))
@@ -287,12 +297,10 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (defun my/exwm-startup ()
       (lambda)
       (exwm-init)
-      (sleep-for 0 200)
       (exwm-workspace-switch-create 9)
-      (sleep-for 0 200)
       (exwm-workspace-switch 1)
       (start-process "" nil "dunst" "&")
-      ;;(dashboard-open)
+      (start-process "" nil "xmodmap" "/home/lambda/.Xmodmap")
       )
     (add-hook 'emacs-startup-hook 'my/exwm-startup)
     (add-hook 'exwm-update-class-hook
@@ -322,14 +330,14 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
 			(lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-volume" "0" "-2%")))
     (exwm-input-set-key (kbd "<XF86AudioMute>")
 			(lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-mute" "0" "toggle")))
-    (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
-			(lambda () (interactive) (start-process "" nil "blight" "inc" "5")))
-    (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
-			(lambda () (interactive) (start-process "" nil "blight" "dec" "5")))
-    (exwm-input-set-key (kbd "s-<XF86MonBrightnessUp>")
-			(lambda () (interactive) (start-process "" nil "blight" "set" "255")))
-    (exwm-input-set-key (kbd "s-<XF86MonBrightnessDown>")
-			(lambda () (interactive) (start-process "" nil "blight" "set" "25")))
+    ;; (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
+    ;; 		      (lambda () (interactive) (start-process "" nil "blight" "inc" "5")))
+    ;; (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
+    ;; 		      (lambda () (interactive) (start-process "" nil "blight" "dec" "5")))
+    ;; (exwm-input-set-key (kbd "s-<XF86MonBrightnessUp>")
+    ;; 		      (lambda () (interactive) (start-process "" nil "blight" "set" "255")))
+    ;; (exwm-input-set-key (kbd "s-<XF86MonBrightnessDown>")
+    ;; 		      (lambda () (interactive) (start-process "" nil "blight" "set" "25")))
     (exwm-input-set-key (kbd "s-<up>")
 			(lambda () (interactive) (enlarge-window-horizontally 2)))
     (exwm-input-set-key (kbd "s-<down>")
@@ -348,6 +356,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
 			  (let ((d (format-time-string "%H:%m%p"))
 				(b (battery-format battery-echo-area-format (funcall battery-status-function))))
 			    (message "%s\t%s" d b))))
+
     (display-time-mode 1)
     (display-battery-mode 1)
     (exwm-input--update-global-prefix-keys)
@@ -368,17 +377,20 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
   (use-package ob-shell :ensure nil)
   (use-package org-tempo :ensure nil)
 #+end_src
+
 *** Auto Tangle
 #+begin_src emacs-lisp
   (use-package org-auto-tangle
     :hook (org-mode . org-auto-tangle-mode))
 #+end_src
+
 *** Modern
 #+begin_src emacs-lisp
   (use-package org-modern
     :after (org)
     :hook (org-mode . org-modern-mode))
 #+end_src
+
 *** Publish
 #+begin_src emacs-lisp
   (setq org-html-validation-link nil
@@ -409,18 +421,21 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
   	("redcroft"
   	 :components ("redcroft-posts" "redcroft-pages" "redcroft-static"))))
 #+end_src
+
 *** Superstar
 #+begin_src emacs-lisp
   (use-package org-superstar
     :after (org)
     :hook (org-mode . org-superstar-mode))
 #+end_src
+
 *** TOC
 #+begin_src emacs-lisp
   (use-package toc-org
     :after (org)
     :hook (org-mode . toc-org-mode))
 #+end_src
+
 ** Languages
 *** Common Lisp
 #+begin_src emacs-lisp
@@ -428,32 +443,39 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (load (expand-file-name "~/.roswell/helper.el"))
     (setq inferior-lisp-program "ros -Q run"))
 #+end_src
+
 *** ELisp
 #+begin_src emacs-lisp
   (use-package elisp-mode
     :ensure nil
     :hook (emacs-lisp-mode . eldoc-mode))
 #+end_src
+
 *** Json
 #+begin_src emacs-lisp
   (use-package json-mode)
 #+end_src
+
 *** Python
 #+begin_src emacs-lisp :tangle no
   (use-package python-mode)
 #+end_src
+
 *** Rust
 #+begin_src emacs-lisp
   (use-package rustic)
 #+end_src
+
 *** Toml
 #+begin_src emacs-lisp
   (use-package toml-mode)
 #+end_src
+
 *** Yaml
 #+begin_src emacs-lisp
   (use-package yaml-mode)
 #+end_src
+
 ** Packages
 *** Avy
 [[https://github.com/abo-abo/avy][Avy]] is a GNU emacs packge for jumping to visible text using a char-based decision tree.
@@ -461,6 +483,19 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
   (use-package avy
     :bind (("C-;" . avy-goto-char)
 	   ("C-:" . avy-goto-char-2)))
+#+end_src
+
+*** Blight
+#+begin_src emacs-lisp
+  (use-package blight
+      :if (string= system-name "red")
+      :ensure nil
+      :after exwm
+      ;; :straight (blight :repo "ssh://git@gitlab.com/ieure/blight.git")
+      :init
+      (setq my/blight (blight-sysfs))
+      (exwm-input-set-key (kbd "<XF86MonBrightnessUp>") (blight-step my/blight 10))
+      (exwm-input-set-key (kbd "<XF86MonBrightnessDown>") (blight-step my/blight -10)))
 #+end_src
 
 *** Cape
@@ -529,7 +564,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     :config (ctrlf-mode t))
 #+end_src
 
-*** Diff-hl
+*** Diff hl
 [[https://github.com/dgutov/diff-hl][diff-hl]] diff-hl-mode highlights uncommitted changes on the side of the window (area also known as the "gutter"), allows you to jump between and revert them selectively.
 #+begin_src emacs-lisp
   (use-package diff-hl
@@ -560,6 +595,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
           eglot-confirm-server-initiated-edits nil
           rustic-lsp-client 'eglot))
 #+end_src
+
 *** Eldoc
 #+begin_src emacs-lisp
   (use-package jsonrpc :ensure nil)
@@ -581,6 +617,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (eldoc-box-only-multi-line t)
     (eldoc-box-max-pixel-width 600))
 #+end_src
+
 *** Eyebrowse
 #+begin_src emacs-lisp
   (use-package eyebrowse
@@ -645,17 +682,20 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
 
   (use-package magit-lfs)
 #+end_src
+
 *** Marginalia
 #+begin_src emacs-lisp
   (use-package marginalia
     :after vertico
     :init (marginalia-mode t))
 #+end_src
+
 *** Move Text
 #+begin_src emacs-lisp
   (use-package move-text
     :config (move-text-default-bindings))
 #+end_src
+
 *** No Littering
 #+begin_src emacs-lisp
   (use-package no-littering
@@ -706,11 +746,13 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
   (use-package rainbow-mode
     :hook (prog-mode . rainbow-mode))
 #+end_src
+
 *** Rainbow Delimiters
 #+begin_src emacs-lisp
   (use-package rainbow-delimiters
     :hook (prog-mode . rainbow-delimiters-mode))
 #+end_src
+
 *** Recentf
 #+begin_src emacs-lisp
   (use-package recentf
@@ -719,6 +761,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     :hook ((elpaca-after-init . recentf-mode)
 	   (kill-emacs . recentf-save-list)))
 #+end_src
+
 *** Solaire
 #+begin_src emacs-lisp
   (use-package solaire-mode
@@ -727,6 +770,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (push '(treemacs-hl-line-face . solaire-hl-line-face) solaire-mode-remap-alist)
     :init (solaire-global-mode))
 #+end_src
+
 *** Treemacs
 #+begin_src emacs-lisp
   (use-package treemacs
@@ -756,6 +800,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
   (use-package treemacs-projectile
     :after (treemacs magit))
 #+end_src
+
 *** Vertico
 #+begin_src emacs-lisp
   (use-package vertico
@@ -779,18 +824,21 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
 	(vertico-posframe-fallback-mode . vertico-buffer-mode))
        (t posframe))))
 #+end_src
+
 *** VTerm
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package vterm
     :bind ("C-x t RET" . vterm)
     :commands (vterm))
 #+end_src
+
 *** Vundo
 #+begin_src emacs-lisp
   (use-package vundo
     :bind ("C-x u" . vundo)
     :custom (vundo-glyph-alist vundo-unicode-symbols))
 #+end_src
+
 *** Which Key
 #+begin_src emacs-lisp
   (use-package which-key
@@ -798,6 +846,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     :config
     (which-key-setup-side-window-bottom))
 #+end_src
+
 ** Theme
 #+begin_src emacs-lisp
   (use-package all-the-icons)
@@ -819,7 +868,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
   	heaven-and-hell-load-theme-no-confirm t)
     (load-theme (cdr (assoc 'dark heaven-and-hell-themes)) t)
     :custom-face
-    (default ((t (:family "Dank Mono" :height 130 :weight regular))))
+    (default ((t (:family "Dank Mono" :height 140 :weight regular))))
     (fixed-pitch ((t (:weight bold))))
     (font-lock-comment-face ((t (:slant italic))))
     (font-lock-keyword-face ((t (:slant italic))))

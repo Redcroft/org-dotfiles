@@ -262,7 +262,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
 ** EXWM
 #+begin_src emacs-lisp
   (use-package exwm
-    ;;:if (string= (getenv "EXWM_ENABLE") "t")
+    :if (string= (getenv "EXWM_ENABLE") "t")
     :config
     (use-package pinentry
       :config (pinentry-start))
@@ -572,6 +572,14 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     :hook ((dired-mode         . diff-hl-dired-mode-unless-remote)
 	   (magit-pre-refresh  . diff-hl-magit-pre-refresh)
 	   (magit-post-refresh . diff-hl-magit-post-refresh)))
+#+end_src
+
+*** Direnv
+#+begin_src emacs-lisp
+  (use-package direnv
+    :config
+    (direnv-mode)
+    (add-hook 'before-hack-local-variables-hook #'direnv-update-environment))
 #+end_src
 
 *** GCMH

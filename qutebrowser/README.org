@@ -9,7 +9,8 @@
 ** Theme
 #+NAME: base16-theme
 #+begin_src sh
-  curl -fsSL --create-dirs -o ~/.config/qutebrowser/theme.py https://raw.githubusercontent.com/theova/base16-qutebrowser/master/themes/default/base16-horizon-terminal-dark.config.py
+  #curl -fsSL --create-dirs -o ~/.config/qutebrowser/theme.py https://raw.githubusercontent.com/theova/base16-qutebrowser/master/themes/default/base16-gruvbox-dark.config.py
+  curl -fsSL --create-dirs -o ~/.config/qutebrowser/theme.py https://raw.githubusercontent.com/The-Compiler/dotfiles/master/qutebrowser/gruvbox.py
 #+end_src
 
 #+begin_src python :tangle "~/.config/qutebrowser/config.py" :noweb yes

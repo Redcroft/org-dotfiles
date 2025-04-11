@@ -214,13 +214,14 @@
   alias pwposeidon='pactl load-module module-tunnel-sink server=tcp:10.0.0.20'
 
   alias xuu='sudo shutdown -h now'
+  alias xur='sudo reboot'
 
   # Source
   if [ -e ~/.cargo/env ] ; then
       . "$HOME/.cargo/env"
   fi
 
-  eval "$(direnv hook bash)"
-  eval "$(zoxide init --cmd cd bash)"
+  eval "$(direnv hook zsh)"
+  eval "$(zoxide init --cmd cd zsh)"
 #+end_src
 

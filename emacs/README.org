@@ -395,7 +395,37 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
 #+end_src
 
 *** Publish
+https://zwpdbh.github.io/emacs/org-to-blog-using-org-publish.html
+https://meganrenae21.github.io/Meg-in-Progress/posts/blogging-with-org-mode.html
+https://opensource.com/article/20/3/blog-emacs
+http://jgkamat.gitlab.io/blog/website1.html
+https://taingram.org/blog/org-mode-blog.html
+https://pank.eu/blog/blog-setup.html
+https://bholten.github.io/posts/blogging_with_emacs.html
 #+begin_src emacs-lisp
+  (setq org-export-html-with-timestamps nil
+        org-export-with-author nil
+        org-export-with-date nil
+        org-export-with-section-numbers nil
+        org-export-with-smart-quotes t
+        org-export-with-timestamps nil
+        org-export-with-toc nil)
+
+  (defvar this-date-format "%b %d, %Y")
+
+  (setq org-html-divs '((preamble "header" "preamble")
+                        (content "main" "content")
+                        (postamble "footer" "postamble"))
+        org-html-container-element "section"
+        org-html-metadata-timestamp-format this-date-format
+        org-html-checkbox-type 'html
+        org-html-html5-fancy nil
+        org-html-validation-link t
+        org-html-head-include-default-style nil
+        org-html-doctype "html5"
+        org-html-htmlize-output-type 'css
+        org-src-fontify-natively t)
+
   (setq org-html-validation-link nil
         org-publish-project-alist
         '(("redcroft-posts"
@@ -405,19 +435,26 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
   	 :recursive t
   	 :publishing-function org-html-publish-to-html
   	 :org-html-preamble nil
+  	 :org-html-postamble nil
+  	 :html-head-include-default-style nil
+  	 :auto-sitemap t
+  	 :sitemap-filename "sitemap.org"
   	 )
   	("redcroft-pages"
   	 :base-directory "~/projects/redcroft/org/"
   	 :base-extension "org"
   	 :publishing-directory "~/projects/redcroft/public_html/"
-  	 :recursive t
-  	 :publishing-function org-html-publish-to-html
   	 :org-html-preamble nil
+  	 :org-html-postamble nil
+  	 :recursive nil
+  	 :publishing-function org-html-publish-to-html
+  	 :html-head "<link rel=\"stylesheet\" href=\"/style.css\" type=\"text/css\"/>"
+  	 :html-head-include-default-style nil
   	 )
   	("redcroft-static"
   	 :base-directory "~/projects/redcroft/org/"
   	 :base-extension "css\\|js\\|\\webm|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg"
-  	 :publishing-directory "public_html/"
+  	 :publishing-directory "~/projects/redcroft/public_html/"
   	 :recursive t
   	 :publishing-function org-publish-attachment
   	 )
@@ -452,6 +489,11 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
   (use-package elisp-mode
     :ensure nil
     :hook (emacs-lisp-mode . eldoc-mode))
+#+end_src
+
+*** GDScript
+#+begin_src emacs-lisp
+  (use-package gdscript-mode)
 #+end_src
 
 *** Json
@@ -578,11 +620,11 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
 #+end_src
 
 *** Direnv
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package direnv
-    :hook (prog-mode . direnv-mode)
-    :config
-    (add-hook 'before-hack-local-variables-hook #'direnv-update-environment))
+    :hook (prog-mode . direnv-mode))
+    ;; :config
+    ;; (add-hook 'before-hack-local-variables-hook #'direnv-update-environment))
 #+end_src
 
 *** GCMH
@@ -647,6 +689,12 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (eyebrowse-mode)
     :custom
     (eyebrowse-new-workspace t))
+#+end_src
+
+*** Helm System Packages
+#+begin_src emacs-lisp
+  (use-package helm-system-packages
+    :bind ("C-x y p" . helm-system-packages))
 #+end_src
 
 *** Indent bars
@@ -866,18 +914,20 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
     :init
     (all-the-icons-completion-mode))
-  (use-package all-the-icons-dired :hook (dired-mode . all-the-icons-dired-Mode))
+  (use-package all-the-icons-dired :hook (dired-mode . all-the-icons-dired-mode))
   (use-package all-the-icons-nerd-fonts)
   (use-package doom-themes :ensure (:wait t))
 
   (use-package heaven-and-hell
     :config
-    (setq heaven-and-hell-theme-type 'dark
-  	heaven-and-hell-themes
+    (if (string= system-name "red")
+        (setq heaven-and-hell-theme-type 'light)
+      (setq heaven-and-hell-theme-type 'dark))
+    (setq heaven-and-hell-themes
   	'((light . doom-gruvbox-light)
   	  (dark  . doom-gruvbox))
   	heaven-and-hell-load-theme-no-confirm t)
-    (load-theme (cdr (assoc 'dark heaven-and-hell-themes)) t)
+    (load-theme (cdr (assoc heaven-and-hell-theme-type heaven-and-hell-themes)) t)
     :custom-face
     (default ((t (:family "Maple Mono" :height 120 :weight semibold))))
     (fixed-pitch ((t (:weight bold))))

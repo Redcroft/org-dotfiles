@@ -876,7 +876,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
   	heaven-and-hell-load-theme-no-confirm t)
     (load-theme (cdr (assoc 'dark heaven-and-hell-themes)) t)
     :custom-face
-    (default ((t (:family "Dank Mono" :height 140 :weight regular))))
+    (default ((t (:family "Maple Mono" :height 120 :weight semibold))))
     (fixed-pitch ((t (:weight bold))))
     (font-lock-comment-face ((t (:slant italic))))
     (font-lock-keyword-face ((t (:slant italic))))

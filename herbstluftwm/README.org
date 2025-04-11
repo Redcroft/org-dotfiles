@@ -1,0 +1,212 @@
+#+TITLE: SSH Configuration
+#+AUTHOR: Richard Redcroft
+#+EMAIL: Richard@Redcroft.tech
+#+OPTIONS: toc:nil num:nil
+#+PROPERTY: Header-args :tangle-mode (identity #o755) :mkdirp yes
+#+auto_tangle: t
+
+* Autostart
+
+** Init
+
+#+begin_src bash :tangle "~/.config/herbstluftwm/autostart" :shebang "#!/bin/bash"
+  hc() {
+      herbstclient "$@"
+  }
+
+  hc emit_hook reload
+  hc keybind --all
+  Mod=Mod4
+#+end_src
+
+** Keybinds
+
+#+begin_src bash :tangle "~/.config/herbstluftwm/autostart"
+  hc keybind $Mod-Shift-Escape quit
+  hc keybind $Mod-tilda quit
+  hc keybind $Mod-Escape reload
+  hc keybind $Mod-Shift-q close
+
+  hc keybind $Mod-Return spawn kitty
+  hc keybind $Mod-Shift-w spawn qutebrowser
+  hc keybind $Mod-Shift-e spawn emacs
+  hc keybind $Mod-d spawn dmenu_run
+  hc keybind $Mod-z spawn rofi-rbw
+  hc keybind $Mod-g spawn game-performance godot
+  hc keybind $Mod-minus spawn ~/.local/bin/hc-scratch
+
+  hc keybind XF86AudioMute spawn pactl set-sink-mute @DEFAULT_SINK@ toggle
+  hc keybind XF86AudioRaiseVolume spawn pactl set-sink-volume @DEFAULT_SINK@ +2%
+  hc keybind XF86AudioLowerVolume spawn pactl set-sink-volume @DEFAULT_SINK@ -2%
+
+  hc keybind $Mod-b     focus left
+  hc keybind $Mod-n     focus down
+  hc keybind $Mod-p     focus up
+  hc keybind $Mod-f     focus right
+
+  hc keybind $Mod-Shift-b     shift left
+  hc keybind $Mod-Shift-n     shift down
+  hc keybind $Mod-Shift-p     shift up
+  hc keybind $Mod-Shift-f     shift right
+
+  hc keybind $Mod-v       split   bottom  0.5
+  hc keybind $Mod-h       split   right   0.5
+  hc keybind $Mod-Control-space split explode
+
+  resizestep=0.005
+  hc keybind $Mod-Control-b       resize left +$resizestep
+  hc keybind $Mod-Control-n       resize down +$resizestep
+  hc keybind $Mod-Control-p       resize up +$resizestep
+  hc keybind $Mod-Control-f       resize right +$resizestep
+
+  hc keybind $Mod-j chain , shift left , focus left , cycle -1 , shift right , focus left
+  hc keybind $Mod-Shift-j chain , shift right , focus right , cycle -1 , shift left , focus rigth
+
+  # tags
+  tag_names=( {1..9} )
+  tag_keys=( {1..9} 0 )
+
+  hc rename default "${tag_names[0]}" || true
+  for i in "${!tag_names[@]}" ; do
+      hc add "${tag_names[$i]}"
+      key="${tag_keys[$i]}"
+      if [ -n "$key" ] ; then
+          hc keybind "$Mod-$key" use_index "$i"
+          hc keybind "$Mod-Shift-$key" move_index "$i"
+      fi
+  done
+
+  # cycle through tags
+  hc keybind $Mod-period use_index +1 --skip-visible
+  hc keybind $Mod-comma  use_index -1 --skip-visible
+
+  # layouting
+  hc keybind $Mod-x remove
+  hc keybind $Mod-s floating toggle
+  hc keybind $Mod-m fullscreen toggle
+  hc keybind $Mod-Shift-space set_attr clients.focus.floating toggle
+  hc keybind $Mod-Shift-d set_attr clients.focus.decorated toggle
+  hc keybind $Mod-space pseudotile toggle
+  hc keybind $Mod-e cycle_layout +1
+  hc keybind $Mod-BackSpace cycle_monitor
+  hc keybind $Mod-Tab cycle +1
+  hc keybind $Mod-Shift-Tab cycle -1
+  hc keybind $Mod-i jumpto urgent
+  hc keybind $Mod-y toggle show_frame_decorations
+
+  hc keybind $Mod-Shift-u substitute FOCUS "tags.focus.name" \
+     foreach CLIENT clients. \
+     sprintf MINATT "%c.minimized" CLIENT \
+     sprintf TAGATT "%c.tag" CLIENT and \
+     , compare MINATT "=" "true" \
+     , compare TAGATT "=" FOCUS \
+     , set_attr MINATT false
+#+end_src
+
+** Mouse
+
+#+begin_src bash :tangle "~/.config/herbstluftwm/autostart"
+  hc mouseunbind --all
+  hc mousebind $Mod-Button1 move
+  hc mousebind $Mod-Button2 resize
+  hc mousebind $Mod-Button3 resize
+
+  hc set focus_follows_mouse 0
+#+end_src
+
+
+** Theme
+
+#+begin_src bash :tangle "~/.config/herbstluftwm/autostart"
+  # theme
+  hc attr theme.tiling.reset 1
+  hc attr theme.floating.reset 1
+  hc set frame_border_active_color "#3c3836"
+  hc set frame_border_normal_color "#3c3836"
+  hc set frame_bg_normal_color "#3c3836"
+  hc set frame_bg_active_color "#8ec07c"
+  hc set frame_border_width 3
+  hc set show_frame_decorations 'focused_if_multiple'
+  hc set frame_bg_transparent on
+  hc set frame_transparent_width 5
+  hc set frame_gap 6
+
+  hc attr theme.title_height 15
+  hc attr theme.title_when multiple_tabs
+  hc attr theme.floating.title_when multiple_tabs
+  hc attr theme.title_font 'Maple Mono:size=12:style=Regular'
+  hc attr theme.title_depth 6
+  hc attr theme.active.color "#8ec07c"
+  hc attr theme.title_color "#3c3836"
+  hc attr theme.normal.color "#3c3836"
+  hc attr theme.urgent.color "#fb4934"
+  hc attr theme.tab_color "#3c3836"
+  hc attr theme.active.tab_color "#3c3836"
+  hc attr theme.active.tab_outer_color "#3c3836"
+  hc attr theme.active.tab_title_color "#ebdbb2"
+  hc attr theme.normal.title_color "#ebdbb2"
+  hc attr theme.inner_width 2
+  hc attr theme.inner_color black
+  hc attr theme.border_width 2
+  hc attr theme.floating.border_width 2
+  hc attr theme.floating.outer_width 2
+  hc attr theme.floating.outer_color "#8ec07c"
+  hc attr theme.active.inner_color "#8ec07c"
+  hc attr theme.urgent.inner_color "#fb4934"
+  hc attr theme.normal.inner_color "#3c3836"
+  # copy inner color to outer_color
+  for state in active urgent normal ; do
+      hc substitute C theme.${state}.inner_color \
+          attr theme.${state}.outer_color C
+  done
+  hc attr theme.tiling.outer_width 1
+  hc attr theme.background_color "#3c3836"
+
+  hc set window_gap 0
+  hc set frame_padding 0
+  hc set smart_window_surroundings off
+  hc set smart_frame_surroundings on
+  hc set mouse_recenter_gap 0
+
+  hc set tree_style '╾│ ├└╼─┐'
+#+end_src
+
+** Rules
+
+#+begin_src bash :tangle "~/.config/herbstluftwm/autostart"
+  hc unrule -F
+  hc rule focus=on
+  hc rule floatplacement=smart
+  hc rule windowtype~'_NET_WM_WINDOW_TYPE_(DIALOG|UTILITY|SPLASH)' floating=on
+  hc rule windowtype='_NET_WM_WINDOW_TYPE_DIALOG' focus=on
+  hc rule windowtype~'_NET_WM_WINDOW_TYPE_(NOTIFICATION|DOCK|DESKTOP)' manage=off
+  hc rule fixedsize floating=on
+  hc rule class~'UnrealEditor' floating=on
+  hc rule class~'*Godot*' floating=on
+
+  hc unlock
+  xrandr --output HDMI-1 --mode 480x1920 --rate 60 --rotate right --pos 320x1440 --output DP-2 --mode 2560x1440 --rate 240 --pos 0x0
+  herbstclient add "panel"
+  herbstclient set_monitors 2560x1440+0+0
+  herbstclient add_monitor 1920x480+320+1440 "panel" panel
+  herbstclient lock_tag panel
+#+end_src
+
+
+** Autostart
+
+#+begin_src bash :tangle "~/.config/herbstluftwm/autostart"
+  sudo zpool import -fa
+  sudo zfs mount photos
+  pkill polybar
+  pkill picom
+  pipewire &
+  polybar &
+  picom &
+  xsetroot -solid '#657c64'
+  hsetroot -solid '#657c64'
+  ~/.fehbg &
+  xrdb -merge ~/.Xresources
+  xset s off
+  xset -dpms
+#+end_src

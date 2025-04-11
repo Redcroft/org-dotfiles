@@ -412,18 +412,19 @@ https://bholten.github.io/posts/blogging_with_emacs.html
         org-export-with-toc nil)
 
   (defvar this-date-format "%b %d, %Y")
-
-  (setq org-html-divs '((preamble "header" "preamble")
+        
+  (setq org-html-checkbox-type 'html
+        org-html-container-element "section"
+        org-html-divs '((preamble "header" "preamble")
                         (content "main" "content")
                         (postamble "footer" "postamble"))
-        org-html-container-element "section"
-        org-html-metadata-timestamp-format this-date-format
-        org-html-checkbox-type 'html
-        org-html-html5-fancy nil
-        org-html-validation-link t
-        org-html-head-include-default-style nil
         org-html-doctype "html5"
+        org-html-head-include-scripts nil
+        org-html-head-include-default-style nil
+        org-html-html5-fancy nil
         org-html-htmlize-output-type 'css
+        org-html-metadata-timestamp-format this-date-format
+        org-html-validation-link nil
         org-src-fontify-natively t)
 
   (setq org-html-validation-link nil

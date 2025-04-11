@@ -124,6 +124,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (user-real-login-name "Richard DW Redcroft")
     (user-login-name "lambda")
     (user-mail-address "richard@redcroft.tech")
+    (vc-follow-symlinks t)
     :init
     (define-prefix-command 'programs-map)
     (flymake-mode -1)
@@ -138,16 +139,16 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (keyboard-translate ?\C-x ?\C-t)
     (keyboard-translate ?\C-t ?\C-x)
     (setq-default apropos-do-all t
-		    bidi-display-reordering nil
-		    custom-safe-themes t
-		    fill-column 80
-		    highlight-nonselected-windows nil
-		    inhibit-tabs-mode nil
-		    initial-scratch-message nil
-		    line-spacing 0.15
-		    truncate-lines t
-		    truncate-partial-width-windows nil
-		    x-stretch-cursor nil))
+  		    bidi-display-reordering nil
+  		    custom-safe-themes t
+  		    fill-column 80
+  		    highlight-nonselected-windows nil
+  		    inhibit-tabs-mode nil
+  		    initial-scratch-message nil
+  		    line-spacing 0.15
+  		    truncate-lines t
+  		    truncate-partial-width-windows nil
+  		    x-stretch-cursor nil))
 #+end_src
 
 *** Ansi Term
@@ -267,32 +268,32 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (use-package pinentry
       :config (pinentry-start))
     (setq battery-update-interval 15
-	  battery-mode-line-format "[%p%% %t]"
-	  display-time-default-load-average nil
-	  display-time-format "[%b %d %I:%M%p]"
-	  exwm-workspace-number 10
-	  exwm-input-simulation-keys
-	  '(([?\C-b] . [left])
-	    ([?\C-f] . [right])
-	    ([?\C-p] . [up])
-	    ([?\C-n] . [down])
-	    ([?\C-a] . [home])
-	    ([?\C-e] . [end])
-	    ([?\M-v] . [prior])
-	    ([?\C-v] . [next])
-	    ([?\C-d] . [delete])
-	    ([?\C-k] . [S-end delete]))
-	  exwm-input-global-keys
-	  `(([?\s-r] . exwm-reset)
-	    ([?\s-w] . exwm-workspace-switch)
-	    ;; ([XF86MonBrightnessUp] . ignore)
-	    ;; ([XF86MonBrightnessDown] . ignore)
-	    ,@(mapcar (lambda (i)
-			`(,(kbd (format "s-%d" i)) .
-			  (lambda ()
-			    (interactive)
-			    (exwm-workspace-switch-create ,i))))
-		      (number-sequence 0 9))))
+  	  battery-mode-line-format "[%p%% %t]"
+  	  display-time-default-load-average nil
+  	  display-time-format "[%b %d %I:%M%p]"
+  	  exwm-workspace-number 10
+  	  exwm-input-simulation-keys
+  	  '(([?\C-b] . [left])
+  	    ([?\C-f] . [right])
+  	    ([?\C-p] . [up])
+  	    ([?\C-n] . [down])
+  	    ([?\C-a] . [home])
+  	    ([?\C-e] . [end])
+  	    ([?\M-v] . [prior])
+  	    ([?\C-v] . [next])
+  	    ([?\C-d] . [delete])
+  	    ([?\C-k] . [S-end delete]))
+  	  exwm-input-global-keys
+  	  `(([?\s-r] . exwm-reset)
+  	    ([?\s-w] . exwm-workspace-switch)
+  	    ;; ([XF86MonBrightnessUp] . ignore)
+  	    ;; ([XF86MonBrightnessDown] . ignore)
+  	    ,@(mapcar (lambda (i)
+  			`(,(kbd (format "s-%d" i)) .
+  			  (lambda ()
+  			    (interactive)
+  			    (exwm-workspace-switch-create ,i))))
+  		      (number-sequence 0 9))))
 
     (defun my/exwm-startup ()
       (lambda)
@@ -301,61 +302,63 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
       (exwm-workspace-switch 1)
       (start-process "" nil "dunst" "&")
       (start-process "" nil "xmodmap" "/home/lambda/.Xmodmap")
+      (start-process "" nil "pipewire" "&")
       )
     (add-hook 'emacs-startup-hook 'my/exwm-startup)
     (add-hook 'exwm-update-class-hook
-	      (lambda ()
-		(unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
-			    (string= "gimp" exwm-instance-name))
-		  (exwm-workspace-rename-buffer (concat "*EXWM* " exwm-class-name)))))
+  	      (lambda ()
+  		(unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+  			    (string= "gimp" exwm-instance-name))
+  		  (exwm-workspace-rename-buffer (concat "*EXWM* " exwm-class-name)))))
     (add-hook 'exwm-update-title-hook
-	      (lambda ()
-		(when (or (not exwm-instance-name)
-			  (string-prefix-p "sun-awt-X11-" exwm-instance-name)
-			  (string= "gimp" exwm-instance-name))
-		  (exwm-workspace-rename-buffer exwm-title))))
+  	      (lambda ()
+  		(when (or (not exwm-instance-name)
+  			  (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+  			  (string= "gimp" exwm-instance-name))
+  		  (exwm-workspace-rename-buffer exwm-title))))
     (add-hook 'exwm-floating-setup-hook 'exwm-layout-hide-mode-line)
     (add-hook 'exwm-floating-exit-hook  'exwm-layout-show-mode-line)
     (exwm-input-set-key (kbd "s-p")
-			(lambda (command)
-			  (interactive (list (read-shell-command "$ ")))
-			  (start-process-shell-command command nil command)))
+  			(lambda (command)
+  			  (interactive (list (read-shell-command "$ ")))
+  			  (start-process-shell-command command nil command)))
     (exwm-input-set-key (kbd "s-<return>")
-			(lambda () (interactive) (eshell)))
+  			(lambda () (interactive) (eshell)))
     (exwm-input-set-key (kbd "s-W")
-			(lambda () (interactive) (start-process "" nil "qutebrowser")))
+  			(lambda () (interactive) (start-process "" nil "qutebrowser")))
     (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
-			(lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-volume" "0" "+2%")))
+  			(lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-volume" "0" "+2%")))
     (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
-			(lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-volume" "0" "-2%")))
+  			(lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-volume" "0" "-2%")))
     (exwm-input-set-key (kbd "<XF86AudioMute>")
-			(lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-mute" "0" "toggle")))
-    ;; (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
-    ;; 		      (lambda () (interactive) (start-process "" nil "blight" "inc" "5")))
-    ;; (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
-    ;; 		      (lambda () (interactive) (start-process "" nil "blight" "dec" "5")))
-    ;; (exwm-input-set-key (kbd "s-<XF86MonBrightnessUp>")
-    ;; 		      (lambda () (interactive) (start-process "" nil "blight" "set" "255")))
-    ;; (exwm-input-set-key (kbd "s-<XF86MonBrightnessDown>")
-    ;; 		      (lambda () (interactive) (start-process "" nil "blight" "set" "25")))
+  		      (lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-mute" "0" "toggle")))
+    (when (not (file-exists-p "/etc/config.scm"))
+      (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
+  			(lambda () (interactive) (start-process "" nil "blight" "inc" "5")))
+      (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
+  			(lambda () (interactive) (start-process "" nil "blight" "dec" "5")))
+      (exwm-input-set-key (kbd "s-<XF86MonBrightnessUp>")
+  			(lambda () (interactive) (start-process "" nil "blight" "set" "255")))
+      (exwm-input-set-key (kbd "s-<XF86MonBrightnessDown>")
+  			(lambda () (interactive) (start-process "" nil "blight" "set" "25"))))
     (exwm-input-set-key (kbd "s-<up>")
-			(lambda () (interactive) (enlarge-window-horizontally 2)))
+  			(lambda () (interactive) (enlarge-window-horizontally 2)))
     (exwm-input-set-key (kbd "s-<down>")
-			(lambda () (interactive) (shrink-window-horizontally 2)))
+  			(lambda () (interactive) (shrink-window-horizontally 2)))
     (exwm-input-set-key (kbd "s-f")
-			(lambda () (interactive) (windmove-right)))
+  			(lambda () (interactive) (windmove-right)))
     (exwm-input-set-key (kbd "s-b")
-			(lambda () (interactive) (windmove-left)))
+  			(lambda () (interactive) (windmove-left)))
     (exwm-input-set-key (kbd "C-s-f")
-			(lambda () (interactive) (windmove-swap-states-right)))
+  			(lambda () (interactive) (windmove-swap-states-right)))
     (exwm-input-set-key (kbd "C-s-b")
-			(lambda () (interactive) (windmove-swap-states-left)))
+  			(lambda () (interactive) (windmove-swap-states-left)))
     (exwm-input-set-key (kbd "s-z")
-			(lambda ()
-			  (interactive)
-			  (let ((d (format-time-string "%H:%m%p"))
-				(b (battery-format battery-echo-area-format (funcall battery-status-function))))
-			    (message "%s\t%s" d b))))
+  			(lambda ()
+  			  (interactive)
+  			  (let ((d (format-time-string "%H:%m%p"))
+  				(b (battery-format battery-echo-area-format (funcall battery-status-function))))
+  			    (message "%s\t%s" d b))))
 
     (display-time-mode 1)
     (display-battery-mode 1)
@@ -486,7 +489,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
 #+end_src
 
 *** Blight
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle (if (file-exists-p "/etc/config.scm") "~/.emacs.d/init.el" "")
   (use-package blight
       :if (string= system-name "red")
       :ensure nil
@@ -575,10 +578,10 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
 #+end_src
 
 *** Direnv
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package direnv
+    :hook (prog-mode . direnv-mode)
     :config
-    (direnv-mode)
     (add-hook 'before-hack-local-variables-hook #'direnv-update-environment))
 #+end_src
 
@@ -834,7 +837,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
 #+end_src
 
 *** VTerm
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (use-package vterm
     :bind ("C-x t RET" . vterm)
     :commands (vterm))

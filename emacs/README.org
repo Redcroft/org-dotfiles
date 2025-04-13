@@ -7,7 +7,7 @@
 
 * Early Init
 This config is mostly to optimize startup time and reduce the UI to the bare minimum before loading the emacs window.
-
+** Settings
 The following settings customize the initial appearance of the Emacs frame.
 I like to have a small internal border and disable the menu bar, scroll bars, and tool bar
 for a cleaner, minimalist interface.
@@ -43,7 +43,6 @@ for a cleaner, minimalist interface.
 
 * Init
 ** Elpaca
-
 I prefer to use [[https://github.com/progfolio/elpaca][Elpaca]] for package management. I can load packages from git directly, but also async load packages. I also use Elpaca-try quite often to just test packages.
 #+begin_src emacs-lisp
   (defvar elpaca-installer-version 0.10)
@@ -149,13 +148,6 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
   		    truncate-lines t
   		    truncate-partial-width-windows nil
   		    x-stretch-cursor nil))
-#+end_src
-
-*** Ansi Term
-#+begin_src emacs-lisp :tangle no
-  (use-package ashell
-    :ensure nil
-    :bind ("C-x t RET" . ansi-term))
 #+end_src
 
 *** EShell
@@ -522,6 +514,17 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package yaml-mode)
 #+end_src
 
+*** Zig
+#+begin_src emacs-lisp
+  (use-package zig-mode
+    :mode "\\.zig\\'"
+    :hook (zig-mode . (lambda ()
+  		      (setq-local tab-width 4)
+  		      (setq-local indent-tabs-mode nil)
+  		      (setq-local c-basic-offset 4)
+  		      (setq-local c-default-style "linux"))))
+#+end_src
+
 ** Packages
 *** Avy
 [[https://github.com/abo-abo/avy][Avy]] is a GNU emacs packge for jumping to visible text using a char-based decision tree.
@@ -628,6 +631,14 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     ;; (add-hook 'before-hack-local-variables-hook #'direnv-update-environment))
 #+end_src
 
+*** Doom Modeline
+#+begin_src emacs-lisp
+  (use-package doom-modeline
+    :hook (after-init . doom-modeline-mode)
+    :custom
+    (doom-modeline-buffer-encoding nil))
+#+end_src
+
 *** GCMH
 #+begin_src emacs-lisp
   (use-package gcmh
@@ -644,10 +655,10 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     :ensure nil
     :after (eldoc)
     :hook (eglot--managed-mode . (lambda () (flymake-mode -1) (eglot-inlay-hints-mode -1)))
-    :config
-    (setq eglot-autoshutdown t
-          eglot-confirm-server-initiated-edits nil
-          rustic-lsp-client 'eglot))
+    :custom
+    (eglot-autoshutdown t)
+    (eglot-confirm-server-initiated-edits nil)
+    (rustic-lsp-client 'eglot))
 #+end_src
 
 *** Eldoc
@@ -705,7 +716,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 #+end_src
 
 *** Lambda Line
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package lambda-line
     :ensure (:type git :host github :repo "lambda-emacs/lambda-line")
     :after all-the-icons
@@ -861,6 +872,14 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     :after (treemacs magit))
 #+end_src
 
+*** Treesit
+#+begin_src emacs-lisp
+  (use-package tree-sitter)
+
+  (use-package treesit-auto
+    :config (global-treesit-auto-mode))
+#+end_src
+
 *** Vertico
 #+begin_src emacs-lisp
   (use-package vertico
@@ -925,8 +944,8 @@ https://bholten.github.io/posts/blogging_with_emacs.html
         (setq heaven-and-hell-theme-type 'light)
       (setq heaven-and-hell-theme-type 'dark))
     (setq heaven-and-hell-themes
-  	'((light . doom-gruvbox-light)
-  	  (dark  . doom-gruvbox))
+  	'((light . doom-flatwhite)
+  	  (dark  . doom-material-dark))
   	heaven-and-hell-load-theme-no-confirm t)
     (load-theme (cdr (assoc heaven-and-hell-theme-type heaven-and-hell-themes)) t)
     :custom-face
@@ -937,6 +956,6 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     (font-lock-string-face ((t (:slant italic))))
     :ensure (:wait t)
     :hook (after-init  . heaven-and-hell-init-hook)
-    :bind (("C-c <f6>" . heaven-and-hell-load-default-theme)
-  	 ("<f6>"     . heaven-and-hell-toggle-theme)))
+    :bind (("C-c <f5>" . heaven-and-hell-load-default-theme)
+  	 ("<f5>"     . heaven-and-hell-toggle-theme)))
 #+end_src

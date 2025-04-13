@@ -6,7 +6,6 @@
 #+auto_tangle: t
 
 * Early Init
-This config is mostly to optimize startup time and reduce the UI to the bare minimum before loading the emacs window.
 ** Settings
 The following settings customize the initial appearance of the Emacs frame.
 I like to have a small internal border and disable the menu bar, scroll bars, and tool bar

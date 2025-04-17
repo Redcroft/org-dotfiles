@@ -73,6 +73,7 @@
   gmail https://gmail.com
   git https://git.carseandwaterman.com
   gol https://gamingonlinux.com
+  hmx https://www.mechmods.co.uk/products/hmx-xinhai-switches?variant=45906378359007
   lisp https://gigamonkeys.com/book/
   mail https://mail.hostinger.com
   mise https://mise.jdx.dev/dev-tools/comparison-to-asdf.html

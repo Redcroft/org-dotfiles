@@ -12,70 +12,70 @@ I like to have a small internal border and disable the menu bar, scroll bars, an
 for a cleaner, minimalist interface.
 #+begin_src emacs-lisp :tangle ~/.emacs.d/early-init.el
   (setq default-frame-alist
-	'((internal-border-width . 6)
-	(menu-bar-lines . 0)
-	(scroll-bar-lines . 0)
-	(tool-bar-lines . 0)
-	(vertical-scroll-bars . nil))
-	frame-resize-pixelwise t
-	frame-inhibit-implied-resize t
-	frame-title-format '("%b")
-	gc-cons-threshold most-positive-fixnum
-	gc-cons-percentage 0.6
-	inhibit-compacting-font-caches t
-	inhibit-splash-screen t
-	inhibit-startup-screen t
-	inhibit-x-resources t
-	initial-scratch-message nil
-	inhibit-startup-echo-area-message user-login-name
-	inhibit-startup-buffer-menu t
-	load-prefer-newer 'noninteractive
-	mode-line-format nil
-	package-enable-at-startup nil
-	ring-bell-function 'ignore
-	visual-bell nil
-	use-dialog-box t
-	use-file-dialog nil
-	use-short-answers t
-	x-gtk-use-system-tooltips nil)
+        '((internal-border-width . 6)
+  	(menu-bar-lines . 0)
+  	(scroll-bar-lines . 0)
+  	(tool-bar-lines . 0)
+  	(vertical-scroll-bars . nil))
+        frame-resize-pixelwise t
+        frame-inhibit-implied-resize t
+        frame-title-format '("%b")
+        gc-cons-threshold most-positive-fixnum
+        gc-cons-percentage 0.6
+        inhibit-compacting-font-caches t
+        inhibit-splash-screen t
+        inhibit-startup-screen t
+        inhibit-x-resources t
+        initial-scratch-message nil
+        inhibit-startup-echo-area-message user-login-name
+        inhibit-startup-buffer-menu t
+        load-prefer-newer 'noninteractive
+        mode-line-format nil
+        package-enable-at-startup nil
+        ring-bell-function 'ignore
+        visual-bell nil
+        use-dialog-box t
+        use-file-dialog nil
+        use-short-answers t
+        x-gtk-use-system-tooltips nil)
 #+end_src
 
 * Init
 ** Elpaca
 I prefer to use [[https://github.com/progfolio/elpaca][Elpaca]] for package management. I can load packages from git directly, but also async load packages. I also use Elpaca-try quite often to just test packages.
 #+begin_src emacs-lisp
-  (defvar elpaca-installer-version 0.10)
+  (defvar elpaca-installer-version 0.11)
   (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
   (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
   (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
   (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-				    :ref nil :depth 1 :inherit ignore
-				    :files (:defaults "elpaca-test.el" (:exclude "extensions"))
-				    :build (:not elpaca--activate-package)))
+  				    :ref nil :depth 1 :inherit ignore
+  				    :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+  				    :build (:not elpaca--activate-package)))
   (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
-	     (build (expand-file-name "elpaca/" elpaca-builds-directory))
-	     (order (cdr elpaca-order))
-	     (default-directory repo))
+  	     (build (expand-file-name "elpaca/" elpaca-builds-directory))
+  	     (order (cdr elpaca-order))
+  	     (default-directory repo))
     (add-to-list 'load-path (if (file-exists-p build) build repo))
     (unless (file-exists-p repo)
       (make-directory repo t)
       (when (<= emacs-major-version 28) (require 'subr-x))
       (condition-case-unless-debug err
-	      (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-			((zerop (apply #'call-process `("git" nil ,buffer t "clone"
-							,@(when-let* ((depth (plist-get order :depth)))
-							    (list (format "--depth=%d" depth) "--no-single-branch"))
-							,(plist-get order :repo) ,repo))))
-			((zerop (call-process "git" nil buffer t "checkout"
-					      (or (plist-get order :ref) "--"))))
-			(emacs (concat invocation-directory invocation-name))
-			((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-					      "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-			((require 'elpaca))
-			((elpaca-generate-autoloads "elpaca" repo)))
-		  (progn (message "%s" (buffer-string)) (kill-buffer buffer))
-		(error "%s" (with-current-buffer buffer (buffer-string))))
-	    ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+  	      (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+  			((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+  							,@(when-let* ((depth (plist-get order :depth)))
+  							    (list (format "--depth=%d" depth) "--no-single-branch"))
+  							,(plist-get order :repo) ,repo))))
+  			((zerop (call-process "git" nil buffer t "checkout"
+  					      (or (plist-get order :ref) "--"))))
+  			(emacs (concat invocation-directory invocation-name))
+  			((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+  					      "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+  			((require 'elpaca))
+  			((elpaca-generate-autoloads "elpaca" repo)))
+  		  (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+  		(error "%s" (with-current-buffer buffer (buffer-string))))
+  	    ((error) (warn "%s" err) (delete-directory repo 'recursive))))
     (unless (require 'elpaca-autoloads nil t)
       (require 'elpaca)
       (elpaca-generate-autoloads "elpaca" repo)
@@ -292,8 +292,6 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
       (exwm-workspace-switch-create 9)
       (exwm-workspace-switch 1)
       (start-process "" nil "dunst" "&")
-      (start-process "" nil "xmodmap" "/home/lambda/.Xmodmap")
-      (start-process "" nil "pipewire" "&")
       )
     (add-hook 'emacs-startup-hook 'my/exwm-startup)
     (add-hook 'exwm-update-class-hook
@@ -318,11 +316,11 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (exwm-input-set-key (kbd "s-W")
   			(lambda () (interactive) (start-process "" nil "qutebrowser")))
     (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
-  			(lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-volume" "0" "+2%")))
+  			(lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-volume" "@DEFAULT_SINK@" "+2%")))
     (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
-  			(lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-volume" "0" "-2%")))
+  			(lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-volume" "@DEFAULT_SINK@" "-2%")))
     (exwm-input-set-key (kbd "<XF86AudioMute>")
-  		      (lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-mute" "0" "toggle")))
+  		      (lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-mute" "@DEFAULT_SINK@" "toggle")))
     (when (not (file-exists-p "/etc/config.scm"))
       (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
   			(lambda () (interactive) (start-process "" nil "blight" "inc" "5")))
@@ -350,11 +348,9 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
   			  (let ((d (format-time-string "%H:%m%p"))
   				(b (battery-format battery-echo-area-format (funcall battery-status-function))))
   			    (message "%s\t%s" d b))))
-
     (display-time-mode 1)
     (display-battery-mode 1)
-    (exwm-input--update-global-prefix-keys)
-    )
+    (exwm-input--update-global-prefix-keys))
 #+end_src
 
 ** Org
@@ -493,6 +489,10 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package json-mode)
 #+end_src
 
+*** Nix
+#+begin_src emacs-lisp
+  (use-package nix-mode)
+#+end_src
 *** Python
 #+begin_src emacs-lisp :tangle no
   (use-package python-mode)
@@ -845,9 +845,9 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 #+begin_src emacs-lisp
   (use-package treemacs
     :bind (("C-x t o" . treemacs-select-window)
-	   ("C-x t t" . treemacs)
-	   ("C-x t d" . treemacs-select-directory)
-	   ("C-x t C-f" . treemacs-find-file))
+  	   ("C-x t t" . treemacs)
+  	   ("C-x t d" . treemacs-select-directory)
+  	   ("C-x t C-f" . treemacs-find-file))
     :commands (treemacs treemacs-create-theme treemacs-create-icon treemacs-load-theme)
     :config
     (treemacs-indent-guide-mode t)
@@ -931,24 +931,21 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package all-the-icons-completion
     :after (marginalia all-the-icons)
     :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
-    :init
-    (all-the-icons-completion-mode))
+    :init (all-the-icons-completion-mode))
   (use-package all-the-icons-dired :hook (dired-mode . all-the-icons-dired-mode))
   (use-package all-the-icons-nerd-fonts)
   (use-package doom-themes :ensure (:wait t))
 
   (use-package heaven-and-hell
     :config
-    (if (string= system-name "red")
-        (setq heaven-and-hell-theme-type 'light)
-      (setq heaven-and-hell-theme-type 'dark))
-    (setq heaven-and-hell-themes
-  	'((light . doom-flatwhite)
-  	  (dark  . doom-material-dark))
+    (setq heaven-and-hell-theme-type 'dark
+  	heaven-and-hell-themes
+  	'((light . doom-gruvbox-light)
+  	  (dark  . doom-gruvbox))
   	heaven-and-hell-load-theme-no-confirm t)
     (load-theme (cdr (assoc heaven-and-hell-theme-type heaven-and-hell-themes)) t)
     :custom-face
-    (default ((t (:family "Maple Mono" :height 120 :weight semibold))))
+    (default ((t (:family "Maple Mono" :height 130 :weight semibold))))
     (fixed-pitch ((t (:weight bold))))
     (font-lock-comment-face ((t (:slant italic))))
     (font-lock-keyword-face ((t (:slant italic))))

@@ -596,7 +596,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     (corfu-auto-prefix 2)
     (corfu-cycle t)
     (corfu-popupinfo-mode t)
-    (corfu-popupinfo-delay 0.1)
+    (corfu-popupinfo-delay 0.25)
     (corfu-quit-no-match t)
     (corfu-quit-at-boundary 'separator)
     (tab-always-indent 'complete))
@@ -934,18 +934,18 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     :init (all-the-icons-completion-mode))
   (use-package all-the-icons-dired :hook (dired-mode . all-the-icons-dired-mode))
   (use-package all-the-icons-nerd-fonts)
-  (use-package doom-themes :ensure (:wait t))
+  (use-package base16-theme :ensure (:wait t))
 
   (use-package heaven-and-hell
     :config
     (setq heaven-and-hell-theme-type 'dark
   	heaven-and-hell-themes
-  	'((light . doom-gruvbox-light)
-  	  (dark  . doom-gruvbox))
+  	'((light . base16-catppuccin-latte)
+  	  (dark  . base16-catppuccin-frappe))
   	heaven-and-hell-load-theme-no-confirm t)
     (load-theme (cdr (assoc heaven-and-hell-theme-type heaven-and-hell-themes)) t)
     :custom-face
-    (default ((t (:family "Maple Mono" :height 130 :weight semibold))))
+    (default ((t (:family "Maple Mono NF" :height 130 :weight semibold))))
     (fixed-pitch ((t (:weight bold))))
     (font-lock-comment-face ((t (:slant italic))))
     (font-lock-keyword-face ((t (:slant italic))))

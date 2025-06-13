@@ -9,7 +9,7 @@
 
 #+begin_src conf :tangle (if (not (string= system-name "red")) "~/.config/pipewire/pipewire.conf.d/50-network.conf" "")
   context.exec = [
-    { path = "pactl" args = "load-module module-native-protocol-tcp listen=0.0.0.0" }
+    { path = "pactl" args = "load-module module-native-protocol-tcp listen=0.0.0.0 port=4714 auth-anonymous=1" }
   ]
 #+end_src
 

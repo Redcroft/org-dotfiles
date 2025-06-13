@@ -1,0 +1,14 @@
+#+TITLE: Ghostty Terminal
+#+AUTHOR: Richard Redcroft
+#+EMAIL: Richard@Redcroft.tech
+#+OPTIONS: toc:nil num:nil
+#+PROPERTY: Header-args :tangle ~/.config/ghostty/config :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+
+* Config
+
+#+begin_src conf
+  font-family = "Maple Mono NF"
+  font-size = 12
+  theme = Aura
+#+end_src

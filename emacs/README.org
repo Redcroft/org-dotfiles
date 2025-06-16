@@ -419,7 +419,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
         '(("redcroft-posts"
   	 :base-directory "~/projects/redcroft/org/posts/"
   	 :base-extension "org"
-  	 :publishing-directory "~/projects/redcroft/public_html/posts/
+  	 :publishing-directory "~/projects/redcroft/public_html/posts/"
   	 :recursive t
   	 :publishing-function org-html-publish-to-html
   	 :org-html-preamble nil

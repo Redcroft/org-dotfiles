@@ -1,4 +1,4 @@
-#+TITLE: Emacs Configuration
+-#+TITLE: Emacs Configuration
 #+AUTHOR: Richard Redcroft
 #+EMAIL: Richard@Redcroft.tech
 #+OPTIONS: toc:nil num:nil
@@ -419,7 +419,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
         '(("redcroft-posts"
   	 :base-directory "~/projects/redcroft/org/posts/"
   	 :base-extension "org"
-  	 :publishing-directory "~/projects/redcroft/public_html/posts/"
+  	 :publishing-directory "~/projects/redcroft/public_html/posts/
   	 :recursive t
   	 :publishing-function org-html-publish-to-html
   	 :org-html-preamble nil
@@ -946,7 +946,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   	heaven-and-hell-load-theme-no-confirm t)
     (load-theme (cdr (assoc heaven-and-hell-theme-type heaven-and-hell-themes)) t)
     :custom-face
-    (default ((t (:family "Maple Mono NF" :height 130 :weight semibold))))
+    (default ((t (:family "Maple Mono NF" :height 110 :weight regular))))
     (fixed-pitch ((t (:weight bold))))
     (font-lock-comment-face ((t (:slant italic))))
     (font-lock-keyword-face ((t (:slant italic))))
@@ -957,7 +957,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   	 ("<f5>"     . heaven-and-hell-toggle-theme)))
 #+end_src
 
-#+begin_src emacs-lisp :tangle "~/.emacs.d/themes/aura-theme.el
+#+begin_src emacs-lisp :tangle "~/.emacs.d/themes/aura-theme.el"
   ;;; aura-theme.el --- aura theme -*- lexical-binding: t; -*-
   ;;
   ;; Author: scturtle <sctuetle@gmail.com>

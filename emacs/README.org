@@ -314,7 +314,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (exwm-input-set-key (kbd "s-<return>")
   			(lambda () (interactive) (eshell)))
     (exwm-input-set-key (kbd "s-W")
-  			(lambda () (interactive) (start-process "" nil "qutebrowser")))
+  			(lambda () (interactive) (start-process "" nil "zen-browser")))
     (exwm-input-set-key (kbd "<XF86AudioRaiseVolume>")
   			(lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-volume" "@DEFAULT_SINK@" "+2%")))
     (exwm-input-set-key (kbd "<XF86AudioLowerVolume>")
@@ -946,7 +946,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   	heaven-and-hell-load-theme-no-confirm t)
     (load-theme (cdr (assoc heaven-and-hell-theme-type heaven-and-hell-themes)) t)
     :custom-face
-    (default ((t (:family "Maple Mono NF" :height 110 :weight regular))))
+    (default ((t (:family "Maple Mono NF" :height 120 :weight regular))))
     (fixed-pitch ((t (:weight bold))))
     (font-lock-comment-face ((t (:slant italic))))
     (font-lock-keyword-face ((t (:slant italic))))

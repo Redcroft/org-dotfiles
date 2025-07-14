@@ -1,0 +1,15 @@
+#+TITLE: Direnv Configuration
+#+AUTHOR: Richard Redcroft
+#+EMAIL: Richard@Redcroft.tech
+#+OPTIONS: toc:nil num:nil
+#+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+
+* Poetry
+#+begin_src conf :tangle "~/.config/direnv/lib/layout_poetry.sh" :mkdirp yes
+layout_poetry() {
+  export POETRY_VIRTUALENVS_IN_PROJECT=true
+  poetry install
+  layout python "$(poetry env info -p)/bin/python"
+}
+#+end_src

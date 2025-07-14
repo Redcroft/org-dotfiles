@@ -733,7 +733,10 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 *** Direnv
 #+begin_src emacs-lisp
   (use-package direnv
-    :hook (prog-mode . direnv-mode))
+    :hook (prog-mode . direnv-mode)
+    :config
+    (with-eval-after-load 'projectile
+      (add-hook 'projectile-after-switch-project-hook #'direnv-update-environment)))
 #+end_src
 
 *** Doom Modeline
@@ -1007,12 +1010,11 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 
 *** Treesit
 #+begin_src emacs-lisp
-  (use-package tree-sitter
+  (use-package treesit
     :ensure nil
     :when (treesit-available-p)
     :custom
     (treesit-font-lock-level 4))
-
 
   (use-package treesit-auto
     :when (treesit-available-p)
@@ -1075,20 +1077,18 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     :init (all-the-icons-completion-mode))
   (use-package all-the-icons-dired :hook (dired-mode . all-the-icons-dired-mode))
   (use-package all-the-icons-nerd-fonts)
-  ;; (use-package base16-theme :ensure (:wait t))
-  (use-package ef-themes :ensure (:wait t))
-  ;; (use-package doom-themes :ensure (:wait t))
+  (use-package doom-themes :ensure (:wait t))
 
   (use-package heaven-and-hell
     :config
     (setq heaven-and-hell-theme-type 'dark
   	heaven-and-hell-themes
-  	'((dark . ef-dream)
-  	  (light  . ef-summer))
+  	'((dark   . doom-ayu-mirage)
+  	  (light  . doom-ayu-light))
   	heaven-and-hell-load-theme-no-confirm t)
     (load-theme (cdr (assoc heaven-and-hell-theme-type heaven-and-hell-themes)) t)
     :custom-face
-    (default ((t (:family "CaskaydiaCove Nerd Font" :height 130 :weight regular))))
+    (default ((t (:family "Maple Mono" :height 130 :weight regular))))
     (fixed-pitch ((t (:weight bold))))
     (font-lock-comment-face ((t (:slant italic))))
     (font-lock-keyword-face ((t (:slant italic))))

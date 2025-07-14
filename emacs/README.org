@@ -1,4 +1,4 @@
--#+TITLE: Emacs Configuration
+#+TITLE: Emacs Configuration
 #+AUTHOR: Richard Redcroft
 #+EMAIL: Richard@Redcroft.tech
 #+OPTIONS: toc:nil num:nil
@@ -125,7 +125,6 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (vc-follow-symlinks t)
     :init
     (define-prefix-command 'programs-map)
-    (flymake-mode -1)
     (global-auto-revert-mode t)
     (global-display-fill-column-indicator-mode t)
     (global-display-line-numbers-mode t)
@@ -327,7 +326,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
       (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
   			(lambda () (interactive) (start-process "" nil "blight" "dec" "5")))
       (exwm-input-set-key (kbd "s-<XF86MonBrightnessUp>")
-  			(lambda () (interactive) (start-process "" nil "blight" "set" "255")))
+  			(lambda () (interactive) (start-process "" nil "blight" "set" "65535")))
       (exwm-input-set-key (kbd "s-<XF86MonBrightnessDown>")
   			(lambda () (interactive) (start-process "" nil "blight" "set" "25"))))
     (exwm-input-set-key (kbd "s-<up>")
@@ -358,6 +357,8 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
 #+begin_src emacs-lisp
   (use-package org
     :ensure nil
+    :bind (("C-c x" . org-capture)
+  	 ("C-c e" . org-publish-all))
     :custom
     (org-fold-core-style 'overlays)
     (org-src-window-setup 'current-window)
@@ -390,6 +391,21 @@ https://taingram.org/blog/org-mode-blog.html
 https://pank.eu/blog/blog-setup.html
 https://bholten.github.io/posts/blogging_with_emacs.html
 #+begin_src emacs-lisp
+  (defvar redcroft-website-header-html
+    (concat
+     "<header class=\"header-main\">"
+     "  <div class=\"site-name\">Richard Redcroft</div>"
+     "  <nav class=\"nav-menu\">"
+     "    <ul>"
+     "      <li><a href=\"/\">Home</a></li>"
+     "      <li><a href=\"/about.html\">About</a></li>"
+     "      <li><a href=\"/work.html\">Work</a></li>"
+     "      <li><a href=\"/contact.html\">Contact</a></li>"
+     "    </ul>"
+     "  </nav>"
+     "</header>")
+    "HTML string for the common header of my website.")
+
   (setq org-export-html-with-timestamps nil
         org-export-with-author nil
         org-export-with-date nil
@@ -411,33 +427,44 @@ https://bholten.github.io/posts/blogging_with_emacs.html
         org-html-html5-fancy nil
         org-html-htmlize-output-type 'css
         org-html-metadata-timestamp-format this-date-format
+        org-html-postamble ""
         org-html-validation-link nil
         org-src-fontify-natively t)
 
   (setq org-html-validation-link nil
         org-publish-project-alist
-        '(("redcroft-posts"
+        `(("redcroft-posts"
   	 :base-directory "~/projects/redcroft/org/posts/"
   	 :base-extension "org"
   	 :publishing-directory "~/projects/redcroft/public_html/posts/"
   	 :recursive t
   	 :publishing-function org-html-publish-to-html
-  	 :org-html-preamble nil
-  	 :org-html-postamble nil
   	 :html-head-include-default-style nil
+  	 :html-head "<link rel=\"stylesheet\" href=\"../style.css\" type=\"text/css\"/>"
+  	 :html-preamble (lambda (info) ,redcroft-website-header-html)
+  	 :language "en"
   	 :auto-sitemap t
-  	 :sitemap-filename "sitemap.org"
+  	 :sitemap-filename "articles.org"
+  	 :sitemap-title "Posts"
+           :sitemap-sort-files anti-chronologically
+           :sitemap-style list
+           :sitemap-format-entry (lambda (entry style project)
+                                   (format "[[file:%s][%s]] - %s"
+                                           entry
+                                           (org-publish-find-title entry project)
+                                           (format-time-string "%B %d, %Y"
+                                                             (org-publish-find-date entry project))))
   	 )
   	("redcroft-pages"
   	 :base-directory "~/projects/redcroft/org/"
   	 :base-extension "org"
   	 :publishing-directory "~/projects/redcroft/public_html/"
-  	 :org-html-preamble nil
-  	 :org-html-postamble nil
   	 :recursive nil
   	 :publishing-function org-html-publish-to-html
-  	 :html-head "<link rel=\"stylesheet\" href=\"/style.css\" type=\"text/css\"/>"
+  	 :html-head "<link rel=\"stylesheet\" href=\"style.css\" type=\"text/css\"/>"
+  	 :html-preamble (lambda (info) ,redcroft-website-header-html)
   	 :html-head-include-default-style nil
+  	 :language "en"
   	 )
   	("redcroft-static"
   	 :base-directory "~/projects/redcroft/org/"
@@ -448,6 +475,35 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   	 )
   	("redcroft"
   	 :components ("redcroft-posts" "redcroft-pages" "redcroft-static"))))
+
+
+  (defun redcroft-create-slug (title)
+    "Create a URL-friendly slug from TITLE."
+    (downcase 
+     (replace-regexp-in-string 
+      "^-\\|-$" "" 
+      (replace-regexp-in-string 
+       "[^a-zA-Z0-9]+" "-" title))))
+
+  (setq org-capture-templates
+        '(("p" "Blog Post" plain
+           (file (lambda ()
+                   (let* ((title (read-string "Post title: "))
+                          (slug (redcroft-create-slug title))
+                          (date-prefix (format-time-string "%y-%m-%d"))
+                          (filename (format "%s_%s.org" date-prefix slug)))
+                     (expand-file-name filename "~/projects/redcroft/org/posts/"))))
+           "#+TITLE: %^{Title}\n#+DATE: %t\n#+AUTHOR: \n#+DESCRIPTION: %^{Description}\n#+KEYWORDS: %^{Keywords}\n#+TAGS: %^{Tags}\n\n* %\\1\n\n%?"
+           :empty-lines 1)
+
+  	("P" "Blog Page" plain
+           (file (lambda ()
+                   (let* ((title (read-string "Page title: "))
+                          (slug (redcroft-create-slug title))
+                          (filename (format "%s.org" slug)))
+                     (expand-file-name filename "~/projects/redcroft/org/"))))
+           "#+TITLE: %^{Title}\n#+DATE: %t\n#+AUTHOR: \n#+DESCRIPTION: %^{Description}\n#+KEYWORDS: %^{Keywords}\n#+TAGS: %^{Tags}\n\n* %\\1\n\n%?"
+           :empty-lines 1)))
 #+end_src
 
 *** Superstar
@@ -471,6 +527,14 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     (load (expand-file-name "~/.roswell/helper.el"))
     (setq inferior-lisp-program "ros -Q run"))
 #+end_src
+*** Dockerfile
+#+begin_src emacs-lisp
+  (use-package dockerfile-mode
+    :mode "Dockerfile\\'"
+    :config
+    (when (treesit-available-p)
+      (add-to-list 'major-mode-remap-alist '(dockerfile-mode . dockerfile-ts-mode))))
+#+end_src
 
 *** ELisp
 #+begin_src emacs-lisp
@@ -486,7 +550,32 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 
 *** Json
 #+begin_src emacs-lisp
-  (use-package json-mode)
+    (use-package json-mode
+      :mode "\\.json\\'"
+      :config
+      (when (treesit-available-p)
+        (add-to-list 'major-mode-remap-alist '(json-mode . json-ts-mode))))
+#+end_src
+
+*** Odin
+#+begin_src emacs-lisp
+  (use-package odin-mode
+    :ensure (:host sourcehut :repo "mgmarlow/odin-mode")
+    :bind (:map odin-mode-map
+  	      ("C-c C-r" . 'odin-run-project)
+  	      ("C-c C-c" . 'odin-build-project)
+  	      ("C-c C-t" . 'odin-test-project)))
+#+end_src
+
+*** Markdown
+#+begin_src emacs-lisp
+  (use-package markdown-mode
+    :mode ("README\\.md\\'" . gfm-mode)
+    :custom
+    (markdown-command "multimarkdown")
+    :config
+    (when (treesit-available-p)
+      (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-ts-mode))))
 #+end_src
 
 *** Nix
@@ -495,7 +584,18 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 #+end_src
 *** Python
 #+begin_src emacs-lisp :tangle no
-  (use-package python-mode)
+  (use-package python
+    :ensure nil
+    :mode "\\.py\\'"
+    :custom
+    (python-shell-interpreter "python")
+    (python-shell-interpreter-args "-i")
+    (python-indent-offset 4)
+    :hook ((python-mode . eglot-ensure)
+  	 (python-ts-mode . eglot-ensure))
+    :config
+    (when (treesit-available-p)
+      (add-t-list 'major-mode-remap-alist '(python-mode . python-ts-mode))))
 #+end_src
 
 *** Rust
@@ -510,7 +610,11 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 
 *** Yaml
 #+begin_src emacs-lisp
-  (use-package yaml-mode)
+  (use-package yaml-mode
+    :mode "\\.ya?ml\\'"
+    :config
+    (when (treesit-available-p)
+      (add-to-list 'major-mode-remap-alist '(yaml-mode . yaml-ts-mode))))
 #+end_src
 
 *** Zig
@@ -559,7 +663,11 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     (add-to-list 'completion-at-point-functions #'cape-elisp-symbol)
     (add-to-list 'completion-at-point-functions #'cape-file)
     (add-to-list 'completion-at-point-functions #'cape-history)
-    (add-to-list 'completion-at-point-functions #'cape-keyword))
+    (add-to-list 'completion-at-point-functions #'cape-keyword)
+    :config
+    (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-silent)
+    (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify)
+    )
 #+end_src
 
 *** Compilation
@@ -589,7 +697,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 [[https://github.com/minad/corfu][Corfu]] enhances in-buffer completion with a small completion popup. The current candidates are shown in a popup below or above the point, and can be selected by moving up and down.
 #+begin_src emacs-lisp
   (use-package corfu
-    :config (global-corfu-mode)
+    :init (global-corfu-mode)
     :custom
     (completion-ignore-case t)
     (corfu-auto t)
@@ -626,8 +734,6 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 #+begin_src emacs-lisp
   (use-package direnv
     :hook (prog-mode . direnv-mode))
-    ;; :config
-    ;; (add-hook 'before-hack-local-variables-hook #'direnv-update-environment))
 #+end_src
 
 *** Doom Modeline
@@ -653,7 +759,6 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package eglot
     :ensure nil
     :after (eldoc)
-    :hook (eglot--managed-mode . (lambda () (flymake-mode -1) (eglot-inlay-hints-mode -1)))
     :custom
     (eglot-autoshutdown t)
     (eglot-confirm-server-initiated-edits nil)
@@ -682,6 +787,23 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     (eldoc-box-max-pixel-width 600))
 #+end_src
 
+*** Embark
+#+begin_src emacs-lisp
+  (use-package embark
+    :bind (("C-." . embark-act)
+  	 ("C-," . embark-dwim))
+    :custom
+    (prefix-help-command #'embark-prefix-help-command)
+    :config
+    (add-to-list 'display-buffer-alist
+  	       '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+  		 nil
+  		 (window-parameters (mode-line-format . none)))))
+
+  (use-package embark-consult
+    :hook (embark-collect-mode . consult-preview-at-point-mode))
+#+end_src
+
 *** Eyebrowse
 #+begin_src emacs-lisp
   (use-package eyebrowse
@@ -700,6 +822,18 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     (eyebrowse-mode)
     :custom
     (eyebrowse-new-workspace t))
+#+end_src
+
+*** Flymake
+#+begin_src emacs-lisp
+  (use-package flymake
+    :ensure nil
+    :hook ((python-mode . flymake-mode)
+  	 (python-ts-mode . flymake-mode))
+    :bind (:map flymake-mode-map
+  	      ("C-c ! n" . flymake-goto-next-error)
+  	      ("C-c ! p" . flymake-goto-prev-error)
+  	      ("C-c ! l" . flymake-show-buffer-diagnostics)))
 #+end_src
 
 *** Helm System Packages
@@ -873,9 +1007,15 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 
 *** Treesit
 #+begin_src emacs-lisp
-  (use-package tree-sitter)
+  (use-package tree-sitter
+    :ensure nil
+    :when (treesit-available-p)
+    :custom
+    (treesit-font-lock-level 4))
+
 
   (use-package treesit-auto
+    :when (treesit-available-p)
     :config (global-treesit-auto-mode))
 #+end_src
 
@@ -896,10 +1036,10 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     :custom
     (vertico-multiform-commands
      '((consult-line
-	posframe
-	(vertico-posframe-poshandler . posframe-poshandler-frame-top-center)
-	(vertico-posframe-border-width . 10)
-	(vertico-posframe-fallback-mode . vertico-buffer-mode))
+  	posframe
+  	(vertico-posframe-poshandler . posframe-poshandler-frame-top-center)
+  	(vertico-posframe-border-width . 10)
+  	(vertico-posframe-fallback-mode . vertico-buffer-mode))
        (t posframe))))
 #+end_src
 
@@ -935,18 +1075,20 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     :init (all-the-icons-completion-mode))
   (use-package all-the-icons-dired :hook (dired-mode . all-the-icons-dired-mode))
   (use-package all-the-icons-nerd-fonts)
-  (use-package base16-theme :ensure (:wait t))
+  ;; (use-package base16-theme :ensure (:wait t))
+  (use-package ef-themes :ensure (:wait t))
+  ;; (use-package doom-themes :ensure (:wait t))
 
   (use-package heaven-and-hell
     :config
     (setq heaven-and-hell-theme-type 'dark
   	heaven-and-hell-themes
-  	'((dark . aura)
-  	  (light  . base16-horizon-light))
+  	'((dark . ef-dream)
+  	  (light  . ef-summer))
   	heaven-and-hell-load-theme-no-confirm t)
     (load-theme (cdr (assoc heaven-and-hell-theme-type heaven-and-hell-themes)) t)
     :custom-face
-    (default ((t (:family "Maple Mono NF" :height 120 :weight regular))))
+    (default ((t (:family "CaskaydiaCove Nerd Font" :height 130 :weight regular))))
     (fixed-pitch ((t (:weight bold))))
     (font-lock-comment-face ((t (:slant italic))))
     (font-lock-keyword-face ((t (:slant italic))))

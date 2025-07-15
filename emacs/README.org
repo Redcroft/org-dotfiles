@@ -735,6 +735,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package direnv
     :hook (prog-mode . direnv-mode)
     :config
+    (setq direnv-always-update-p t)
     (with-eval-after-load 'projectile
       (add-hook 'projectile-after-switch-project-hook #'direnv-update-environment)))
 #+end_src

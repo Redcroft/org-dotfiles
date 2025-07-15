@@ -9,7 +9,6 @@
 #+NAME: zimfw
 #+begin_src emacs-lisp
   (start-process "my-process" "curl" "curl" "-fsSL" "--create-dirs" "-o" "~/.zim/zimfw.zsh" "https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh")
-  ""
 #+end_src
 
 #+begin_src zsh :tangle "~/.zimrc" :noweb yes
@@ -223,5 +222,8 @@
 
   eval "$(direnv hook zsh)"
   eval "$(zoxide init --cmd cd zsh)"
+  export PATH="$HOME/.pyenv/bin:$PATH"
+  eval "$(pyenv init --path)"
+  eval "$(pyenv init -)"
 #+end_src
 

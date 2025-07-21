@@ -1,0 +1,26 @@
+#+TITLE: Dotfiles
+#+AUTHOR: Richard Redcroft
+#+EMAIL: Richard@Redcroft.tech
+#+OPTIONS: toc:nil num:nil
+
+* Introduction
+This repository contains my personal dotfiles, managed with Org-mode and tangled to their respective locations. Each major configuration has its own subdirectory with a dedicated `README.org` file detailing its setup and purpose.
+
+* Configurations
+- [[./direnv/README.org][Direnv]]
+- [[./emacs/README.org][Emacs]]
+- [[./ghostty/README.org][Ghostty]]
+- [[./git/README.org][Git]]
+- [[./gnupg/README.org][GnuPG]]
+- [[./guix/README.org][Guix]]
+- [[./herbstluftwm/README.org][Herbstluftwm]]
+- [[./kanata/README.org][Kanata]]
+- [[./kitty/README.org][Kitty]]
+- [[./pipewire/README.org][Pipewire]]
+- [[./polybar/README.org][Polybar]]
+- [[./qutebrowser/README.org][Qutebrowser]]
+- [[./rbw/README.org][Rbw]]
+- [[./rofi/README.org][Rofi]]
+- [[./ssh/README.org][SSH]]
+- [[./xorg/xorg.org][Xorg]]
+- [[./zsh/README.org][Zsh]]

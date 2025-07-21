@@ -20,8 +20,7 @@ for a cleaner, minimalist interface.
         frame-resize-pixelwise t
         frame-inhibit-implied-resize t
         frame-title-format '("%b")
-        gc-cons-threshold most-positive-fixnum
-        gc-cons-percentage 0.6
+        
         inhibit-compacting-font-caches t
         inhibit-splash-screen t
         inhibit-startup-screen t
@@ -103,6 +102,18 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
      ("C-c m" . eval-region)
      ("C-x r s" . replace-string)
      ("M-#" . comment-or-uncomment-region))
+    :init
+    (define-prefix-command 'programs-map)
+    (global-auto-revert-mode t)
+    (global-display-fill-column-indicator-mode t)
+    (global-display-line-numbers-mode t)
+    (global-prettify-symbols-mode t)
+    (global-set-key (kbd "C-x y") 'programs-map)
+    (global-set-key (kbd "C-x C-c") #'save-buffers-kill-emacs)
+    (global-superword-mode t)
+    (global-subword-mode t)
+    (keyboard-translate ?\C-x ?\C-t)
+    (keyboard-translate ?\C-t ?\C-x)
     :config
     (defun my/open-emacs-config ()
       (interactive)
@@ -117,35 +128,23 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (file-name-handler-alist nil)
     (flymake-start-on-flymake-mode nil)
     (site-run-file nil)
-    (undo-limit 100000000)
+    (undo-limit 16777216)
     (user-file-name "Richard DW Redcroft")
     (user-real-login-name "Richard DW Redcroft")
     (user-login-name "lambda")
     (user-mail-address "richard@redcroft.tech")
     (vc-follow-symlinks t)
-    :init
-    (define-prefix-command 'programs-map)
-    (global-auto-revert-mode t)
-    (global-display-fill-column-indicator-mode t)
-    (global-display-line-numbers-mode t)
-    (global-prettify-symbols-mode t)
-    (global-set-key (kbd "C-x y") 'programs-map)
-    (global-set-key (kbd "C-x C-c") #'save-buffers-kill-emacs)
-    (global-superword-mode t)
-    (global-subword-mode t)
-    (keyboard-translate ?\C-x ?\C-t)
-    (keyboard-translate ?\C-t ?\C-x)
-    (setq-default apropos-do-all t
-  		    bidi-display-reordering nil
-  		    custom-safe-themes t
-  		    fill-column 80
-  		    highlight-nonselected-windows nil
-  		    inhibit-tabs-mode nil
-  		    initial-scratch-message nil
-  		    line-spacing 0.15
-  		    truncate-lines t
-  		    truncate-partial-width-windows nil
-  		    x-stretch-cursor nil))
+    (apropos-do-all t)
+    (bidi-display-reordering nil)
+    (custom-safe-themes t)
+    (fill-column 80)
+    (highlight-nonselected-windows nil)
+    (inhibit-tabs-mode nil)
+    (initial-scratch-message nil)
+    (line-spacing 0.15)
+    (truncate-lines t)
+    (truncate-partial-width-windows nil)
+    (x-stretch-cursor nil))
 #+end_src
 
 *** EShell
@@ -217,25 +216,25 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
 #+begin_src emacs-lisp
   (use-package simple
     :ensure nil
-    :config
-    (setq-default async-shell-command-buffer 'new-buffer
-		  backward-delete-char-untabify-method 'hungry
-		  eval-expression-print-level nil
-		  idle-update-delay 1.0
-		  jit-lock-defer-time 0
-		  kill-whote-line t
-		  line-move-visual nil
-		  suggest-key-bindings t
-		  track-eol t
-		  yank-pop-change-selection t))
+    :custom
+    (async-shell-command-buffer 'new-buffer)
+    (backward-delete-char-untabify-method 'hungry)
+    (eval-expression-print-level nil)
+    (idle-update-delay 1.0)
+    (jit-lock-defer-time 0)
+    (kill-whole-line t)
+    (line-move-visual nil)
+    (suggest-key-bindings t)
+    (track-eol t)
+    (yank-pop-change-selection t))
 #+end_src
 
 *** Whitespace
 #+begin_src emacs-lisp
   (use-package whitespace
     :ensure nil
-    :config
-    (setq-default whitespace-display-mappings
+    :custom
+    (whitespace-display-mappings
 		  '((tab-mark 9 [187 9] [92 9])))
     :custom-face
     (whitespace-tab ((t (:background "#FF000088"))))
@@ -254,58 +253,60 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
 #+begin_src emacs-lisp
   (use-package exwm
     :if (string= (getenv "EXWM_ENABLE") "t")
-    :config
-    (use-package pinentry
-      :config (pinentry-start))
-    (setq battery-update-interval 15
-  	  battery-mode-line-format "[%p%% %t]"
-  	  display-time-default-load-average nil
-  	  display-time-format "[%b %d %I:%M%p]"
-  	  exwm-workspace-number 10
-  	  exwm-input-simulation-keys
-  	  '(([?\C-b] . [left])
-  	    ([?\C-f] . [right])
-  	    ([?\C-p] . [up])
-  	    ([?\C-n] . [down])
-  	    ([?\C-a] . [home])
-  	    ([?\C-e] . [end])
-  	    ([?\M-v] . [prior])
-  	    ([?\C-v] . [next])
-  	    ([?\C-d] . [delete])
-  	    ([?\C-k] . [S-end delete]))
-  	  exwm-input-global-keys
-  	  `(([?\s-r] . exwm-reset)
-  	    ([?\s-w] . exwm-workspace-switch)
-  	    ;; ([XF86MonBrightnessUp] . ignore)
-  	    ;; ([XF86MonBrightnessDown] . ignore)
-  	    ,@(mapcar (lambda (i)
+    :custom
+    (battery-update-interval 15)
+    (battery-mode-line-format "[%p%% %t]")
+    (display-time-default-load-average nil)
+    (display-time-format "[%b %d %I:%M%p]")
+    (exwm-workspace-number 10)
+    (exwm-input-simulation-keys
+     '(([?\C-b] . [left])
+       ([?\C-f] . [right])
+       ([?\C-p] . [up])
+       ([?\C-n] . [down])
+       ([?\C-a] . [home])
+       ([?\C-e] . [end])
+       ([?\M-v] . [prior])
+       ([?\C-v] . [next])
+       ([?\C-d] . [delete])
+       ([?\C-k] . [S-end delete])))
+    (exwm-input-global-keys
+     `(([?\s-r] . exwm-reset)
+       ([?\s-w] . exwm-workspace-switch)
+       ;; ([XF86MonBrightnessUp] . ignore)
+       ;; ([XF86MonBrightnessDown] . ignore)
+       ,@(mapcar (lambda (i)
   			`(,(kbd (format "s-%d" i)) .
   			  (lambda ()
   			    (interactive)
   			    (exwm-workspace-switch-create ,i))))
   		      (number-sequence 0 9))))
+    :init
+    (display-time-mode 1)
+    (display-battery-mode 1)
+    :hook
+    (emacs-startup-hook . my/exwm-startup)
+    (exwm-update-class-hook . (lambda ()
+       (unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+  		    (string= "gimp" exwm-instance-name))
+  		  (exwm-workspace-rename-buffer (concat "*EXWM* " exwm-class-name)))))
+    (exwm-update-title-hook . (lambda ()
+       (when (or (not exwm-instance-name)
+  		  (string-prefix-p "sun-awt-X11-" exwm-instance-name)
+  		  (string= "gimp" exwm-instance-name))
+  		  (exwm-workspace-rename-buffer exwm-title))))
+    (exwm-floating-setup-hook . exwm-layout-hide-mode-line)
+    (exwm-floating-exit-hook  . exwm-layout-show-mode-line)
+    :config
+    (use-package pinentry
+      :config (pinentry-start))
 
     (defun my/exwm-startup ()
-      (lambda)
       (exwm-init)
       (exwm-workspace-switch-create 9)
       (exwm-workspace-switch 1)
-      (start-process "" nil "dunst" "&")
+      (start-process-shell-command "dunst" nil "dunst" "&")
       )
-    (add-hook 'emacs-startup-hook 'my/exwm-startup)
-    (add-hook 'exwm-update-class-hook
-  	      (lambda ()
-  		(unless (or (string-prefix-p "sun-awt-X11-" exwm-instance-name)
-  			    (string= "gimp" exwm-instance-name))
-  		  (exwm-workspace-rename-buffer (concat "*EXWM* " exwm-class-name)))))
-    (add-hook 'exwm-update-title-hook
-  	      (lambda ()
-  		(when (or (not exwm-instance-name)
-  			  (string-prefix-p "sun-awt-X11-" exwm-instance-name)
-  			  (string= "gimp" exwm-instance-name))
-  		  (exwm-workspace-rename-buffer exwm-title))))
-    (add-hook 'exwm-floating-setup-hook 'exwm-layout-hide-mode-line)
-    (add-hook 'exwm-floating-exit-hook  'exwm-layout-show-mode-line)
     (exwm-input-set-key (kbd "s-p")
   			(lambda (command)
   			  (interactive (list (read-shell-command "$ ")))
@@ -346,9 +347,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
   			  (interactive)
   			  (let ((d (format-time-string "%H:%m%p"))
   				(b (battery-format battery-echo-area-format (funcall battery-status-function))))
-  			    (message "%s\t%s" d b))))
-    (display-time-mode 1)
-    (display-battery-mode 1)
+  			    (message "%s	%s" d b))))
     (exwm-input--update-global-prefix-keys))
 #+end_src
 
@@ -595,12 +594,17 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   	 (python-ts-mode . eglot-ensure))
     :config
     (when (treesit-available-p)
-      (add-t-list 'major-mode-remap-alist '(python-mode . python-ts-mode))))
+      (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))))
 #+end_src
 
 *** Rust
 #+begin_src emacs-lisp
   (use-package rustic)
+#+end_src
+
+*** Svelte
+#+begin_src emacs-lisp
+  (use-package svelte-mode)
 #+end_src
 
 *** Toml
@@ -664,10 +668,8 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     (add-to-list 'completion-at-point-functions #'cape-file)
     (add-to-list 'completion-at-point-functions #'cape-history)
     (add-to-list 'completion-at-point-functions #'cape-keyword)
-    :config
     (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-silent)
-    (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify)
-    )
+    (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify))
 #+end_src
 
 *** Compilation
@@ -717,14 +719,14 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 [[https://github.com/radian-software/ctrlf][CTRLF]] is an intuitive and efficient solution for single-buffer text search in Emacs, replacing packages such as Isearch, Swiper, and helm-swoop.
 #+begin_src emacs-lisp
   (use-package ctrlf
-    :config (ctrlf-mode t))
+    :init (ctrlf-mode t))
 #+end_src
 
 *** Diff hl
 [[https://github.com/dgutov/diff-hl][diff-hl]] diff-hl-mode highlights uncommitted changes on the side of the window (area also known as the "gutter"), allows you to jump between and revert them selectively.
 #+begin_src emacs-lisp
   (use-package diff-hl
-    :config (global-diff-hl-mode)
+    :init (global-diff-hl-mode)
     :hook ((dired-mode         . diff-hl-dired-mode-unless-remote)
 	   (magit-pre-refresh  . diff-hl-magit-pre-refresh)
 	   (magit-post-refresh . diff-hl-magit-post-refresh)))
@@ -734,7 +736,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 #+begin_src emacs-lisp
   (use-package direnv
     :hook (prog-mode . direnv-mode)
-    :config
+    :init
     (setq direnv-always-update-p t)
     (with-eval-after-load 'projectile
       (add-hook 'projectile-after-switch-project-hook #'direnv-update-environment)))
@@ -776,7 +778,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package eldoc
     :ensure nil
     :hook (prog-mode-hook . eldoc-mode)
-    :config
+    :init
     (global-eldoc-mode -1)
     :custom
     (eldoc-idle-delay 1.0))
@@ -798,9 +800,9 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   	 ("C-," . embark-dwim))
     :custom
     (prefix-help-command #'embark-prefix-help-command)
-    :config
+    :init
     (add-to-list 'display-buffer-alist
-  	       '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+  	       '("\`\*Embark Collect \(Live\|Completions\)\\*"
   		 nil
   		 (window-parameters (mode-line-format . none)))))
 
@@ -822,8 +824,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 	       ("M-8" . eyebrowse-switch-to-window-config-8)
 	       ("M-9" . eyebrowse-switch-to-window-config-9)
 	       ("M-0" . eyebrowse-switch-to-window-config-0))
-    :config
-    (eyebrowse-mode)
+    :init (eyebrowse-mode)
     :custom
     (eyebrowse-new-workspace t))
 #+end_src
@@ -901,7 +902,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 *** Move Text
 #+begin_src emacs-lisp
   (use-package move-text
-    :config (move-text-default-bindings))
+    :init (move-text-default-bindings))
 #+end_src
 
 *** No Littering
@@ -973,10 +974,10 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 *** Solaire
 #+begin_src emacs-lisp
   (use-package solaire-mode
-    :config
+    :init
+    (solaire-global-mode)
     (push '(treemacs-window-background-face . solaire-default-face) solaire-mode-remap-alist)
-    (push '(treemacs-hl-line-face . solaire-hl-line-face) solaire-mode-remap-alist)
-    :init (solaire-global-mode))
+    (push '(treemacs-hl-line-face . solaire-hl-line-face) solaire-mode-remap-alist))
 #+end_src
 
 *** Treemacs
@@ -1018,8 +1019,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     (treesit-font-lock-level 4))
 
   (use-package treesit-auto
-    :when (treesit-available-p)
-    :config (global-treesit-auto-mode))
+    :when (treesit-available-p))
 #+end_src
 
 *** Vertico
@@ -1064,8 +1064,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 #+begin_src emacs-lisp
   (use-package which-key
     :hook (elpaca-after-init . which-key-mode)
-    :config
-    (which-key-setup-side-window-bottom))
+    :init (which-key-setup-side-window-bottom))
 #+end_src
 
 ** Theme
@@ -1081,21 +1080,20 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package doom-themes :ensure (:wait t))
 
   (use-package heaven-and-hell
+    :ensure (:wait t)
     :config
     (setq heaven-and-hell-theme-type 'dark
   	heaven-and-hell-themes
-  	'((dark   . doom-ayu-mirage)
+  	'((dark   . aura)
   	  (light  . doom-ayu-light))
   	heaven-and-hell-load-theme-no-confirm t)
-    (load-theme (cdr (assoc heaven-and-hell-theme-type heaven-and-hell-themes)) t)
     :custom-face
     (default ((t (:family "Maple Mono" :height 130 :weight regular))))
     (fixed-pitch ((t (:weight bold))))
     (font-lock-comment-face ((t (:slant italic))))
     (font-lock-keyword-face ((t (:slant italic))))
     (font-lock-string-face ((t (:slant italic))))
-    :ensure (:wait t)
-    :hook (after-init  . heaven-and-hell-init-hook)
+    :hook (after-init . heaven-and-hell-init-hook)
     :bind (("C-c <f5>" . heaven-and-hell-load-default-theme)
   	 ("<f5>"     . heaven-and-hell-toggle-theme)))
 #+end_src

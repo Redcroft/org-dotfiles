@@ -7,7 +7,7 @@
 
 * zimrc
 #+NAME: zimfw
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no :results none
   (start-process "my-process" "curl" "curl" "-fsSL" "--create-dirs" "-o" "~/.zim/zimfw.zsh" "https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh")
 #+end_src
 
@@ -225,5 +225,6 @@
   export PATH="$HOME/.pyenv/bin:$PATH"
   eval "$(pyenv init --path)"
   eval "$(pyenv init -)"
+  eval "$(pyenv virtualenv-init -)"
 #+end_src
 

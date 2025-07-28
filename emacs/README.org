@@ -948,6 +948,9 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     (projectile-project-root-file-bottom-up
      '(".git" ".projectile"))
     (projectile-verbose nil))
+
+  (use-package projectile-ripgrep
+    :bind ("C-c P r" . projectile-ripgrep))
 #+end_src
 
 *** Rainbow

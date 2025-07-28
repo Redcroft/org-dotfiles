@@ -126,6 +126,55 @@
       _ _ _ _ _ _ _ _)
 #+end_src
 
+#+begin_src lisp :tangle (if (string= system-name "heimdall") "/sudo::/etc/kanata/config.kbd" "")
+  (defcfg
+      linux-dev ( /dev/input/by-id/usb-ROYUAN_MonsGeek_2.4G_Wireless_Keyboard-event-kbd
+                  /dev/input/by-id/usb-ROYUAN_MonsGeek_Keyboard-event-kbd
+                  )
+    process-unmapped-keys yes)
+
+  (defalias
+      lwr (layer-toggle lower)
+    qwr (layer-switch qwerty)
+    dvk (layer-switch dvorak)
+    cmk (layer-switch colemak))
+
+  (defsrc
+      esc  1  2  3  4  5  6  7  8  9  0   -   =   bspc
+      tab  q  w  e  r  t  y  u  i  o  p   [   ]   \
+      caps a  s  d  f  g  h  j  k  l  ;   '   ret
+      lsft z  x  c  v  b  n  m  ,  .   /  rsft
+      lctl lmet  lalt  spc  ralt  del rctl)
+
+  (deflayer colemak
+      esc  1  2  3  4  5  6  7  8  9  0   '   =   bspc
+      tab  q  w  f  p  b  j  l  u  y  ;   [   ]   \
+      lctl a  r  s  t  g  m  n  e  i   o   -  ret
+      lsft  x  c  d  v  z  k  h  ,  .  /  rsft
+      @lwr lmet  lalt  spc  @lwr  del rctl)
+
+  (deflayer qwerty
+      esc  1  2  3  4  5  6  7  8  9  0   -   =   bspc
+      tab  q  w  e  r  t  y  u  i  o  p   [   ]   \
+      lctl a  s  d  f  g  h  j  k  l  ;   '   ret
+      lsft z  x  c  v  b  n  m  ,  .   /   rsft
+      @lwr lmet  lalt  spc  @lwr   del rctl)
+
+  (deflayer dvorak
+      esc  1  2  3  4  5  6  7  8  9  0   [   ]   bspc
+      tab  '  ,  .  p  y  f  g  c  r  l   /   =   \
+      lctl a  o  e  u  i  d  h  t  n  s   -   ret
+      lsft ;  q  j  k  x  b  m  w  v   z   rsft
+      @lwr  lmet lalt  spc  @lwr  del rctl)
+
+  (deflayer lower
+      _ f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 _
+      _ _ up _ _ _ _ _ _ _ _ @cmk @qwr @dvk
+      _ lft down rght _ _ _ lft down up rght _ _
+      _ _ _ _ _ _ _ _ _ _ _ _
+      _ _ _ _ _ pgdn pgup)
+#+end_src
+
 #+begin_src conf :tangle "/sudo::/etc/systemd/system/kanata.service"
   [Unit]
   Description=Kanata key remapping daemon
@@ -134,7 +183,7 @@
 
   [Service]
   Type=simple
-  ExecStart=/usr/local/bin/kanata --cfg /etc/kanata/config.kbd
+  ExecStart=/usr/bin/kanata --cfg /etc/kanata/config.kbd
 
   [Install]
   WantedBy=sysinit.target

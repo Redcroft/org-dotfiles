@@ -8,12 +8,10 @@
 * Config
 
 #+NAME:pinentry
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (when (string= system-name "red")
     (if (file-exists-p "/usr/bin/pinentry-emacs")
     "pinentry-program /usr/bin/pinentry-emacs" "")
-    (if (file-exists-p "/run/current-system/profile/bin/pinentry-emacs")
-      "/run/current-system/profile/bin/pinentry-emacs" "")
     )
 #+end_src
 

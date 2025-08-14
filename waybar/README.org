@@ -1,0 +1,226 @@
+#+TITLE: Waybar Configuration
+#+AUTHOR: Richard Redcroft
+#+EMAIL: Richard@Redcroft.tech
+#+OPTIONS: toc:nil num:nil
+#+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+
+#+begin_src json :tangle "~/.config/waybar/config"
+  {
+    "layer": "top",
+    "position": "top",
+    "reload_style_on_change": true,
+    "modules-left": ["hyprland/workspaces"],
+    "modules-center": ["hyprland/window"],
+    "modules-right": ["pulseaudio","battery","clock","custom/power"],
+
+    "hyprland/workspaces": {
+      "format": "{icon}",
+      "format-icons": {
+        "active": "",
+        "default": "",
+        "empty": ""
+      },
+    },
+
+    "hyprland/window": {
+      "format": "{class}",
+      "icon": true,
+    },
+    
+    "custom/power": {
+      "format" : "⏻ ",
+      "tooltip": false,
+      "menu": "on-click",
+      "menu-file": "$HOME/.config/waybar/power_menu.xml", // Menu file in resources folder
+      "menu-actions": {
+        "shutdown": "shutdown",
+        "reboot": "reboot",
+        "suspend": "systemctl suspend",
+        "hibernate": "systemctl hibernate"
+      }
+    },
+    
+    "clock": {
+      "format": "{:%I:%M:%S %p} ",
+      "interval": 1,   
+      "tooltip-format": "<tt>{calendar}</tt>",
+      "calendar": {
+        "format": {
+          "today": "<span color='#fAfBfC'><b>{}</b></span>"
+        }
+      },
+      "actions": {
+        "on-click-right": "shift_down",
+        "on-click": "shift_up"
+      }
+    },
+    "battery": {
+      "interval":30,
+      "states": {
+        "good": 95,
+        "warning": 30,
+        "critical": 20
+      },
+      "format": "{capacity}% {icon}",
+      "format-charging": "{capacity}% 󰂄",
+      "format-plugged": "{capacity}% 󰂄 ",
+      "format-alt": "{time} {icon}",
+      "format-icons": [
+        "󰁻",
+        "󰁼",
+        "󰁾",
+        "󰂀",
+        "󰂂",
+        "󰁹"
+      ],
+    },
+    "cpu": {
+      "format": "󰻠",
+      "tooltip": true
+    },
+    "memory": {
+      "format": ""
+    },
+    "temperature": {
+      "critical-threshold": 80,
+      "format": "",
+    },
+    "tray": {
+      "icon-size": 14,
+      "spacing": 10
+    },
+  }
+#+end_src
+
+#+begin_src css :tangle "~/.config/waybar/style.css"
+  ,* {
+    font-size: 16px;
+    font-family: "Iosevka Term Nerd Font";
+  }
+
+  window#waybar {
+    all: unset;
+  }
+
+  .modules-left, .modules-center, .modules-right {
+    margin: 10px 10px 0 10px;
+    padding: 10px;
+    background: alpha(#3c3836, 0.9);
+    border-radius: 10px;
+  }
+
+  .modules-left   { margin: 10px 0 0 20px; }
+  .modules-center { margin: 10px 0 0 0; padding: 10px 15px; }
+  .modules-right  { margin: 10px 20px 0 0; padding: 10px 20px; }
+
+  tooltip {
+    background: alpha(#3c3836, 1);
+    border-radius: 10px;
+    color: #ebdbb2;
+  }
+
+  #clock:hover, 
+  #window:hover, 
+  #battery:hover, 
+  #cpu:hover, 
+  #memory:hover, 
+  #temperature:hover {
+    color: #657d64;
+  }
+
+  #clock, #battery, #cpu, #memory, #temperature {
+    color: #ebdbb2;
+    transition: color 0.3s ease;
+  }
+
+  #clock { padding: 0 10px 0 0; }
+
+  #window { padding: 0 10px; }
+
+  #workspaces { padding: 0 10px; }
+
+  #workspaces button {
+    all: unset;
+    padding: 0 5px;
+    color: alpha(#ebdbb2, 0.27);
+    transition: color 0.2s ease;
+  }
+
+  #workspaces button:hover {
+    color: transparent;
+  }
+
+  #workspaces button.active {
+    color: #83a598;
+  }
+
+  #workspaces button.empty {
+    color: transparent;
+  }
+
+  #workspaces button.empty:hover {
+  }
+
+  #workspaces button.empty.active {
+    color: #f6f5f3;
+  }
+
+  #battery {
+    color: #8ec07c;
+    padding: 0 20px;
+  }
+
+  #battery.charging {
+    color: #b8bb26;
+  }
+
+  #battery.warning:not(.charging) {
+    color: #fe8019;
+  }
+
+  #battery.critical:not(.charging) {
+    color: #fb4934;
+    animation: blink 0.5s linear infinite alternate;
+  }
+
+  #cpu, #memory, #temperature { padding: 0 5px; }
+
+  #tray { padding: 0 5px; }
+
+  #tray menu *,
+  #tray menu separator {
+    padding: 0 5px;
+  }
+#+end_src
+
+#+begin_src xml :tangle "~/.config/waybar/power_menu.xml"
+  <?xml version="1.0" encoding="UTF-8"?>
+  <interface>
+    <object class="GtkMenu" id="menu">
+      <child>
+        <object class="GtkMenuItem" id="suspend">
+  	<property name="label">Suspend</property>
+        </object>
+      </child>
+      <child>
+        <object class="GtkMenuItem" id="hibernate">
+  	<property name="label">Hibernate</property>
+        </object>
+      </child>
+      <child>
+        <object class="GtkMenuItem" id="shutdown">
+  	<property name="label">Shutdown</property>
+        </object>
+      </child>
+      <child>
+        <object class="GtkSeparatorMenuItem" id="delimiter1"/>
+      </child>
+      <child>
+        <object class="GtkMenuItem" id="reboot">
+  	<property name="label">Reboot</property>
+        </object>
+      </child>
+    </object>
+  </interface>
+#+end_src

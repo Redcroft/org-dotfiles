@@ -146,7 +146,15 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (truncate-partial-width-windows nil)
     (x-stretch-cursor nil))
 #+end_src
+*** Epa
+#+begin_src emacs-lisp
+  (use-package epa
+    :ensure nil)
 
+  (use-package epa-file
+    :ensure nil
+    :init (epa-file-enable))
+#+end_src
 *** EShell
 #+begin_src emacs-lisp
   (use-package tramp :ensure nil)
@@ -323,13 +331,13 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
   		      (lambda () (interactive) (start-process "" nil "pactl" "--" "set-sink-mute" "@DEFAULT_SINK@" "toggle")))
     (when (not (file-exists-p "/etc/config.scm"))
       (exwm-input-set-key (kbd "<XF86MonBrightnessUp>")
-  			(lambda () (interactive) (start-process "" nil "blight" "inc" "5")))
+  			(lambda () (interactive) (start-process "" nil "blight" "set" "+10%")))
       (exwm-input-set-key (kbd "<XF86MonBrightnessDown>")
-  			(lambda () (interactive) (start-process "" nil "blight" "dec" "5")))
+  			(lambda () (interactive) (start-process "" nil "blight" "set" "-10%")))
       (exwm-input-set-key (kbd "s-<XF86MonBrightnessUp>")
-  			(lambda () (interactive) (start-process "" nil "blight" "set" "65535")))
+  			(lambda () (interactive) (start-process "" nil "blight" "set" "100%")))
       (exwm-input-set-key (kbd "s-<XF86MonBrightnessDown>")
-  			(lambda () (interactive) (start-process "" nil "blight" "set" "25"))))
+  			(lambda () (interactive) (start-process "" nil "blight" "set" "1%"))))
     (exwm-input-set-key (kbd "s-<up>")
   			(lambda () (interactive) (enlarge-window-horizontally 2)))
     (exwm-input-set-key (kbd "s-<down>")
@@ -605,6 +613,11 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 *** Svelte
 #+begin_src emacs-lisp
   (use-package svelte-mode)
+#+end_src
+
+*** Systemd
+#+begin_src emacs-lisp
+  (use-package systemd)
 #+end_src
 
 *** Toml
@@ -1087,11 +1100,11 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     :config
     (setq heaven-and-hell-theme-type 'dark
   	heaven-and-hell-themes
-  	'((dark   . aura)
-  	  (light  . doom-ayu-light))
+  	'((dark   . doom-gruvbox)
+  	  (light  . doom-gruvbox-light))
   	heaven-and-hell-load-theme-no-confirm t)
     :custom-face
-    (default ((t (:family "Maple Mono" :height 130 :weight regular))))
+    (default ((t (:family "Iosevka Term" :height 150 :weight regular))))
     (fixed-pitch ((t (:weight bold))))
     (font-lock-comment-face ((t (:slant italic))))
     (font-lock-keyword-face ((t (:slant italic))))

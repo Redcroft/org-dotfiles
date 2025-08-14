@@ -223,8 +223,5 @@
   eval "$(direnv hook zsh)"
   eval "$(zoxide init --cmd cd zsh)"
   export PATH="$HOME/.pyenv/bin:$PATH"
-  eval "$(pyenv init --path)"
-  eval "$(pyenv init -)"
-  eval "$(pyenv virtualenv-init -)"
 #+end_src
 

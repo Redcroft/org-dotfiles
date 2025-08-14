@@ -1,0 +1,120 @@
+#+TITLE: Email Config
+#+AUTHOR: Richard Redcroft
+#+EMAIL: Richard@Redcroft.tech
+#+OPTIONS: toc:nil num:nil
+#+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+
+* Isync
+** Create Dirs
+#+begin_src conf :tangle "~/.mail/temp"
+  # Created
+#+end_src
+
+** Redcroft
+#+begin_src conf :tangle "~/.mbsyncrc"
+  IMAPAccount redcroft
+  Host imap.hostinger.com
+  User richard@redcroft.tech
+  #PassCmd "bw get password hostinger.com richard@redcroft.tech"
+  PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.repos/org-dotfiles/mail/redcroft.gpg"
+  TLSType IMAPS
+  CertificateFIle /etc/ssl/certs/ca-certificates.crt
+
+  IMAPStore redcroft-remote
+  Account redcroft
+
+  MaildirStore redcroft-local
+  SubFolders Verbatim
+  Path ~/.mail/redcroft/
+  Inbox ~/.mail/redcroft/Inbox
+
+  Channel Redcroft
+  Far :redcroft-remote:
+  Near :redcroft-local:
+  Patterns *
+  Create Both
+  Expunge Both
+  SyncState *
+#+end_src
+
+** Work
+#+begin_src conf :tangle "~/.mbsyncrc"
+  IMAPAccount work
+  Host imap.hostinger.com
+  User richard@carseandwaterman.com
+  #PassCmd "bw get password hostinger.com richard@work.tech"
+  AuthMechs XOAUTH2
+  TLSType IMAPS
+  CertificateFIle /etc/ssl/certs/ca-certificates.crt
+
+  IMAPStore work-remote
+  Account work
+
+  MaildirStore work-local
+  SubFolders Verbatim
+  Path ~/.mail/work/
+  Inbox ~/.mail/work/Inbox
+
+  Channel Work
+  Far :work-remote:
+  Near :work-local:
+  Patterns *
+  Create Both
+  Expunge Both
+  SyncState *
+#+end_src
+
+** Gmail
+#+begin_src conf :tangle "~/.mbsyncrc"
+  IMAPAccount gmail
+  Host imap.hostinger.com
+  User animationrich@gmail.com
+  #PassCmd "bw get password hostinger.com richard@gmail.tech"
+  PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.repos/org-dotfiles/mail/gmail.gpg"
+  TLSType IMAPS
+  CertificateFIle /etc/ssl/certs/ca-certificates.crt
+
+  IMAPStore gmail-remote
+  Account gmail
+
+  MaildirStore gmail-local
+  SubFolders Verbatim
+  Path ~/.mail/gmail/
+  Inbox ~/.mail/gmail/Inbox
+
+  Channel Gmail
+  Far :gmail-remote:
+  Near :gmail-local:
+  Patterns *
+  Create Both
+  Expunge Both
+  SyncState *
+#+end_src
+
+
+** Systemd
+#+begin_src systemd :tangle "~/.config/systemd/user/mbsync.service"
+  [Unit]
+  Description=Mailbox sync service
+
+  [Service]
+  Type=oneshot
+  ExecStart=/usr/bin/mbsync -Va
+
+  [Install]
+  WantedBy=default.target
+#+end_src
+
+#+begin_src systemd :tangle "~/.config/systemd/user/mbsync.timer"
+  [Unit]
+  Description=Mailbox sync TimerSlackNSec
+
+  [Timer]
+  OnBootSec=2m
+  OnUnitActiveSec=5m
+  Unit=mbsync.service
+
+  [Install]
+  WantedBy=timers.target
+#+end_src

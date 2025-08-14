@@ -10,5 +10,5 @@
 #+begin_src conf
   font-family = "Maple Mono NF"
   font-size = 12
-  theme = Aura
+  theme = GruvboxDark
 #+end_src

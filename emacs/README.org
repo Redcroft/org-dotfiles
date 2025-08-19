@@ -1093,18 +1093,18 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     :init (all-the-icons-completion-mode))
   (use-package all-the-icons-dired :hook (dired-mode . all-the-icons-dired-mode))
   (use-package all-the-icons-nerd-fonts)
-  (use-package doom-themes :ensure (:wait t))
+  (use-package base16-themes :ensure (:wait t))
 
   (use-package heaven-and-hell
     :ensure (:wait t)
     :config
     (setq heaven-and-hell-theme-type 'dark
   	heaven-and-hell-themes
-  	'((dark   . doom-vibrant)
-  	  (light  . doom-one-light))
+  	'((dark   . aura)
+  	  (light  . base16-catppuccin-latte))
   	heaven-and-hell-load-theme-no-confirm t)
     :custom-face
-    (default ((t (:family "Maple Mono" :height 120 :weight regular))))
+    (default ((t (:family "VictorMono Nerd Font" :height 130 :weight Semibold))))
     (fixed-pitch ((t (:weight bold))))
     (font-lock-comment-face ((t (:slant italic))))
     (font-lock-keyword-face ((t (:slant italic))))

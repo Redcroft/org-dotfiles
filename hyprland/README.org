@@ -43,7 +43,7 @@
       col.inactive_border = rgba(3c3836aa)
       resize_on_border = false
       allow_tearing = false
-      layout = dwindle
+      layout = master
   }
 
   decoration {
@@ -148,10 +148,11 @@
   bind = $mainMod, space, pseudo, # dwindle
   bind = $mainMod, V, togglesplit, # dwindle
 
-  bind = $mainMod, B, movefocus, l
-  bind = $mainMod, F, movefocus, r
-  bind = $mainMod, P, movefocus, u
-  bind = $mainMod, N, movefocus, d
+  bind = $mainMod, B, cycleprev
+  bind = $mainMod, F, cyclenext
+  bind = $mainMod, J, swapwithmaster master
+  bind = $mainMod CONTROL, B, mfact -0.05
+  bind = $mainMod CONTROL, F, mfact +0.05
 
   bind = $mainMod, 1, workspace, 1
   bind = $mainMod, 2, workspace, 2

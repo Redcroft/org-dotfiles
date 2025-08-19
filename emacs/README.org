@@ -1093,7 +1093,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     :init (all-the-icons-completion-mode))
   (use-package all-the-icons-dired :hook (dired-mode . all-the-icons-dired-mode))
   (use-package all-the-icons-nerd-fonts)
-  (use-package base16-themes :ensure (:wait t))
+  (use-package base16-theme :ensure (:wait t))
 
   (use-package heaven-and-hell
     :ensure (:wait t)

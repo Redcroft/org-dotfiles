@@ -6,9 +6,22 @@
 #+auto_tangle: t
 
 * Hyprland
+#+name: monitor-layout
+#+begin_src emacs-lisp :tangle no
+  (cond
+   ((string= (system-name) "red")
+    "monitor=eDP-1,1920x1080,0x0,1")
+   ((string= (system-name) "poseidon")
+    "monitor=DP-1,3840x2160,0x0,1
+  monitor=DP-2,3840x2160,3840x0,1")
+   ((string= (system-name) "heimdall")
+    "monitor=DP-1,2540x1440,0x0,1")
+   (t
+    "monitor=,1920x1080,0x0,1"))
+#+end_src
 
-#+begin_src conf :tangle "~/.config/hypr/hyprland.conf"
-  monitor=,1920x1080,0x0,1
+#+begin_src conf :tangle "~/.config/hypr/hyprland.conf" :noweb yes
+  <<monitor-layout()>>
 
   $terminal = ghostty
   $menu = bemenu-run

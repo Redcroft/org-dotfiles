@@ -12,8 +12,8 @@
    ((string= (system-name) "red")
     "monitor=eDP-1,1920x1080,0x0,1")
    ((string= (system-name) "poseidon")
-    "monitor=DP-1,3840x2160,0x0,1
-  monitor=DP-2,3840x2160,3840x0,1")
+    "monitor=DP-1,3840x2160,3840x0,1
+  monitor=DP-2,3840x2160,0x0,1")
    ((string= (system-name) "heimdall")
     "monitor=DP-1,2540x1440,0x0,1")
    (t
@@ -227,7 +227,21 @@
 
 * Hyprpaper
 
-#+begin_src conf :tangle "~/.config/hypr/hyprpaper.conf"
+#+name: monitor-wallpaper
+#+begin_src emacs-lisp :tangle no
+    (cond
+   ((string= (system-name) "red")
+    "wallpaper = eDP-1,/home/lambda/.repos/org-dotfiles/wallpaper.jpg")
+   ((string= (system-name) "poseidon")
+    "wallpaper = DP-1,/home/lambda/.repos/org-dotfiles/wallpaper.jpg
+     wallpaper = DP-2,/home/lambda/.repos/org-dotfiles/wallpaper.jpg")
+   ((string= (system-name) "heimdall")
+    "wallpaper = DP-2,/home/lambda/.repos/org-dotfiles/wallpaper.jpg")
+   (t
+    "monitor=,1920x1080,0x0,1"))
+#+end_src
+
+#+begin_src conf :tangle "~/.config/hypr/hyprpaper.conf" :noweb yes
   preload = /home/lambda/.repos/org-dotfiles/wallpaper.jpg
-  wallpaper = eDP-1, /home/lambda/.repos/org-dotfiles/wallpaper.jpg
+  <<monitor-wallpaper()>>
 #+end_src

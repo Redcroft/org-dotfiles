@@ -12,8 +12,8 @@
    ((string= (system-name) "red")
     "monitor=eDP-1,1920x1080,0x0,1")
    ((string= (system-name) "poseidon")
-    "monitor=DP-1,3840x2160,3840x0,1
-  monitor=DP-2,3840x2160,0x0,1")
+    "monitor=DP-1,3840x2160,0x0,1
+  monitor=DP-2,3840x2160,-3840x0,1")
    ((string= (system-name) "heimdall")
     "monitor=DP-1,2540x1440,0x0,1")
    (t

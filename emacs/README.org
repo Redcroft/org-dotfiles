@@ -1100,11 +1100,11 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     :config
     (setq heaven-and-hell-theme-type 'dark
   	heaven-and-hell-themes
-  	'((dark   . doom-gruvbox)
-  	  (light  . doom-gruvbox-light))
+  	'((dark   . doom-vibrant)
+  	  (light  . doom-one-light))
   	heaven-and-hell-load-theme-no-confirm t)
     :custom-face
-    (default ((t (:family "Iosevka Term" :height 150 :weight regular))))
+    (default ((t (:family "Maple Mono" :height 120 :weight regular))))
     (fixed-pitch ((t (:weight bold))))
     (font-lock-comment-face ((t (:slant italic))))
     (font-lock-keyword-face ((t (:slant italic))))

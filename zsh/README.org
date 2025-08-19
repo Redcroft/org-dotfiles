@@ -221,7 +221,7 @@
   fi
 
   eval "$(direnv hook zsh)"
-  eval "$(zoxide init --cmd cd zsh)"
+  # eval "$(zoxide init --cmd cd zsh)"
   export PATH="$HOME/.pyenv/bin:$PATH"
 #+end_src
 

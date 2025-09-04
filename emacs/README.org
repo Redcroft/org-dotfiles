@@ -141,7 +141,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (highlight-nonselected-windows nil)
     (inhibit-tabs-mode nil)
     (initial-scratch-message nil)
-    (line-spacing 0.15)
+    (line-spacing 0.00)
     (truncate-lines t)
     (truncate-partial-width-windows nil)
     (x-stretch-cursor nil))
@@ -927,6 +927,25 @@ https://bholten.github.io/posts/blogging_with_emacs.html
      `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
 #+end_src
 
+*** Notmuch
+#+begin_src emacs-lisp
+  (use-package notmuch
+    :bind ("C-x y m" . notmuch)
+    :custom
+    (notmuch-saved-searches
+     '((:name "inbox" :query "tag:inbox" :key "i")
+       (:name "unread" :query "tag:unread" :key "u")
+       (:name "gmail" :query "folder:/gmail/ AND tag:inbox" :key "h")
+       (:name "redcroft" :query "folder:/redcroft/ AND tag:inbox" :key "r")
+       (:name "work" :query "folder:/work/ AND tag:inbox" :key "w")
+       (:name "sent" :query "tag:sent" :key "s")))
+    (notmuch-show-insert-text/html-hook '(shr-insert-document))
+    (notmuch-show-insert-text/plain-hook
+     '(notmuch-wash-convert-inline-patch-to-part
+       notmuch-wash-wrap-long-lines))
+    )
+#+end_src
+
 *** Orderless
 #+begin_src emacs-lisp
   (use-package orderless
@@ -1100,11 +1119,11 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     :config
     (setq heaven-and-hell-theme-type 'dark
   	heaven-and-hell-themes
-  	'((dark   . aura)
-  	  (light  . base16-catppuccin-latte))
+  	'((dark   . base16-gruvbox-dark-medium)
+  	  (light  . base16-gruvbox-light-medium))
   	heaven-and-hell-load-theme-no-confirm t)
     :custom-face
-    (default ((t (:family "VictorMono Nerd Font" :height 130 :weight Semibold))))
+    (default ((t (:family "Maple Mono NF" :height 120 :weight Semibold))))
     (fixed-pitch ((t (:weight bold))))
     (font-lock-comment-face ((t (:slant italic))))
     (font-lock-keyword-face ((t (:slant italic))))

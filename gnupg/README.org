@@ -22,5 +22,5 @@
   max-cache-ttl-ssh 8400000
   allow-loopback-pinentry
   allow-emacs-pinentry
-  <<pinentry()>>
+  pinentry-program /usr/bin/pinentry-gtk
 #+end_src

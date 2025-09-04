@@ -7,9 +7,10 @@
 
 * Isync
 ** Create Dirs
-#+begin_src conf :tangle "~/.mail/temp"
-  # Created
+#+begin_src sh :results none
+  mkdir -p ~/.mail/{redcroft,work,gmail}
 #+end_src
+
 
 ** Redcroft
 #+begin_src conf :tangle "~/.mbsyncrc"
@@ -41,10 +42,10 @@
 ** Work
 #+begin_src conf :tangle "~/.mbsyncrc"
   IMAPAccount work
-  Host imap.hostinger.com
+  Host imap.gmail.com
   User richard@carseandwaterman.com
   #PassCmd "bw get password hostinger.com richard@work.tech"
-  AuthMechs XOAUTH2
+  PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.repos/org-dotfiles/mail/work.gpg"
   TLSType IMAPS
   CertificateFIle /etc/ssl/certs/ca-certificates.crt
 
@@ -68,7 +69,7 @@
 ** Gmail
 #+begin_src conf :tangle "~/.mbsyncrc"
   IMAPAccount gmail
-  Host imap.hostinger.com
+  Host imap.gmail.com
   User animationrich@gmail.com
   #PassCmd "bw get password hostinger.com richard@gmail.tech"
   PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.repos/org-dotfiles/mail/gmail.gpg"
@@ -91,7 +92,6 @@
   Expunge Both
   SyncState *
 #+end_src
-
 
 ** Systemd
 #+begin_src systemd :tangle "~/.config/systemd/user/mbsync.service"
@@ -118,3 +118,4 @@
   [Install]
   WantedBy=timers.target
 #+end_src
+ 

@@ -6,24 +6,21 @@
 #+auto_tangle: t
 
 * Hyprland
-#+name: monitor-layout
-#+begin_src emacs-lisp :tangle no
-  (cond
-   ((string= (system-name) "red")
-    "monitor=eDP-1,1920x1080,0x0,1")
-   ((string= (system-name) "poseidon")
-    "monitor=DP-1,3840x2160,0x0,1
-  monitor=DP-2,3840x2160,-3840x0,1")
-   ((string= (system-name) "heimdall")
-    "monitor=DP-1,2540x1440,0x0,1")
-   (t
-    "monitor=,1920x1080,0x0,1"))
+#+begin_src conf :tangle (if (string= system-name "heimdall") "~/.config/hypr/hyprland.conf" "")
+  monitor=DP-1,2560x1440,0x0,1
 #+end_src
 
-#+begin_src conf :tangle "~/.config/hypr/hyprland.conf" :noweb yes
-  <<monitor-layout()>>
+#+begin_src conf :tangle (if (string= system-name "red") "~/.config/hypr/hyprland.conf" "")
+  monitor=eDP-1,1920x1080,0x0,1
+#+end_src
 
-  $terminal = ghostty
+#+begin_src conf :tangle (if (string= system-name "poseidon") "~/.config/hypr/hyprland.conf" "")
+  monitor=DP-1,3840x2160,0x0,1
+  monitor=DP-2,3840x2160,-3840x0,1
+#+end_src
+
+#+begin_src conf :tangle "~/.config/hypr/hyprland.conf"
+  $terminal = foot -e tmux
   $menu = bemenu-run
   $web = zen-browser
   $editor = emacs
@@ -31,9 +28,9 @@
   env = XCURSOR_SIZE,24
   env = HYPRCURSOR_SIZE,24
 
-  exec-once = waybar
-  exec-once = hyprpaper
-  exec-once = ghostty --title="Scratchpad"
+  exec-once = uwsm app -- waybar
+  exec-once = uwsm app -- hyprpaper
+  exec-once = uwsm app -- foot -T Scratchpad -e tmux
 
   general {
       gaps_in = 5
@@ -42,7 +39,7 @@
       col.active_border = rgba(b8bb26ee) rgba(8ec07cee) 45deg
       col.inactive_border = rgba(3c3836aa)
       resize_on_border = false
-      allow_tearing = false
+      allow_tearing = true
       layout = master
   }
 
@@ -52,10 +49,10 @@
       active_opacity = 1.0
       inactive_opacity = 1.0
       shadow {
-          enabled = true
-          range = 4
-          render_power = 3
-          color = rgba(1a1a1aee)
+          enabled = false
+          range = 16
+          render_power = 5
+          color = rgba(1a1a1a11)
       }
       blur {
           enabled = true
@@ -144,15 +141,15 @@
   bind = $mainMod SHIFT, Q, killactive,
   bind = $mainMod SHIFT, escape, exit,
   bind = $mainMod SHIFT, space, togglefloating,
-  bind = $mainMod SHIFT, P, exec, $menu
+  bind = $mainMod, D, exec, $menu
   bind = $mainMod, space, pseudo, # dwindle
   bind = $mainMod, V, togglesplit, # dwindle
 
-  bind = $mainMod, B, cycleprev
-  bind = $mainMod, F, cyclenext
-  bind = $mainMod, J, swapwithmaster master
-  bind = $mainMod CONTROL, B, mfact -0.05
-  bind = $mainMod CONTROL, F, mfact +0.05
+  bind = $mainMod, B, layoutmsg, cycleprev
+  bind = $mainMod, F, layoutmsg, cyclenext
+  bind = $mainMod, J, layoutmsg, swapwithmaster master
+  bind = $mainMod CONTROL, B, layoutmsg, mfact -0.01
+  bind = $mainMod CONTROL, F, layoutmsg, mfact +0.01
 
   bind = $mainMod, 1, workspace, 1
   bind = $mainMod, 2, workspace, 2
@@ -196,6 +193,8 @@
   bindel = ,XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
   bindel = ,XF86MonBrightnessUp, exec, brightnessctl -e4 -n2 set 5%+
   bindel = ,XF86MonBrightnessDown, exec, brightnessctl -e4 -n2 set 5%-
+  bindel = $mainMod, XF86MonBrightnessUp, exec, brightnessctl -e4 -n2 set 100%
+  bindel = $mainMod, XF86MonBrightnessDown, exec, brightnessctl -e4 -n2 set 1%
 
   # Requires playerctl
   bindl = , XF86AudioNext, exec, playerctl next
@@ -219,30 +218,29 @@
   # Fix some dragging issues with XWayland
   windowrule = nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0
 
-  windowrulev2 = movetoworkspace,special:scratch,title:^(Scratchpad)$
   windowrulev2 = float,title:^(Scratchpad)$
   windowrulev2 = size 50% 50%,title:^(Scratchpad)$
   windowrulev2 = center,title:^(Scratchpad)$
+  windowrulev2 = movetoworkspace,special:scratch,title:^(Scratchpad)$
+
+  windowrulev2 = float,class:org.gtk_rs.HelloWorld
 
 #+end_src
 
 * Hyprpaper
-
-#+name: monitor-wallpaper
-#+begin_src emacs-lisp :tangle no
-    (cond
-   ((string= (system-name) "red")
-    "wallpaper = eDP-1,/home/lambda/.repos/org-dotfiles/wallpaper.jpg")
-   ((string= (system-name) "poseidon")
-    "wallpaper = DP-1,/home/lambda/.repos/org-dotfiles/wallpaper.jpg
-     wallpaper = DP-2,/home/lambda/.repos/org-dotfiles/wallpaper.jpg")
-   ((string= (system-name) "heimdall")
-    "wallpaper = DP-2,/home/lambda/.repos/org-dotfiles/wallpaper.jpg")
-   (t
-    "monitor=,1920x1080,0x0,1"))
+#+begin_src conf :tangle "~/.config/hypr/hyprpaper.conf"
+  preload = /home/lambda/.repos/org-dotfiles/wallpaper.jpg
 #+end_src
 
-#+begin_src conf :tangle "~/.config/hypr/hyprpaper.conf" :noweb yes
-  preload = /home/lambda/.repos/org-dotfiles/wallpaper.jpg
-  <<monitor-wallpaper()>>
+#+begin_src conf :tangle (if (string= system-name "heimdall") "~/.config/hypr/hyprpaper.conf" "")
+  wallpaper = DP-1,/home/lambda/.repos/org-dotfiles/wallpaper.jpg
+#+end_src
+
+#+begin_src conf :tangle (if (string= system-name "red") "~/.config/hypr/hyprpaper.conf" "")
+  wallpaper = eDP-1,/home/lambda/.repos/org-dotfiles/wallpaper.jpg
+#+end_src
+
+#+begin_src conf :tangle (if (string= system-name "poseidon") "~/.config/hypr/hyprpaper.conf" "")
+  wallpaper = DP-1,/home/lambda/.repos/org-dotfiles/wallpaper.jpg
+  wallpaper = DP-2,/home/lambda/.repos/org-dotfiles/wallpaper.jpg
 #+end_src

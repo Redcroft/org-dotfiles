@@ -11,16 +11,8 @@
     "position": "top",
     "reload_style_on_change": true,
     "modules-left": ["hyprland/workspaces"],
-    "modules-center": ["hyprland/window"],
-    "modules-right": ["pulseaudio","battery","clock","custom/power"],
-
-    "hyprland/workspaces": {
-    },
-
-    "hyprland/window": {
-      "format": "{class}",
-      "icon": false,
-    },
+    "modules-center": ["clock"],
+    "modules-right": ["pulseaudio","battery","custom/power"],
     
     "custom/power": {
       "format" : "⏻ ",
@@ -28,15 +20,15 @@
       "menu": "on-click",
       "menu-file": "$HOME/.config/waybar/power_menu.xml", // Menu file in resources folder
       "menu-actions": {
-        "shutdown": "shutdown",
-        "reboot": "reboot",
+        "shutdown": "systemctl poweroff",
+        "reboot": "systemctl reboot",
         "suspend": "systemctl suspend",
         "hibernate": "systemctl hibernate"
       }
     },
     
     "clock": {
-      "format": "{:%I:%M:%S %p} ",
+      "format": "{:%I:%M:%S %p}",
       "interval": 1,   
       "tooltip-format": "<tt>{calendar}</tt>",
       "calendar": {
@@ -69,6 +61,22 @@
         "󰁹"
       ],
     },
+    "pulseaudio": {
+      "format": "{volume}% {icon}",
+      "format-bluetooth": "{volume}% {icon}",
+      "format-muted": "",
+      "format-icons": {
+        "headphone": " ",
+        "hands-free": " ",
+        "headset": " ",
+        "phone": " ",
+        "portable": " ",
+        "car": " ",
+        "default": [" ", " "]
+      },
+      "scroll-step": 1,
+      "on-click": "pavucontrol"
+    },
     "cpu": {
       "format": "󰻠",
       "tooltip": true
@@ -98,20 +106,19 @@
   }
 
   .modules-left, .modules-center, .modules-right {
-    margin: 10px 10px 0 10px;
     padding: 10px;
-    background: alpha(#3c3836, 0.9);
+    background: alpha(#000000, 0.9);
     border-radius: 10px;
   }
 
-  .modules-left   { margin: 10px 0 0 20px; }
+  .modules-left   { margin: 10px 0 0 10px; }
   .modules-center { margin: 10px 0 0 0; padding: 10px 15px; }
-  .modules-right  { margin: 10px 20px 0 0; padding: 10px 20px; }
+  .modules-right  { margin: 10px 10px 0 0; padding: 10px 20px; }
 
   tooltip {
-    background: alpha(#3c3836, 1);
+    background: alpha(#000000, 1);
     border-radius: 10px;
-    color: #ebdbb2;
+    color: #ffffff;
   }
 
   #clock:hover, 
@@ -120,15 +127,15 @@
   #cpu:hover, 
   #memory:hover, 
   #temperature:hover {
-    color: #657d64;
+    color: #2fafff;
   }
 
   #clock, #battery, #cpu, #memory, #temperature {
-    color: #ebdbb2;
+    color: #ffffff;
     transition: color 0.3s ease;
   }
 
-  #clock { padding: 0 10px 0 0; }
+  #clock { padding: 0; }
 
   #window { padding: 0 10px; }
 
@@ -137,7 +144,7 @@
   #workspaces button {
     all: unset;
     padding: 0 5px;
-    color: alpha(#ebdbb2, 0.27);
+    color: alpha(#ffffff, 0.27);
     transition: color 0.2s ease;
   }
 
@@ -146,7 +153,7 @@
   }
 
   #workspaces button.active {
-    color: #83a598;
+    color: #00c06f;
   }
 
   #workspaces button.empty {
@@ -161,30 +168,27 @@
   }
 
   #battery {
-    color: #8ec07c;
+    color: #00c06f;
     padding: 0 20px;
   }
 
   #battery.charging {
-    color: #b8bb26;
+    color: #44bc44;
   }
 
   #battery.warning:not(.charging) {
-    color: #fe8019;
+    color: #cabf00;
   }
 
   #battery.critical:not(.charging) {
-    color: #fb4934;
+    color: #ff5f59;
     animation: blink 0.5s linear infinite alternate;
   }
 
   #cpu, #memory, #temperature { padding: 0 5px; }
 
-  #tray { padding: 0 5px; }
-
-  #tray menu *,
-  #tray menu separator {
-    padding: 0 5px;
+  #custom-power {
+    color: #ff5f59;
   }
 #+end_src
 

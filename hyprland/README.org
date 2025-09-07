@@ -25,8 +25,8 @@
   $web = zen-browser
   $editor = emacs
 
-  env = XCURSOR_SIZE,24
-  env = HYPRCURSOR_SIZE,24
+  env = XCURSOR_SIZE,32
+  env = HYPRCURSOR_SIZE,32
 
   exec-once = uwsm app -- waybar
   exec-once = uwsm app -- hyprpaper
@@ -34,9 +34,9 @@
 
   general {
       gaps_in = 5
-      gaps_out = 20
+      gaps_out = 10
       border_size = 2
-      col.active_border = rgba(b8bb26ee) rgba(8ec07cee) 45deg
+      col.active_border = rgba(00c06fee) rgba(00bcffee) 55deg
       col.inactive_border = rgba(3c3836aa)
       resize_on_border = false
       allow_tearing = true
@@ -52,7 +52,7 @@
           enabled = false
           range = 16
           render_power = 5
-          color = rgba(1a1a1a11)
+          color = rgba(00c06f11)
       }
       blur {
           enabled = true

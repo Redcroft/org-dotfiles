@@ -223,7 +223,8 @@
   windowrulev2 = center,title:^(Scratchpad)$
   windowrulev2 = movetoworkspace,special:scratch,title:^(Scratchpad)$
 
-  windowrulev2 = float,class:org.gtk_rs.HelloWorld
+  windowrulev2 = noborder, class:appphotos
+  windowrulev2 = float,class:appphotos
 
 #+end_src
 

@@ -604,6 +604,12 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     (when (treesit-available-p)
       (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))))
 #+end_src
+*** QML
+#+begin_src emacs-lisp
+  (use-package qml-mode
+    :hook (qml-mode . eglot-ensure)
+    :mode ("\\.qml\\'" . qml-mode))
+#+end_src
 
 *** Rust
 #+begin_src emacs-lisp
@@ -735,6 +741,15 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     :init (ctrlf-mode t))
 #+end_src
 
+*** Devdocs
+#+begin_src emacs-lisp
+  (use-package devdocs-browser
+    ;; :bind ("C-c d" . devdocs-browser-open-at-point)
+    ;; :commands (devdocs-browser-open devdocs-browser-open-at-point)
+    :custom
+    (devdocs-browser-cache-directory "~/.emacs.d/devdocs-cache"))
+#+end_src
+
 *** Diff hl
 [[https://github.com/dgutov/diff-hl][diff-hl]] diff-hl-mode highlights uncommitted changes on the side of the window (area also known as the "gutter"), allows you to jump between and revert them selectively.
 #+begin_src emacs-lisp
@@ -781,7 +796,12 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     :custom
     (eglot-autoshutdown t)
     (eglot-confirm-server-initiated-edits nil)
-    (rustic-lsp-client 'eglot))
+    (rustic-lsp-client 'eglot)
+    :config
+    (add-to-list 'eglot-server-programs
+  	       `((c++-mode c-mode) . ("clangd")))
+    (add-to-list 'eglot-server-programs
+  	       `(qml-mode . ("qmlls6"))))
 #+end_src
 
 *** Eldoc
@@ -1119,8 +1139,8 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     :config
     (setq heaven-and-hell-theme-type 'dark
   	heaven-and-hell-themes
-  	'((dark   . base16-gruvbox-dark-medium)
-  	  (light  . base16-gruvbox-light-medium))
+  	'((dark   . modus-vivendi-tritanopia)
+  	  (light  . modus-operandi-tinted))
   	heaven-and-hell-load-theme-no-confirm t)
     :custom-face
     (default ((t (:family "Maple Mono NF" :height 120 :weight Semibold))))

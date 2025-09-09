@@ -325,3 +325,9 @@ I want to keep hrtf files within the dotfile repo, so use emacs to determine whe
   WantedBy=default.target
 #+end_src
 
+
+* GSX Fix
+#+begin_src conf :tangle "/sudo::/etc/udev/hwdb.d/gsx.hwdb"
+  evdev:input:b0003v1395p00a0*
+    KEYBOARD_KEY_C00EA=reserved
+#+end_src

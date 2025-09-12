@@ -8,8 +8,8 @@
 * Config
 
 #+begin_src conf
-  font-family = "VictorMono Nerd Font"
-  font-size = 12
+  font-family = "JetBrainsMono Nerd Font"
+  font-size = 13
   theme = Horizon
 #+end_src
 

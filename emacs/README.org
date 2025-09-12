@@ -1132,18 +1132,18 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     :init (all-the-icons-completion-mode))
   (use-package all-the-icons-dired :hook (dired-mode . all-the-icons-dired-mode))
   (use-package all-the-icons-nerd-fonts)
-  (use-package base16-theme :ensure (:wait t))
+  (use-package kanagawa-themes :ensure (:wait t))
 
   (use-package heaven-and-hell
     :ensure (:wait t)
     :config
     (setq heaven-and-hell-theme-type 'dark
   	heaven-and-hell-themes
-  	'((dark   . modus-vivendi-tritanopia)
-  	  (light  . modus-operandi-tinted))
+  	'((dark   . kanagawa-wave)
+  	  (light  . kanagawa-lotus))
   	heaven-and-hell-load-theme-no-confirm t)
     :custom-face
-    (default ((t (:family "Maple Mono NF" :height 120 :weight Semibold))))
+    (default ((t (:family "JetBrainsMono Nerd Font" :height 120 :weight Semibold))))
     (fixed-pitch ((t (:weight bold))))
     (font-lock-comment-face ((t (:slant italic))))
     (font-lock-keyword-face ((t (:slant italic))))
@@ -1153,6 +1153,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   	 ("<f5>"     . heaven-and-hell-toggle-theme)))
 #+end_src
 
+*** Aura
 #+begin_src emacs-lisp :tangle "~/.emacs.d/themes/aura-theme.el"
   ;;; aura-theme.el --- aura theme -*- lexical-binding: t; -*-
   ;;

@@ -613,7 +613,9 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 
 *** Rust
 #+begin_src emacs-lisp
-  (use-package rustic)
+  (use-package rustic
+    :custom
+    (rustic-format-on-save t))
 #+end_src
 
 *** Svelte
@@ -796,6 +798,8 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     :custom
     (eglot-autoshutdown t)
     (eglot-confirm-server-initiated-edits nil)
+    (eglot-stay-out-of '(eldoc-documentation-strategy))
+    (eldoc-documentation-strategy 'eldoc-documentation-compose)
     (rustic-lsp-client 'eglot)
     :config
     (add-to-list 'eglot-server-programs

@@ -585,6 +585,13 @@ https://bholten.github.io/posts/blogging_with_emacs.html
       (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-ts-mode))))
 #+end_src
 
+*** Meson
+#+begin_src emacs-lisp
+  (use-package meson-mode
+    :mode ("meson\\.build\\'" . meson-mode)
+    :hook (meson-mode . company-mode))
+#+end_src
+
 *** Nix
 #+begin_src emacs-lisp
   (use-package nix-mode)
@@ -614,8 +621,17 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 *** Rust
 #+begin_src emacs-lisp
   (use-package rustic
+    :bind (:map rustic-mode-map
+                ("C-c C-c a" . rustic-cargo-add)
+                ("C-c C-c r" . rustic-cargo-run)
+                ("C-c C-c t" . rustic-cargo-test)
+                ("C-c C-c b" . rustic-cargo-build)
+                ("C-c C-c c" . rustic-cargo-check)
+                ("C-c C-c d" . rustic-cargo-doc)
+                ("C-c C-c f" . rustic-format-buffer))
     :custom
-    (rustic-format-on-save t))
+    (rustic-lsp-client 'eglot)
+    (rustic-analyzer-command '("rust-analyzer")))
 #+end_src
 
 *** Svelte
@@ -658,8 +674,17 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 [[https://github.com/abo-abo/avy][Avy]] is a GNU emacs packge for jumping to visible text using a char-based decision tree.
 #+begin_src emacs-lisp
   (use-package avy
-    :bind (("C-;" . avy-goto-char)
-	   ("C-:" . avy-goto-char-2)))
+    :bind (("C-;" . avy-goto-char-timer)
+           ("C-:" . avy-goto-char-2)
+           ("M-g w" . avy-goto-word-1)
+           ("M-g l" . avy-goto-line)
+           ("M-g e" . avy-goto-word-0)
+           ("C-c C-j" . avy-resume))
+    :custom
+    (avy-background t)
+    (avy-style 'at-full)
+    (avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+    (avy-timeout-seconds 0.3))
 #+end_src
 
 *** Blight
@@ -721,19 +746,42 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 #+begin_src emacs-lisp
   (use-package corfu
     :init (global-corfu-mode)
+    :bind (:map corfu-map
+                ("TAB" . corfu-next)
+                ([tab] . corfu-next)
+                ("S-TAB" . corfu-previous)
+                ([backtab] . corfu-previous)
+                ("RET" . corfu-insert)
+                ("C-j" . corfu-next)
+                ("C-k" . corfu-previous)
+                ("C-SPC" . corfu-insert-separator))
     :custom
     (completion-ignore-case t)
     (corfu-auto t)
-    (corfu-auto-prefix 2)
+    (corfu-auto-delay 0.0)
+    (corfu-auto-prefix 1)
     (corfu-cycle t)
     (corfu-popupinfo-mode t)
-    (corfu-popupinfo-delay 0.25)
+    (corfu-popupinfo-delay 0.1)
     (corfu-quit-no-match t)
     (corfu-quit-at-boundary 'separator)
-    (tab-always-indent 'complete))
+    (corfu-preview-current 'insert)
+    (corfu-preselect 'prompt)
+    (corfu-on-exact-match 'insert)
+    (tab-always-indent 'complete)
+    :config
+    (global-corfu-mode)
+    (corfu-popupinfo-mode))
 
   (use-package corfu-terminal
     :init (corfu-terminal-mode))
+    
+  (use-package kind-icon
+    :after corfu
+    :custom
+    (kind-icon-default-face 'corfu-default)
+    :config
+    (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 #+end_src
 
 *** CtrlF
@@ -795,13 +843,35 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package eglot
     :ensure nil
     :after (eldoc)
+    :bind (:map eglot-mode-map
+                ("C-c l a" . eglot-code-actions)
+                ("C-c l r" . eglot-rename)
+                ("C-c l f" . eglot-format)
+                ("C-c l i" . eglot-code-action-organize-imports)
+                ("C-c l q" . eglot-code-action-quickfix)
+                ("C-c l d" . eldoc-box-help-at-point))
     :custom
     (eglot-autoshutdown t)
     (eglot-confirm-server-initiated-edits nil)
     (eglot-stay-out-of '(eldoc-documentation-strategy))
+    (eglot-send-changes-idle-time 0.1)
+    (eglot-extend-to-xref t)
+    (eglot-ignored-server-capabilities '(:documentFormattingProvider))
     (eldoc-documentation-strategy 'eldoc-documentation-compose)
     (rustic-lsp-client 'eglot)
     :config
+    ;; Performance tuning
+    (fset #'jsonrpc--log-event #'ignore)
+    (setq-default eglot-events-buffer-size 0)
+    
+    ;; Auto-show completions
+    (add-hook 'eglot-managed-mode-hook
+              (lambda ()
+                (setq-local completion-at-point-functions
+                            (list (cape-capf-super
+                                   #'eglot-completion-at-point
+                                   #'cape-dabbrev)))))
+    
     (add-to-list 'eglot-server-programs
   	       `((c++-mode c-mode) . ("clangd")))
     (add-to-list 'eglot-server-programs
@@ -1124,6 +1194,152 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package which-key
     :hook (elpaca-after-init . which-key-mode)
     :init (which-key-setup-side-window-bottom))
+#+end_src
+
+*** Yasnippet (Code Snippets)
+#+begin_src emacs-lisp
+  (use-package yasnippet
+    :hook ((prog-mode . yas-minor-mode)
+           (org-mode . yas-minor-mode))
+    :bind (("C-c s n" . yas-new-snippet)
+           ("C-c s i" . yas-insert-snippet)
+           ("C-c s v" . yas-visit-snippet-file))
+    :config
+    (yas-reload-all))
+
+  (use-package yasnippet-snippets
+    :after yasnippet)
+
+  (use-package consult-yasnippet
+    :after (consult yasnippet)
+    :bind ("C-c y" . consult-yasnippet))
+#+end_src
+
+*** Symbol Overlay (Highlight and Navigate Symbols)
+#+begin_src emacs-lisp
+  (use-package symbol-overlay
+    :bind (("M-i" . symbol-overlay-put)
+           ("M-n" . symbol-overlay-switch-forward)
+           ("M-p" . symbol-overlay-switch-backward)
+           ("<f7>" . symbol-overlay-mode)
+           ("<f8>" . symbol-overlay-remove-all))
+    :hook (prog-mode . symbol-overlay-mode))
+#+end_src
+
+*** Dumb Jump (Jump to Definition Fallback)
+#+begin_src emacs-lisp
+  (use-package dumb-jump
+    :config
+    (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
+    (setq xref-show-definitions-function #'xref-show-definitions-completing-read))
+#+end_src
+
+*** Format All (Auto-formatting)
+#+begin_src emacs-lisp
+  (use-package format-all
+    :commands format-all-mode
+    :hook (prog-mode . format-all-mode)
+    :config
+    (setq-default format-all-formatters
+                  '(("Python" (black))
+                    ("JavaScript" (prettier))
+                    ("TypeScript" (prettier))
+                    ("JSON" (prettier))
+                    ("YAML" (prettier)))))
+#+end_src
+
+*** Expand Region (Smart Selection)
+#+begin_src emacs-lisp
+  (use-package expand-region
+    :bind ("C-=" . er/expand-region))
+#+end_src
+
+*** Multiple Cursors
+#+begin_src emacs-lisp
+  (use-package multiple-cursors
+    :bind (("C-S-c C-S-c" . mc/edit-lines)
+           ("C->" . mc/mark-next-like-this)
+           ("C-<" . mc/mark-previous-like-this)
+           ("C-c C-<" . mc/mark-all-like-this)
+           ("C-S-<mouse-1>" . mc/add-cursor-on-click)))
+#+end_src
+
+*** Smartparens (Auto-pairing)
+#+begin_src emacs-lisp
+  (use-package smartparens
+    :hook (prog-mode . smartparens-mode)
+    :bind (:map smartparens-mode-map
+                ("C-M-f" . sp-forward-sexp)
+                ("C-M-b" . sp-backward-sexp)
+                ("C-M-n" . sp-next-sexp)
+                ("C-M-p" . sp-previous-sexp)
+                ("C-M-a" . sp-beginning-of-sexp)
+                ("C-M-e" . sp-end-of-sexp)
+                ("C-M-k" . sp-kill-sexp)
+                ("C-M-w" . sp-copy-sexp)
+                ("M-<delete>" . sp-unwrap-sexp)
+                ("M-<backspace>" . sp-backward-unwrap-sexp)
+                ("C-<right>" . sp-forward-slurp-sexp)
+                ("C-<left>" . sp-forward-barf-sexp)
+                ("C-M-<right>" . sp-backward-slurp-sexp)
+                ("C-M-<left>" . sp-backward-barf-sexp))
+    :config
+    (require 'smartparens-config)
+    ;; Rust-specific pairs
+    (sp-local-pair 'rustic-mode "'" "'" :actions '(insert))
+    (sp-local-pair 'rustic-mode "<" ">")
+    ;; Auto-expand braces with newline for all prog-modes
+    (sp-local-pair 'prog-mode "{" nil :post-handlers '(("||\n[i]" "RET")))
+    (sp-local-pair 'prog-mode "[" nil :post-handlers '(("||\n[i]" "RET")))
+    (sp-local-pair 'prog-mode "(" nil :post-handlers '(("||\n[i]" "RET")))
+    )
+#+end_src
+
+*** Ace Window (Quick Window Switching)
+#+begin_src emacs-lisp
+  (use-package ace-window
+    :bind ("M-o" . ace-window)
+    :custom
+    (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+    (aw-scope 'frame)
+    (aw-dispatch-always t))
+#+end_src
+
+*** Consult LSP (Better LSP Navigation)
+#+begin_src emacs-lisp
+  (use-package consult-lsp
+    :after (consult lsp-mode)
+    :bind (:map lsp-mode-map
+                ([remap xref-find-apropos] . consult-lsp-symbols)))
+#+end_src
+
+*** Origami (Code Folding)
+#+begin_src emacs-lisp
+  (use-package origami
+    :hook (prog-mode . origami-mode)
+    :bind (:map origami-mode-map
+                ("C-c f f" . origami-toggle-node)
+                ("C-c f a" . origami-toggle-all-nodes)
+                ("C-c f o" . origami-open-node-recursively)
+                ("C-c f c" . origami-close-node-recursively)
+                ("C-c f n" . origami-next-fold)
+                ("C-c f p" . origami-previous-fold)))
+#+end_src
+
+*** Combobulate (Structural Navigation)
+#+begin_src emacs-lisp
+  (use-package combobulate
+    :ensure (:host github :repo "mickeynp/combobulate")
+    :hook ((python-ts-mode . combobulate-mode)
+           (js-ts-mode . combobulate-mode)
+           (typescript-ts-mode . combobulate-mode)
+           (tsx-ts-mode . combobulate-mode)
+           (rust-ts-mode . combobulate-mode))
+    :bind (:map combobulate-key-map
+                ("M-<up>" . combobulate-navigate-up)
+                ("M-<down>" . combobulate-navigate-down)
+                ("M-<left>" . combobulate-navigate-backward)
+                ("M-<right>" . combobulate-navigate-forward)))
 #+end_src
 
 ** Theme

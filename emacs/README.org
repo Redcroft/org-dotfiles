@@ -127,7 +127,6 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (default-directory "~")
     (file-name-handler-alist nil)
     (flymake-start-on-flymake-mode nil)
-    (site-run-file nil)
     (undo-limit 16777216)
     (user-file-name "Richard DW Redcroft")
     (user-real-login-name "Richard DW Redcroft")

@@ -10,10 +10,10 @@
 #+begin_src conf
   font-family = "JetBrainsMono Nerd Font"
   font-size = 13
-  theme = Horizon
+  theme = Dracula+
 #+end_src
 
-#+begin_src conf
+#+begin_src conf :tangle no
   # Modus-Vivendi-Tritanopia Colors
   background = #000000
   foreground = #ffffff

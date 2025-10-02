@@ -761,6 +761,17 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     :init (ctrlf-mode t))
 #+end_src
 
+*** Dashboard
+#+begin_src emacs-lisp
+  (use-package dashboard
+    :config
+    (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
+    (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
+    (dashboard-setup-startup-hook)
+    :custom
+    (dashboard-startup-banner 2))
+#+end_src
+
 *** Devdocs
 #+begin_src emacs-lisp
   (use-package devdocs-browser
@@ -1329,23 +1340,23 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   ;;   :custom
   ;;   (catppuccin-flavor 'macchiato)
   ;;   :custom-face
-  ;;   (default ((t (:family "MapleMono NF" :height 110 :weight Regular))))
+  ;;   (default ((t (:family "JetBrainsMono Nerd Font" :height 130 :weight Semibold))))
   ;;   (fixed-pitch ((t (:weight bold))))
   ;;   (font-lock-comment-face ((t (:slant italic))))
   ;;   (font-lock-keyword-face ((t (:slant italic))))
   ;;   (font-lock-string-face ((t (:slant italic)))))
 
-  (use-package ef-themes :ensure (:wait t))
+  (use-package base16-theme :ensure (:wait t))
   (use-package heaven-and-hell
     :ensure (:wait t)
     :config
     (setq heaven-and-hell-theme-type 'dark
   	heaven-and-hell-themes
-  	'((dark   . ef-winter)
-  	  (light  . ef-summer))
+  	'((dark   . dracula-pro-blade)
+  	  (light  . dracula-pro-alucard))
   	heaven-and-hell-load-theme-no-confirm t)
     :custom-face
-    (default ((t (:family "Iosevka Nerd Font" :height 130 :weight Semibold))))
+    (default ((t (:family "JetBrainsMono Nerd Font" :height 130 :weight Semibold))))
     (fixed-pitch ((t (:weight bold))))
     (font-lock-comment-face ((t (:slant italic))))
     (font-lock-keyword-face ((t (:slant italic))))

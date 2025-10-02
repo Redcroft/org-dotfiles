@@ -20,7 +20,7 @@
 #+end_src
 
 #+begin_src conf :tangle "~/.config/hypr/hyprland.conf"
-  $terminal = foot -e tmux
+  $terminal = ghostty
   $menu = bemenu-run
   $web = zen-browser
   $editor = emacs
@@ -122,10 +122,6 @@
       touchpad {
           natural_scroll = true
       }
-  }
-
-  gestures {
-      workspace_swipe = false
   }
 
   ###################

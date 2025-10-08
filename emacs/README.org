@@ -769,7 +769,9 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
     (dashboard-setup-startup-hook)
     :custom
-    (dashboard-startup-banner 2))
+    (dashboard-startup-banner 2)
+    (dashboard-items '((recents  . 5)
+                       (projects . 5))))
 #+end_src
 
 *** Devdocs
@@ -1085,8 +1087,8 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package recentf
     :ensure nil
     :after no-littering
-    :hook ((elpaca-after-init . recentf-mode)
-	   (kill-emacs . recentf-save-list)))
+    :init (recentf-mode 1)
+    :hook (kill-emacs . recentf-save-list))
 #+end_src
 
 *** Solaire
@@ -1346,14 +1348,14 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   ;;   (font-lock-keyword-face ((t (:slant italic))))
   ;;   (font-lock-string-face ((t (:slant italic)))))
 
-  (use-package base16-theme :ensure (:wait t))
+  (use-package doom-themes :ensure (:wait t))
   (use-package heaven-and-hell
     :ensure (:wait t)
     :config
     (setq heaven-and-hell-theme-type 'dark
   	heaven-and-hell-themes
-  	'((dark   . dracula-pro-blade)
-  	  (light  . dracula-pro-alucard))
+  	'((dark   . doom-gruvbox)
+  	  (light  . doom-gruvbox-light))
   	heaven-and-hell-load-theme-no-confirm t)
     :custom-face
     (default ((t (:family "JetBrainsMono Nerd Font" :height 130 :weight Semibold))))

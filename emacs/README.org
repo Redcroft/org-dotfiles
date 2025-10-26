@@ -1348,13 +1348,16 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   ;;   (font-lock-keyword-face ((t (:slant italic))))
   ;;   (font-lock-string-face ((t (:slant italic)))))
 
+  (use-package materialized-theme
+    :ensure (:type git :host github :repo "xenodium/emacs-materialized-theme"))
+
   (use-package doom-themes :ensure (:wait t))
   (use-package heaven-and-hell
     :ensure (:wait t)
     :config
     (setq heaven-and-hell-theme-type 'dark
   	heaven-and-hell-themes
-  	'((dark   . doom-gruvbox)
+  	'((dark   . materialized)
   	  (light  . doom-gruvbox-light))
   	heaven-and-hell-load-theme-no-confirm t)
     :custom-face

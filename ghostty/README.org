@@ -13,6 +13,10 @@
   theme = Dracula+
 #+end_src
 
+#+begin_src conf
+  keybind = global:super+minus=toggle_quick_terminal
+#+end_src
+
 #+begin_src conf :tangle no
   # Modus-Vivendi-Tritanopia Colors
   background = #000000

@@ -6,6 +6,8 @@
 #+auto_tangle: t
 
 * Hyprland
+
+** Monitors
 #+begin_src conf :tangle (if (string= system-name "heimdall") "~/.config/hypr/hyprland.conf" "")
   monitor=DP-1,2560x1440,0x0,1
 #+end_src
@@ -19,8 +21,9 @@
   monitor=DP-2,3840x2160,-3840x0,1
 #+end_src
 
+** Config
 #+begin_src conf :tangle "~/.config/hypr/hyprland.conf"
-  $terminal = ghostty
+  $terminal = foot
   $menu = bemenu-run
   $web = zen-browser
   $editor = emacs
@@ -31,11 +34,12 @@
   exec-once = uwsm app -- waybar
   exec-once = uwsm app -- hyprpaper
   exec-once = uwsm app -- foot -T Scratchpad -e tmux
+  exec-once = uwsm app -- mako
 
   general {
-      gaps_in = 5
-      gaps_out = 10
-      border_size = 2
+      gaps_in = 3
+      gaps_out = 6
+      border_size = 3
       col.active_border = rgba(00c06fee) rgba(00bcffee) 55deg
       col.inactive_border = rgba(3c3836aa)
       resize_on_border = false
@@ -118,9 +122,11 @@
       follow_mouse = 1
 
       sensitivity = 0 # -1.0 - 1.0, 0 means no modification.
+      accel_profile = flat
 
       touchpad {
           natural_scroll = true
+  	disable_while_typing = false
       }
   }
 

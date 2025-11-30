@@ -131,8 +131,8 @@
   }
 
   #clock, #battery, #cpu, #memory, #temperature {
-    color: #ffffff;
     transition: color 0.3s ease;
+    color: #ffffff;
   }
 
   #clock { padding: 0; }
@@ -149,7 +149,7 @@
   }
 
   #workspaces button:hover {
-    color: transparent;
+    color: #00c06f;
   }
 
   #workspaces button.active {

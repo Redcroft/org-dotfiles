@@ -9,7 +9,7 @@
 
 ** Monitors
 #+begin_src conf :tangle (if (string= system-name "heimdall") "~/.config/hypr/hyprland.conf" "")
-  monitor=DP-1,2560x1440,0x0,1
+  monitor=DP-1,2560x1440@240,0x0,1,bitdepth,10,vrr,1
 #+end_src
 
 #+begin_src conf :tangle (if (string= system-name "red") "~/.config/hypr/hyprland.conf" "")
@@ -93,11 +93,6 @@
       animation = workspacesOut, 1, 1.94, almostLinear, fade
   }
 
-  dwindle {
-      pseudotile = true
-      preserve_split = true
-  }
-
   master {
       new_status = master
   }
@@ -144,14 +139,13 @@
   bind = $mainMod SHIFT, escape, exit,
   bind = $mainMod SHIFT, space, togglefloating,
   bind = $mainMod, D, exec, $menu
-  bind = $mainMod, space, pseudo, # dwindle
-  bind = $mainMod, V, togglesplit, # dwindle
 
   bind = $mainMod, B, layoutmsg, cycleprev
   bind = $mainMod, F, layoutmsg, cyclenext
   bind = $mainMod, J, layoutmsg, swapwithmaster master
   bind = $mainMod CONTROL, B, layoutmsg, mfact -0.01
   bind = $mainMod CONTROL, F, layoutmsg, mfact +0.01
+  bind = $mainMod, M, fullscreen, toggle
 
   bind = $mainMod, 1, workspace, 1
   bind = $mainMod, 2, workspace, 2
@@ -223,7 +217,7 @@
   windowrulev2 = float,title:^(Scratchpad)$
   windowrulev2 = size 50% 50%,title:^(Scratchpad)$
   windowrulev2 = center,title:^(Scratchpad)$
-  windowrulev2 = movetoworkspace,special:scratch,title:^(Scratchpad)$
+  windowrulev2 = movetoworkspace,special:magic,title:^(Scratchpad)$
 
   windowrulev2 = noborder, class:appphotos
   windowrulev2 = float,class:appphotos
@@ -231,19 +225,29 @@
 #+end_src
 
 * Hyprpaper
-#+begin_src conf :tangle "~/.config/hypr/hyprpaper.conf"
-  preload = /home/lambda/.repos/org-dotfiles/wallpaper.jpg
+#+NAME: get_wallpaper
+#+begin_src emacs-lisp :eval yes :results none
+  (expand-file-name "../wallpaper.jpg" (file-name-directory (buffer-file-name)))
 #+end_src
 
-#+begin_src conf :tangle (if (string= system-name "heimdall") "~/.config/hypr/hyprpaper.conf" "")
-  wallpaper = DP-1,/home/lambda/.repos/org-dotfiles/wallpaper.jpg
+#+begin_src conf :tangle "~/.config/hypr/hyprpaper.conf" :noweb yes
+  # Automatically calculated path based on README.org location
+  preload = <<get_wallpaper()>>
 #+end_src
 
-#+begin_src conf :tangle (if (string= system-name "red") "~/.config/hypr/hyprpaper.conf" "")
-  wallpaper = eDP-1,/home/lambda/.repos/org-dotfiles/wallpaper.jpg
+#+begin_src conf :tangle (if (string= system-name "heimdall") "~/.config/hypr/hyprpaper.conf" "") :noweb yes
+  wallpaper = DP-1,<<get_wallpaper()>>
 #+end_src
 
-#+begin_src conf :tangle (if (string= system-name "poseidon") "~/.config/hypr/hyprpaper.conf" "")
-  wallpaper = DP-1,/home/lambda/.repos/org-dotfiles/wallpaper.jpg
-  wallpaper = DP-2,/home/lambda/.repos/org-dotfiles/wallpaper.jpg
+#+begin_src conf :tangle (if (string= system-name "red") "~/.config/hypr/hyprpaper.conf" "") :noweb yes
+  wallpaper = eDP-1,<<get_wallpaper()>>
 #+end_src
+
+#+begin_src conf :tangle (if (string= system-name "poseidon") "~/.config/hypr/hyprpaper.conf" "") :noweb yes
+  wallpaper = DP-1,<<get_wallpaper()>>
+  wallpaper = DP-2,<<get_wallpaper()>>
+#+end_src
+
+# Local Variables:
+# org-confirm-babel-evaluate: nil
+# End:

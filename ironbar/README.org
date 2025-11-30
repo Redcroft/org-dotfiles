@@ -1,0 +1,69 @@
+#+TITLE: Ironbar Configuration
+#+AUTHOR: Richard Redcroft
+#+EMAIL: Richard@Redcroft.tech
+#+OPTIONS: toc:nil num:nil
+#+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+
+#+begin_src yaml :tangle "~/.config/ironbar/config.yaml"
+  position: top
+  height: 24
+  start:
+  - type: workspaces
+  center:
+  - type: focused
+    icon_size: 16
+  end:
+  - type: battery
+    show_if: '[ -f /sys/class/power_supply/BAT0 ]'
+  - type: sys_info
+    format:
+    - '{cpu_percent}% '
+    - '{memory_percent}% '
+    interval:
+      cpu: 1
+  - type: tray
+  - type: clock
+#+end_src
+
+#+begin_src css :tangle "~/.config/ironbar/style.css"
+   {
+  	border-radius: 4px;
+  }
+
+  .background {
+  	background-color: transparent;
+  }
+
+  .clock {
+  	margin-left: 8px;
+  	background-color: grey;
+  	border-width: 0px;
+  }
+
+  .upower {
+  	margin-left: 8px;
+  	background-color: rgb(92, 198, 92);
+  	border-width: 0px;
+  }
+
+  .volume {
+  	margin-left: 8px;
+  	padding: 4px;
+  	background-color: rgb(63, 172, 255);
+  	border-width: 2px;
+  }
+
+  .wifi {
+  	margin-left: 8px;
+  	padding: 4px;
+  	background-color: rgb(96, 181, 183);
+  	border-width: 2px;
+  	
+  }
+
+  .focused {
+  	background-color: grey;
+  	padding: 4px;
+  }
+#+end_src

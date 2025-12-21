@@ -10,7 +10,8 @@
 #+begin_src conf
   font-family = "JetBrainsMono Nerd Font"
   font-size = 13
-  theme = Dracula+
+  theme = Aura
+  window-decoration = none
 #+end_src
 
 #+begin_src conf

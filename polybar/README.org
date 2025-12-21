@@ -7,11 +7,11 @@
 
 #+begin_src conf
   [colors]
-  background = #212121
+  background = #15141b
   background-alt = #3e3e3e
-  foreground = #eeffff
-  primary = #c3e88d
-  secondary = #ffcb6b
+  foreground = #edecee
+  primary = #a277ff
+  secondary = #61ffca
   alert = #f57373
   disabled = #585858
   # Used for bars

@@ -27,7 +27,7 @@
   hc keybind $Mod-Escape reload
   hc keybind $Mod-Shift-q close
 
-  hc keybind $Mod-Return spawn kitty
+  hc keybind $Mod-Return spawn ghostty
   hc keybind $Mod-Shift-w spawn zen-browser
   hc keybind $Mod-Shift-e spawn emacs
   hc keybind $Mod-d spawn rofi -show run
@@ -118,10 +118,10 @@
   # theme
   hc attr theme.tiling.reset 1
   hc attr theme.floating.reset 1
-  hc set frame_border_active_color "#212121"
-  hc set frame_border_normal_color "#212121"
-  hc set frame_bg_normal_color "#212121"
-  hc set frame_bg_active_color "#ffcb6b"
+  hc set frame_border_active_color "#15141b"
+  hc set frame_border_normal_color "#15141b"
+  hc set frame_bg_normal_color "#15141b"
+  hc set frame_bg_active_color "#a277ff"
   hc set frame_border_width 3
   hc set show_frame_decorations 'focused_if_multiple'
   hc set frame_bg_transparent on
@@ -131,15 +131,15 @@
   hc attr theme.title_height 15
   hc attr theme.title_when multiple_tabs
   hc attr theme.floating.title_when multiple_tabs
-  hc attr theme.title_font 'Maple Mono:size=12:style=Regular'
+  hc attr theme.title_font 'Maple Mono NF:size=12:style=Regular'
   hc attr theme.title_depth 6
-  hc attr theme.active.color "#ffcb6b"
-  hc attr theme.title_color "#212121"
-  hc attr theme.normal.color "#212121"
+  hc attr theme.active.color "#a277ff"
+  hc attr theme.title_color "#15141b"
+  hc attr theme.normal.color "#15141b"
   hc attr theme.urgent.color "#f57373"
-  hc attr theme.tab_color "#212121"
-  hc attr theme.active.tab_color "#212121"
-  hc attr theme.active.tab_outer_color "#212121"
+  hc attr theme.tab_color "#15141b"
+  hc attr theme.active.tab_color "#15141b"
+  hc attr theme.active.tab_outer_color "#15141b"
   hc attr theme.active.tab_title_color "#eeffff"
   hc attr theme.normal.title_color "#eeffff"
   hc attr theme.inner_width 2
@@ -147,17 +147,17 @@
   hc attr theme.border_width 2
   hc attr theme.floating.border_width 2
   hc attr theme.floating.outer_width 2
-  hc attr theme.floating.outer_color "#ffcb6b"
-  hc attr theme.active.inner_color "#ffcb6b"
+  hc attr theme.floating.outer_color "#a277ff"
+  hc attr theme.active.inner_color "#a277ff"
   hc attr theme.urgent.inner_color "#f57373"
-  hc attr theme.normal.inner_color "#212121"
+  hc attr theme.normal.inner_color "#15141b"
   # copy inner color to outer_color
   for state in active urgent normal ; do
       hc substitute C theme.${state}.inner_color \
           attr theme.${state}.outer_color C
   done
   hc attr theme.tiling.outer_width 1
-  hc attr theme.background_color "#212121"
+  hc attr theme.background_color "#15141b"
 
   hc set window_gap 0
   hc set frame_padding 0
@@ -205,6 +205,7 @@
   xrdb -merge ~/.Xresources
   xset s off
   xset -dpms
+  dunst &
 #+end_src
 
 * HC-Scratch

@@ -1335,38 +1335,17 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package all-the-icons-dired :hook (dired-mode . all-the-icons-dired-mode))
   (use-package all-the-icons-nerd-fonts)
 
-  ;; (use-package catppuccin-theme
-  ;;   :init
-  ;;   (load-theme 'catppuccin t)
-  ;;   :bind (("<f5>" . (lambda ()
-  ;; 		     (interactive)
-  ;; 		     (catppuccin-load-flavor 'macchiato)))
-  ;; 	 ("<f6>" . (lambda ()
-  ;; 		     (interactive)
-  ;; 		     (catppuccin-load-flavor 'latte))))
-  ;;   :custom
-  ;;   (catppuccin-flavor 'macchiato)
-  ;;   :custom-face
-  ;;   (default ((t (:family "JetBrainsMono Nerd Font" :height 130 :weight Semibold))))
-  ;;   (fixed-pitch ((t (:weight bold))))
-  ;;   (font-lock-comment-face ((t (:slant italic))))
-  ;;   (font-lock-keyword-face ((t (:slant italic))))
-  ;;   (font-lock-string-face ((t (:slant italic)))))
-
-  (use-package materialized-theme
-    :ensure (:type git :host github :repo "xenodium/emacs-materialized-theme"))
-
-  (use-package doom-themes :ensure (:wait t))
+  (use-package base16-theme :ensure (:wait t))
   (use-package heaven-and-hell
     :ensure (:wait t)
     :config
     (setq heaven-and-hell-theme-type 'dark
   	heaven-and-hell-themes
-  	'((dark   . materialized)
-  	  (light  . doom-gruvbox-light))
+  	'((dark   . aura)
+  	  (light  . base16-gruvbox-material-light-hard))
   	heaven-and-hell-load-theme-no-confirm t)
     :custom-face
-    (default ((t (:family "JetBrainsMono Nerd Font" :height 130 :weight Semibold))))
+    (default ((t (:family "Maple Mono NF" :height 130 :weight Semibold))))
     (fixed-pitch ((t (:weight bold))))
     (font-lock-comment-face ((t (:slant italic))))
     (font-lock-keyword-face ((t (:slant italic))))

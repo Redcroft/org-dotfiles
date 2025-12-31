@@ -97,8 +97,8 @@
 
 #+begin_src css :tangle "~/.config/waybar/style.css"
   ,* {
-    font-size: 16px;
-    font-family: "Iosevka Term Nerd Font";
+    font-size: 14px;
+    font-family: "Maple Mono NF";
   }
 
   window#waybar {
@@ -106,19 +106,19 @@
   }
 
   .modules-left, .modules-center, .modules-right {
-    padding: 10px;
-    background: alpha(#000000, 0.9);
+    padding: 5px;
+    background: #3c3836;
     border-radius: 10px;
   }
 
-  .modules-left   { margin: 10px 0 0 10px; }
-  .modules-center { margin: 10px 0 0 0; padding: 10px 15px; }
-  .modules-right  { margin: 10px 10px 0 0; padding: 10px 20px; }
+  .modules-left   { margin: 5px 0 0 5px; }
+  .modules-center { margin: 5px 0 0 0; padding: 5px 15px; }
+  .modules-right  { margin: 5px 5px 0 0; padding: 5px 15px; }
 
   tooltip {
     background: alpha(#000000, 1);
     border-radius: 10px;
-    color: #ffffff;
+    color: #ebdbb2;
   }
 
   #clock:hover, 
@@ -127,12 +127,12 @@
   #cpu:hover, 
   #memory:hover, 
   #temperature:hover {
-    color: #2fafff;
+    color: #458588;
   }
 
   #clock, #battery, #cpu, #memory, #temperature {
     transition: color 0.3s ease;
-    color: #ffffff;
+    color: #ebdbb2;
   }
 
   #clock { padding: 0; }
@@ -144,16 +144,16 @@
   #workspaces button {
     all: unset;
     padding: 0 5px;
-    color: alpha(#ffffff, 0.27);
+    color: alpha(#ebdbb2, 0.27);
     transition: color 0.2s ease;
   }
 
   #workspaces button:hover {
-    color: #00c06f;
+    color: #689d61;
   }
 
   #workspaces button.active {
-    color: #00c06f;
+    color: #689d61;
   }
 
   #workspaces button.empty {
@@ -164,31 +164,31 @@
   }
 
   #workspaces button.empty.active {
-    color: #f6f5f3;
+    color: #ebdbb2;
   }
 
   #battery {
-    color: #00c06f;
+    color: #8ec07c;
     padding: 0 20px;
   }
 
   #battery.charging {
-    color: #44bc44;
+    color: #8ec07c;
   }
 
   #battery.warning:not(.charging) {
-    color: #cabf00;
+    color: #fabd2f;
   }
 
   #battery.critical:not(.charging) {
-    color: #ff5f59;
+    color: #fb4934;
     animation: blink 0.5s linear infinite alternate;
   }
 
   #cpu, #memory, #temperature { padding: 0 5px; }
 
   #custom-power {
-    color: #ff5f59;
+    color: #fb4934;
   }
 #+end_src
 

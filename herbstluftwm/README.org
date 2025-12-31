@@ -206,6 +206,7 @@
   xset s off
   xset -dpms
   dunst &
+  udiskie &
 #+end_src
 
 * HC-Scratch

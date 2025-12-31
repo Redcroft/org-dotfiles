@@ -24,7 +24,7 @@
 ** Config
 #+begin_src conf :tangle "~/.config/hypr/hyprland.conf"
   $terminal = foot
-  $menu = bemenu-run
+  $menu = hyprlauncher
   $web = zen-browser
   $editor = emacs
 
@@ -33,15 +33,15 @@
 
   exec-once = uwsm app -- waybar
   exec-once = uwsm app -- hyprpaper
-  exec-once = uwsm app -- foot -T Scratchpad -e tmux
+  exec-once = uwsm app -- foot -T Scratchpad
   exec-once = uwsm app -- mako
 
   general {
       gaps_in = 3
       gaps_out = 6
       border_size = 3
-      col.active_border = rgba(00c06fee) rgba(00bcffee) 55deg
-      col.inactive_border = rgba(3c3836aa)
+      col.active_border = rgb(83a598)
+      col.inactive_border = rgb(3c3836)
       resize_on_border = false
       allow_tearing = true
       layout = master
@@ -205,22 +205,25 @@
   # See https://wiki.hypr.land/Configuring/Window-Rules/ for more
   # See https://wiki.hypr.land/Configuring/Workspace-Rules/ for workspace rules
 
-  # Example windowrule
-  # windowrule = float,class:^(kitty)$,title:^(kitty)$
+  windowrule {
+    name = float-scratchpad
+    match:title = .*Scratchpad.*
+    float = on
+    size = (monitor_w*0.5) (monitor_h*0.5)
+    move = (monitor_w*0.25) (monitor_h*0.25)
+    workspace = special:magic
+  }
 
-  # Ignore maximize requests from apps. You'll probably like this.
-  windowrule = suppressevent maximize, class:.*
+  # windowrule = suppressevent maximize, class:.*
+  # windowrule = nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0
 
-  # Fix some dragging issues with XWayland
-  windowrule = nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0
+  # windowrulev2 = float,title:^(Scratchpad)$
+  # windowrulev2 = size 50% 50%,title:^(Scratchpad)$
+  # windowrulev2 = center,title:^(Scratchpad)$
+  # windowrulev2 = movetoworkspace,special:magic,title:^(Scratchpad)$
 
-  windowrulev2 = float,title:^(Scratchpad)$
-  windowrulev2 = size 50% 50%,title:^(Scratchpad)$
-  windowrulev2 = center,title:^(Scratchpad)$
-  windowrulev2 = movetoworkspace,special:magic,title:^(Scratchpad)$
-
-  windowrulev2 = noborder, class:appphotos
-  windowrulev2 = float,class:appphotos
+  # windowrulev2 = noborder, class:appphotos
+  # windowrulev2 = float,class:appphotos
 
 #+end_src
 
@@ -236,18 +239,71 @@
 #+end_src
 
 #+begin_src conf :tangle (if (string= system-name "heimdall") "~/.config/hypr/hyprpaper.conf" "") :noweb yes
-  wallpaper = DP-1,<<get_wallpaper()>>
+  wallpaper {
+      monitor = DP-1
+      path = <<get_wallpaper()>>
+  }
 #+end_src
 
 #+begin_src conf :tangle (if (string= system-name "red") "~/.config/hypr/hyprpaper.conf" "") :noweb yes
-  wallpaper = eDP-1,<<get_wallpaper()>>
+  wallpaper {
+      monitor = eDP-1
+      path = <<get_wallpaper()>>
+  }
 #+end_src
 
 #+begin_src conf :tangle (if (string= system-name "poseidon") "~/.config/hypr/hyprpaper.conf" "") :noweb yes
-  wallpaper = DP-1,<<get_wallpaper()>>
-  wallpaper = DP-2,<<get_wallpaper()>>
+  wallpaper {
+      monitor = DP-1
+      path = <<get_wallpaper()>>
+  }
+  wallpaper {
+      monitor = DP-1
+      path = <<get_wallpaper()>>
+  }
 #+end_src
 
 # Local Variables:
 # org-confirm-babel-evaluate: nil
 # End:
+
+* Hyprlauncher
+#+begin_src conf :tangle "~/.config/hypr/hyprlauncher.conf"
+  general {
+    grab_focus = true
+  }
+
+  cache {
+    enabled = true
+  }
+
+  finders {
+    default_finder = desktop
+    desktop_prefix =
+    desktop_launch_prefix = uwsm app --
+    desktop_icons = false
+  }
+
+  ui {
+    window_size = 720 250
+  }
+#+end_src
+
+* Hyprtoolkit
+#+begin_src conf :tangle "~/.config/hypr/hyprtoolkit.conf"
+  background = FF282828
+  base = FF1d2021
+  text = FFebdbb2
+  alternate_base = FF3c3836
+  bright_text = FFfbf1c7
+  accent = FF8ec07c
+  accent_secondary = FF83a598
+  h1_size = 19
+  h2_size = 15
+  h3_size = 13
+  font_size = 11
+  small_font_size = 10
+  font_family = Maple Mono NF
+  font_family_monospace = Maple Mono NF
+  icon_theme = Flatery-Dark
+#+end_src

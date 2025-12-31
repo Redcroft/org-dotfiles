@@ -1341,7 +1341,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     :config
     (setq heaven-and-hell-theme-type 'dark
   	heaven-and-hell-themes
-  	'((dark   . aura)
+  	'((dark   . base16-gruvbox-material-dark-hard)
   	  (light  . base16-gruvbox-material-light-hard))
   	heaven-and-hell-load-theme-no-confirm t)
     :custom-face

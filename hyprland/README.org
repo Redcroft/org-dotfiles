@@ -23,15 +23,19 @@
 
 ** Config
 #+begin_src conf :tangle "~/.config/hypr/hyprland.conf"
-  $terminal = foot
-  $menu = hyprlauncher
-  $web = zen-browser
-  $editor = emacs
+  $terminal = uwsm app -- foot
+  $menu = uwsm app -- fuzzel
+  $menu-2 = uwsm app -- bemenu-run
+  $web = uwsm app -- zen-browser
+  $editor = uwsm app -- emacs
 
-  env = XCURSOR_SIZE,32
+  env = HYPRCURSOR_THEME,Posy_Cursor_Black
   env = HYPRCURSOR_SIZE,32
+  env = XCURSOR_THEME,Posy_Cursor_Black
+  env = XCURSOR_SIZE,32
+  env = BEMENU_OPTS, --fn 'Maple Mono NF 12' --nb '##282828' --nf '##ebdbb2' --tb '##282828' --tf '##fb4934' --hb '##3c3836' --hf '##fabd2f' --fb '##282828' --ff '##ebdbb2' --ab '##282828' --af '##ebdbb2'
 
-  exec-once = uwsm app -- waybar
+  exec-once = uwsm app -- ashell
   exec-once = uwsm app -- hyprpaper
   exec-once = uwsm app -- foot -T Scratchpad
   exec-once = uwsm app -- mako
@@ -47,6 +51,17 @@
       layout = master
   }
 
+  cursor {
+      no_hardware_cursors = false
+      min_refresh_rate = 240
+      no_warps = false 
+  }
+
+  render {
+      new_render_scheduling = 1 
+      direct_scanout = 1
+  }
+
   decoration {
       rounding = 10
       rounding_power = 2
@@ -59,7 +74,7 @@
           color = rgba(00c06f11)
       }
       blur {
-          enabled = true
+          enabled = false
           size = 3
           passes = 1
           vibrancy = 0.1696
@@ -67,7 +82,7 @@
   }
 
   animations {
-      enabled = yes, please :)
+      enabled = no
 
       bezier = easeOutQuint,0.23,1,0.32,1
       bezier = easeInOutCubic,0.65,0.05,0.36,1
@@ -99,6 +114,7 @@
 
   misc {
       disable_hyprland_logo = true
+      vfr = true
   }
 
 
@@ -125,27 +141,58 @@
       }
   }
 
+  ##############
+  ### Groups ###
+  ##############
+
+  group {
+      col.border_active = rgb(83a598)
+      col.border_inactive = rgb(3c3836)
+
+      groupbar {
+          gradients = true
+          font_family = Maple Mono NF
+          font_size = 10
+  	font_weight_active = bold
+  	font_weight_inactive = bold
+          text_color = rgb(3c3836)
+  	text_color_inactive = rgb(ebdbb2)
+  	col.active = rgba(83a598ff)
+          col.inactive = rgba(3c3836ff)
+      }
+  }
+
   ###################
   ### KEYBINDINGS ###
   ###################
 
-  # See https://wiki.hypr.land/Configuring/Keywords/
-  $mainMod = SUPER # Sets "Windows" key as main modifier
+  $mainMod = SUPER
 
   bind = $mainMod, return, exec, $terminal
   bind = $mainMod SHIFT, W, exec, $web
   bind = $mainMod SHIFT, E, exec, $editor
   bind = $mainMod SHIFT, Q, killactive,
   bind = $mainMod SHIFT, escape, exit,
+  bind = $mainMod, escape, exec, hyprctl reload
   bind = $mainMod SHIFT, space, togglefloating,
   bind = $mainMod, D, exec, $menu
+  bind = $mainMod, P, exec, $menu-2
 
   bind = $mainMod, B, layoutmsg, cycleprev
   bind = $mainMod, F, layoutmsg, cyclenext
   bind = $mainMod, J, layoutmsg, swapwithmaster master
-  bind = $mainMod CONTROL, B, layoutmsg, mfact -0.01
-  bind = $mainMod CONTROL, F, layoutmsg, mfact +0.01
+  bind = $mainMod CONTROL, B, layoutmsg, mfact -0.005
+  bind = $mainMod CONTROL, F, layoutmsg, mfact +0.005
   bind = $mainMod, M, fullscreen, toggle
+
+  bind = $mainMod, G, togglegroup
+  bind = $mainMod, Tab, changegroupactive, f
+  bind = $mainMod SHIFT, Tab, changegroupactive, b
+  bind = $mainMod ALT, B, moveintogroup, l
+  bind = $mainMod ALT, F, moveintogroup, r
+  bind = $mainMod ALT, P, moveintogroup, u
+  bind = $mainMod ALT, N, moveintogroup, d
+  bind = $mainMod, comma, moveoutofgroup
 
   bind = $mainMod, 1, workspace, 1
   bind = $mainMod, 2, workspace, 2
@@ -214,58 +261,23 @@
     workspace = special:magic
   }
 
+  windowrulev2 = float, class:^(Houdini FX)$, title:^(Save|Open|Preferences|Render|Export|Import)
+  windowrulev2 = tile, class:^(Houdini FX)$, title:.*Houdini.*
+  windowrulev2 = pseudo, class:^(Houdini FX)$, title:.*\.hip.*
+
+
   # windowrule = suppressevent maximize, class:.*
   # windowrule = nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0
 
   # windowrulev2 = float,title:^(Scratchpad)$
   # windowrulev2 = size 50% 50%,title:^(Scratchpad)$
   # windowrulev2 = center,title:^(Scratchpad)$
-  # windowrulev2 = movetoworkspace,special:magic,title:^(Scratchpad)$
+  # windowrulev2 = movetoworkspace,special:magic,title:^(Scratchgpad)$
 
   # windowrulev2 = noborder, class:appphotos
   # windowrulev2 = float,class:appphotos
 
 #+end_src
-
-* Hyprpaper
-#+NAME: get_wallpaper
-#+begin_src emacs-lisp :eval yes :results none
-  (expand-file-name "../wallpaper.jpg" (file-name-directory (buffer-file-name)))
-#+end_src
-
-#+begin_src conf :tangle "~/.config/hypr/hyprpaper.conf" :noweb yes
-  # Automatically calculated path based on README.org location
-  preload = <<get_wallpaper()>>
-#+end_src
-
-#+begin_src conf :tangle (if (string= system-name "heimdall") "~/.config/hypr/hyprpaper.conf" "") :noweb yes
-  wallpaper {
-      monitor = DP-1
-      path = <<get_wallpaper()>>
-  }
-#+end_src
-
-#+begin_src conf :tangle (if (string= system-name "red") "~/.config/hypr/hyprpaper.conf" "") :noweb yes
-  wallpaper {
-      monitor = eDP-1
-      path = <<get_wallpaper()>>
-  }
-#+end_src
-
-#+begin_src conf :tangle (if (string= system-name "poseidon") "~/.config/hypr/hyprpaper.conf" "") :noweb yes
-  wallpaper {
-      monitor = DP-1
-      path = <<get_wallpaper()>>
-  }
-  wallpaper {
-      monitor = DP-1
-      path = <<get_wallpaper()>>
-  }
-#+end_src
-
-# Local Variables:
-# org-confirm-babel-evaluate: nil
-# End:
 
 * Hyprlauncher
 #+begin_src conf :tangle "~/.config/hypr/hyprlauncher.conf"
@@ -307,3 +319,4 @@
   font_family_monospace = Maple Mono NF
   icon_theme = Flatery-Dark
 #+end_src
+

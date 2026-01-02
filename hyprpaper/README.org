@@ -1,0 +1,46 @@
+#+TITLE: Hyprpaper Configuration
+#+AUTHOR: Richard Redcroft
+#+EMAIL: Richard@Redcroft.tech
+#+OPTIONS: toc:nil num:nil
+#+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+
+* Hyprpaper
+#+NAME: get_wallpaper
+#+begin_src emacs-lisp :eval yes :results none :cache yes
+  (expand-file-name "../wallpaper.jpg" (file-name-directory (buffer-file-name)))
+#+end_src
+
+#+begin_src conf :tangle "~/.config/hypr/hyprpaper.conf" :noweb yes
+  # Automatically calculated path based on README.org location
+  preload = <<get_wallpaper()>>
+#+end_src
+
+#+begin_src conf :tangle (if (string= system-name "heimdall") "~/.config/hypr/hyprpaper.conf" "") :noweb yes
+  wallpaper {
+      monitor = DP-1
+      path = <<get_wallpaper()>>
+  }
+#+end_src
+
+#+begin_src conf :tangle (if (string= system-name "red") "~/.config/hypr/hyprpaper.conf" "") :noweb yes
+  wallpaper {
+      monitor = eDP-1
+      path = <<get_wallpaper()>>
+  }
+#+end_src
+
+#+begin_src conf :tangle (if (string= system-name "poseidon") "~/.config/hypr/hyprpaper.conf" "") :noweb yes
+  wallpaper {
+      monitor = DP-1
+      path = <<get_wallpaper()>>
+  }
+  wallpaper {
+      monitor = DP-1
+      path = <<get_wallpaper()>>
+  }
+#+end_src
+
+# Local Variables:
+# org-confirm-babel-evaluate: nil
+# End:

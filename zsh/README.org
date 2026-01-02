@@ -8,7 +8,11 @@
 * zimrc
 #+NAME: zimfw
 #+begin_src emacs-lisp :tangle no :results none
-  (start-process "my-process" "curl" "curl" "-fsSL" "--create-dirs" "-o" "~/.zim/zimfw.zsh" "https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh")
+  (let ((zim-path (expand-file-name "~/.zim/zimfw.zsh")))
+      (start-process "my-process" "curl" "curl" 
+                     "-fsSL" "--create-dirs" 
+                     "-o" zim-path 
+                     "https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh"))
 #+end_src
 
 #+begin_src zsh :tangle "~/.zimrc" :noweb yes

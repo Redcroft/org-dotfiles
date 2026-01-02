@@ -7,8 +7,10 @@
 
 * Isync
 ** Create Dirs
-#+begin_src sh :results none
-  mkdir -p ~/.mail/{redcroft,work,gmail}
+#+begin_src emacs-lisp :tangle no :results none
+  (make-directory (expand-file-name "~/.mail/redcroft"))
+  (make-directory (expand-file-name "~/.mail/work"))
+  (make-directory (expand-file-name "~/.mail/gmail"))
 #+end_src
 
 
@@ -46,6 +48,7 @@
   User richard@carseandwaterman.com
   #PassCmd "bw get password hostinger.com richard@work.tech"
   PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.repos/org-dotfiles/mail/work.gpg"
+  AuthMechs LOGIN
   TLSType IMAPS
   CertificateFIle /etc/ssl/certs/ca-certificates.crt
 
@@ -60,7 +63,7 @@
   Channel Work
   Far :work-remote:
   Near :work-local:
-  Patterns *
+  Patterns * ![Gmail]/All* ![Gmail]/Spam
   Create Both
   Expunge Both
   SyncState *
@@ -73,6 +76,7 @@
   User animationrich@gmail.com
   #PassCmd "bw get password hostinger.com richard@gmail.tech"
   PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.repos/org-dotfiles/mail/gmail.gpg"
+  AuthMechs LOGIN
   TLSType IMAPS
   CertificateFIle /etc/ssl/certs/ca-certificates.crt
 
@@ -87,12 +91,49 @@
   Channel Gmail
   Far :gmail-remote:
   Near :gmail-local:
-  Patterns *
+  Patterns * ![Gmail]/All* ![Gmail]/Spam
   Create Both
   Expunge Both
   SyncState *
 #+end_src
 
+** Msmtp
+#+begin_src conf :tangle "~/.msmtprc"
+  # Set default values for all following accounts.
+  defaults
+  auth             on
+  tls              on
+  tls_trust_file   /etc/ssl/certs/ca-certificates.crt
+  logfile          ~/.msmtp.log
+
+  # Redcroft
+  account          redcroft
+  host             smtp.hostinger.com
+  port             465
+  tls_starttls     off
+  from             richard@redcroft.tech
+  user             richard@redcroft.tech
+  passwordeval     "gpg2 -q --for-your-eyes-only --no-tty -d ~/.repos/org-dotfiles/mail/redcroft.gpg"
+
+  # Work Gmail
+  account          work
+  host             smtp.gmail.com
+  port             587
+  from             richard@carseandwaterman.com
+  user             richard@carseandwaterman.com
+  passwordeval     "gpg2 -q --for-your-eyes-only --no-tty -d ~/.repos/org-dotfiles/mail/work.gpg"
+
+  # Personal Gmail
+  account          gmail
+  host             smtp.gmail.com
+  port             587
+  from             animationrich@gmail.com
+  user             animationrich@gmail.com
+  passwordeval     "gpg2 -q --for-your-eyes-only --no-tty -d ~/.repos/org-dotfiles/mail/gmail.gpg"
+
+  # Set a default account
+  account default : redcroft
+#+end_src
 ** Systemd
 #+begin_src systemd :tangle "~/.config/systemd/user/mbsync.service"
   [Unit]
@@ -100,7 +141,7 @@
 
   [Service]
   Type=oneshot
-  ExecStart=/usr/bin/mbsync -Va
+  ExecStart=%h/.local/bin/mail-sync
 
   [Install]
   WantedBy=default.target
@@ -119,3 +160,9 @@
   WantedBy=timers.target
 #+end_src
  
+
+#+begin_src sh :tangle "~/.local/bin/mail-sync" :tangle-mode (identity #o777)
+  #!/bin/bash
+  mbsync -Va
+  mu index
+#+end_src

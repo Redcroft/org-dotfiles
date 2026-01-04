@@ -1425,17 +1425,17 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package all-the-icons-dired :hook (dired-mode . all-the-icons-dired-mode))
   (use-package all-the-icons-nerd-fonts)
 
-  (use-package base16-theme :ensure (:wait t))
+  ;; (use-package base16-theme :ensure (:wait t))
   (use-package heaven-and-hell
     :ensure (:wait t)
     :config
     (setq heaven-and-hell-theme-type 'dark
   	heaven-and-hell-themes
-  	'((dark   . base16-gruvbox-material-dark-hard)
-  	  (light  . base16-gruvbox-material-light-hard))
+  	'((dark   . modus-vivendi)
+  	  (light  . modus-operandi))
   	heaven-and-hell-load-theme-no-confirm t)
     :custom-face
-    (default ((t (:family "JetBrainsMono Nerd Font" :height 110 :weight Semibold))))
+    (default ((t (:family "IosevkaTerm Nerd Font" :height 110 :weight Semibold))))
     (fixed-pitch ((t (:weight bold))))
     (font-lock-comment-face ((t (:slant italic))))
     (font-lock-keyword-face ((t (:slant italic))))
@@ -2817,7 +2817,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   ;;; dracula-pro-blade-theme.el ends here
 #+end_src
 ***** Lincoln
-#+begin_src emacs-lisp :tangle "~/.emacs.d/theme/dracula-pro-lincoln-theme.el"
+#+begin_src emacs-lisp :tangle "~/.emacs.d/themes/dracula-pro-lincoln-theme.el"
   ;;; dracula-pro-lincoln-theme.el --- Dracula Pro
 
   ;; Copyright (C) 2020-Today Dracula Theme.
@@ -3458,7 +3458,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   ;;; dracula-pro-lincoln-theme.el ends here
 #+end_src
 ***** Morbius
-#+begin_src emacs-lisp :tangle "~/.emacs.d/theme/dracula-pro-morbius-theme.el"
+#+begin_src emacs-lisp :tangle "~/.emacs.d/themes/dracula-pro-morbius-theme.el"
   ;;; dracula-pro-morbius-theme.el --- Dracula Pro
 
   ;; Copyright (C) 2020-Today Dracula Theme.

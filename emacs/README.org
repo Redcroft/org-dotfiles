@@ -160,9 +160,10 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
   (use-package eshell
     :ensure nil
     :bind (("C-x RET" . eshell))
+    :hook (eshell-mode . (lambda () (corfu-mode -1)))
     :custom
     (eshell-bad-command-tolerance 1)
-    (eshell-cmpl-autlist t)
+    (eshell-cmpl-autlist nil)
     (eshell-cmpl-cycle-completions nil)
     (eshell-cmpl-cycle-cutoff-length 2)
     (eshell-cmpl-ignore-case t)
@@ -664,13 +665,18 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 
 *** Zig
 #+begin_src emacs-lisp
-  (use-package zig-mode
+  (setq treesit-language-source-alist
+      '((zig "https://github.com/tree-sitter-grammars/tree-sitter-zig")))
+
+  (use-package zig-ts-mode
     :mode "\\.zig\\'"
-    :hook (zig-mode . (lambda ()
+    :init
+    (unless (treesit-language-available-p 'zig)
+      (treesit-install-language-grammar 'zig))
+    :hook (zig-ts-mode . (lambda ()
   		      (setq-local tab-width 4)
   		      (setq-local indent-tabs-mode nil)
-  		      (setq-local c-basic-offset 4)
-  		      (setq-local c-default-style "linux"))))
+  		      (setq treesit-font-lock-level 4))))
 #+end_src
 
 ** Packages
@@ -845,8 +851,12 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   	 (c++-mode . eglot-ensure)
   	 (rustic-mode . eglot-ensure)
   	 (rust-mode . eglot-ensure)
-  	 (rust-ts-mode . eglot-ensure))
+  	 (rust-ts-mode . eglot-ensure)
+  	 (zig-ts-mode . eglot-ensure))
     :config
+    (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs
+                 '(zig-ts-mode . ("zls"))))
     (setq rustic-lsp-client 'eglot))
     #+end_src
 
@@ -1425,7 +1435,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   	  (light  . base16-gruvbox-material-light-hard))
   	heaven-and-hell-load-theme-no-confirm t)
     :custom-face
-    (default ((t (:family "Maple Mono NF" :height 130 :weight Semibold))))
+    (default ((t (:family "JetBrainsMono Nerd Font" :height 110 :weight Semibold))))
     (fixed-pitch ((t (:weight bold))))
     (font-lock-comment-face ((t (:slant italic))))
     (font-lock-keyword-face ((t (:slant italic))))

@@ -181,8 +181,8 @@
   bind = $mainMod, B, layoutmsg, cycleprev
   bind = $mainMod, F, layoutmsg, cyclenext
   bind = $mainMod, J, layoutmsg, swapwithmaster master
-  bind = $mainMod CONTROL, B, layoutmsg, mfact -0.005
-  bind = $mainMod CONTROL, F, layoutmsg, mfact +0.005
+  bind = $mainMod CONTROL, B, layoutmsg, mfact -0.01
+  bind = $mainMod CONTROL, F, layoutmsg, mfact +0.01
   bind = $mainMod, M, fullscreen, toggle
 
   bind = $mainMod, G, togglegroup

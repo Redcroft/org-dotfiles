@@ -44,8 +44,8 @@
       gaps_in = 3
       gaps_out = 6
       border_size = 3
-      col.active_border = rgb(83a598)
-      col.inactive_border = rgb(3c3836)
+      col.active_border = rgb(b6a0ff)
+      col.inactive_border = rgb(000000)
       resize_on_border = false
       allow_tearing = true
       layout = master
@@ -146,19 +146,19 @@
   ##############
 
   group {
-      col.border_active = rgb(83a598)
-      col.border_inactive = rgb(3c3836)
+      col.border_active = rgb(b6a0ff)
+      col.border_inactive = rgb(000000)
 
       groupbar {
           gradients = true
-          font_family = Maple Mono NF
-          font_size = 10
-  	font_weight_active = bold
-  	font_weight_inactive = bold
-          text_color = rgb(3c3836)
-  	text_color_inactive = rgb(ebdbb2)
-  	col.active = rgba(83a598ff)
-          col.inactive = rgba(3c3836ff)
+          font_family = IosevkaTerm Nerd Font
+          font_size = 13
+  	font_weight_active = Semibold
+  	font_weight_inactive = Semibold
+          text_color = rgb(000000)
+  	text_color_inactive = rgb(ffffff)
+  	col.active = rgba(b6a0ffff)
+          col.inactive = rgba(000000ff)
       }
   }
 

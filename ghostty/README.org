@@ -9,7 +9,7 @@
 
 #+begin_src conf
   font-family = "IosevkaTerm Nerd Font"
-  font-size = 11
+  font-size = 13
   # theme = Aura
   window-decoration = none
 #+end_src

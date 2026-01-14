@@ -8,7 +8,7 @@
 * Main
 #+begin_src conf
   [main]
-  font=IosevkaTerm Nerd Font:size=12:style=semibold
+  font=IosevkaTerm Nerd Font:size=13:style=semibold
   pad=12x12 center-when-maximized-and-fullscreen
 #+end_src
 

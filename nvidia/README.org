@@ -1,0 +1,27 @@
+#+TITLE: Nvidia Config
+#+AUTHOR: Richard Redcroft
+#+EMAIL: Richard@Redcroft.tech
+#+OPTIONS: toc:nil num:nil
+#+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+
+#+begin_src conf :tangle (if (string= system-name "heimdall") "/sudo::/etc/systemd/system/gpu-limit.service" "")
+[Unit]
+Description=GPU power limiter
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+User=root
+Type=simple
+Restart=always
+RestartSec=1
+ExecStart=/usr/bin/nvidia-smi -i 0 -pl 450
+
+[Install]
+WantedBy=multi-user.target
+#+end_src
+
+#+begin_src sh :tangle no
+  sudo systemctl enable --now gpu-limit
+#+end_src

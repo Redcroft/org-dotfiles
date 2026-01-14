@@ -1428,7 +1428,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 
   (use-package modus-themes
     :init
-    (set-face-attribute 'default nil :family "IosevkaTerm Nerd Font" :height 120 :weight 'semibold)
+    (set-face-attribute 'default nil :family "IosevkaTerm Nerd Font" :height 130 :weight 'semibold)
     (modus-themes-include-derivatives-mode 1)
     :bind
     (("<f5>" . modus-themes-rotate)

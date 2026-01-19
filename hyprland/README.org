@@ -33,7 +33,7 @@
   env = HYPRCURSOR_SIZE,32
   env = XCURSOR_THEME,Posy_Cursor_Black
   env = XCURSOR_SIZE,32
-  env = BEMENU_OPTS, --fn 'Maple Mono NF 12' --nb '##282828' --nf '##ebdbb2' --tb '##282828' --tf '##fb4934' --hb '##3c3836' --hf '##fabd2f' --fb '##282828' --ff '##ebdbb2' --ab '##282828' --af '##ebdbb2'
+  env = BEMENU_OPTS, --fn 'CaskaydiaCover Nerd Font 12' --nb '##282828' --nf '##ebdbb2' --tb '##282828' --tf '##fb4934' --hb '##3c3836' --hf '##fabd2f' --fb '##282828' --ff '##ebdbb2' --ab '##282828' --af '##ebdbb2'
 
   exec-once = uwsm app -- ashell
   exec-once = uwsm app -- hyprpaper
@@ -151,7 +151,7 @@
 
       groupbar {
           gradients = true
-          font_family = IosevkaTerm Nerd Font
+          font_family = CaskaydiaCove Nerd Font
           font_size = 13
   	font_weight_active = Semibold
   	font_weight_inactive = Semibold
@@ -181,8 +181,8 @@
   bind = $mainMod, B, layoutmsg, cycleprev
   bind = $mainMod, F, layoutmsg, cyclenext
   bind = $mainMod, J, layoutmsg, swapwithmaster master
-  bind = $mainMod CONTROL, B, layoutmsg, mfact -0.01
-  bind = $mainMod CONTROL, F, layoutmsg, mfact +0.01
+  binde = $mainMod CONTROL, B, layoutmsg, mfact -0.01
+  binde = $mainMod CONTROL, F, layoutmsg, mfact +0.01
   bind = $mainMod, M, fullscreen, toggle
 
   bind = $mainMod, G, togglegroup
@@ -315,8 +315,8 @@
   h3_size = 13
   font_size = 11
   small_font_size = 10
-  font_family = Maple Mono NF
-  font_family_monospace = Maple Mono NF
+  font_family = CaskaydiaCove Nerd Font
+  font_family_monospace = CaskaydiaCove Nerd Font
   icon_theme = Flatery-Dark
 #+end_src
 

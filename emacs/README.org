@@ -602,16 +602,20 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 #+end_src
 *** Python
 #+begin_src emacs-lisp :tangle no
-  (use-package python
-    :ensure nil
-    :mode "\\.py\\'"
-    :custom
-    (python-shell-interpreter "python")
-    (python-shell-interpreter-args "-i")
-    (python-indent-offset 4)
-    :config
-    (when (treesit-available-p)
-      (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))))
+    (use-package python
+      :ensure nil
+      :mode "\\.py\\'"
+      :custom
+      (python-shell-interpreter "python")
+      (python-shell-interpreter-args "-i")
+      (python-indent-offset 4)
+      :config
+      (when (treesit-available-p)
+        (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))))
+
+    (use-package uv-mode
+      :hook ((python-mode . uv-mode-auto-activate-hook)
+  	   (python-ts-mode . uv-mode-auto-activate-hook)))
 #+end_src
 *** QML
 #+begin_src emacs-lisp
@@ -1426,7 +1430,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package all-the-icons-nerd-fonts)
 
   (use-package doom-themes
-    :ensure t
+    :ensure (:wait t)
     :init
     (set-face-attribute 'default nil :family "CaskaydiaCove Nerd Font" :height 130 :weight 'normal)
     :bind ("<f5>" . my/toggle-theme)
@@ -1435,11 +1439,12 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     (doom-themes-enable-italic t)
     (doom-themes-treemacs-theme "doom-atom")
     :config
-    (load-theme 'doom-horizon t)
     (doom-themes-visual-bell-config)
     (doom-themes-neotree-config)
     (doom-themes-treemacs-config)
     (doom-themes-org-config))
+
+  (load-theme 'doom-horizon t)
 
   (defvar my/themes '(doom-horizon doom-flatwhite)
     "List of two themes to toggle between. First is light, second is dark.")

@@ -534,10 +534,6 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     (load (expand-file-name "~/.roswell/helper.el"))
     (setq inferior-lisp-program "ros -Q run"))
 #+end_src
-*** CSS
-#+begin_src emacs-lisp
-  (use-package css-mode)
-#+end_src
 
 *** Dockerfile
 #+begin_src emacs-lisp
@@ -602,20 +598,26 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 #+end_src
 *** Python
 #+begin_src emacs-lisp :tangle no
-    (use-package python
-      :ensure nil
-      :mode "\\.py\\'"
-      :custom
-      (python-shell-interpreter "python")
-      (python-shell-interpreter-args "-i")
-      (python-indent-offset 4)
-      :config
-      (when (treesit-available-p)
-        (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))))
+  (use-package python
+    :ensure nil
+    :mode "\\.py\\'"
+    :custom
+    (python-shell-interpreter "python")
+    (python-shell-interpreter-args "-i")
+    (python-indent-offset 4)
+    :config
+    (when (treesit-available-p)
+      (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))))
 
-    (use-package uv-mode
-      :hook ((python-mode . uv-mode-auto-activate-hook)
-  	   (python-ts-mode . uv-mode-auto-activate-hook)))
+  (use-package uv-mode
+    :hook ((python-mode . uv-mode-auto-activate-hook)
+  	 (python-ts-mode . uv-mode-auto-activate-hook)))
+
+  (with-eval-after-load 'eglot
+    (setq-default eglot-workspace-configuration
+                  '(:basedpyright (:analysis (:typeCheckingMode "basic"))))
+    (add-to-list 'eglot-server-programs
+                 '((python-mode python-ts-mode) . ("basedpyright-langserver" "--stdio"))))
 #+end_src
 *** QML
 #+begin_src emacs-lisp
@@ -810,12 +812,9 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 
 *** Direnv
 #+begin_src emacs-lisp
-  (use-package direnv
-    :hook (prog-mode . direnv-mode)
-    :init
-    (setq direnv-always-update-p t)
-    (with-eval-after-load 'projectile
-      (add-hook 'projectile-after-switch-project-hook #'direnv-update-environment)))
+  (use-package envrc
+    :ensure t
+    :hook (after-init . envrc-global-mode))
 #+end_src
 
 *** Doom Modeline

@@ -10,15 +10,15 @@
 #+begin_src conf
   font-family = "IosevkaTerm Nerd Font"
   font-size = 13
-  # theme = Aura
-  window-decoration = none
+  theme = Horizon
+  # window-decoration = none
 #+end_src
 
 #+begin_src conf
   # keybind = global:super+minus=toggle_quick_terminal
 #+end_src
 
-#+begin_src conf
+#+begin_src conf :tangle no
   # Modus-Vivendi Colors
   background = #000000
   foreground = #ffffff

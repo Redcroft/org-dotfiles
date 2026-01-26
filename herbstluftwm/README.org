@@ -27,7 +27,7 @@
   hc keybind $Mod-Escape reload
   hc keybind $Mod-Shift-q close
 
-  hc keybind $Mod-Return spawn ghostty
+  hc keybind $Mod-Return spawn kitty
   hc keybind $Mod-Shift-w spawn zen-browser
   hc keybind $Mod-Shift-e spawn emacs
   hc keybind $Mod-d spawn rofi -show run
@@ -131,7 +131,7 @@
   hc attr theme.title_height 15
   hc attr theme.title_when multiple_tabs
   hc attr theme.floating.title_when multiple_tabs
-  hc attr theme.title_font 'Maple Mono NF:size=12:style=Regular'
+  hc attr theme.title_font 'JetBrainsMono Nerd Font:size=12:style=Regular'
   hc attr theme.title_depth 6
   hc attr theme.active.color "#a277ff"
   hc attr theme.title_color "#15141b"
@@ -181,7 +181,8 @@
   hc rule class~'UnrealEditor' floating=on
   hc rule class~'*Godot*' floating=on
 
-  # hc unlock
+  hc unlock
+  
   # xrandr --output HDMI-1 --mode 480x1920 --rate 60 --rotate right --pos 320x1440 --output DP-2 --mode 2560x1440 --rate 240 --pos 0x0
   # herbstclient add "panel"
   # herbstclient set_monitors 2560x1440+0+0
@@ -192,17 +193,10 @@
 ** Autostart
 
 #+begin_src bash :tangle "~/.config/herbstluftwm/autostart"
-  sudo zpool import -fa
-  sudo zfs mount photos
-  pkill polybar
-  pkill picom
-  pipewire &
+  #sudo zpool import -fa
+  #sudo zfs mount photos
   polybar &
-  picom &
-  xsetroot -solid '#657c64'
-  hsetroot -solid '#657c64'
-  ~/.fehbg &
-  xrdb -merge ~/.Xresources
+  #xsetroot -solid '#000000'
   xset s off
   xset -dpms
   dunst &

@@ -1431,7 +1431,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package doom-themes
     :ensure (:wait t)
     :init
-    (set-face-attribute 'default nil :family "CaskaydiaCove Nerd Font" :height 130 :weight 'normal)
+    (set-face-attribute 'default nil :family "JetBrainsMono Nerd Font" :height 120 :weight 'semibold)
     :bind ("<f5>" . my/toggle-theme)
     :custom
     (doom-themes-enable-bold t)

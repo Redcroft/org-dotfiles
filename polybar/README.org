@@ -41,7 +41,7 @@
   separator = |
   separator-foreground = ${colors.secondary}
 
-  font-0 = "Maple Mono NF:size=10:style=SemiBold"
+  font-0 = "JetBrainsMono Nerd Font:size=10:style=SemiBold"
 
   modules-left = xworkspaces
   modules-center = xwindow

@@ -8,16 +8,17 @@
 * Kitty
 ** Font
 #+begin_src conf
-  font_family      Maple Mono
-  bold_font        auto
-  italic_font      auto
-  bold_italic_font auto
+  font_family      family='JetBrainsMono Nerd Font' style=Light
+  bold_font        family='JetBrainsMono Nerd Font' style=Regular
+  italic_font      family='JetBrainsMono Nerd Font' style='Light Italic'
+  bold_italic_font family='JetBrainsMono Nerd Font' style='Medium Italic'
 
   font_size 12.0
 #+end_src
 
 ** Theme
-#+begin_src conf
+*** Material Darker
+#+begin_src conf :tangle no
   # Base16 Material Darker - kitty color config
   # Scheme by Nate Peterson
   background #212121
@@ -62,7 +63,58 @@
   color20 #B2CCD6
   color21 #EEFFFF
 #+end_src
+*** Horizon
+#+begin_src conf
+  # vim:ft kitty
 
+  ## name: Horizon Extended
+  ## license: MIT
+  ## author: Lance Wilhelm
+  ## upstream: 
+
+  background #1C1E26
+  foreground #D5D8DA
+  selection_background #D5D8DA
+  selection_foreground #1C1E26
+  url_color #f6637c
+  cursor #D5D8DA
+  cursor_text_color #1C1E26
+
+  # Tabs
+  active_tab_background #f6637c
+  active_tab_foreground #1C1E26
+  inactive_tab_background #1C1E26
+  inactive_tab_foreground #565c75
+  #tab_bar_background #1c1e26
+
+  # Windows
+  active_border_color #f6637c
+  inactive_border_color #1c1e26
+
+  # normal
+  color0 #414557
+  color1 #f6637c
+  color2 #99d279
+  color3 #f8d28a
+  color4 #21b1be
+  color5 #b774dc
+  color6 #f9c199
+  color7 #f88e7c
+
+  # brignt
+  color8 #565c75
+  color9 #d68492
+  color10 #9ec08a
+  color11 #e0caa3
+  color12 #389ea8
+  color13 #b08ec2
+  color14 #e9c4a9
+  color15 #e39d90
+
+  # extended colors
+  color16 #ff9e64
+  color17 #db4b4b
+#+end_src
 ** General
 #+begin_src conf
   window_padding_width 8

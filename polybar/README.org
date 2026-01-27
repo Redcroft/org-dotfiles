@@ -23,7 +23,7 @@
   [bar/main]
   width = 100%
   height = 32
-  radius = 0
+  radius = 8
 
   background = ${colors.background}
   foreground = ${colors.foreground}

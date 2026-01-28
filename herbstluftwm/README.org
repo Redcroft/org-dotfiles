@@ -196,8 +196,8 @@
   #sudo zpool import -fa
   #sudo zfs mount photos
 
-  ~/.config/herbstluftwm/panel.sh
-  picom &
+  ~/.config/herbstluftwm/panel.sh &
+  #picom &
   dunst &
   udiskie &
   xsetroot -solid '#657'
@@ -281,9 +281,8 @@
   FG="#D5D8DA"
   BG="#1C1E26"
   ACCENT="#8f93db"
-  FONT="-misc-cozettevector-medium-r-normal--13-0-0-0-p-0-iso10646-1"
+  FONT="-misc-ohsnap-medium-r-normal--*-*-75-75-*-*-*-*"
 
-  # Pre-define colors for sed to make the tag loop faster
   C_BUSY="%{B$ACCENT}%{F$BG}"
   C_FREE="%{F$FG}"
   C_URGENT="%{F#BF616A}"
@@ -296,16 +295,16 @@
       # 2. Remove the last element (the scratchpad)
       unset 'tags_array[${#tags_array[@]}-1]'
 
-      # 3. Format the remaining elements
+      # 3. Format the remaining element
       formatted_tags=""
       for tag in "${tags_array[@]}"; do
   	status=${tag:0:1}
   	name=${tag:1}
   	case "$status" in
-  	    '#'|'-') formatted_tags+="%{B$ACCENT}%{F$BG} $name %{F-}%{B-}" ;;
-  	    ':'|'+') formatted_tags+="%{F$FG} $name %{F-}" ;;
-  	    '!')     formatted_tags+="%{F#BF616A} $name %{F-}" ;;
-  	    '.')     formatted_tags+="%{F#555555} $name %{F-}" ;;
+  	    '#'|'-') formatted_tags+="$C_BUSY $name %{F-}%{B-}" ;;
+  	    ':'|'+') formatted_tags+="$C_FREE $name %{F-}" ;;
+  	    '!')     formatted_tags+="$C_URGENT $name %{F-}" ;;
+  	    '.')     formatted_tags+="$C_EMPTY $name %{F-}" ;;
   	    ,*)       formatted_tags+=" $name " ;;
   	esac
       done

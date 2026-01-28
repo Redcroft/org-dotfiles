@@ -8,6 +8,7 @@
 * Isync
 ** Create Dirs
 #+begin_src emacs-lisp :tangle no :results none
+  (make-directory (expand-file-name "~/.mail"))
   (make-directory (expand-file-name "~/.mail/redcroft"))
   (make-directory (expand-file-name "~/.mail/work"))
   (make-directory (expand-file-name "~/.mail/gmail"))
@@ -165,4 +166,11 @@
   #!/bin/bash
   mbsync -Va
   mu index
+#+end_src
+
+#+begin_src sh :tangle no :results none
+  mbsync -a
+  mu init --maildir=~/.mail --personal-address=richard@redcroft.tech --personal-address=animationrich@gmail.com --personal-address=richard@carseandwaterman.com
+  mu index
+  systemctl --user enable --now mbsync.timer
 #+end_src

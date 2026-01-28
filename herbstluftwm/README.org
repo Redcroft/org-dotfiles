@@ -17,6 +17,9 @@
   hc emit_hook reload
   hc keybind --all
   Mod=Mod4
+
+  xdg-mime default org.qutebrowser.qutebrowser.desktop 'x-scheme-handler/http'
+  xdg-mime default org.qutebrowser.qutebrowser.desktop 'x-scheme-handler/https'
 #+end_src
 
 ** Keybinds
@@ -27,8 +30,8 @@
   hc keybind $Mod-Escape reload
   hc keybind $Mod-Shift-q close
 
-  hc keybind $Mod-Return spawn kitty
-  hc keybind $Mod-Shift-w spawn zen-browser
+  hc keybind $Mod-Return spawn st -e tmux
+  hc keybind $Mod-Shift-w spawn qutebrowser
   hc keybind $Mod-Shift-e spawn emacs
   hc keybind $Mod-d spawn rofi -show run
   hc keybind $Mod-minus spawn ~/.local/bin/hc-scratch

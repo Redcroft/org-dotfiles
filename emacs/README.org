@@ -118,6 +118,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (defun my/open-emacs-config ()
       (interactive)
       (find-file "~/.repos/org-dotfiles/emacs/README.org"))
+    (setq-default display-fill-column-indicator-character ?|)
     :custom
     (auth-sources '("~/.authinfo.gpg"))
     (byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
@@ -136,6 +137,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (apropos-do-all t)
     (bidi-display-reordering nil)
     (custom-safe-themes t)
+    (display-fill-column-indicator-character ?|)
     (fill-column 80)
     (highlight-nonselected-windows nil)
     (inhibit-tabs-mode nil)
@@ -600,7 +602,6 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 #+begin_src emacs-lisp :tangle no
   (use-package python
     :ensure nil
-    :mode "\\.py\\'"
     :custom
     (python-shell-interpreter "python")
     (python-shell-interpreter-args "-i")
@@ -610,14 +611,18 @@ https://bholten.github.io/posts/blogging_with_emacs.html
       (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))))
 
   (use-package uv-mode
-    :hook ((python-mode . uv-mode-auto-activate-hook)
-  	 (python-ts-mode . uv-mode-auto-activate-hook)))
+    :hook ((python-base-mode . uv-mode-auto-activate-hook)))
 
   (with-eval-after-load 'eglot
     (setq-default eglot-workspace-configuration
                   '(:basedpyright (:analysis (:typeCheckingMode "basic"))))
     (add-to-list 'eglot-server-programs
                  '((python-mode python-ts-mode) . ("basedpyright-langserver" "--stdio"))))
+
+  (use-package python-black
+    :ensure t
+    :after python
+    :hook (python-base-mode . python-black-on-save-mode-enable-dwim))
 #+end_src
 *** QML
 #+begin_src emacs-lisp
@@ -844,6 +849,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
                 ("C-c l a" . eglot-code-actions)
                 ("C-c l r" . eglot-rename)
                 ("C-c l f" . eglot-format)
+  	      ("C-c l h" . eglot-inlay-hints-mode)
                 ("C-c l i" . eglot-code-action-organize-imports)
                 ("C-c l q" . eglot-code-action-quickfix)
                 ("C-c l d" . eldoc-box-help-at-point)
@@ -1237,7 +1243,19 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     (treesit-font-lock-level 4))
 
   (use-package treesit-auto
-    :when (treesit-available-p))
+    :when (treesit-available-p)
+    :custom
+    (treesit-auto-install 'prompt)
+    :config
+    (global-treesit-auto-mode))
+
+  (use-package treesit-fold
+    :hook ((treesit-major-mode-setup . treesit-fold-mode)
+  	 (python-ts-mode . uv-mode-auto-activate-hook))
+    :bind (:map treesit-fold-mode-map
+                ("C-c f f" . treesit-fold-toggle)
+                ("C-c f o" . treesit-fold-open)
+                ("C-c f c" . treesit-fold-close)))
 #+end_src
 
 *** Vertico
@@ -1411,10 +1429,10 @@ https://bholten.github.io/posts/blogging_with_emacs.html
            (tsx-ts-mode . combobulate-mode)
            (rust-ts-mode . combobulate-mode))
     :bind (:map combobulate-key-map
-                ("M-<up>" . combobulate-navigate-up)
-                ("M-<down>" . combobulate-navigate-down)
-                ("M-<left>" . combobulate-navigate-backward)
-                ("M-<right>" . combobulate-navigate-forward)))
+                ("C-M-<up>" . combobulate-navigate-up)
+                ("C-M-<down>" . combobulate-navigate-down)
+                ("C-M-<left>" . combobulate-navigate-backward)
+                ("C-M-<right>" . combobulate-navigate-forward)))
 #+end_src
 
 ** Theme
@@ -1431,7 +1449,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package doom-themes
     :ensure (:wait t)
     :init
-    (set-face-attribute 'default nil :family "JetBrainsMono Nerd Font" :height 120 :weight 'semibold)
+    (set-face-attribute 'default nil :family "Gohu GohuFont" :height 120 :weight 'regular)
     :bind ("<f5>" . my/toggle-theme)
     :custom
     (doom-themes-enable-bold t)

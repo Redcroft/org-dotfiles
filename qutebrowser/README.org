@@ -39,14 +39,15 @@
   c.colors.webpage.preferred_color_scheme = "dark"
   c.colors.webpage.darkmode.enabled = False
   c.colors.webpage.darkmode.policy.images = "smart-simple"
+  c.fonts.default_family = ["Gohu GohuFont"]
 
   config.bind("<Ctrl-tab>", "tab-next")
   config.bind("<Ctrl-Shift-tab>", "tab-prev")
   config.bind("m", "spawn mpv --hwdec=auto --ytdl-format=bestvideo[height<=?720]+bestaudio/best {url}")
   config.bind("M", "hint links spawn mpv --hwdec=auto --ytdl-format=bestvideo[height<=?720]+bestaudio/best {hint-url}")
-  config.bind("<z><l>", "spawn --userscript qute-bitwarden")
-  config.bind("<z><u>", "spawn --userscript qute-bitwarden --username-only")
-  config.bind("<z><p>", "spawn --userscript qute-bitwarden --password-only")
+  config.bind("<z><l>", "spawn --userscript qute-rbw")
+  config.bind("<z><u>", "spawn --userscript qute-rbw --username-only")
+  config.bind("<z><p>", "spawn --userscript qute-rbw --password-only")
   config.bind("<Ctrl-f>", "scroll right")
   config.bind("<Ctrl-b>", "scroll left")
   config.bind("<Ctrl-n>", "scroll down")

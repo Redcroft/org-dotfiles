@@ -125,17 +125,17 @@
   hc set frame_border_normal_color "#15141b"
   hc set frame_bg_normal_color "#15141b"
   hc set frame_bg_active_color "#a277ff"
-  hc set frame_border_width 3
+  hc set frame_border_width 0
   hc set show_frame_decorations 'focused_if_multiple'
   hc set frame_bg_transparent on
-  hc set frame_transparent_width 5
+  hc set frame_transparent_width 1
   hc set frame_gap 6
 
-  hc attr theme.title_height 15
+  hc attr theme.title_height 10
   hc attr theme.title_when multiple_tabs
   hc attr theme.floating.title_when multiple_tabs
-  hc attr theme.title_font 'JetBrainsMono Nerd Font:size=12:style=Regular'
-  hc attr theme.title_depth 6
+  hc attr theme.title_font 'GohuFont uni11 Nerd Font:size=8:antialias=false:hinting=false'
+  hc attr theme.title_depth 3
   hc attr theme.active.color "#a277ff"
   hc attr theme.title_color "#15141b"
   hc attr theme.normal.color "#15141b"
@@ -145,11 +145,11 @@
   hc attr theme.active.tab_outer_color "#15141b"
   hc attr theme.active.tab_title_color "#eeffff"
   hc attr theme.normal.title_color "#eeffff"
-  hc attr theme.inner_width 2
+  hc attr theme.inner_width 1
   hc attr theme.inner_color black
-  hc attr theme.border_width 2
-  hc attr theme.floating.border_width 2
-  hc attr theme.floating.outer_width 2
+  hc attr theme.border_width 1
+  hc attr theme.floating.border_width 1
+  hc attr theme.floating.outer_width 1
   hc attr theme.floating.outer_color "#a277ff"
   hc attr theme.active.inner_color "#a277ff"
   hc attr theme.urgent.inner_color "#f57373"
@@ -159,7 +159,7 @@
       hc substitute C theme.${state}.inner_color \
           attr theme.${state}.outer_color C
   done
-  hc attr theme.tiling.outer_width 1
+  hc attr theme.tiling.outer_width 0
   hc attr theme.background_color "#15141b"
 
   hc set window_gap 0
@@ -284,13 +284,18 @@
   FG="#D5D8DA"
   BG="#1C1E26"
   ACCENT="#8f93db"
-  FONT="-misc-ohsnap-medium-r-normal--*-*-75-75-*-*-*-*"
+  URGENT="#BF616A"
+  EMPTY="#555555"
+  FONT="-gohu-gohufont-medium-r-normal--11-*-*-*-*-*-*-*"
 
   C_BUSY="%{B$ACCENT}%{F$BG}"
   C_FREE="%{F$FG}"
-  C_URGENT="%{F#BF616A}"
-  C_EMPTY="%{F#555555}"
+  C_URGENT="%{F$URGENT}"
+  C_EMPTY="%{F$EMPTY}"
   C_RESET="%{F-}%{B-}"
+
+  PREV_TOTAL=0
+  PREV_IDLE=0
 
   get_bar_data() {
       tags_array=( $(herbstclient tag_status) )
@@ -313,13 +318,21 @@
       done
 
       # --- System Stats ---
-      #read -r cpu_load _ < /proc/loadavg
       read -r _ user nice system idle iowait irq softirq steal _ _ < /proc/stat
-      IDLE=$((idle + iowait)); TOTAL=$((IDLE + user + nice + system + irq + softirq + steal))
-      cpu_usage=$(( ( (TOTAL - PREV_TOTAL) - (IDLE - PREV_IDLE) ) * 100 / (TOTAL - PREV_TOTAL + 1) ))
-      PREV_TOTAL=$TOTAL; PREV_IDLE=$IDLE
+      IDLE=$((idle + iowait))
+      TOTAL=$((IDLE + user + nice + system + irq + softirq + steal))
+      
+      DIFF_TOTAL=$((TOTAL - PREV_TOTAL))
+      DIFF_IDLE=$((IDLE - PREV_IDLE))
+      # Avoid division by zero
+      if [ "$DIFF_TOTAL" -eq 0 ]; then
+          cpu_usage=0
+      else
+          cpu_usage=$(( (DIFF_TOTAL - DIFF_IDLE) * 100 / DIFF_TOTAL ))
+      fi
+      PREV_TOTAL=$TOTAL
+      PREV_IDLE=$IDLE
 
-      # Meminfo is slightly more efficient than awk for single variables
       ram=$(awk '/MemTotal/ {t=$2} /MemAvailable/ {a=$2} END {printf("%d%%", (t-a)/t*100)}' /proc/meminfo)
 
       disk=$(df -h / | awk 'NR==2 {print $5}')
@@ -327,20 +340,61 @@
 
       date_str=$(date +'%a %d %b %I:%M')
 
-      echo "%{l}$formatted_tags %{c} $date_str %{r} %{F$ACCENT}Disk:%{F-} ${disk} %{F$ACCENT}Vol:%{F-} ${vol}%  %{F$ACCENT}Mem:%{F-} $ram  %{F$ACCENT}CPU:%{F-} $cpu_usage%% "
+      # --- Battery Laptop ---
+      BAT=""
+      if [ -d /sys/class/power_supply/BAT0 ]; then
+          bat_cap=$(cat /sys/class/power_supply/BAT0/capacity)
+          bat_stat=$(cat /sys/class/power_supply/BAT0/status)
+          
+          if [ "$bat_stat" = "Discharging" ]; then
+              # Get energy (mWh) and power draw (mW)
+              energy=$(cat /sys/class/power_supply/BAT0/energy_now)
+              power=$(cat /sys/class/power_supply/BAT0/power_now)
+              
+              # Avoid division by zero if power draw isn't reporting yet
+              if [ "$power" -gt 0 ]; then
+                  # Calculate minutes: (energy / power) * 60
+                  minutes_left=$(( energy * 60 / power ))
+                  h=$(( minutes_left / 60 ))
+                  m=$(( minutes_left % 60 ))
+                  # Format minutes to always be two digits (e.g., 3:02)
+                  rem_time=$(printf "%d:%02d rem" "$h" "$m")
+  		if [ "$bat_cap" -le 15 ]; then
+  		    BAT="%{F$ACCENT}Bat:%{F-} %{F$URGENT}${bat_cap}% $rem_time%{F-}"
+  		else
+  		    BAT="%{F$ACCENT}Bat:%{F-} ${bat_cap}% $rem_time"
+  		fi
+              else
+                  BAT="%{F$ACCENT}Bat:%{F-} ${bat_cap}%"
+              fi
+          else
+              # While charging or full, just show percentage
+              BAT="%{F$ACCENT}Bat:%{F-} ${bat_cap}%"
+          fi
+      fi
+
+      DISK="%{F$ACCENT}Disk:%{F-} ${disk}"
+      VOL="%{F$ACCENT}Vol:%{F-} ${vol}%"
+      MEM="%{F$ACCENT}Mem:%{F-} $ram"
+      CPU="%{F$ACCENT}CPU:%{F-} $cpu_usage%%"
+      
+      LEFT="%{l}${formatted_tags}"
+      CENTER="%{c}$date_str"
+      RIGHT="%{r}$BAT   $DISK   $VOL   $MEM   $CPU   "
+
+      echo "$LEFT $CENTER $RIGHT"
   }
 
   # Clean up old bars
   pkill lemonbar
 
   # --- The "Event + Timer" Loop ---
-  # This approach listens to herbstclient but also forces a tick every 5s
+  # This approach listens to herbstclient but also forces a tick every 3s
   # without creating a massive process pipe.
   (
       while true; do
   	get_bar_data
-  	# Wait for a herbstclient event OR timeout after 5 seconds
-  	read -t 1 -u 3 2>/dev/null || true
+  	read -t 3 -u 3 2>/dev/null || true
       done 3< <(herbstclient --idle)
   ) | lemonbar -p -g x24 -f "$FONT" -B "$BG" -F "$FG" | sh
 #+end_src

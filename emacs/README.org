@@ -1250,8 +1250,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     (global-treesit-auto-mode))
 
   (use-package treesit-fold
-    :hook ((treesit-major-mode-setup . treesit-fold-mode)
-  	 (python-ts-mode . uv-mode-auto-activate-hook))
+    :hook (treesit-major-mode-setup . treesit-fold-mode)
     :bind (:map treesit-fold-mode-map
                 ("C-c f f" . treesit-fold-toggle)
                 ("C-c f o" . treesit-fold-open)

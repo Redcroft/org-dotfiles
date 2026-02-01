@@ -1,0 +1,89 @@
+#+TITLE: Fish Configuration
+#+AUTHOR: Richard Redcroft
+#+EMAIL: Richard@Redcroft.tech
+#+OPTIONS: toc:nil num:nil
+#+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+
+
+#+begin_src fish :tangle "~/.config/fish/config.fish"
+  # --- Loop-Proof Auto-Bootstrap Fisher ---
+  set -l fisher_path $__fish_config_dir/functions/fisher.fish
+
+  if not test -f $fisher_path
+      echo "Fisher not found. Installing..."
+      curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source
+      fisher update
+  end
+
+  # Disable the default "Welcome to fish" message
+  set -g fish_greeting ""
+
+  # --- PATH & Environment ---
+  # Add local binaries and Cargo/Go paths if they exist
+  fish_add_path ~/.local/bin
+  fish_add_path ~/.cargo/bin
+
+  # Set Editor (Muscle memory for Bash users)
+  set -gx EDITOR nvim
+  set -gx VISUAL emacs
+
+  # --- Tool Initializations ---
+  # We use 'command -q' to check if a tool exists before sourcing it.
+  # This makes your dotfiles portable across machines.
+
+  if command -q starship
+  	starship init fish | source
+  end
+
+  if command -q zoxide
+  	zoxide init fish | source
+  end
+
+  if command -q direnv
+  	direnv hook fish | source
+  end
+
+  if command -q mise
+  	mise activate fish | source
+  end
+
+  # --- Modern Aliases (Using eza and ripgrep) ---
+  if command -q eza
+      alias ls='eza --icons --group-directories-first'
+      alias ll='eza -lh --icons --grid --group-directories-first'
+      alias la='eza -a --icons --group-directories-first'
+      alias tree='eza --tree --icons'
+  end
+
+  # Better Grep
+  if command -q rg
+      alias grep='rg'
+  end
+
+  # --- Abbreviations (The "Fish Way") ---
+  # Abbreviations expand as you type Space. 
+  # Use these for "Bash-isms" or long commands you want to see expanded.
+  abbr -a gs  'git status'
+  abbr -a ga  'git add'
+  abbr -a gc  'git commit -m'
+  abbr -a gp  'git push'
+  abbr -a ..  'cd ..'
+  abbr -a ... 'cd ../..'
+
+  # --- FZF Integration ---
+  # On Arch, the fzf package includes fish integration.
+  # This binds Ctrl+R to history search and Alt+C to directory search automatically.
+  if test -f /usr/share/fish/vendor_conf.d/fzf.fish
+      source /usr/share/fish/vendor_conf.d/fzf.fish
+  end
+#+end_src
+
+#+begin_src text :tangle "~/.config/fish/fish_plugins"
+  franciscolourenco/done
+  jorgebucaran/autopair.fish
+  jorgebucaran/fisher
+  jhillyerd/plugin-git
+  edc/bass
+  PatrickF1/fzf.fish
+#+end_src

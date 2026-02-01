@@ -553,6 +553,11 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     :hook (emacs-lisp-mode . eldoc-mode))
 #+end_src
 
+*** Fish
+#+begin_src emacs-lisp
+  (use-package fish-mode)
+#+end_src
+
 *** GDScript
 #+begin_src emacs-lisp
   (use-package gdscript-mode)
@@ -999,6 +1004,12 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package marginalia
     :after vertico
     :init (marginalia-mode t))
+#+end_src
+
+*** Mise
+#+begin_src emacs-lisp
+  (use-package mise
+    :hook (elpaca-after-init . global-mise-mode))
 #+end_src
 
 *** Move Text

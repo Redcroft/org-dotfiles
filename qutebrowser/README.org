@@ -29,7 +29,7 @@
   c.window.title_format = "qutebrowser"
   c.hints.chars = "arstneio"
   c.url.searchengines = {
-      'DEFAULT':  'https://bing.com/search?q={}',
+      'DEFAULT':  'https://duckduckgo.com/search?q={}',
       'az': 'https://www.amazon.co.uk/s?k={}',
       'g':  'https://google.com/search?hl=en&q={}',
       'yt': 'https://youtube.com/results?search_query={}',
@@ -78,6 +78,9 @@
   tornado https://vimeo.com/ondemand/snowflaketornado
   yt https://youtube.com/feed/subscriptions
   homerow https://github.com/stasmarkin/sm_td
+  psx https://www.willsconsolemodifications.co.uk/index.php?route=product/product&language=en-gb&path=61_65&product_id=82
+  raylib-cs https://www.raylib.com/cheatsheet/cheatsheet.html
+  raylib-cpp https://robloach.github.io/raylib-cpp/namespaces.html
 #+end_src
 
 * Qute-rbw
@@ -401,7 +404,7 @@
 #+end_src
 
 * Adblock
-#+begin_src javascript :tangle "~/.local/share/qutebrowser/greasemonkey/yt-adblock.js" :tangle-mode (identity #o755)
+#+begin_src javascript :tangle no :tngle "~/.local/share/qutebrowser/greasemonkey/yt-adblock.js" :tangle-mode (identity #o755)
   // ==UserScript==
   // @name         YouTube Ad-Blocker (uBlock layout)
   // @version      2.7

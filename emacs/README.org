@@ -618,12 +618,6 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package uv-mode
     :hook ((python-base-mode . uv-mode-auto-activate-hook)))
 
-  (with-eval-after-load 'eglot
-    (setq-default eglot-workspace-configuration
-                  '(:basedpyright (:analysis (:typeCheckingMode "basic"))))
-    (add-to-list 'eglot-server-programs
-                 '((python-mode python-ts-mode) . ("basedpyright-langserver" "--stdio"))))
-
   (use-package python-black
     :ensure t
     :after python
@@ -873,40 +867,55 @@ https://bholten.github.io/posts/blogging_with_emacs.html
                 ("C-c l a" . eglot-code-actions)
                 ("C-c l r" . eglot-rename)
                 ("C-c l f" . eglot-format)
-  	      ("C-c l h" . eglot-inlay-hints-mode)
+                ("C-c l h" . eglot-inlay-hints-mode)
                 ("C-c l i" . eglot-code-action-organize-imports)
                 ("C-c l q" . eglot-code-action-quickfix)
                 ("C-c l d" . eldoc-box-help-at-point)
                 ("C-c l s" . eglot-shutdown)
                 ("C-c l R" . eglot-reconnect))
     :hook ((python-base-mode . eglot-ensure)
-  	 (c-mode . eglot-ensure)
-  	 (c++-mode . eglot-ensure)
-  	 (js-ts-mode . eglot-ensure)
-  	 (rustic-mode . eglot-ensure)
-  	 (rust-mode . eglot-ensure)
-  	 (rust-ts-mode . eglot-ensure)
-  	 (typescript-ts-mode . eglot-ensure)
-  	 (tsx-ts-mode . eglot-ensure)
-  	 (zig-ts-mode . eglot-ensure))
+           (c-mode . eglot-ensure)
+           (c++-mode . eglot-ensure)
+           (js-ts-mode . eglot-ensure)
+           (rustic-mode . eglot-ensure)
+           (rust-mode . eglot-ensure)
+           (rust-ts-mode . eglot-ensure)
+           (typescript-ts-mode . eglot-ensure)
+           (tsx-ts-mode . eglot-ensure)
+           (zig-ts-mode . eglot-ensure))
     :config
-    (with-eval-after-load 'eglot
-      (add-to-list 'eglot-server-programs
-  		 '(zig-ts-mode . ("zls")))
-      (add-to-list 'eglot-server-programs
-  		 '((js-mode js-ts-mode typescript-mode typescript-ts-mode tsx-mode tsx-ts-mode)
-  		   . ("typescript-language-server" "--stdio")))
-      (setq-default eglot-workspace-configuration
-                    '(:typescript-language-server
-                      (:typescript
-                       (:tsdk nil)  ; auto-detect from node_modules or global
-                       (:preferences
-                        (:importModuleSpecifier "project-relative"
-  					      :quotePreference "single")))))
-      (add-to-list 'eglot-server-programs
-  		 '(svelte-ts-mode . ("svelteserver" "--stdio")))
-      )
+    ;; Set timeouts for slow language servers
+    (setq eglot-connect-timeout 30
+          eglot-sync-connect nil)
+    
+    ;; Python/basedpyright configuration
+    (add-to-list 'eglot-server-programs
+                 '((python-mode python-ts-mode) . ("basedpyright-langserver" "--stdio")))
+    
+    ;; Other language servers
+    (add-to-list 'eglot-server-programs
+                 '(zig-ts-mode . ("zls")))
+    (add-to-list 'eglot-server-programs
+                 '((js-mode js-ts-mode typescript-mode typescript-ts-mode tsx-mode tsx-ts-mode)
+                   . ("typescript-language-server" "--stdio")))
+    (add-to-list 'eglot-server-programs
+                 '(svelte-ts-mode . ("svelteserver" "--stdio")))
+    
     (setq rustic-lsp-client 'eglot))
+
+  ;; Configure basedpyright workspace settings SEPARATELY
+  (with-eval-after-load 'eglot
+    (defun my/eglot-workspace-config (server)
+      "Return workspace configuration for SERVER."
+      (when (eq (eglot--major-modes server) '(python-mode python-ts-mode))
+        `(:basedpyright
+          (:analysis
+           (:typeCheckingMode "basic"
+            :diagnosticMode "openFilesOnly"
+            :autoSearchPaths t
+            :useLibraryCodeForTypes :json-false)))))
+    
+    (setq-default eglot-workspace-configuration #'my/eglot-workspace-config))
     #+end_src
 
 *** Eldoc
@@ -1044,7 +1053,21 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 *** Mise
 #+begin_src emacs-lisp
   (use-package mise
-    :hook (elpaca-after-init . global-mise-mode))
+    :demand t
+    :config
+    (global-mise-mode 1)
+    
+    ;; Enable all auto-update options
+    (setq mise-update-on-eshell-directory-change t))
+    
+    ;; ;; Force mise to update when changing directories or opening files
+    ;; (add-hook 'find-file-hook #'mise-update-buffer)
+    ;; (add-hook 'eshell-directory-change-hook #'mise-update-buffer)
+    
+    ;; ;; Also update after project switch if using project.el or projectile
+    ;; (with-eval-after-load 'project
+    ;;   (add-hook 'project-switch-hook #'mise-update-buffer))
+    ;;)
 #+end_src
 
 *** Move Text
@@ -1200,24 +1223,14 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     (corfu-prescient-mode 1))
 #+end_src
 
-*** Projectile
+*** Project
 #+begin_src emacs-lisp
-  (use-package project :ensure nil :defer t)
-
-  (use-package projectile
-    :bind ("C-c p" . projectile-command-map)
-    :init (projectile-global-mode t)
-    :custom
-    (projectile-dynamic-mode-line nil)
-    (projectile-enable-caching nil)
-    (projectile-index-method 'alien)
-    (projectile-mode-line nil)
-    (projectile-project-root-file-bottom-up
-     '(".git" ".projectile"))
-    (projectile-verbose nil))
-
-  (use-package projectile-ripgrep
-    :bind ("C-c P r" . projectile-ripgrep))
+  (use-package project
+    :ensure nil
+    :config
+    ;; Add mise and uv markers
+    (add-to-list 'project-vc-extra-root-markers "mise.toml")
+    (add-to-list 'project-vc-extra-root-markers "pyproject.toml"))
 #+end_src
 
 *** Rainbow

@@ -23,21 +23,21 @@
 
 ** Config
 #+begin_src conf :tangle "~/.config/hypr/hyprland.conf"
-  $terminal = uwsm app -- foot
-  $menu = uwsm app -- fuzzel
+  $terminal = uwsm app -- foot -e tmux
+  $menu = uwsm app -- bemenu-run
   $menu-2 = uwsm app -- bemenu-run
-  $web = uwsm app -- zen-browser
+  $web = uwsm app -- qutebrowser
   $editor = uwsm app -- emacs
 
   env = HYPRCURSOR_THEME,Posy_Cursor_Black
   env = HYPRCURSOR_SIZE,32
   env = XCURSOR_THEME,Posy_Cursor_Black
   env = XCURSOR_SIZE,32
-  env = BEMENU_OPTS, --fn 'CaskaydiaCover Nerd Font 12' --nb '##282828' --nf '##ebdbb2' --tb '##282828' --tf '##fb4934' --hb '##3c3836' --hf '##fabd2f' --fb '##282828' --ff '##ebdbb2' --ab '##282828' --af '##ebdbb2'
+  env = BEMENU_OPTS, --fn 'IosevkaTerm Nerd Font 12' --nb '##282828' --nf '##ebdbb2' --tb '##282828' --tf '##fb4934' --hb '##3c3836' --hf '##fabd2f' --fb '##282828' --ff '##ebdbb2' --ab '##282828' --af '##ebdbb2'
 
   exec-once = uwsm app -- ashell
   exec-once = uwsm app -- hyprpaper
-  exec-once = uwsm app -- foot -T Scratchpad
+  exec-once = uwsm app -- foot -T Scratchpad -e tmux
   exec-once = uwsm app -- mako
 
   general {
@@ -261,9 +261,9 @@
     workspace = special:magic
   }
 
-  windowrulev2 = float, class:^(Houdini FX)$, title:^(Save|Open|Preferences|Render|Export|Import)
-  windowrulev2 = tile, class:^(Houdini FX)$, title:.*Houdini.*
-  windowrulev2 = pseudo, class:^(Houdini FX)$, title:.*\.hip.*
+  #windowrulev2 = float, class:^(Houdini FX)$, title:^(Save|Open|Preferences|Render|Export|Import)
+  #windowrulev2 = tile, class:^(Houdini FX)$, title:.*Houdini.*
+  #windowrulev2 = pseudo, class:^(Houdini FX)$, title:.*\.hip.*
 
 
   # windowrule = suppressevent maximize, class:.*

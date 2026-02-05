@@ -2,7 +2,7 @@
 #+AUTHOR: Richard Redcroft
 #+EMAIL: Richard@Redcroft.tech
 #+OPTIONS: toc:nil num:nil
-#+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes
+#+PROPERTY: Header-args :tangle-mode :mkdirp yes
 #+auto_tangle: t
 
 
@@ -86,4 +86,5 @@
   jhillyerd/plugin-git
   edc/bass
   PatrickF1/fzf.fish
+  icezyclon/zoxide.fish 
 #+end_src

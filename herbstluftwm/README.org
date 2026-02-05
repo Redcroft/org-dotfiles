@@ -200,6 +200,7 @@
   #sudo zfs mount photos
 
   ~/.config/herbstluftwm/panel.sh &
+  /usr/lib/polkit-kde-authentication-agent-1 &
   #picom &
   dunst &
   udiskie &

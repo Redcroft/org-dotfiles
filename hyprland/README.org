@@ -33,8 +33,9 @@
   env = HYPRCURSOR_SIZE,32
   env = XCURSOR_THEME,Posy_Cursor_Black
   env = XCURSOR_SIZE,32
-  env = BEMENU_OPTS, --fn 'CaskaydiaCover Nerd Font 12' --nb '##282828' --nf '##ebdbb2' --tb '##282828' --tf '##fb4934' --hb '##3c3836' --hf '##fabd2f' --fb '##282828' --ff '##ebdbb2' --ab '##282828' --af '##ebdbb2'
+  env = BEMENU_OPTS, --fn 'IosevkaTerm Nerd Font 12' --nb '##282828' --nf '##ebdbb2' --tb '##282828' --tf '##fb4934' --hb '##3c3836' --hf '##fabd2f' --fb '##282828' --ff '##ebdbb2' --ab '##282828' --af '##ebdbb2'
 
+  exec-once = systemctl --user start hyprpolkitagent
   exec-once = uwsm app -- ashell
   exec-once = uwsm app -- hyprpaper
   exec-once = uwsm app -- foot -T Scratchpad
@@ -151,7 +152,7 @@
 
       groupbar {
           gradients = true
-          font_family = CaskaydiaCove Nerd Font
+          font_family = IosevkaTerm Nerd Font
           font_size = 13
   	font_weight_active = Semibold
   	font_weight_inactive = Semibold
@@ -315,8 +316,8 @@
   h3_size = 13
   font_size = 11
   small_font_size = 10
-  font_family = CaskaydiaCove Nerd Font
-  font_family_monospace = CaskaydiaCove Nerd Font
+  font_family = IosevkaTerm Nerd Font
+  font_family_monospace = IosevkaTerm Nerd Font
   icon_theme = Flatery-Dark
 #+end_src
 

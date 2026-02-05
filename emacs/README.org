@@ -748,7 +748,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     :custom
     (corfu-cycle t)
     (corfu-auto t)
-    (corfu-auto-delay 0.1)
+    (corfu-auto-delay 1.0)
     (corfu-auto-prefix 1)
     (corfu-echo-documentation nil))
 #+end_src
@@ -1228,7 +1228,6 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package project
     :ensure nil
     :config
-    ;; Add mise and uv markers
     (add-to-list 'project-vc-extra-root-markers "mise.toml")
     (add-to-list 'project-vc-extra-root-markers "pyproject.toml"))
 #+end_src
@@ -1524,76 +1523,63 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package all-the-icons-dired :hook (dired-mode . all-the-icons-dired-mode))
   (use-package all-the-icons-nerd-fonts)
 
-  (use-package doom-themes
-    :ensure (:wait t)
-    :init
-    (set-face-attribute 'default nil :family "Gohu GohuFont" :height 120 :weight 'regular)
-    :bind ("<f5>" . my/toggle-theme)
-    :custom
-    (doom-themes-enable-bold t)
-    (doom-themes-enable-italic t)
-    (doom-themes-treemacs-theme "doom-atom")
-    :config
-    (doom-themes-visual-bell-config)
-    (doom-themes-neotree-config)
-    (doom-themes-treemacs-config)
-    (doom-themes-org-config))
-
-  (load-theme 'doom-horizon t)
-
-  (defvar my/themes '(doom-horizon doom-flatwhite)
-    "List of two themes to toggle between. First is light, second is dark.")
-
-  (defvar my/current-theme (car my/themes)
-    "Currently active theme.")
-
-  (defun my/toggle-theme ()
-    "Toggle between two predefined themes without reloading."
-    (interactive)
-    ;; Disable all enabled themes first
-    (mapc #'disable-theme custom-enabled-themes)
-    ;; Switch to the other theme
-    (setq my/current-theme
-          (if (eq my/current-theme (car my/themes))
-              (cadr my/themes)
-            (car my/themes)))
-    (load-theme my/current-theme t)
-    (message "Switched to theme: %s" my/current-theme))
-
-  ;; (use-package modus-themes
+  ;; (use-package doom-themes
+  ;;   :ensure (:wait t)
   ;;   :init
-  ;;   (set-face-attribute 'default nil :family "CaskaydiaCove Nerd Font" :height 130 :weight 'normal)
-  ;;   (modus-themes-include-derivatives-mode 1)
-  ;;   :bind
-  ;;   (("<f5>" . modus-themes-rotate)
-  ;;    ("C-<f5>" . modus-themes-select)
-  ;;    ("M-<f5>" . modus-themes-load-random))
+  ;;   (set-face-attribute 'default nil
+  ;; 		      :family "BlexMono Nerd Font"
+  ;; 		      :height 130
+  ;; 		      :weight 'regular)
+  ;;   :bind ("<f5>" . my/toggle-theme)
+  ;;   :custom
+  ;;   (doom-themes-enable-bold t)
+  ;;   (doom-themes-enable-italic t)
+  ;;   (doom-themes-treemacs-theme "doom-atom")
   ;;   :config
-  ;;   (defconst my-modus-themes-items
-  ;;   '( modus-operandi
-  ;;      modus-vivendi)
-  ;;   "Symbols of the Modus themes.")
-  ;;   (setq modus-themes-to-toggle '(modus-operandi modus-vivendi)
-  ;;         modus-themes-to-rotate my-modus-themes-items
-  ;;         modus-themes-mixed-fonts nil
-  ;;         modus-themes-variable-pitch-ui nil
-  ;;         modus-themes-italic-constructs t
-  ;;         modus-themes-bold-constructs t
-  ;;         modus-themes-completions '((t . (bold)))
-  ;;         modus-themes-prompts '(bold)
-  ;;         modus-themes-headings
-  ;;         '((agenda-structure . (variable-pitch light 2.2))
-  ;;           (agenda-date . (variable-pitch regular 1.3))
-  ;;           (t . (regular 1.15))))
+  ;;   (doom-themes-visual-bell-config)
+  ;;   (doom-themes-neotree-config)
+  ;;   (doom-themes-treemacs-config)
+  ;;   (doom-themes-org-config))
 
-  ;;   (setq modus-themes-common-palette-overrides nil)
+  ;; (load-theme 'doom-horizon t)
 
-  ;;   (modus-themes-load-theme 'modus-vivendi)
-  ;;   :custom-face
-  ;;   (fixed-pitch ((t (:weight bold))))
-  ;;   (font-lock-comment-face ((t (:slant italic))))
-  ;;   (font-lock-keyword-face ((t (:slant italic))))
-  ;;   (font-lock-string-face ((t (:slant italic)))))
+  (use-package modus-themes
+    :init
+    (set-face-attribute 'default nil
+  		      :family "IosevkaTerm Nerd Font"
+  		      :height 130
+  		      :weight 'normal)
+    (modus-themes-include-derivatives-mode 1)
+    :bind
+    (("<f5>" . modus-themes-rotate)
+     ("C-<f5>" . modus-themes-select)
+     ("M-<f5>" . modus-themes-load-random))
+    :config
+    (defconst my-modus-themes-items
+    '( modus-operandi
+       modus-vivendi)
+    "Symbols of the Modus themes.")
+    (setq modus-themes-to-toggle '(modus-operandi modus-vivendi)
+          modus-themes-to-rotate my-modus-themes-items
+          modus-themes-mixed-fonts nil
+          modus-themes-variable-pitch-ui nil
+          modus-themes-italic-constructs t
+          modus-themes-bold-constructs t
+          modus-themes-completions '((t . (bold)))
+          modus-themes-prompts '(bold)
+          modus-themes-headings
+          '((agenda-structure . (variable-pitch light 2.2))
+            (agenda-date . (variable-pitch regular 1.3))
+            (t . (regular 1.15))))
+
+    (setq modus-themes-common-palette-overrides nil)
+
+    (modus-themes-load-theme 'modus-vivendi)
+    :custom-face
+    (fixed-pitch ((t (:weight bold))))
+    (font-lock-comment-face ((t (:slant italic))))
+    (font-lock-keyword-face ((t (:slant italic))))
+    (font-lock-string-face ((t (:slant italic)))))
 #+end_src
 
 *** Custom Themes

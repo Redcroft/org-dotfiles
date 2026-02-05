@@ -23,10 +23,10 @@
 
 ** Config
 #+begin_src conf :tangle "~/.config/hypr/hyprland.conf"
-  $terminal = uwsm app -- foot
-  $menu = uwsm app -- fuzzel
+  $terminal = uwsm app -- foot -e tmux
+  $menu = uwsm app -- bemenu-run
   $menu-2 = uwsm app -- bemenu-run
-  $web = uwsm app -- zen-browser
+  $web = uwsm app -- qutebrowser
   $editor = uwsm app -- emacs
 
   env = HYPRCURSOR_THEME,Posy_Cursor_Black
@@ -38,7 +38,7 @@
   exec-once = systemctl --user start hyprpolkitagent
   exec-once = uwsm app -- ashell
   exec-once = uwsm app -- hyprpaper
-  exec-once = uwsm app -- foot -T Scratchpad
+  exec-once = uwsm app -- foot -T Scratchpad -e tmux
   exec-once = uwsm app -- mako
 
   general {
@@ -262,9 +262,9 @@
     workspace = special:magic
   }
 
-  windowrulev2 = float, class:^(Houdini FX)$, title:^(Save|Open|Preferences|Render|Export|Import)
-  windowrulev2 = tile, class:^(Houdini FX)$, title:.*Houdini.*
-  windowrulev2 = pseudo, class:^(Houdini FX)$, title:.*\.hip.*
+  #windowrulev2 = float, class:^(Houdini FX)$, title:^(Save|Open|Preferences|Render|Export|Import)
+  #windowrulev2 = tile, class:^(Houdini FX)$, title:.*Houdini.*
+  #windowrulev2 = pseudo, class:^(Houdini FX)$, title:.*\.hip.*
 
 
   # windowrule = suppressevent maximize, class:.*

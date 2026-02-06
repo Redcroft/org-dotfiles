@@ -14,6 +14,7 @@
 #+begin_src conf :tangle "~/.config/hypr/hyprpaper.conf" :noweb yes
   # Automatically calculated path based on README.org location
   preload = <<get_wallpaper()>>
+  splash = false
 #+end_src
 
 #+begin_src conf :tangle (if (string= system-name "heimdall") "~/.config/hypr/hyprpaper.conf" "") :noweb yes

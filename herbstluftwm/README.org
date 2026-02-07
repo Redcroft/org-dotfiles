@@ -89,7 +89,7 @@
   hc keybind $Mod-Shift-d set_attr clients.focus.decorated toggle
   hc keybind $Mod-space pseudotile toggle
   hc keybind $Mod-e cycle_layout +1
-  #hc keybind $Mod-BackSpace cycle_monitor
+  hc keybind $Mod-BackSpace cycle_monitor
   hc keybind $Mod-Tab cycle +1
   hc keybind $Mod-Shift-Tab cycle -1
   hc keybind $Mod-i jumpto urgent
@@ -185,13 +185,17 @@
   hc rule class~'*Godot*' floating=on
 
   hc unlock
-  
-  # xrandr --output HDMI-1 --mode 480x1920 --rate 60 --rotate right --pos 320x1440 --output DP-2 --mode 2560x1440 --rate 240 --pos 0x0
-  # herbstclient add "panel"
-  # herbstclient set_monitors 2560x1440+0+0
-  # herbstclient add_monitor 1920x480+320+1440 "panel" panel
-  # herbstclient lock_tag panel
 #+end_src
+
+** Monitors 
+#+begin_src bash :tangle (when (string= system-name "heimdall") "~/.config/herbstluftwm/autostart")
+  xrandr --output HDMI-0 --mode 480x1920 --rate 60 --rotate right --pos 320x1440 --output DP-0 --mode 2560x1440 --rate 240 --pos 0x0
+  herbstclient add "panel"
+  herbstclient set_monitors 2560x1440+0+0
+  herbstclient add_monitor 1920x480+320+1440 "panel" panel
+  herbstclient lock_tag panel
+#+end_src
+
 
 ** Autostart
 

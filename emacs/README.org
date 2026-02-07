@@ -1523,26 +1523,6 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package all-the-icons-dired :hook (dired-mode . all-the-icons-dired-mode))
   (use-package all-the-icons-nerd-fonts)
 
-  ;; (use-package doom-themes
-  ;;   :ensure (:wait t)
-  ;;   :init
-  ;;   (set-face-attribute 'default nil
-  ;;   		      :family "CommitMono Nerd Font"
-  ;;   		      :height 120
-  ;;   		      :weight 'semibold)
-  ;;   :bind ("<f5>" . my/toggle-theme)
-  ;;   :custom
-  ;;   (doom-themes-enable-bold t)
-  ;;   (doom-themes-enable-italic t)
-  ;;   (doom-themes-treemacs-theme "doom-atom")
-  ;;   :config
-  ;;   (doom-themes-visual-bell-config)
-  ;;   (doom-themes-neotree-config)
-  ;;   (doom-themes-treemacs-config)
-  ;;   (doom-themes-org-config))
-
-  ;; (load-theme 'doom-moonlight t)
-
   (use-package doom-themes)
   (use-package base16-theme
     :ensure (:wait t)
@@ -1572,6 +1552,8 @@ https://bholten.github.io/posts/blogging_with_emacs.html
             (car my/themes)))
     (load-theme my/current-theme t)
     (message "Switched to theme: %s" my/current-theme))
+
+  (load-theme (car my/themes) t)
 
   ;; (use-package modus-themes
   ;;   :init

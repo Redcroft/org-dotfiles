@@ -71,6 +71,9 @@
   abbr -a ..  'cd ..'
   abbr -a ... 'cd ../..'
 
+  alias xuu="sudo shutdown -h now"
+  alias xur="sudo reboot"
+
   # --- FZF Integration ---
   # On Arch, the fzf package includes fish integration.
   # This binds Ctrl+R to history search and Alt+C to directory search automatically.

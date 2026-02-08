@@ -15,8 +15,8 @@
       "identity_url":null,
       "ui_url":null,
       "notifications_url":null,
-      "lock_timeout":8400,
-      "sync_interval":8400,
+      "lock_timeout":18400,
+      "sync_interval":18400,
       "pinentry":"pinentry",
       "client_cert_path":null
   }

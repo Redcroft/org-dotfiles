@@ -142,7 +142,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (highlight-nonselected-windows nil)
     (inhibit-tabs-mode nil)
     (initial-scratch-message nil)
-    (line-spacing 0.05)
+    (line-spacing 0.00)
     (truncate-lines t)
     (truncate-partial-width-windows nil)
     (x-stretch-cursor nil))
@@ -1523,18 +1523,17 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package all-the-icons-dired :hook (dired-mode . all-the-icons-dired-mode))
   (use-package all-the-icons-nerd-fonts)
 
-  (use-package doom-themes)
   (use-package base16-theme
     :ensure (:wait t)
     :init
     (set-face-attribute 'default nil
-    		      :family "CommitMono Nerd Font"
-    		      :height 120
+    		      :family "VictorMono Nerd Font"
+    		      :height 110
     		      :weight 'semibold)
     :bind ("<f5>" . my/toggle-theme)
     )
 
-  (defvar my/themes '(base16-circus doom-flatwhite)
+  (defvar my/themes '(base16-rose-pine-moon base16-rose-pine-dawn)
     "List of two themes to toggle between. First is light, second is dark.")
 
   (defvar my/current-theme (car my/themes)

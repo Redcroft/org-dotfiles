@@ -12,7 +12,10 @@
 
   if not test -f $fisher_path
       echo "Fisher not found. Installing..."
-      curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source
+      mkdir -p $__fish_config_dir/functions
+      curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish -o $fisher_path
+      source $fisher_path
+      fisher install
       fisher update
   end
 

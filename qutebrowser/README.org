@@ -60,27 +60,23 @@
   asdf https://asdf-vm.com/guide/introduction.html
   cg https://www.cgchannel.com/
   chat https://chat.carseandwaterman.com
-  devbox https://www.jetify.com/devbox
-  devenv https://devenv.sh/
   gmail https://gmail.com
   git https://git.carseandwaterman.com
   gol https://gamingonlinux.com
-  hmx https://www.mechmods.co.uk/products/hmx-xinhai-switches?variant=45906378359007
-  lisp https://gigamonkeys.com/book/
+  homerow https://github.com/stasmarkin/sm_td
+  hotuk https://hotukdeals.com
+  lisp https://gigamonkeys.com/book
   mail https://mail.hostinger.com
   mise https://mise.jdx.dev/dev-tools/comparison-to-asdf.html
   phoronix https://phoronix.com
   prime https://amazon.co.uk/gp/video/storefront
-  pwhrtf https://obito.fr/posts/2023/06/true-spatial-audio-on-linux-using-hrtf/
+  psx https://www.willsconsolemodifications.co.uk/index.php?route=product/product&language=en-gb&path=61_65&product_id=82
+  raylib-cpp https://robloach.github.io/raylib-cpp/namespaces.html
+  raylib-cs https://www.raylib.com/cheatsheet/cheatsheet.html
   reddit https://reddit.com
   roswell https://roswell.github.io/Roswell-as-a-Scripting-Environment.html
   rust https://fasterthanli.me/articles/a-half-hour-to-learn-rust
-  tornado https://vimeo.com/ondemand/snowflaketornado
   yt https://youtube.com/feed/subscriptions
-  homerow https://github.com/stasmarkin/sm_td
-  psx https://www.willsconsolemodifications.co.uk/index.php?route=product/product&language=en-gb&path=61_65&product_id=82
-  raylib-cs https://www.raylib.com/cheatsheet/cheatsheet.html
-  raylib-cpp https://robloach.github.io/raylib-cpp/namespaces.html
 #+end_src
 
 * Qute-rbw

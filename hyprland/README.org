@@ -10,6 +10,7 @@
 ** Monitors
 #+begin_src conf :tangle (if (string= system-name "heimdall") "~/.config/hypr/hyprland.conf" "")
   monitor=DP-1,2560x1440@240,0x0,1,bitdepth,10,vrr,1
+  exec-once = openrgb --profile "solid-orange.orp"
 #+end_src
 
 #+begin_src conf :tangle (if (string= system-name "red") "~/.config/hypr/hyprland.conf" "")

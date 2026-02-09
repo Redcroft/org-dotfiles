@@ -651,8 +651,15 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 
 *** Svelte
 #+begin_src emacs-lisp
-  (use-package svelte-ts-mode
-    :ensure (:host github :repo "leafOfTree/svelte-ts-mode")
+  ;; (use-package svelte-ts-mode
+  ;;   :ensure (:host github :repo "leafOfTree/svelte-ts-mode" :rev "main")
+  ;;   :mode "\\.svelte\\'"
+  ;;   :config
+  ;;   (with-eval-after-load 'svelte-ts-mode
+  ;;   ;; Force Tree-sitter to handle indentation
+  ;;   (setq-local indent-line-function #'treesit-indent)))
+
+  (use-package svelte-mode
     :mode "\\.svelte\\'")
 #+end_src
 
@@ -1533,7 +1540,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     :bind ("<f5>" . my/toggle-theme)
     )
 
-  (defvar my/themes '(base16-rose-pine-moon base16-rose-pine-dawn)
+  (defvar my/themes '(base16-gruvbox-dark-hard base16-gruvbox-light-medium)
     "List of two themes to toggle between. First is light, second is dark.")
 
   (defvar my/current-theme (car my/themes)

@@ -1,0 +1,20 @@
+#+TITLE: Mako Configuration
+#+AUTHOR: Richard Redcroft
+#+EMAIL: Richard@Redcroft.tech
+#+OPTIONS: toc:nil num:nil
+#+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+
+* Mako
+
+#+begin_src conf :tangle "~/.config/mako/config"
+  # Colors
+
+  background-color=#24273a
+  text-color=#cad3f5
+  border-color=#8aadf4
+  progress-color=over #363a4f
+
+  [urgency=high]
+  border-color=#f5a97f
+#+end_src

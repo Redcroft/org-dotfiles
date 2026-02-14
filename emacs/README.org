@@ -651,16 +651,16 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 
 *** Svelte
 #+begin_src emacs-lisp
-  ;; (use-package svelte-ts-mode
-  ;;   :ensure (:host github :repo "leafOfTree/svelte-ts-mode" :rev "main")
-  ;;   :mode "\\.svelte\\'"
-  ;;   :config
-  ;;   (with-eval-after-load 'svelte-ts-mode
-  ;;   ;; Force Tree-sitter to handle indentation
-  ;;   (setq-local indent-line-function #'treesit-indent)))
+  (use-package svelte-ts-mode
+    :ensure (:host github :repo "leafOfTree/svelte-ts-mode" :rev "main")
+    :mode "\\.svelte\\'"
+    :config
+    (with-eval-after-load 'svelte-ts-mode
+    ;; Force Tree-sitter to handle indentation
+    (setq-local indent-line-function #'treesit-indent)))
 
-  (use-package svelte-mode
-    :mode "\\.svelte\\'")
+  ;; (use-package svelte-mode
+  ;;   :mode "\\.svelte\\'")
 #+end_src
 
 *** Systemd
@@ -1530,17 +1530,20 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package all-the-icons-dired :hook (dired-mode . all-the-icons-dired-mode))
   (use-package all-the-icons-nerd-fonts)
 
-  (use-package base16-theme
-    :ensure (:wait t)
-    :init
-    (set-face-attribute 'default nil
-    		      :family "VictorMono Nerd Font"
+  (use-package catppuccin-theme :ensure (:wait t))
+  (use-package doom-themes :ensure (:wait t))
+  (use-package base16-theme :ensure (:wait t))
+
+  (setq catppuccin-flavor 'mocha)
+
+  (global-set-key (kbd "<f5>") #'my/toggle-theme)
+
+  (set-face-attribute 'default nil
+    		      :family "CommitMono Nerd Font"
     		      :height 110
     		      :weight 'semibold)
-    :bind ("<f5>" . my/toggle-theme)
-    )
 
-  (defvar my/themes '(base16-gruvbox-dark-hard base16-gruvbox-light-medium)
+  (defvar my/themes '(catppuccin base16-catppuccin-latte)
     "List of two themes to toggle between. First is light, second is dark.")
 
   (defvar my/current-theme (car my/themes)

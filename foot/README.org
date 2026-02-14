@@ -8,12 +8,13 @@
 * Main
 #+begin_src conf
   [main]
-  font=VictorMono Nerd Font:size=11:style=semibold
+  font=CommitMono Nerd Font:size=11:style=semibold
   pad=12x12 center-when-maximized-and-fullscreen
+  include=/usr/share/foot/themes/catppuccin-mocha
 #+end_src
 
 * Colors
-#+begin_src conf
+#+begin_src conf :tangle no
   [colors]
   background=000000
   foreground=ffffff

@@ -26,15 +26,14 @@
 ** Config
 #+begin_src conf :tangle "~/.config/hypr/hyprland.conf"
   $terminal = uwsm app -- foot -e tmux
-  $menu = uwsm app -- bemenu-run
-  $web = uwsm app -- qutebrowser
+  $menu = uwsm app -- $HOME/.local/bin/mybemenu
+  $web = uwsm app -- zen-browser
   $editor = uwsm app -- emacs
 
   env = HYPRCURSOR_THEME,Posy_Cursor_Black
   env = HYPRCURSOR_SIZE,32
   env = XCURSOR_THEME,Posy_Cursor_Black
   env = XCURSOR_SIZE,32
-  env = BEMENU_OPTS, --fn 'IosevkaTerm Nerd Font 12' --nb '##282828' --nf '##ebdbb2' --tb '##282828' --tf '##fb4934' --hb '##3c3836' --hf '##fabd2f' --fb '##282828' --ff '##ebdbb2' --ab '##282828' --af '##ebdbb2'
 
   exec-once = systemctl --user start hyprpolkitagent
   exec-once = uwsm app -- waybar #ashell
@@ -334,3 +333,8 @@
   icon_theme = Flatery-Dark
 #+end_src
 
+* Bemenu
+#+begin_src bash :tangle "~/.local/bin/mybemenu" :tangle-mode (identity #o777) :mkdirp yes
+  #!/bin/bash
+  bemenu-run --fn "CommitMono Nerd Font 12" --fb "#1e1e2e" --ff "#cdd6f4" --nb "#1e1e2e" --nf "#cdd6f4" --tb "#1e1e2e" --hb "#1e1e2e" --tf "#f38ba8" --hf "#f9e2af" --af "#cdd6f4" --ab "#1e1e2e"
+#+end_src

@@ -1543,7 +1543,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     		      :height 110
     		      :weight 'semibold)
 
-  (defvar my/themes '(catppuccin base16-catppuccin-latte)
+  (defvar my/themes '(aura doom-flatwhite)
     "List of two themes to toggle between. First is light, second is dark.")
 
   (defvar my/current-theme (car my/themes)
@@ -1636,12 +1636,12 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     (blend color "#FFFFFF" (- 1 alpha)))
 
   (let*
-      ((bg      "#21202e")
-       (bg-alt  "#1c1b27")
+      ((bg      "#15141b")
+       (bg-alt  "#110f18")
        (fg      "#edecee")
        (fg-alt  "#e1e0e2")
 
-       (grey    "#b6b6b2")
+       (grey    "#4d4d4d")
        (red     "#ff6767")
        (yellow  "#ffca85")
        (orange  "#ffca85")

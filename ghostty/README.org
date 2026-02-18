@@ -10,18 +10,19 @@
 #+begin_src conf
   font-family = "CommitMono Nerd Font"
   font-size = 12
-  theme = Catppuccin Mocha
+  theme = Aura
   window-decoration = client
   quick-terminal-position = center
   quick-terminal-size = 60%,60%
   gtk-titlebar-style = tabs
+  initial-window = false
 
   window-padding-x = 6
   window-padding-y = 6
 #+end_src
 
-#+begin_src conf :tangle no
-  keybind = global:super+j=toggle_quick_terminal
+#+begin_src conf
+  keybind = global:super+minus=toggle_quick_terminal
 #+end_src
 
 #+begin_src conf :tangle no

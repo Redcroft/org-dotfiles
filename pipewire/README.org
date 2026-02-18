@@ -31,19 +31,13 @@ I want to keep hrtf files within the dotfile repo, so use emacs to determine whe
   (expand-file-name "hrtf.wav" default-directory)
 #+end_src
 
-#+RESULTS[7459ae3ebbf5e99f36fd5327ab1b6f6404497933]: wav-file
-: /home/lambda/.repos/org-dotfiles/pipewire/wav/dh+.wav
-
 #+NAME: sofa-file
 #+begin_src emacs-lisp :cache yes
   (expand-file-name "hrtf.sofa" default-directory)
 #+end_src
 
-#+RESULTS[45888b9b74b1a4af0da39f4d2d5c00143e00e953]: sofa-file
-: /home/lambda/.repos/org-dotfiles/pipewire/sofa/H5_48K_24bit_256tap_FIR_SOFA.sofa
 
-
-#+begin_src conf :tangle "~/.config/pipewire/pipewire.conf.d/99-spatial-hrir.conf" :noweb yes
+#+begin_src conf :tangle no :tle "~/.config/pipewire/pipewire.conf.d/99-spatial-hrir.conf" :noweb yes
   context.modules = [
        { name = libpipewire-module-filter-chain
            args = {

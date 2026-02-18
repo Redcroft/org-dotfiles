@@ -21,3 +21,4 @@ find "$DOTFILES_ROOT" -name "README.org" -type f | while read -r org_file; do
 done
 
 echo "=== Tangling complete ==="
+echo "Manually Add FREETYPE_PROPERTIES=\"cff:no-stem-darkening=0 autofitter:no-stem-darkening=0\" to /etc/environment"

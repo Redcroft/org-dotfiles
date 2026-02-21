@@ -808,6 +808,15 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     :init (ctrlf-mode t))
 #+end_src
 
+*** Cursory
+#+begin_src emacs-lisp
+  (use-package cursory
+    :if (display-graphic-p)
+    :config
+    (cursory-set-preset (or (cursory-restore-latest-preset) 'underscroe))
+    (cursory-mode 1))
+#+end_src
+
 *** Dashboard
 #+begin_src emacs-lisp
   (use-package dashboard
@@ -1638,12 +1647,12 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     (blend color "#FFFFFF" (- 1 alpha)))
 
   (let*
-      ((bg      "#15141b")
-       (bg-alt  "#110f18")
+      ((bg      "#21202e")
+       (bg-alt  "#1c1b27")
        (fg      "#edecee")
        (fg-alt  "#e1e0e2")
 
-       (grey    "#4d4d4d")
+       (grey    "#b6b6b2")
        (red     "#ff6767")
        (yellow  "#ffca85")
        (orange  "#ffca85")

@@ -188,7 +188,7 @@
 #+end_src
 
 ** Monitors 
-#+begin_src bash :tangle (when (string= system-name "heimdall") "~/.config/herbstluftwm/autostart")
+#+begin_src bash :tangle (if (string= system-name "heimdall") "~/.config/herbstluftwm/autostart" "")
   # xrandr --output HDMI-0 --primary --mode 480x1920 --rate 60 --rotate right --pos 320x1440 --output DP-0 --mode 2560x1440 --rate 240 --pos 0x0 --primary
   # herbstclient add "panel"
   # herbstclient set_monitors 2560x1440+0+0

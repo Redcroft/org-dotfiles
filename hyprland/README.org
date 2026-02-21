@@ -19,8 +19,8 @@
 #+end_src
 
 #+begin_src conf :tangle (if (string= system-name "poseidon") "~/.config/hypr/hyprland.conf" "")
-  monitor=DP-1,3840x2160,0x0,1
-  monitor=DP-2,3840x2160,-3840x0,1
+  monitor=DP-1,3840x2160,3840x0,1
+  monitor=DP-2,3840x2160,0x0,1
 #+end_src
 
 ** Config

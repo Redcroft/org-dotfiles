@@ -8,9 +8,9 @@
 * Main
 #+begin_src conf
   [main]
-  font=CommitMono Nerd Font:size=11:style=semibold
+  font=JetBrains Mono:size=11:style=semibold
   pad=12x12 center-when-maximized-and-fullscreen
-  include=/usr/share/foot/themes/catppuccin-mocha
+  include=~/.config/foot/themes/noctalia
 #+end_src
 
 * Colors

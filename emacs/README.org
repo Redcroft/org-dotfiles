@@ -1530,39 +1530,41 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package all-the-icons-dired :hook (dired-mode . all-the-icons-dired-mode))
   (use-package all-the-icons-nerd-fonts)
 
-  (use-package catppuccin-theme :ensure (:wait t))
+  (use-package catppuccin-theme :ensure (:wait t)
+    :custom
+    (catppuccin-flavor 'mocha))
   (use-package doom-themes :ensure (:wait t))
   (use-package base16-theme :ensure (:wait t))
-
-  (setq catppuccin-flavor 'mocha)
 
   (global-set-key (kbd "<f5>") #'my/toggle-theme)
 
   (set-face-attribute 'default nil
-    		      :family "CommitMono Nerd Font"
-    		      :height 110
-    		      :weight 'semibold)
+    		    :family "JetBrains Mono"
+    		    :height 110
+    		    :weight 'semibold)
 
-  (defvar my/themes '(aura doom-flatwhite)
-    "List of two themes to toggle between. First is light, second is dark.")
+  ;; (defvar my/themes '(aura doom-flatwhite)
+  ;;   "List of two themes to toggle between. First is light, second is dark.")
 
-  (defvar my/current-theme (car my/themes)
-    "Currently active theme.")
+  ;; (defvar my/current-theme (car my/themes)
+  ;;   "Currently active theme.")
 
-  (defun my/toggle-theme ()
-    "Toggle between two predefined themes without reloading."
-    (interactive)
-    ;; Disable all enabled themes first
-    (mapc #'disable-theme custom-enabled-themes)
-    ;; Switch to the other theme
-    (setq my/current-theme
-          (if (eq my/current-theme (car my/themes))
-              (cadr my/themes)
-            (car my/themes)))
-    (load-theme my/current-theme t)
-    (message "Switched to theme: %s" my/current-theme))
+  ;; (defun my/toggle-theme ()
+  ;;   "Toggle between two predefined themes without reloading."
+  ;;   (interactive)
+  ;;   ;; Disable all enabled themes first
+  ;;   (mapc #'disable-theme custom-enabled-themes)
+  ;;   ;; Switch to the other theme
+  ;;   (setq my/current-theme
+  ;;         (if (eq my/current-theme (car my/themes))
+  ;;             (cadr my/themes)
+  ;;           (car my/themes)))
+  ;;   (load-theme my/current-theme t)
+  ;;   (message "Switched to theme: %s" my/current-theme))
 
-  (load-theme (car my/themes) t)
+  ;; (load-theme (car my/themes) t)
+
+  (load-theme 'noctalia t)
 
   ;; (use-package modus-themes
   ;;   :init

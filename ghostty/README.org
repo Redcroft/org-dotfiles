@@ -8,21 +8,21 @@
 * Config
 
 #+begin_src conf
-  font-family = "CommitMono Nerd Font"
+  font-family = "JetBrains Mono"
   font-size = 12
-  theme = Aura
+  theme = noctalia
   window-decoration = client
   quick-terminal-position = center
   quick-terminal-size = 60%,60%
   gtk-titlebar-style = tabs
-  initial-window = false
+  # initial-window = false
 
   window-padding-x = 6
   window-padding-y = 6
 #+end_src
 
 #+begin_src conf
-  keybind = global:super+minus=toggle_quick_terminal
+  # keybind = global:super+minus=toggle_quick_terminal
 #+end_src
 
 #+begin_src conf :tangle no

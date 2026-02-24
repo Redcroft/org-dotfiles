@@ -120,7 +120,6 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
       (find-file "~/.repos/org-dotfiles/emacs/README.org"))
     (setq-default display-fill-column-indicator-character ?|)
     :custom
-    (auth-sources '("~/.authinfo.gpg"))
     (byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
     (byte-compile--use-old-handlers nil)
     (custom-file (concat user-emacs-directory "custom.el"))
@@ -150,7 +149,9 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
 *** Epa
 #+begin_src emacs-lisp
   (use-package epa
-    :ensure nil)
+    :ensure nil
+    :custom
+    (auth-sources '("~/.authinfo.gpg")))
 
   (use-package epa-file
     :ensure nil
@@ -999,6 +1000,24 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   	      ("C-c ! l" . flymake-show-buffer-diagnostics)))
 #+end_src
 
+*** GPTel
+#+begin_src emacs-lisp
+  (use-package gptel
+    :config
+    (setq my-openrouter-backend
+          (gptel-make-openai "OpenRouter"
+            :host "openrouter.ai"
+            :endpoint "/api/v1/chat/completions"
+            :stream t
+            :models '("minimax/minimax-m2.5")
+            :key (lambda () (auth-source-pick-first-password 
+                             :host "openrouter.ai" 
+                             :user "apikey"))))
+
+    (setq-default gptel-backend my-openrouter-backend
+                  gptel-model "minimax/minimax-m2.5"))
+#+end_src
+
 *** Helm System Packages
 #+begin_src emacs-lisp
   (use-package helm-system-packages
@@ -1539,7 +1558,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (global-set-key (kbd "<f5>") #'my/toggle-theme)
 
   (set-face-attribute 'default nil
-    		    :family "JetBrains Mono"
+    		    :family "JetBrains Mono Nerd Font"
     		    :height 110
     		    :weight 'semibold)
 

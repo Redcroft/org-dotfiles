@@ -8,9 +8,12 @@
 * Main
 #+begin_src conf
   [main]
-  font=JetBrains Mono:size=11:style=semibold
+  font=JetBrains Mono Nerd Font:size=11:style=semibold
   pad=12x12 center-when-maximized-and-fullscreen
   include=~/.config/foot/themes/noctalia
+
+  [colors]
+  alpha = 0.9
 #+end_src
 
 * Colors

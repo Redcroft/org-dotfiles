@@ -32,7 +32,7 @@
         ],
         "preferredPlayer": "",
         "visualizerType": "linear",
-        "volumeFeedback": false,
+        "volumeFeedback": true,
         "volumeOverdrive": false,
         "volumeStep": 5
     },
@@ -42,12 +42,12 @@
         "backgroundOpacity": 0.85,
         "barType": "framed",
         "capsuleColorKey": "primary",
-        "capsuleOpacity": 0.06,
+        "capsuleOpacity": 0,
         "density": "compact",
         "displayMode": "always_visible",
         "floating": false,
         "frameRadius": 24,
-        "frameThickness": 7,
+        "frameThickness": 6,
         "hideOnOverview": false,
         "marginHorizontal": 4,
         "marginVertical": 4,
@@ -59,7 +59,7 @@
         ],
         "showCapsule": true,
         "showOutline": false,
-        "useSeparateOpacity": true,
+        "useSeparateOpacity": false,
         "widgets": {
             "center": [
                 {
@@ -70,15 +70,6 @@
                     "id": "Clock",
                     "tooltipFormat": "HH:mm ddd, MMM dd",
                     "useCustomFont": false
-                },
-                {
-                    "colorizeDistroLogo": false,
-                    "colorizeSystemIcon": "none",
-                    "customIconPath": "",
-                    "enableColorization": false,
-                    "icon": "noctalia",
-                    "id": "ControlCenter",
-                    "useDistroLogo": false
                 }
             ],
             "left": [
@@ -100,35 +91,6 @@
                     "showBadge": true,
                     "showLabelsOnlyWhenOccupied": true,
                     "unfocusedIconsOpacity": 1
-                },
-                {
-                    "colorizeIcons": false,
-                    "hideMode": "hidden",
-                    "id": "ActiveWindow",
-                    "maxWidth": 145,
-                    "scrollingMode": "hover",
-                    "showIcon": true,
-                    "textColor": "none",
-                    "useFixedWidth": false
-                },
-                {
-                    "compactMode": false,
-                    "compactShowAlbumArt": true,
-                    "compactShowVisualizer": false,
-                    "hideMode": "hidden",
-                    "hideWhenIdle": false,
-                    "id": "MediaMini",
-                    "maxWidth": 145,
-                    "panelShowAlbumArt": true,
-                    "panelShowVisualizer": true,
-                    "scrollingMode": "hover",
-                    "showAlbumArt": true,
-                    "showArtistFirst": true,
-                    "showProgressRing": true,
-                    "showVisualizer": false,
-                    "textColor": "none",
-                    "useFixedWidth": false,
-                    "visualizerType": "linear"
                 }
             ],
             "right": [
@@ -211,6 +173,10 @@
                     "usePadding": false
                 },
                 {
+                    "iconColor": "none",
+                    "id": "DarkMode"
+                },
+                {
                     "iconColor": "error",
                     "id": "SessionMenu"
                 }
@@ -218,7 +184,7 @@
         }
     },
     "brightness": {
-        "brightnessStep": 5,
+        "brightnessStep": 1,
         "enableDdcSupport": true,
         "enforceMinimum": true
     },
@@ -244,7 +210,7 @@
         "manualSunrise": "06:30",
         "manualSunset": "18:30",
         "monitorForColors": "",
-        "predefinedScheme": "Vesper",
+        "predefinedScheme": "GruvboxAlt",
         "schedulingMode": "off",
         "useWallpaperColors": false
     },
@@ -290,6 +256,9 @@
                 },
                 {
                     "id": "NoctaliaPerformance"
+                },
+                {
+                    "id": "DarkMode"
                 }
             ],
             "right": [
@@ -346,7 +315,7 @@
         "clockFormat": "hh\\nmm",
         "clockStyle": "custom",
         "compactLockScreen": false,
-        "dimmerOpacity": 0.43,
+        "dimmerOpacity": 0,
         "enableLockScreenCountdown": true,
         "enableShadows": true,
         "forceBlackScreenCorners": true,
@@ -450,12 +419,12 @@
         "enableMediaToast": false,
         "enabled": true,
         "location": "top_right",
-        "lowUrgencyDuration": 3,
+        "lowUrgencyDuration": 2,
         "monitors": [
         ],
-        "normalUrgencyDuration": 8,
+        "normalUrgencyDuration": 5,
         "overlayLayer": true,
-        "respectExpireTimeout": false,
+        "respectExpireTimeout": true,
         "saveToHistory": {
             "critical": true,
             "low": true,
@@ -704,9 +673,9 @@
         "fontDefault": "SF Pro Display",
         "fontDefaultScale": 1,
         "fontFixed": "JetBrains Mono",
-        "fontFixedScale": 0.9,
+        "fontFixedScale": 1,
         "networkPanelView": "wifi",
-        "panelBackgroundOpacity": 0.85,
+        "panelBackgroundOpacity": 0.66,
         "panelsAttachedToBar": true,
         "settingsPanelMode": "attached",
         "tooltipsEnabled": true,

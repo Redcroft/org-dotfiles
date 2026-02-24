@@ -12,20 +12,7 @@
     "reload_style_on_change": true,
     "modules-left": ["hyprland/workspaces"],
     "modules-center": ["clock"],
-    "modules-right": ["tray", "pulseaudio", "battery", "custom/power"],
-    
-    "custom/power": {
-      "format" : " ⏻ ",
-      "tooltip": false,
-      "menu": "on-click",
-      "menu-file": "$HOME/.config/waybar/power_menu.xml", // Menu file in resources folder
-      "menu-actions": {
-        "shutdown": "systemctl poweroff",
-        "reboot": "systemctl reboot",
-        "suspend": "systemctl suspend",
-        "hibernate": "systemctl hibernate"
-      }
-    },
+    "modules-right": ["tray", "pulseaudio", "cpu", "memory", "battery"],
     
     "clock": {
       "format": "{:%I:%M:%S %p}",
@@ -48,10 +35,10 @@
         "warning": 30,
         "critical": 20
       },
-      "format": "{capacity}% {icon}",
-      "format-charging": "{capacity}% 󰂄",
-      "format-plugged": "{capacity}% 󰂄 ",
-      "format-alt": "{time} {icon}",
+      "format": " {icon} {capacity}% {time} ",
+      "format-charging": " 󰂄 {capacity}% ",
+      "format-plugged": " 󰂄  {capacity}% ",
+      "format-alt": " {icon} {time} ",
       "format-icons": [
         "󰁻",
         "󰁼",
@@ -62,8 +49,8 @@
       ],
     },
     "pulseaudio": {
-      "format": "  {volume}% {icon}",
-      "format-bluetooth": "{volume}% {icon}",
+      "format": "  {icon} {volume}% ",
+      "format-bluetooth": "  {icon} {volume}% ",
       "format-muted": "",
       "format-icons": {
         "headphone": " ",
@@ -78,11 +65,11 @@
       "on-click": "pavucontrol"
     },
     "cpu": {
-      "format": " 󰻠 ",
+      "format": " 󰻠 {usage}% ",
       "tooltip": true
     },
     "memory": {
-      "format": "   "
+      "format": "   {percentage}%"
     },
     "temperature": {
       "critical-threshold": 80,

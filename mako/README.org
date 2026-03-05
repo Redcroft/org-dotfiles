@@ -8,13 +8,14 @@
 * Mako
 
 #+begin_src conf :tangle "~/.config/mako/config"
-  # Colors
+  default-timeout = 5
 
-  background-color=#24273a
-  text-color=#cad3f5
-  border-color=#8aadf4
+  # Colors
+  background-color=#21202e
+  text-color=#edecee
+  border-color=#a277ff
   progress-color=over #363a4f
 
   [urgency=high]
-  border-color=#f5a97f
+  border-color=#ffca85
 #+end_src

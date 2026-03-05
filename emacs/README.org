@@ -12,7 +12,8 @@ I like to have a small internal border and disable the menu bar, scroll bars, an
 for a cleaner, minimalist interface.
 #+begin_src emacs-lisp :tangle ~/.emacs.d/early-init.el
   (setq default-frame-alist
-        '((internal-border-width . 6)
+        '((alpha-background . 95)
+  	(internal-border-width . 2)
   	(menu-bar-lines . 0)
   	(scroll-bar-lines . 0)
   	(tool-bar-lines . 0)
@@ -653,7 +654,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 *** Svelte
 #+begin_src emacs-lisp
   (use-package svelte-ts-mode
-    :ensure (:host github :repo "leafOfTree/svelte-ts-mode" :rev "main")
+    :ensure (:host github :repo "leafOfTree/svelte-ts-mode")
     :mode "\\.svelte\\'"
     :config
     (with-eval-after-load 'svelte-ts-mode
@@ -1342,7 +1343,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
             (json "https://github.com/tree-sitter/tree-sitter-json")
             (python "https://github.com/tree-sitter/tree-sitter-python")
   	  (rust "https://github.com/tree-sitter/tree-sitter-rust")
-  	  (svelte "https://github.com/Himujjal/tree-sitter-svelte")
+  	  (svelte "https://github.com/tree-sitter-grammars/tree-sitter-svelte")
   	  (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
   	  (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
   	  (zig "https://github.com/tree-sitter-grammars/tree-sitter-zig"))
@@ -1567,70 +1568,30 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (global-set-key (kbd "<f5>") #'my/toggle-theme)
 
   (set-face-attribute 'default nil
-    		    :family "JetBrains Mono Nerd Font"
+    		    :family "Aporetic Sans Mono"
     		    :height 110
-    		    :weight 'semibold)
+    		    :weight 'regular)
 
-  ;; (defvar my/themes '(aura doom-flatwhite)
-  ;;   "List of two themes to toggle between. First is light, second is dark.")
+  (defvar my/themes '(aura doom-flatwhite)
+    "List of two themes to toggle between. First is light, second is dark.")
 
-  ;; (defvar my/current-theme (car my/themes)
-  ;;   "Currently active theme.")
+  (defvar my/current-theme (car my/themes)
+    "Currently active theme.")
 
-  ;; (defun my/toggle-theme ()
-  ;;   "Toggle between two predefined themes without reloading."
-  ;;   (interactive)
-  ;;   ;; Disable all enabled themes first
-  ;;   (mapc #'disable-theme custom-enabled-themes)
-  ;;   ;; Switch to the other theme
-  ;;   (setq my/current-theme
-  ;;         (if (eq my/current-theme (car my/themes))
-  ;;             (cadr my/themes)
-  ;;           (car my/themes)))
-  ;;   (load-theme my/current-theme t)
-  ;;   (message "Switched to theme: %s" my/current-theme))
+  (defun my/toggle-theme ()
+    "Toggle between two predefined themes without reloading."
+    (interactive)
+    ;; Disable all enabled themes first
+    (mapc #'disable-theme custom-enabled-themes)
+    ;; Switch to the other theme
+    (setq my/current-theme
+          (if (eq my/current-theme (car my/themes))
+              (cadr my/themes)
+            (car my/themes)))
+    (load-theme my/current-theme t)
+    (message "Switched to theme: %s" my/current-theme))
 
-  ;; (load-theme (car my/themes) t)
-
-  (load-theme 'noctalia t)
-
-  ;; (use-package modus-themes
-  ;;   :init
-  ;;   (set-face-attribute 'default nil
-  ;; 		      :family "IosevkaTerm Nerd Font"
-  ;; 		      :height 130
-  ;; 		      :weight 'semibold)
-  ;;   (modus-themes-include-derivatives-mode 1)
-  ;;   :bind
-  ;;   (("<f5>" . modus-themes-rotate)
-  ;;    ("C-<f5>" . modus-themes-select)
-  ;;    ("M-<f5>" . modus-themes-load-random))
-  ;;   :config
-  ;;   (defconst my-modus-themes-items
-  ;;   '( modus-operandi
-  ;;      modus-vivendi)
-  ;;   "Symbols of the Modus themes.")
-  ;;   (setq modus-themes-to-toggle '(modus-operandi modus-vivendi)
-  ;;         modus-themes-to-rotate my-modus-themes-items
-  ;;         modus-themes-mixed-fonts nil
-  ;;         modus-themes-variable-pitch-ui nil
-  ;;         modus-themes-italic-constructs t
-  ;;         modus-themes-bold-constructs t
-  ;;         modus-themes-completions '((t . (bold)))
-  ;;         modus-themes-prompts '(bold)
-  ;;         modus-themes-headings
-  ;;         '((agenda-structure . (variable-pitch light 2.2))
-  ;;           (agenda-date . (variable-pitch regular 1.3))
-  ;;           (t . (regular 1.15))))
-
-  ;;   (setq modus-themes-common-palette-overrides nil)
-
-  ;;   (modus-themes-load-theme 'modus-vivendi)
-  ;;   :custom-face
-  ;;   (fixed-pitch ((t (:weight bold))))
-  ;;   (font-lock-comment-face ((t (:slant italic))))
-  ;;   (font-lock-keyword-face ((t (:slant italic))))
-  ;;   (font-lock-string-face ((t (:slant italic)))))
+  (load-theme (car my/themes) t)
 #+end_src
 
 *** Custom Themes

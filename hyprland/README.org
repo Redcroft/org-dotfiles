@@ -10,7 +10,7 @@
 ** Monitors
 #+begin_src conf :tangle (if (string= system-name "heimdall") "~/.config/hypr/hyprland.conf" "")
   monitor=DP-1,2560x1440@240,0x0,1,bitdepth,10,vrr,1
-  exec-once = openrgb --profile "solid-orange.orp"
+  #exec-once = openrgb --profile "solid-orange.orp"
 #+end_src
 
 #+begin_src conf :tangle (if (string= system-name "red") "~/.config/hypr/hyprland.conf" "")
@@ -24,7 +24,7 @@
 
 ** Config
 #+begin_src conf :tangle "~/.config/hypr/hyprland.conf"
-  $terminal = uwsm app -- foot -e tmux
+  $terminal = uwsm app -- ghostty
   $menu = uwsm app -- $HOME/.local/bin/mybemenu
   $web = uwsm app -- zen-browser
   $editor = uwsm app -- emacs
@@ -34,18 +34,19 @@
   env = XCURSOR_THEME,Posy_Cursor_Black
   env = XCURSOR_SIZE,32
 
-  # exec-once = systemctl --user start hyprpolkitagent
-  exec-once = uwsm app -- qs -c noctalia-shell --no-duplicate #waybar #ashell
-  exec-once = uwsm app -- foot -T Scratchpad -e tmux
-  # exec-once = uwsm app -- hyprpaper
-  # exec-once = uwsm app -- mako
+  exec-once = systemctl --user start hyprpolkitagent
+  # exec-once = uwsm app -- qs -c noctalia-shell --no-duplicate #waybar
+  exec-once = uwsm app -- ashell
+  exec-once = uwsm app -- ghostty --title="Scratchpad"
+  exec-once = uwsm app -- hyprpaper
+  exec-once = uwsm app -- mako
 
   general {
-      gaps_in = 5
-      gaps_out = 10
-      border_size = 2
-      # col.active_border = rgb(b6a0ff)
-      # col.inactive_border = rgb(000000)
+      gaps_in = 4
+      gaps_out = 8
+      border_size = 1
+      col.active_border = rgb(61ffca)
+      col.inactive_border = rgb(000000)
       resize_on_border = false
       allow_tearing = true
       layout = master
@@ -63,22 +64,22 @@
   }
 
   decoration {
-      rounding = 20
+      rounding = 0
       rounding_power = 2
       
       active_opacity = 1.0
       inactive_opacity = 1.0
       
       shadow {
-          enabled = true
-          range = 4
+          enabled = false
+          range = 12
           render_power = 3
-          color = rgba(1a1a1aee)
+          color = rgba(1a1a1a44)
       }
       
       blur {
-          enabled = true
-          size = 3
+          enabled = false
+          size = 10
           passes = 2
           vibrancy = 0.1696
       }
@@ -150,20 +151,20 @@
   ##############
 
   group {
-      # col.border_active = rgb(b6a0ff)
-      # col.border_inactive = rgb(000000)
+      col.border_active = rgb(61ffca)
+      col.border_inactive = rgb(000000)
 
       groupbar {
           gradients = false
   	render_titles = 1
-          font_family = IosevkaTerm Nerd Font
+          font_family = Aporetic Sans Mono
           font_size = 13
   	font_weight_active = Semibold
   	font_weight_inactive = Semibold
-          # text_color = rgb(000000)
-  	# text_color_inactive = rgb(ffffff)
-  	# col.active = rgb(b6a0ff)
-          # col.inactive = rgb(000000)
+          text_color = rgb(000000)
+  	text_color_inactive = rgb(ffffff)
+  	col.active = rgb(61ffca)
+          col.inactive = rgb(000000)
       }
   }
 
@@ -172,7 +173,6 @@
   ###################
 
   $mainMod = SUPER
-  $ipc = qs -c noctalia-shell ipc call
 
   bind = $mainMod, return, exec, $terminal
   bind = $mainMod SHIFT, W, exec, $web
@@ -181,9 +181,7 @@
   bind = $mainMod SHIFT, escape, exit,
   bind = $mainMod, escape, exec, hyprctl reload
   bind = $mainMod SHIFT, space, togglefloating,
-  bind = $mainMod, D, exec, $ipc launcher toggle
-  bind = $mainMod SHIFT, Y, exec, $ipc controlCenter toggle
-  bind = $mainMod SHIFT, U, exec, $ipc settings toggle
+  bind = $mainMod, D, exec, $menu
   bind = $mainMod, backspace, focusmonitor, +1
 
   bind = $mainMod SHIFT, S, exec, grim -g "$(slurp -d)"
@@ -241,15 +239,10 @@
   bindm = $mainMod, mouse:273, resizewindow
 
   # Laptop multimedia keys for volume and LCD brightness
-  bindel = , XF86AudioRaiseVolume, exec, $ipc volume increase
-  bindel = , XF86AudioLowerVolume, exec, $ipc volume decrease
-  bindl = , XF86AudioMute, exec, $ipc volume muteOutput
-  bindel = , XF86MonBrightnessUp, exec, $ipc brightness increase
-  bindel = , XF86MonBrightnessDown, exec, $ipc brightness decrease
-  # bindel = ,XF86AudioRaiseVolume, exec, wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+
-  # bindel = ,XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
-  # bindel = ,XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
-  # bindel = ,XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+  bindel = ,XF86AudioRaiseVolume, exec, wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+
+  bindel = ,XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+  bindel = ,XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+  bindel = ,XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
   # bindel = ,XF86MonBrightnessUp, exec, brightnessctl -e4 -n2 set 5%+
   # bindel = ,XF86MonBrightnessDown, exec, brightnessctl -e4 -n2 set 5%-
   # bindel = $mainMod, XF86MonBrightnessUp, exec, brightnessctl -e4 -n2 set 100%
@@ -272,8 +265,8 @@
     name = float-scratchpad
     match:title = .*Scratchpad.*
     float = on
-    size = (monitor_w*0.5) (monitor_h*0.5)
-    move = (monitor_w*0.25) (monitor_h*0.25)
+    size = (monitor_w*0.66) (monitor_h*0.66)
+    move = (monitor_w*0.33*.5) (monitor_h*0.33*.5)
     workspace = special:magic
   }
 
@@ -381,7 +374,7 @@
 #+end_src
 
 * Hyprtoolkit
-#+begin_src conf :tangle no :tgle "~/.config/hypr/hyprtoolkit.conf"
+#+begin_src conf :tangle "~/.config/hypr/hyprtoolkit.conf"
   background = 0xFF282828
   base = 0xFF1d2021
   text = 0xFFebdbb2
@@ -402,5 +395,5 @@
 * Bemenu
 #+begin_src bash :tangle "~/.local/bin/mybemenu" :tangle-mode (identity #o777) :mkdirp yes
   #!/bin/bash
-  bemenu-run --fn "CommitMono Nerd Font 12" --fb "#1e1e2e" --ff "#cdd6f4" --nb "#1e1e2e" --nf "#cdd6f4" --tb "#1e1e2e" --hb "#1e1e2e" --tf "#f38ba8" --hf "#f9e2af" --af "#cdd6f4" --ab "#1e1e2e"
+  bemenu-run --fn "Aporetic Sans Mono 11" --fb "#1e1e2e" --ff "#cdd6f4" --nb "#1e1e2e" --nf "#cdd6f4" --tb "#1e1e2e" --hb "#1e1e2e" --tf "#f38ba8" --hf "#f9e2af" --af "#cdd6f4" --ab "#1e1e2e"
 #+end_src

@@ -12,7 +12,7 @@ I like to have a small internal border and disable the menu bar, scroll bars, an
 for a cleaner, minimalist interface.
 #+begin_src emacs-lisp :tangle ~/.emacs.d/early-init.el
   (setq default-frame-alist
-        '((alpha-background . 95)
+        '((alpha-background . 100)
   	(internal-border-width . 2)
   	(menu-bar-lines . 0)
   	(scroll-bar-lines . 0)
@@ -142,7 +142,7 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (highlight-nonselected-windows nil)
     (inhibit-tabs-mode nil)
     (initial-scratch-message nil)
-    (line-spacing 0.00)
+    (line-spacing 0.15)
     (truncate-lines t)
     (truncate-partial-width-windows nil)
     (x-stretch-cursor nil))
@@ -1559,20 +1559,20 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   (use-package all-the-icons-dired :hook (dired-mode . all-the-icons-dired-mode))
   (use-package all-the-icons-nerd-fonts)
 
-  (use-package catppuccin-theme :ensure (:wait t)
-    :custom
-    (catppuccin-flavor 'mocha))
+  ;; (use-package catppuccin-theme :ensure (:wait t)
+  ;;   :custom
+  ;;   (catppuccin-flavor 'mocha))
   (use-package doom-themes :ensure (:wait t))
-  (use-package base16-theme :ensure (:wait t))
+  ;; (use-package base16-theme :ensure (:wait t))
 
   (global-set-key (kbd "<f5>") #'my/toggle-theme)
 
   (set-face-attribute 'default nil
     		    :family "Aporetic Sans Mono"
-    		    :height 110
+    		    :height 120
     		    :weight 'regular)
 
-  (defvar my/themes '(aura doom-flatwhite)
+  (defvar my/themes '(doom-horizon doom-one-light)
     "List of two themes to toggle between. First is light, second is dark.")
 
   (defvar my/current-theme (car my/themes)
@@ -5514,7 +5514,7 @@ https://bholten.github.io/posts/blogging_with_emacs.html
                                  (t                       ; should be only tty-like envs
                                   ,(funcall expand-for-kind tty-colors spec))))))))
 
-  
+  
   ;;;###autoload
   (when load-file-name
     (add-to-list 'custom-theme-load-path

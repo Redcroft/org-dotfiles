@@ -6,6 +6,11 @@
 #+auto_tangle: t
 
 #+begin_src conf :tangle (if (string= system-name "heimdall") "/sudo::/etc/systemd/system/gpu-limit.service" "")
+  [Unit]
+  Description=Set Nvidia GPU Power Limit
+  After=nvidia-persistenced.service
+  Wants=nvidia-persistenced.service
+
   [Service]
   Type=oneshot
   User=root

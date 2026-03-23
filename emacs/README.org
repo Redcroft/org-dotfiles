@@ -44,42 +44,42 @@ for a cleaner, minimalist interface.
 ** Elpaca
 I prefer to use [[https://github.com/progfolio/elpaca][Elpaca]] for package management. I can load packages from git directly, but also async load packages. I also use Elpaca-try quite often to just test packages.
 #+begin_src emacs-lisp
-  (defvar elpaca-installer-version 0.11)
+  (defvar elpaca-installer-version 0.12)
   (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
   (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
-  (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+  (defvar elpaca-sources-directory (expand-file-name "sources/" elpaca-directory))
   (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-  				    :ref nil :depth 1 :inherit ignore
-  				    :files (:defaults "elpaca-test.el" (:exclude "extensions"))
-  				    :build (:not elpaca--activate-package)))
-  (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
-  	     (build (expand-file-name "elpaca/" elpaca-builds-directory))
-  	     (order (cdr elpaca-order))
-  	     (default-directory repo))
+                                :ref nil :depth 1 :inherit ignore
+                                :files (:defaults "elpaca-test.el" (:exclude "extensions"))
+                                :build (:not elpaca-activate)))
+  (let* ((repo  (expand-file-name "elpaca/" elpaca-sources-directory))
+         (build (expand-file-name "elpaca/" elpaca-builds-directory))
+         (order (cdr elpaca-order))
+         (default-directory repo))
     (add-to-list 'load-path (if (file-exists-p build) build repo))
     (unless (file-exists-p repo)
       (make-directory repo t)
       (when (<= emacs-major-version 28) (require 'subr-x))
       (condition-case-unless-debug err
-  	      (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-  			((zerop (apply #'call-process `("git" nil ,buffer t "clone"
-  							,@(when-let* ((depth (plist-get order :depth)))
-  							    (list (format "--depth=%d" depth) "--no-single-branch"))
-  							,(plist-get order :repo) ,repo))))
-  			((zerop (call-process "git" nil buffer t "checkout"
-  					      (or (plist-get order :ref) "--"))))
-  			(emacs (concat invocation-directory invocation-name))
-  			((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-  					      "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-  			((require 'elpaca))
-  			((elpaca-generate-autoloads "elpaca" repo)))
-  		  (progn (message "%s" (buffer-string)) (kill-buffer buffer))
-  		(error "%s" (with-current-buffer buffer (buffer-string))))
-  	    ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+          (if-let* ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+                    ((zerop (apply #'call-process `("git" nil ,buffer t "clone"
+                                                    ,@(when-let* ((depth (plist-get order :depth)))
+                                                        (list (format "--depth=%d" depth) "--no-single-branch"))
+                                                    ,(plist-get order :repo) ,repo))))
+                    ((zerop (call-process "git" nil buffer t "checkout"
+                                          (or (plist-get order :ref) "--"))))
+                    (emacs (concat invocation-directory invocation-name))
+                    ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+                                          "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+                    ((require 'elpaca))
+                    ((elpaca-generate-autoloads "elpaca" repo)))
+              (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+            (error "%s" (with-current-buffer buffer (buffer-string))))
+        ((error) (warn "%s" err) (delete-directory repo 'recursive))))
     (unless (require 'elpaca-autoloads nil t)
       (require 'elpaca)
       (elpaca-generate-autoloads "elpaca" repo)
-      (load "./elpaca-autoloads")))
+      (let ((load-source-file-function nil)) (load "./elpaca-autoloads"))))
   (add-hook 'after-init-hook #'elpaca-process-queues)
   (elpaca `(,@elpaca-order))
 
@@ -1089,21 +1089,18 @@ https://bholten.github.io/posts/blogging_with_emacs.html
 *** Mise
 #+begin_src emacs-lisp
   (use-package mise
+    :ensure t
     :demand t
     :config
     (global-mise-mode 1)
+    (setq mise-update-on-eshell-directory-change t)
+
+    ;; Fix: Wrap the call so it passes the current buffer
+    (add-hook 'find-file-hook (lambda () (interactive) (mise-update-buffer (current-buffer))))
     
-    ;; Enable all auto-update options
-    (setq mise-update-on-eshell-directory-change t))
-    
-    ;; ;; Force mise to update when changing directories or opening files
-    ;; (add-hook 'find-file-hook #'mise-update-buffer)
-    ;; (add-hook 'eshell-directory-change-hook #'mise-update-buffer)
-    
-    ;; ;; Also update after project switch if using project.el or projectile
-    ;; (with-eval-after-load 'project
-    ;;   (add-hook 'project-switch-hook #'mise-update-buffer))
-    ;;)
+    ;; Do the same for project switching if you use it
+    (with-eval-after-load 'project
+      (add-hook 'project-switch-hook (lambda () (mise-update-buffer (current-buffer))))))
 #+end_src
 
 *** Move Text
@@ -1564,15 +1561,16 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   ;;   (catppuccin-flavor 'mocha))
   (use-package doom-themes :ensure (:wait t))
   ;; (use-package base16-theme :ensure (:wait t))
+  ;  (use-package gruvbox-theme :ensure (:wait t))
 
   (global-set-key (kbd "<f5>") #'my/toggle-theme)
 
   (set-face-attribute 'default nil
-    		    :family "Aporetic Sans Mono"
-    		    :height 120
+    		    :family "CaskaydiaCove Nerd Font"
+    		    :height 110
     		    :weight 'regular)
 
-  (defvar my/themes '(doom-horizon doom-one-light)
+  (defvar my/themes '(doom-tomorrow-night doom-tomorrow-day)
     "List of two themes to toggle between. First is light, second is dark.")
 
   (defvar my/current-theme (car my/themes)

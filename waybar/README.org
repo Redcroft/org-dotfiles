@@ -12,7 +12,7 @@
     "reload_style_on_change": true,
     "modules-left": ["hyprland/workspaces"],
     "modules-center": ["clock"],
-    "modules-right": ["tray", "pulseaudio", "cpu", "memory", "battery"],
+    "modules-right": ["pulseaudio", "cpu", "memory", "battery"],
     
     "clock": {
       "format": "{:%I:%M:%S %p}",
@@ -23,10 +23,6 @@
           "today": "<span color='#fAfBfC'><b>{}</b></span>"
         }
       },
-      "actions": {
-        "on-click-right": "shift_down",
-        "on-click": "shift_up"
-      }
     },
     "battery": {
       "interval":30,
@@ -65,11 +61,11 @@
       "on-click": "pavucontrol"
     },
     "cpu": {
-      "format": " 󰻠 {usage}% ",
+      "format": " {usage}% ",
       "tooltip": true
     },
     "memory": {
-      "format": "   {percentage}%"
+      "format": " {percentage}%"
     },
     "temperature": {
       "critical-threshold": 80,
@@ -84,98 +80,86 @@
 
 #+begin_src css :tangle "~/.config/waybar/style.css"
   ,* {
-    font-size: 12px;
-    font-family: "VictorMono Nerd Font";
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+    font-family: Ioskeley Mono;
+    font-size: 15px;
+    font-weight: 800;
+    color: #727272;
   }
 
   window#waybar {
-    all: unset;
+    background-color: rgba(0,0,0,1.0);
+    transition: all 0.3s ease-in-out;
   }
 
-  .modules-left, .modules-center, .modules-right {
-    padding: 5px;
-    background: #3c3836;
-    border-radius: 10px;
+  window#waybar.hidden {
+    opacity: 0.0;
   }
 
-  .modules-left   { margin: 5px 0 0 5px; }
-  .modules-center { margin: 5px 0 0 0; padding: 5px 15px; }
-  .modules-right  { margin: 5px 5px 0 0; padding: 5px 15px; }
-
-  tooltip {
-    background: alpha(#000000, 1);
-    border-radius: 10px;
-    color: #ebdbb2;
+  #workspaces {
+    background-color: transparent;
   }
-
-  #clock:hover, 
-  #window:hover, 
-  #battery:hover, 
-  #cpu:hover, 
-  #memory:hover, 
-  #temperature:hover {
-    color: #458588;
-  }
-
-  #clock, #battery, #cpu, #memory, #temperature {
-    transition: color 0.3s ease;
-    color: #ebdbb2;
-  }
-
-  #clock { padding: 0; }
-
-  #window { padding: 0 10px; }
-
-  #workspaces { padding: 0 10px; }
 
   #workspaces button {
-    all: unset;
-    padding: 0 5px;
-    color: alpha(#ebdbb2, 0.27);
-    transition: color 0.2s ease;
-  }
-
-  #workspaces button:hover {
-    color: #689d61;
+    all: initial;
+    /* Remove GTK theme values (waybar #1351) */
+    min-width: 0;
+    /* Fix weird spacing in materia (waybar #450) */
+    box-shadow: inset 0 -3px transparent;
+    /* Use box-shadow instead of border so the text isn't offset */
+    padding: 3px 8px;
+    margin: 3px 3px;
+    border-radius: 4px;
+    background-color: #1e1e2e;
   }
 
   #workspaces button.active {
-    color: #689d61;
+
+    background-color: #323232;
   }
 
-  #workspaces button.empty {
-    color: transparent;
+  #workspaces button:hover {
+    box-shadow: inherit;
+    text-shadow: inherit;
+    color: #1e1e2e;
+    background-color: #cdd6f4;
   }
 
-  #workspaces button.empty:hover {
-  }
-
-  #workspaces button.empty.active {
-    color: #ebdbb2;
+  #workspaces button.urgent {
+    background-color: #f38ba8;
   }
 
   #battery {
-    color: #8ec07c;
-    padding: 0 20px;
+    background-color: #f38ba8;
+  }
+
+  #battery.warning,
+  #battery.critical,
+  #battery.urgent {
+    background-color: #ff0000;
+    color: #FFFF00;
   }
 
   #battery.charging {
-    color: #8ec07c;
+    background-color: #a6e3a1;
+    color: #181825;
   }
 
-  #battery.warning:not(.charging) {
-    color: #fabd2f;
+  #backlight {
+    background-color: #fab387;
   }
 
-  #battery.critical:not(.charging) {
-    color: #fb4934;
-    animation: blink 0.5s linear infinite alternate;
+  tooltip {
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #131822;
   }
 
-  #cpu, #memory, #temperature { padding: 0 5px; }
-
-  #custom-power {
-    color: #fb4934;
+  tooltip label {
+    padding: 5px;
+    background-color: #131822;
   }
 #+end_src
 

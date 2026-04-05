@@ -8,20 +8,20 @@
 * Config
 
 #+begin_src conf
-  font-family = "Aporetic Sans Mono"
-  font-size = 13
-  theme = Horizon
+  font-family = "Ioskeley Mono"
+  font-size = 12
+  font-style = "Medium"
+  theme = Aura
   quick-terminal-position = center
   quick-terminal-size = 60%,60%
 
   window-padding-x = 6
   window-padding-y = 6
-
-  initial-window = false
-  quit-after-last-window-closed = false
 #+end_src
 
 #+begin_src conf :tangle no
+  initial-window = false
+  quit-after-last-window-closed = false
   keybind = global:super+minus=toggle_quick_terminal
 #+end_src
 

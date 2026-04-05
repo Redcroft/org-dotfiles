@@ -8,7 +8,11 @@
 * Mako
 
 #+begin_src conf :tangle "~/.config/mako/config"
-  default-timeout = 5
+  default-timeout=5
+  max-history=5
+  sort=-time
+  icon-path=/usr/share/icons/Adwaita/symbolic/status
+  max-icon-size=32
 
   # Colors
   background-color=#21202e
@@ -18,4 +22,15 @@
 
   [urgency=high]
   border-color=#ffca85
+
+  [app-name=osd]
+  group-by=none
+  border-color=#a277ff
+  background-color=#000000
+  text-color=#727272
+  default-timeout=1000
+  anchor=center
+  width=300
+  height=200
+  text-alignment=center
 #+end_src

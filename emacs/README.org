@@ -120,6 +120,9 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
       (interactive)
       (find-file "~/.repos/org-dotfiles/emacs/README.org"))
     (setq-default display-fill-column-indicator-character ?|)
+    (setq-default Xft.rgba "none")
+    (setq-default Xft.hintstyle "hintslight")
+    (setq-default Xft.antialias "1")
     :custom
     (byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
     (byte-compile--use-old-handlers nil)
@@ -145,6 +148,9 @@ Configure base emacs with use-package as i find it cleaner, make sure that ~ensu
     (line-spacing 0.15)
     (truncate-lines t)
     (truncate-partial-width-windows nil)
+    (pixel-scroll-precision-mode nil)
+    (scroll-step 1)
+    (scroll-conservatively 10000)
     (x-stretch-cursor nil))
 #+end_src
 *** Epa
@@ -1559,18 +1565,18 @@ https://bholten.github.io/posts/blogging_with_emacs.html
   ;; (use-package catppuccin-theme :ensure (:wait t)
   ;;   :custom
   ;;   (catppuccin-flavor 'mocha))
-  (use-package doom-themes :ensure (:wait t))
-  ;; (use-package base16-theme :ensure (:wait t))
-  ;  (use-package gruvbox-theme :ensure (:wait t))
+  ;; (use-package doom-themes :ensure (:wait t))
+  (use-package base16-theme :ensure (:wait t))
+  ;; (use-package gruvbox-theme :ensure (:wait t))
 
   (global-set-key (kbd "<f5>") #'my/toggle-theme)
 
   (set-face-attribute 'default nil
-    		    :family "CaskaydiaCove Nerd Font"
+    		    :family "Ioskeley Mono:antialias=gray:hinting=true:hintstyle=hintslight"
     		    :height 110
-    		    :weight 'regular)
+    		    :weight 'medium)
 
-  (defvar my/themes '(doom-tomorrow-night doom-tomorrow-day)
+  (defvar my/themes '(aura base16-catppuccin-latte)
     "List of two themes to toggle between. First is light, second is dark.")
 
   (defvar my/current-theme (car my/themes)
@@ -1625,8 +1631,8 @@ https://bholten.github.io/posts/blogging_with_emacs.html
     (blend color "#FFFFFF" (- 1 alpha)))
 
   (let*
-      ((bg      "#21202e")
-       (bg-alt  "#1c1b27")
+      ((bg      "#15141b")
+       (bg-alt  "#323232")
        (fg      "#edecee")
        (fg-alt  "#e1e0e2")
 

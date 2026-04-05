@@ -7,74 +7,80 @@
 
 #+begin_src json :tangle "~/.config/waybar/config"
   {
-    "layer": "top",
-    "position": "top",
-    "reload_style_on_change": true,
-    "modules-left": ["hyprland/workspaces"],
-    "modules-center": ["clock"],
-    "modules-right": ["pulseaudio", "cpu", "memory", "battery"],
-    
-    "clock": {
-      "format": "{:%I:%M:%S %p}",
-      "interval": 1,   
-      "tooltip-format": "<tt>{calendar}</tt>",
-      "calendar": {
-        "format": {
-          "today": "<span color='#fAfBfC'><b>{}</b></span>"
-        }
+      "layer": "top",
+      "position": "top",
+      "reload_style_on_change": true,
+      "modules-left": ["hyprland/workspaces"],
+      "modules-center": ["clock"],
+      "modules-right": ["pulseaudio", "custom/bl", "cpu", "memory", "battery"],
+
+      "custom/bl": {
+  	"exec": "ddcutil getvcp 10 | awk '{print $9}' | sed 's/,/%/g'",
+  	"format": " 󰃠 {} ",
+  	"interval": 60,
       },
-    },
-    "battery": {
-      "interval":30,
-      "states": {
-        "good": 95,
-        "warning": 30,
-        "critical": 20
+      
+      "clock": {
+  	"format": "{:%I:%M %p}",
+  	"interval": 1,   
+  	"tooltip-format": "<tt>{calendar}</tt>",
+  	"calendar": {
+  	    "format": {
+  		"today": "<span color='#fAfBfC'><b>{}</b></span>"
+  	    }
+  	},
       },
-      "format": " {icon} {capacity}% {time} ",
-      "format-charging": " 󰂄 {capacity}% ",
-      "format-plugged": " 󰂄  {capacity}% ",
-      "format-alt": " {icon} {time} ",
-      "format-icons": [
-        "󰁻",
-        "󰁼",
-        "󰁾",
-        "󰂀",
-        "󰂂",
-        "󰁹"
-      ],
-    },
-    "pulseaudio": {
-      "format": "  {icon} {volume}% ",
-      "format-bluetooth": "  {icon} {volume}% ",
-      "format-muted": "",
-      "format-icons": {
-        "headphone": " ",
-        "hands-free": " ",
-        "headset": " ",
-        "phone": " ",
-        "portable": " ",
-        "car": " ",
-        "default": [" ", " "]
+      "battery": {
+  	"interval":30,
+  	"states": {
+  	    "good": 95,
+  	    "warning": 30,
+  	    "critical": 20
+  	},
+  	"format": " {icon} {capacity}% {time} ",
+  	"format-charging": " 󰂄 {capacity}% ",
+  	"format-plugged": " 󰂄  {capacity}% ",
+  	"format-alt": " {icon} {time} ",
+  	"format-icons": [
+  	    "󰁻",
+  	    "󰁼",
+  	    "󰁾",
+  	    "󰂀",
+  	    "󰂂",
+  	    "󰁹"
+  	],
       },
-      "scroll-step": 1,
-      "on-click": "pavucontrol"
-    },
-    "cpu": {
-      "format": " {usage}% ",
-      "tooltip": true
-    },
-    "memory": {
-      "format": " {percentage}%"
-    },
-    "temperature": {
-      "critical-threshold": 80,
-      "format": "  ",
-    },
-    "tray": {
-      "icon-size": 14,
-      "spacing": 10
-    },
+      "pulseaudio": {
+  	"format": "{icon}{volume}% ",
+  	"format-bluetooth": "  {icon} {volume}% ",
+  	"format-muted": "",
+  	"format-icons": {
+  	    "headphone": " ",
+  	    "hands-free": " ",
+  	    "headset": " ",
+  	    "phone": " ",
+  	    "portable": " ",
+  	    "car": " ",
+  	    "default": [" ", " "]
+  	},
+  	"scroll-step": 1,
+  	"on-click": "pavucontrol"
+      },
+      "cpu": {
+  	"format": "  {usage}% ",
+  	"tooltip": true
+      },
+      "memory": {
+  	"format": "  {percentage}%"
+      },
+      "temperature": {
+  	"critical-threshold": 80,
+  	"format": "  ",
+      },
+      "tray": {
+  	"icon-size": 14,
+  	"spacing": 10
+      },
   }
 #+end_src
 

@@ -28,9 +28,34 @@
   border-color=#a277ff
   background-color=#000000
   text-color=#727272
-  default-timeout=1000
+  default-timeout=100
   anchor=center
   width=300
   height=200
   text-alignment=center
+#+end_src
+
+#+begin_src bash :tangle "~/.local/bin/osd.sh" :tangle-mode (identity #o777)
+#!/bin/bash
+
+MESSAGE=$1
+ICON_NAME=$2
+ICON_PATH="/usr/share/icons/Adwaita/symbolic/status/${ICON_NAME}.svg"
+
+# Fallback to Legacy PNG
+if [ ! -f "$ICON_PATH" ]; then
+    ICON_PATH="/usr/share/icons/AdwaitaLegacy/32x32/legacy/${ICON_NAME}.png"
+fi
+
+makoctl dismiss -a "osd"
+
+# THE GDBUS CALL
+# Arguments: (app_name, replace_id, app_icon, summary, body, actions, hints, expire_timeout)
+gdbus call --session \
+    --dest org.freedesktop.Notifications \
+    --object-path /org/freedesktop/Notifications \
+    --method org.freedesktop.Notifications.Notify \
+    "osd" 999 "$ICON_PATH" "$MESSAGE" "" "[]" \
+    "{\"x-mako-stack-tag\": <'osd-notification'>, \"transient\": <true>}" 500 > /dev/null
+
 #+end_src

@@ -392,16 +392,16 @@
   accent_secondary = 0xFF83a598
   h1_size = 19
   h2_size = 15
-  h3_size = 13
+  h3_size = 13v
   font_size = 11
   small_font_size = 10
-  font_family = IosevkaTerm Nerd Font
-  font_family_monospace = IosevkaTerm Nerd Font
+  font_family = Ioskeley Mono
+  font_family_monospace = Ioskeley Mono
   icon_theme = Flatery-Dark
 #+end_src
 
 * Bemenu
 #+begin_src bash :tangle "~/.local/bin/mybemenu" :tangle-mode (identity #o777) :mkdirp yes
   #!/bin/bash
-  bemenu-run --fn "Aporetic Sans Mono 11" --fb "#1e1e2e" --ff "#cdd6f4" --nb "#1e1e2e" --nf "#cdd6f4" --tb "#1e1e2e" --hb "#1e1e2e" --tf "#f38ba8" --hf "#f9e2af" --af "#cdd6f4" --ab "#1e1e2e"
+  bemenu-run --fn "Ioskeley Mono 12" --fb "#000000" --ff "#cdd6f4" --nb "#1e1e2e" --nf "#cdd6f4" --tb "#1e1e2e" --hb "#1e1e2e" --tf "#f38ba8" --hf "#f9e2af" --af "#cdd6f4" --ab "#1e1e2e"
 #+end_src

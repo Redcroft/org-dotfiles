@@ -89,9 +89,9 @@
     border: none;
     border-radius: 0;
     min-height: 0;
-    font-family: Ioskeley Mono;
-    font-size: 15px;
-    font-weight: 800;
+    font-family: BigBlueTermPlus Nerd Font;
+    font-size: 14px;
+    font-weight: 600;
     color: #727272;
   }
 

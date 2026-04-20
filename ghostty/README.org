@@ -8,7 +8,7 @@
 * Config
 
 #+begin_src conf
-  font-family = "Ioskeley Mono"
+  font-family = "JetBrainsMono Nerd Font"
   font-size = 12
   font-style = "Medium"
   theme = Aura
@@ -17,6 +17,8 @@
 
   window-padding-x = 6
   window-padding-y = 6
+
+  window-decoration = none
 #+end_src
 
 #+begin_src conf :tangle no

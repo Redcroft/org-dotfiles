@@ -6,7 +6,6 @@
 #+auto_tangle: t
 
 * Autostart
-
 ** Init
 
 #+begin_src bash :tangle "~/.config/herbstluftwm/autostart" :shebang "#!/bin/bash"
@@ -30,7 +29,7 @@
   hc keybind $Mod-Escape reload
   hc keybind $Mod-Shift-q close
 
-  hc keybind $Mod-Return spawn alacritty
+  hc keybind $Mod-Return spawn ghostty
   hc keybind $Mod-Shift-w spawn zen-browser
   hc keybind $Mod-Shift-e spawn emacs
   hc keybind $Mod-d spawn rofi -show run
@@ -39,6 +38,12 @@
   hc keybind XF86AudioMute spawn pactl set-sink-mute @DEFAULT_SINK@ toggle
   hc keybind XF86AudioRaiseVolume spawn pactl set-sink-volume @DEFAULT_SINK@ +2%
   hc keybind XF86AudioLowerVolume spawn pactl set-sink-volume @DEFAULT_SINK@ -2%
+
+  hc keybind XF86MonBrightnessUp spawn ddcutil setvcp 10 + 5
+  hc keybind XF86MonBrightnessDown spawn ddcutil setvcp 10 - 5
+  hc keybind $Mod-XF86MonBrightnessUp spawn ddcutil setvcp 10 30
+  hc keybind $Mod-XF86MonBrightnessDown spawn ddcutil setvcp 10 5
+  hc keybind $Mod-Shift-XF86MonBrightnessUp spawn ddcutil setvcp 10 100
 
   hc keybind $Mod-b     focus left
   hc keybind $Mod-n     focus down
@@ -124,34 +129,34 @@
   hc set frame_border_active_color "#15141b"
   hc set frame_border_normal_color "#15141b"
   hc set frame_bg_normal_color "#15141b"
-  hc set frame_bg_active_color "#a277ff"
+  hc set frame_bg_active_color "#454545"
   hc set frame_border_width 0
   hc set show_frame_decorations 'focused_if_multiple'
   hc set frame_bg_transparent on
   hc set frame_transparent_width 1
   hc set frame_gap 6
 
-  hc attr theme.title_height 10
+  hc attr theme.title_height 12
   hc attr theme.title_when multiple_tabs
   hc attr theme.floating.title_when multiple_tabs
-  hc attr theme.title_font 'GohuFont uni11 Nerd Font:size=8:antialias=false:hinting=false'
+  hc attr theme.title_font 'JetBrainsMono Nerd Font-8'
   hc attr theme.title_depth 3
-  hc attr theme.active.color "#a277ff"
-  hc attr theme.title_color "#15141b"
+  hc attr theme.active.color "#727272"
+  hc attr theme.title_color "#111111"
   hc attr theme.normal.color "#15141b"
   hc attr theme.urgent.color "#f57373"
   hc attr theme.tab_color "#15141b"
   hc attr theme.active.tab_color "#15141b"
   hc attr theme.active.tab_outer_color "#15141b"
-  hc attr theme.active.tab_title_color "#eeffff"
-  hc attr theme.normal.title_color "#eeffff"
+  hc attr theme.active.tab_title_color "#ababab"
+  hc attr theme.normal.title_color "#ababab"
   hc attr theme.inner_width 1
   hc attr theme.inner_color black
   hc attr theme.border_width 1
   hc attr theme.floating.border_width 1
   hc attr theme.floating.outer_width 1
-  hc attr theme.floating.outer_color "#a277ff"
-  hc attr theme.active.inner_color "#a277ff"
+  hc attr theme.floating.outer_color "#727272"
+  hc attr theme.active.inner_color "#727272"
   hc attr theme.urgent.inner_color "#f57373"
   hc attr theme.normal.inner_color "#15141b"
   # copy inner color to outer_color
@@ -203,16 +208,15 @@
   #sudo zpool import -fa
   #sudo zfs mount photos
 
-  ~/.config/herbstluftwm/panel.sh &
+  # ~/.config/herbstluftwm/panel.sh &
   /usr/lib/polkit-kde-authentication-agent-1 &
   #picom &
-  dunst &
-  udiskie &
-  xsetroot -solid '#657'
-  hsetroot -solid '#657'
-  xset s off
-  xset -dpms
+  killall dunst; dunst &
+  killall udiskie; udiskie &
+  xsetroot -solid '#000000'
+  hsetroot -solid '#000000'
 #+end_src
+
 
 * HC-Scratch
 
@@ -286,13 +290,13 @@
 #+begin_src bash :tangle "~/.config/herbstluftwm/panel.sh" :tangle-mode (identity #o777)
   #!/bin/bash
 
-  FG="#D5D8DA"
-  BG="#1C1E26"
-  ACCENT="#8f93db"
+  FG="#454545"
+  BG="#000000"
+  ACCENT="#454545"
   URGENT="#BF616A"
   EMPTY="#555555"
   #FONT="-gohu-gohufont-medium-r-normal--11-*-*-*-*-*-*-*"
-  FONT="CaskaydiaCover Nerd Font"
+  FONT="JetBrainsMono Nerd Font-10"
 
   C_BUSY="%{B$ACCENT}%{F$BG}"
   C_FREE="%{F$FG}"

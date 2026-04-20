@@ -15,10 +15,10 @@
     position = 0x0
     scale = 1
     bitdepth = 10
-    vrr = 0
+    vrr = 1
     cm = auto
   }
-  #exec-once = openrgb --profile "solid-orange.orp"
+  exec-once = openrgb --profile "off.orp"
 #+end_src
 
 #+begin_src conf :tangle (if (string= system-name "red") "~/.config/hypr/hyprland.conf" "")

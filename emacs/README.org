@@ -213,6 +213,25 @@
     (auto-save-file-name-transforms
      `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
 #+end_src
+** Rainbow Mode
+#+begin_src emacs-lisp
+  (use-package rainbow-mode
+    :hook (prog-mode . rainbow-mode))
+#+end_src
+
+** Search
+#+begin_src emacs-lisp
+  ;; ============================================================
+  ;; Search and Navigation — Consult
+  ;; ============================================================
+  (use-package consult
+    :bind (("C-s"   . consult-line)
+           ("M-y"   . consult-yank-pop)
+           ("C-x b" . consult-buffer))
+    :init
+    (setq register-preview-delay    0.5
+          register-preview-function #'consult-register-format))
+#+end_src
 ** Tree-sitter
 #+begin_src emacs-lisp
   ;; ============================================================
@@ -317,19 +336,6 @@
     :after (embark consult)
     :hook (embark-collect-mode . consult-preview-at-point-mode))
 #+end_src
-** Search
-#+begin_src emacs-lisp
-  ;; ============================================================
-  ;; Search and Navigation — Consult
-  ;; ============================================================
-  (use-package consult
-    :bind (("C-s"   . consult-line)
-           ("M-y"   . consult-yank-pop)
-           ("C-x b" . consult-buffer))
-    :init
-    (setq register-preview-delay    0.5
-          register-preview-function #'consult-register-format))
-#+end_src
 ** Languages
 #+begin_src emacs-lisp
   ;; ============================================================
@@ -365,10 +371,10 @@
   (use-package nerd-icons)
 
   (use-package doom-themes
-    :config (load-theme 'doom-horizon t))
+    :config (load-theme 'doom-ayu-mirage t))
 
   (use-package doom-modeline
     :init (doom-modeline-mode 1))
 
-  (set-face-attribute 'default nil :font "MxPlus AST PremiumExec-15:antialias=false")
+  (set-face-attribute 'default nil :font "IosevkaTerm Nerd Font-13:weight=SemiBold")
 #+end_src

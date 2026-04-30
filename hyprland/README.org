@@ -34,7 +34,7 @@
 #+begin_src conf :tangle "~/.config/hypr/hyprland.conf"
   $terminal = uwsm app -- ghostty
   $menu = uwsm app -- $HOME/.local/bin/mybemenu
-  $web = uwsm app -- zen-browser
+  $web = uwsm app -- brave-origin-nightly
   $editor = uwsm app -- emacs
 
   env = HYPRCURSOR_THEME,Posy_Cursor_Black

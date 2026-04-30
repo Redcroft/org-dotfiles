@@ -9,10 +9,11 @@
 ** Visuals
 #+begin_src emacs-lisp :tangle ~/.emacs.d/early-init.el
   ;;; early-init.el --- Early initialization  -*- lexical-binding: t; -*-
-  
+
   (push '(menu-bar-lines . 0) default-frame-alist)
   (push '(tool-bar-lines . 0) default-frame-alist)
-  (push '(vertical-scroll-bars) default-frame-alist)
+  (push '(vertical-scroll-bars 0) default-frame-alist)
+  (push '(background-color . "#000000") default-frame-alist)
 
   (defvar default-file-name-handler-alist file-name-handler-alist)
   (setq file-name-handler-alist nil)
@@ -20,13 +21,22 @@
 #+end_src
 ** GC
 #+begin_src emacs-lisp :tangle ~/.emacs.d/early-init.el
-  (setq gc-cons-threshold most-positive-fixnum)
+  ;; early-init.el
+  (setq gc-cons-threshold most-positive-fixnum
+        file-name-handler-alist nil
+        package-enable-at-startup nil)
+
   (add-hook 'emacs-startup-hook
             (lambda ()
               (setq gc-cons-threshold (* 16 1024 1024)
+                    gc-cons-percentage 0.1
                     file-name-handler-alist default-file-name-handler-alist)))
-
-  (setq package-enable-at-startup nil)
+#+end_src
+** Native Comp
+#+begin_src emacs-lisp :tangle ~/.emacs.d/early-init.el
+  (when (native-comp-available-p)
+    (setq native-comp-deferred-compilation t
+          native-comp-jit-compilation t))
 #+end_src
 * Init
 ** Elpaca
@@ -81,43 +91,53 @@
   (elpaca elpaca-use-package
     (elpaca-use-package-mode)
     (setq use-package-always-ensure t))
-
-  (elpaca-wait)
 #+end_src
 ** Core
 #+begin_src emacs-lisp
-    ;; ============================================================
-    ;; Core / built-ins
-    ;; ============================================================
-    (use-package emacs
-      :ensure nil
-      :hook
-      (after-init . (lambda ()
-                      (keyboard-translate ?\C-x ?\C-t)
-                      (keyboard-translate ?\C-t ?\C-x)))
-      :init
-      (setq apropos-do-all t
+  ;; ============================================================
+  ;; Core / built-ins
+  ;; ============================================================
+  (use-package emacs
+    :ensure nil
+    :bind (("C-x r s" . replace-string)
+  	 ("C-c r" . eval-buffer)
+    	 ("M-#" . comment-or-uncomment-region))
+    :hook
+    (after-init . (lambda ()
+                    (keyboard-translate ?\C-x ?\C-t)
+                    (keyboard-translate ?\C-t ?\C-x)))
+    :init
+    (load-theme 'modus-vivendi t)
+    (recentf-mode 1)
+    (setq recentf-max-saved-items 500)
+    (save-place-mode 1)
+    (setq apropos-do-all t
     	custom-file (concat user-emacs-directory "custom.el")
     	custom-safe-themes t
     	inhibit-startup-screen t
     	use-short-answers t)
-      (column-number-mode 1)
-      (global-display-line-numbers-mode 1)
-      (setq major-mode-remap-alist
-            '((js-mode     . js-ts-mode)
-              (bash-mode   . bash-ts-mode)
-              (json-mode   . json-ts-mode)
-  	    (svelte-mode . svelte-ts-mode))))
+    (column-number-mode 1)
+    (setq display-line-numbers-type 'relative)   ; optional
+    (dolist (mode '(term-mode shell-mode eshell-mode eww-mode org-mode))
+      (add-hook (intern (concat (symbol-name mode) "-hook"))
+                (lambda () (display-line-numbers-mode -1))))
+    (setq major-mode-remap-alist
+          '((js-ts-mode     . js-mode)
+            (bash-ts-mode   . bash-mode)
+            (json-ts-mode   . json-mode)
+    	  (python-ts-mode . python-mode)
+    	  (rust-ts-mode   . rustic-mode)
+    	  (svelte-ts-mode . svelte-mode)))
+    )
 
-    (use-package savehist
-      :ensure nil
-      :init (savehist-mode))
+  (use-package savehist
+    :ensure nil
+    :init (savehist-mode))
 
 
-    (use-package which-key
-      :ensure nil
-      :init (which-key-mode)
-      :custom (which-key-idle-delay 0.5))
+  (use-package which-key
+    :init (which-key-mode)
+    :custom (which-key-idle-delay 0.5))
 #+end_src
 ** Workspaces
 #+begin_src emacs-lisp
@@ -142,7 +162,7 @@
 ** Org
 #+begin_src emacs-lisp
   ;; ============================================================
-  ;; Tree-sitter (Built-in)
+  ;; Org-Mode (Built-in)
   ;; ============================================================
   (use-package org
     :ensure nil
@@ -172,6 +192,7 @@
   (use-package transient)
 
   (use-package magit
+    :defer t
     :bind ("C-x g" . magit-status)
     :custom (magit-diff-refine-hunk t))
 #+end_src
@@ -182,7 +203,6 @@
   ;; ============================================================
   (use-package mise
     :ensure t
-    :demand t
     :config
     (global-mise-mode 1)
     (setq mise-update-on-eshell-directory-change t)
@@ -205,13 +225,24 @@
 ** No Littering
 #+begin_src emacs-lisp
   ;; ============================================================
-  ;; No Littesing
+  ;; No Littering
   ;; ============================================================
   (use-package no-littering
-    :demand t
     :custom
+    ;; This handles the #auto-save# files (which you already have)
     (auto-save-file-name-transforms
-     `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
+     `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+    
+    ;; This handles the backup~ files
+    (backup-directory-alist
+     `((".*" . ,(no-littering-expand-var-file-name "backup/"))))
+
+    (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
+    
+    (delete-old-versions t)
+    (kept-new-versions 6)
+    (kept-old-versions 2)
+    (version-control t))
 #+end_src
 ** Rainbow Mode
 #+begin_src emacs-lisp
@@ -232,36 +263,7 @@
     (setq register-preview-delay    0.5
           register-preview-function #'consult-register-format))
 #+end_src
-** Tree-sitter
-#+begin_src emacs-lisp
-  ;; ============================================================
-  ;; Tree-sitter (Built-in)
-  ;; ============================================================
-  (use-package treesit
-    :ensure nil
-    :custom
-    (treesit-font-lock-level 4)
-    :config
-    (setq treesit-language-source-alist
-  	'((c          "https://github.com/tree-sitter/tree-sitter-c")
-            (cpp        "https://github.com/tree-sitter/tree-sitter-cpp")
-            (css        "https://github.com/tree-sitter/tree-sitter-css")
-            (go         "https://github.com/tree-sitter/tree-sitter-go")
-            (javascript "https://github.com/tree-sitter/tree-sitter-javascript")
-            (json       "https://github.com/tree-sitter/tree-sitter-json")
-            (python     "https://github.com/tree-sitter/tree-sitter-python")
-            (rust       "https://github.com/tree-sitter/tree-sitter-rust")
-            (svelte     "https://github.com/tree-sitter-grammars/tree-sitter-svelte")
-            (toml       "https://github.com/tree-sitter/tree-sitter-toml")
-            (tsx        "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
-            (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
-            (zig        "https://github.com/tree-sitter-grammars/tree-sitter-zig")))
 
-    ;; Automatically install missing grammars
-    (dolist (lang treesit-language-source-alist)
-      (unless (treesit-language-available-p (car lang))
-        (treesit-install-language-grammar (car lang)))))
-#+end_src
 ** LSP
 #+begin_src emacs-lisp
   ;; ============================================================
@@ -269,10 +271,11 @@
   ;; ============================================================
   (use-package eglot
     :ensure nil
-    :hook ((bash-ts-mode   . eglot-ensure)
+    :hook ((bash-mode   . eglot-ensure)
+  	 (elixir-mode . eglot-ensure)
            (python-mode . eglot-ensure)
-           (js-ts-mode     . eglot-ensure)
-  	 (svelte-ts-mode . eglot-ensure))
+           (js-mode     . eglot-ensure)
+  	 (svelte-mode . eglot-ensure))
     :bind (:map eglot-mode-map
                 ("C-c r" . eglot-rename)
                 ("C-c f" . eglot-format-buffer))
@@ -341,6 +344,17 @@
   ;; ============================================================
   ;; Languages
   ;; ============================================================
+
+  ;; Elixir
+  (use-package elixir-mode
+    :mode (("\\.ex\\'" . elixir-mode)
+  	 ("\\.exs\\'" . elixir-mode))
+    :hook (elixir-mode . eglot-ensure)
+    :config
+    (setq elixir-indent-style 'no-argument))
+
+
+  ;; Python	
   (use-package python
     :ensure nil
     :custom
@@ -350,31 +364,47 @@
     (add-to-list 'major-mode-remap-alist '(python-ts-mode . python-mode)))
 
   (use-package reformatter
-    :ensure t
     :config
     (reformatter-define python-black
       :program "black"
       :args '("-"))
     (add-hook 'python-mode-hook #'python-black-on-save-mode))
 
-  (use-package svelte-ts-mode
+  ;; Rust
+  (use-package rustic
+    :bind (:map rustic-mode-map
+                ("M-j" . consult-eglot-symbols)
+                ("C-c C-c r" . eglot-rename))
+    :custom (rustic-lsp-client 'eglot))
+
+  ;; Svelte
+  (use-package svelte-mode
     :after eglot
-    :ensure (:host github :repo "leafOfTree/svelte-ts-mode")
     :config
-    (add-to-list 'eglot-server-programs '(svelte-ts-mode . ("svelteserver" "--stdio"))))
+    (add-to-list 'eglot-server-programs '(svelte-mode . ("svelteserver" "--stdio"))))
 #+end_src
+
 ** Aesthetics
 #+begin_src emacs-lisp
   ;; ============================================================
   ;; Aesthetics
   ;; ============================================================
-  (use-package nerd-icons)
+  (use-package nerd-icons :defer t)
 
-  (use-package doom-themes
-    :config (load-theme 'doom-ayu-mirage t))
+  (use-package moody
+    :config
+    (setq x-underline-at-descent-line t)
+    (moody-replace-mode-line-front-space)
+    (moody-replace-mode-line-buffer-identification)
+    (moody-replace-vc-mode))
 
-  (use-package doom-modeline
-    :init (doom-modeline-mode 1))
+  (use-package minions
+    :init
+    (minions-mode))
 
-  (set-face-attribute 'default nil :font "IosevkaTerm Nerd Font-13:weight=SemiBold")
+  (setq line-spacing 0.15)
+  (set-face-attribute 'default nil
+                      :family "CaskaydiaCove Nerd Font"
+                      :height 130
+                      :weight 'SemiBold)
 #+end_src

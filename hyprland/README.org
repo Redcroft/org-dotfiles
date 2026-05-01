@@ -18,7 +18,7 @@
     vrr = 1
     cm = auto
   }
-  exec-once = openrgb --profile "off.orp"
+  exec-once = uwsm app -- openrgb --profile "off.orp"
 #+end_src
 
 #+begin_src conf :tangle (if (string= system-name "red") "~/.config/hypr/hyprland.conf" "")
@@ -45,7 +45,7 @@
   exec-once = systemctl --user start hyprpolkitagent
   exec-once = uwsm app -- waybar
   exec-once = uwsm app -- ghostty --title="Scratchpad"
-  # exec-once = uwsm app -- hyprpaper
+  exec-ocnde = uwsm app -- gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
   exec-once = sleep 1 && uwsm app -- mako
   exec-once = sleep 1 && uwsm app -- udiskie
 

@@ -107,28 +107,29 @@
                     (keyboard-translate ?\C-x ?\C-t)
                     (keyboard-translate ?\C-t ?\C-x)))
     :init
-    (load-theme 'modus-vivendi t)
+    (column-number-mode -1)
+    (global-display-line-numbers-mode 1)
+    (global-prettify-symbols-mode 1)
     (recentf-mode 1)
-    (setq recentf-max-saved-items 500)
     (save-place-mode 1)
-    (setq apropos-do-all t
+    (dolist (mode '(term-mode shell-mode eshell-mode eww-mode org-mode))
+      (add-hook (intern (concat (symbol-name mode) "-hook"))
+                (lambda () (display-line-numbers-mode -1))))
+    :custom
+    (apropos-do-all t
     	custom-file (concat user-emacs-directory "custom.el")
     	custom-safe-themes t
     	inhibit-startup-screen t
     	use-short-answers t)
-    (column-number-mode 1)
-    (setq display-line-numbers-type 'relative)   ; optional
-    (dolist (mode '(term-mode shell-mode eshell-mode eww-mode org-mode))
-      (add-hook (intern (concat (symbol-name mode) "-hook"))
-                (lambda () (display-line-numbers-mode -1))))
-    (setq major-mode-remap-alist
+    (display-line-numbers-type 'visual)
+    (major-mode-remap-alist
           '((js-ts-mode     . js-mode)
             (bash-ts-mode   . bash-mode)
             (json-ts-mode   . json-mode)
     	  (python-ts-mode . python-mode)
     	  (rust-ts-mode   . rustic-mode)
     	  (svelte-ts-mode . svelte-mode)))
-    )
+    (recentf-max-saved-items 500))
 
   (use-package savehist
     :ensure nil
@@ -184,6 +185,73 @@
     :after (org)
     :hook (org-mode . org-modern-mode))
 #+end_src
+** Ligatures
+#+begin_src emacs-lisp
+  (use-package ligature
+    :config
+    (ligature-set-ligatures 't '("www"))
+    (ligature-set-ligatures 'eww-mode '("ff" "fi" "ffi"))
+    (ligature-set-ligatures 'prog-mode
+                          '(;; == === ==== => =| =>>=>=|=>==>> ==< =/=//=// =~
+                            ;; =:= =!=
+                            ("=" (rx (+ (or ">" "<" "|" "/" "~" ":" "!" "="))))
+                            ;; ;; ;;;
+                            (";" (rx (+ ";")))
+                            ;; && &&&
+                            ("&" (rx (+ "&")))
+                            ;; !! !!! !. !: !!. != !== !~
+                            ("!" (rx (+ (or "=" "!" "\." ":" "~"))))
+                            ;; ?? ??? ?:  ?=  ?.
+                            ("?" (rx (or ":" "=" "\." (+ "?"))))
+                            ;; %% %%%
+                            ("%" (rx (+ "%")))
+                            ;; |> ||> |||> ||||> |] |} || ||| |-> ||-||
+                            ;; |->>-||-<<-| |- |== ||=||
+                            ;; |==>>==<<==<=>==//==/=!==:===>
+                            ("|" (rx (+ (or ">" "<" "|" "/" ":" "!" "}" "\]"
+                                            "-" "=" ))))
+                            ;; \\ \\\ \/
+                            ("\\" (rx (or "/" (+ "\\"))))
+                            ;; ++ +++ ++++ +>
+                            ("+" (rx (or ">" (+ "+"))))
+                            ;; :: ::: :::: :> :< := :// ::=
+                            (":" (rx (or ">" "<" "=" "//" ":=" (+ ":"))))
+                            ;; // /// //// /\ /* /> /===:===!=//===>>==>==/
+                            ("/" (rx (+ (or ">"  "<" "|" "/" "\\" "\*" ":" "!"
+                                            "="))))
+                            ;; .. ... .... .= .- .? ..= ..<
+                            ("\." (rx (or "=" "-" "\?" "\.=" "\.<" (+ "\."))))
+                            ;; -- --- ---- -~ -> ->> -| -|->-->>->--<<-|
+                            ("-" (rx (+ (or ">" "<" "|" "~" "-"))))
+                            ;; *> */ *)  ** *** ****
+                            ("*" (rx (or ">" "/" ")" (+ "*"))))
+                            ;; www wwww
+                            ("w" (rx (+ "w")))
+                            ;; <> <!-- <|> <: <~ <~> <~~ <+ <* <$ </  <+> <*>
+                            ;; <$> </> <|  <||  <||| <|||| <- <-| <-<<-|-> <->>
+                            ;; <<-> <= <=> <<==<<==>=|=>==/==//=!==:=>
+                            ;; << <<< <<<<
+                            ("<" (rx (+ (or "\+" "\*" "\$" "<" ">" ":" "~"  "!"
+                                            "-"  "/" "|" "="))))
+                            ;; >: >- >>- >--|-> >>-|-> >= >== >>== >=|=:=>>
+                            ;; >> >>> >>>>
+                            (">" (rx (+ (or ">" "<" "|" "/" ":" "=" "-"))))
+                            ;; #: #= #! #( #? #[ #{ #_ #_( ## ### #####
+                            ("#" (rx (or ":" "=" "!" "(" "\?" "\[" "{" "_(" "_"
+                                         (+ "#"))))
+                            ;; ~~ ~~~ ~=  ~-  ~@ ~> ~~>
+                            ("~" (rx (or ">" "=" "-" "@" "~>" (+ "~"))))
+                            ;; __ ___ ____ _|_ __|____|_
+                            ("_" (rx (+ (or "_" "|"))))
+                            ;; Fira code: 0xFF 0x12
+                            ("0" (rx (and "x" (+ (in "A-F" "a-f" "0-9")))))
+                            ;; Fira code:
+                            "Fl"  "Tl"  "fi"  "fj"  "fl"  "ft"
+                            ;; The few not covered by the regexps.
+                            "{|"  "[|"  "]#"  "(*"  "}#"  "$>"  "^="))
+    (global-ligature-mode t))
+#+end_src
+
 ** Magit
 #+begin_src emacs-lisp
   ;; ============================================================
@@ -319,7 +387,7 @@
 
   (use-package nerd-icons-corfu
     :after corfu
-    :config
+    :init
     (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
 #+end_src
@@ -350,8 +418,8 @@
     :mode (("\\.ex\\'" . elixir-mode)
   	 ("\\.exs\\'" . elixir-mode))
     :hook (elixir-mode . eglot-ensure)
-    :config
-    (setq elixir-indent-style 'no-argument))
+    :custom
+    (elixir-indent-style 'no-argument))
 
 
   ;; Python	
@@ -360,11 +428,11 @@
     :custom
     (python-indent-guess-indent-offset-verbose nil)
     (python-indent-offset 4)
-    :config
+    :init
     (add-to-list 'major-mode-remap-alist '(python-ts-mode . python-mode)))
 
   (use-package reformatter
-    :config
+    :init
     (reformatter-define python-black
       :program "black"
       :args '("-"))
@@ -380,7 +448,7 @@
   ;; Svelte
   (use-package svelte-mode
     :after eglot
-    :config
+    :init
     (add-to-list 'eglot-server-programs '(svelte-mode . ("svelteserver" "--stdio"))))
 #+end_src
 
@@ -392,7 +460,7 @@
   (use-package nerd-icons :defer t)
 
   (use-package moody
-    :config
+    :init
     (setq x-underline-at-descent-line t)
     (moody-replace-mode-line-front-space)
     (moody-replace-mode-line-buffer-identification)
@@ -402,9 +470,12 @@
     :init
     (minions-mode))
 
+  (use-package kaolin-themes
+    :config (load-theme 'kaolin-valley-dark t))
+
   (setq line-spacing 0.15)
   (set-face-attribute 'default nil
                       :family "CaskaydiaCove Nerd Font"
-                      :height 130
+                      :height 120
                       :weight 'SemiBold)
 #+end_src

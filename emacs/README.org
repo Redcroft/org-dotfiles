@@ -12,7 +12,7 @@
 
   (push '(menu-bar-lines . 0) default-frame-alist)
   (push '(tool-bar-lines . 0) default-frame-alist)
-  (push '(vertical-scroll-bars 0) default-frame-alist)
+  (push '(vertical-scroll-bars nil . nil) default-frame-alist)
   (push '(background-color . "#000000") default-frame-alist)
 
   (defvar default-file-name-handler-alist file-name-handler-alist)
@@ -112,24 +112,25 @@
     (global-prettify-symbols-mode 1)
     (recentf-mode 1)
     (save-place-mode 1)
+    (scroll-bar-mode -1)
     (dolist (mode '(term-mode shell-mode eshell-mode eww-mode org-mode))
       (add-hook (intern (concat (symbol-name mode) "-hook"))
                 (lambda () (display-line-numbers-mode -1))))
-    :custom
-    (apropos-do-all t
+    :config
+    (setq apropos-do-all t
     	custom-file (concat user-emacs-directory "custom.el")
     	custom-safe-themes t
     	inhibit-startup-screen t
-    	use-short-answers t)
-    (display-line-numbers-type 'visual)
-    (major-mode-remap-alist
+    	use-short-answers t
+  	display-line-numbers-type 'visual
+  	major-mode-remap-alist
           '((js-ts-mode     . js-mode)
             (bash-ts-mode   . bash-mode)
             (json-ts-mode   . json-mode)
     	  (python-ts-mode . python-mode)
     	  (rust-ts-mode   . rustic-mode)
-    	  (svelte-ts-mode . svelte-mode)))
-    (recentf-max-saved-items 500))
+    	  (svelte-ts-mode . svelte-mode))
+  	recentf-max-saved-items 500))
 
   (use-package savehist
     :ensure nil
@@ -470,12 +471,12 @@
     :init
     (minions-mode))
 
-  (use-package kaolin-themes
-    :config (load-theme 'kaolin-valley-dark t))
+  (use-package base16-theme
+    :config (load-theme 'base16-framer t))
 
-  (setq line-spacing 0.15)
+  (setq line-spacing 0.00)
   (set-face-attribute 'default nil
-                      :family "CaskaydiaCove Nerd Font"
-                      :height 120
+                      :family "CommitMono Nerd Font"
+                      :height 110
                       :weight 'SemiBold)
 #+end_src

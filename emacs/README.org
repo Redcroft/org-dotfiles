@@ -130,7 +130,12 @@
     	  (python-ts-mode . python-mode)
     	  (rust-ts-mode   . rustic-mode)
     	  (svelte-ts-mode . svelte-mode))
-  	recentf-max-saved-items 500))
+  	recentf-max-saved-items 500
+  	indent-tabs-mode nil
+  	)
+    (electric-indent-mode 1)
+    (electric-pair-mode 1)
+    )
 
   (use-package savehist
     :ensure nil
@@ -422,6 +427,8 @@
     :custom
     (elixir-indent-style 'no-argument))
 
+  ;; Lua
+  (use-package lua-mode)
 
   ;; Python	
   (use-package python
@@ -444,7 +451,10 @@
     :bind (:map rustic-mode-map
                 ("M-j" . consult-eglot-symbols)
                 ("C-c C-c r" . eglot-rename))
-    :custom (rustic-lsp-client 'eglot))
+    :custom
+    (rustic-lsp-client 'eglot)
+    (rustic-format-trigger 'on-save)
+    )
 
   ;; Svelte
   (use-package svelte-mode

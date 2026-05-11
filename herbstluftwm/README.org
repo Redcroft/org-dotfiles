@@ -82,10 +82,6 @@
       fi
   done
 
-  # cycle through tags
-  hc keybind $Mod-period use_index +1 --skip-visible
-  hc keybind $Mod-comma  use_index -1 --skip-visible
-
   # layouting
   hc keybind $Mod-x remove
   hc keybind $Mod-s floating toggle
@@ -205,8 +201,8 @@
 ** Autostart
 
 #+begin_src bash :tangle "~/.config/herbstluftwm/autostart"
-  #sudo zpool import -fa
-  #sudo zfs mount photos
+  # sudo zpool import -fa
+  # sudo zfs mount photos
 
   # ~/.config/herbstluftwm/panel.sh &
   /usr/lib/polkit-kde-authentication-agent-1 &

@@ -210,6 +210,29 @@
   	 allow_tearing            = true,
         },
 
+        group = {
+  	 col = {
+  	   border_active          = "rgb(484848)",
+  	   border_inactive        = "rgb(000000)",
+  	 },
+  	 
+  	 groupbar = {
+  	    enabled               = true,
+  	    render_titles         = true,
+  	    font_family           = "JetBrainsMono Nerd Font",
+  	    font_size             = 12,
+  	    font_weight_active    = "Semibold",
+  	    font_weight_inactive  = "Semibold",
+  	    gradients             = true,
+  	    text_color            = "rgb(eeeeee)",
+  	    text_color_inactive   = "rgb(484848)",
+  	    col = {
+  	       active             = "rgb(484848)",
+  	       inactive           = "rgb(000000)",
+  	    }
+  	 },
+        },
+
         input = {
   	 kb_layout                = "us",
   	 kb_variant               = "",
@@ -226,7 +249,7 @@
         },
 
         master = {
-  	new_status                = "master", 
+  	 new_status                = "master", 
         },
 
         misc = {
@@ -331,9 +354,9 @@
   -- WORKSPACES
   --------------------------------------------------
   for i = 1, 10 do
-      local key = i % 10
-      hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }))
-      hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
+     local key = i % 10
+     hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }))
+     hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
   end
 
   -- Special Workspace
@@ -352,44 +375,44 @@
   -- MULTIMEDIA & BRIGHTNESS
   --------------------------------------------------
   function show_osd(message, icon_name)
-      local icon_path = "/usr/share/icons/Adwaita/symbolic/status/" .. icon_name .. ".svg"
-      
-      local f = io.open(icon_path, "r")
-      if f then 
-          f:close() 
-      else
-          icon_path = "/usr/share/icons/AdwaitaLegacy/32x32/legacy/" .. icon_name .. ".png"
-      end
+     local icon_path = "/usr/share/icons/Adwaita/symbolic/status/" .. icon_name .. ".svg"
+     
+     local f = io.open(icon_path, "r")
+     if f then 
+        f:close() 
+     else
+        icon_path = "/usr/share/icons/AdwaitaLegacy/32x32/legacy/" .. icon_name .. ".png"
+     end
 
-      hl.exec_cmd("makoctl dismiss -a 'osd'")
-      
-      local gdbus_cmd = string.format(
-          [[gdbus call --session --dest org.freedesktop.Notifications ]] ..
-          [[--object-path /org/freedesktop/Notifications ]] ..
-          [[--method org.freedesktop.Notifications.Notify ]] ..
-          [["osd" 999 "%s" "%s" "" "[]" ]] ..
-          [[ '{"x-mako-stack-tag": <"osd-notification">, "transient": <true>}' 500]],
-          icon_path, message
-      )
+     hl.exec_cmd("makoctl dismiss -a 'osd'")
+     
+     local gdbus_cmd = string.format(
+        [[gdbus call --session --dest org.freedesktop.Notifications ]] ..
+        [[--object-path /org/freedesktop/Notifications ]] ..
+        [[--method org.freedesktop.Notifications.Notify ]] ..
+        [["osd" 999 "%s" "%s" "" "[]" ]] ..
+        [[ '{"x-mako-stack-tag": <"osd-notification">, "transient": <true>}' 500]],
+        icon_path, message
+     )
 
-      hl.exec_cmd(gdbus_cmd)
+     hl.exec_cmd(gdbus_cmd)
   end
 
   local function change_brightness(cmd_type, action, value)
-      -- 1. Execute the monitor command
-      local monitor_call = string.format("monitorctl %s %s %s", cmd_type, action, value or "")
-      os.execute(monitor_call)
+     -- 1. Execute the monitor command
+     local monitor_call = string.format("monitorctl %s %s %s", cmd_type, action, value or "")
+     os.execute(monitor_call)
 
-      -- 2. Fetch the new value
-      local handle = io.popen("monitorctl b -g")
-      local current_val = "0"
-      if handle then
-          current_val = handle:read("*a"):gsub("%s+", "")
-          handle:close()
-      end
+     -- 2. Fetch the new value
+     local handle = io.popen("monitorctl b -g")
+     local current_val = "0"
+     if handle then
+        current_val = handle:read("*a"):gsub("%s+", "")
+        handle:close()
+     end
 
-      -- 3. Show OSD
-      show_osd("Brightness " .. current_val .. "%", "display-brightness-symbolic")
+     -- 3. Show OSD
+     show_osd("Brightness " .. current_val .. "%", "display-brightness-symbolic")
   end
 
   -- Audio (unchanged, but could be moved to monitorctl v if preferred)
@@ -412,65 +435,65 @@
 
   -- Suppress Maximize (Global)
   hl.window_rule({
-      name  = "suppress-maximize",
-      match = { class = ".*" },
-      suppress_event = "maximize",
+        name  = "suppress-maximize",
+        match = { class = ".*" },
+        suppress_event = "maximize",
   })
 
   -- Scratchpad Rule
   hl.window_rule({
-      name = "float-scratchpad",
-      match = { title = ".*Scratchpad.*" },
-      float = true,
-      size = {"(monitor_w*0.6)", "(monitor_h*0.6)"},
-      move = {"(monitor_w*0.15)", "(monitor_h*0.15)"},
-      workspace = "special:magic"
+        name = "float-scratchpad",
+        match = { title = ".*Scratchpad.*" },
+        float = true,
+        size = {"(monitor_w*0.6)", "(monitor_h*0.6)"},
+        move = {"(monitor_w*0.15)", "(monitor_h*0.15)"},
+        workspace = "special:magic"
   })
 
   -- Unreal Engine Fixes
   hl.window_rule({
-      name = "unreal-engine-tweak",
-      match = { class = "UnrealEditor", title = "%w*" },
-      no_initial_focus = true,
-      suppress_event = "activate"
+        name = "unreal-engine-tweak",
+        match = { class = "UnrealEditor", title = "%w*" },
+        no_initial_focus = true,
+        suppress_event = "activate"
   })
 
   -- Video/Photo Editing Rules (Resolve & Affinity)
   local editing_apps = {
-      { name = "davinci", class = "resolve", title = "resolve" },
-      { name = "affinity", class = "affinity.exe", title = "" }
+     { name = "davinci", class = "resolve", title = "resolve" },
+     { name = "affinity", class = "affinity.exe", title = "" }
   }
 
   for _, app in ipairs(editing_apps) do
-      hl.window_rule({
-          name = app.name .. "-tweak",
-          match = { class = app.class, title = app.title },
-          no_blur = true,
-          border_size = 0,
-          no_shadow = true
-      })
+     hl.window_rule({
+  	 name = app.name .. "-tweak",
+  	 match = { class = app.class, title = app.title },
+  	 no_blur = true,
+  	 border_size = 0,
+  	 no_shadow = true
+     })
   end
 
   -- Affinity Tile Override
   hl.window_rule({
-      name = "affinity-photo-tile-tweak",
-      match = { class = "affinity.exe", title = "Affinity" },
-      tile = true
+        name = "affinity-photo-tile-tweak",
+        match = { class = "affinity.exe", title = "Affinity" },
+        tile = true
   })
 
   -- Gamescope / Gaming Rule
   hl.window_rule({
-      name = "gamescope",
-      match = { class = "^(steam_app_.*|cs2|gamescope)$" },
-      float = false,
-      fullscreen = true,
+        name = "gamescope",
+        match = { class = "^(steam_app_.*|cs2|gamescope)$" },
+        float = false,
+        fullscreen = true,
   })
 
   -- Simple Floats
   hl.window_rule({
-      name = "floating-windows",
-      match = { title = "Steam - Self Updater" },
-      float = true
+        name = "floating-windows",
+        match = { title = "Steam - Self Updater" },
+        float = true
   })
 #+end_src
 * Hyprlauncher

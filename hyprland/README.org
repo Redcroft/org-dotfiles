@@ -27,20 +27,6 @@
 
   local hostname = get_hostname()
 
-
-  --------------------------------------------------
-  -- HELPERS
-  --------------------------------------------------
-
-  local function monitor(config)
-     hl.monitor(config)
-  end
-
-  local function exec(cmd)
-     hl.exec_cmd(cmd)
-  end
-
-
   --------------------------------------------------
   -- MACHINE CONFIGURATION
   --------------------------------------------------
@@ -48,7 +34,7 @@
   local machines = {
      heimdall = {
         monitors = function()
-           monitor({
+           hl.monitor({
   	       output   = "DP-1",
   	       mode     = "3440x1440@175",
   	       position = "0x0",
@@ -60,13 +46,13 @@
         end,
 
         startup = function()
-           exec([[uwsm app -- openrgb --profile "off.orp"]])
+           hl.exec_cmd([[uwsm app -- openrgb --profile "off.orp"]])
         end,
      },
 
      red = {
         monitors = function()
-           monitor({
+           hl.monitor({
   	       output   = "eDP-1",
   	       mode     = "1920x1080",
   	       position = "0x0",
@@ -77,14 +63,14 @@
 
      poseidon = {
         monitors = function()
-           monitor({
+           hl.monitor({
   	       output   = "DP-1",
   	       mode     = "3840x2160",
   	       position = "3840x0",
   	       scale    = 1,
            })
 
-           monitor({
+           hl.monitor({
   	       output   = "DP-2",
   	       mode     = "3840x2160",
   	       position = "0x0",
@@ -95,7 +81,7 @@
 
      default = {
         monitors = function()
-           monitor({
+           hl.monitor({
   	       output   = "*",
   	       mode     = "preferred",
   	       position = "auto",
@@ -293,9 +279,6 @@
   --------------------------------------------------
   -- KEYBINDS
   --------------------------------------------------
-
-  local mainMod = "SUPER"
-
   local mainMod = "SUPER"
 
   --------------------------------------------------
@@ -335,14 +318,14 @@
   --------------------------------------------------
   -- GROUPS
   --------------------------------------------------
-  hl.bind(mainMod .. " + G", hl.dsp.layout("togglegroup"))
-  hl.bind(mainMod .. " + Tab", hl.dsp.layout("changegroupactive", "f"))
-  hl.bind(mainMod .. " + SHIFT + Tab", hl.dsp.layout("changegroupactive", "b"))
-  hl.bind(mainMod .. " + ALT + B", hl.dsp.layout("moveintogroup", "l"))
-  hl.bind(mainMod .. " + ALT + F", hl.dsp.layout("moveintogroup", "r"))
-  hl.bind(mainMod .. " + ALT + P", hl.dsp.layout("moveintogroup", "u"))
-  hl.bind(mainMod .. " + ALT + N", hl.dsp.layout("moveintogroup", "d"))
-  hl.bind(mainMod .. " + comma", hl.dsp.layout("moveoutofgroup"))
+  hl.bind(mainMod .. " + G", hl.dsp.group.toggle())
+  hl.bind(mainMod .. " + Tab", hl.dsp.group.next({}))
+  hl.bind(mainMod .. " + SHIFT + Tab", hl.dsp.group.prev({}))
+  hl.bind(mainMod .. " + ALT + B", hl.dsp.window.move({into_group = "left"}))
+  hl.bind(mainMod .. " + ALT + F", hl.dsp.window.move({into_group = "right"}))
+  hl.bind(mainMod .. " + ALT + P", hl.dsp.window.move({into_group = "up"}))
+  hl.bind(mainMod .. " + ALT + N", hl.dsp.window.move({into_group = "down"}))
+  hl.bind(mainMod .. " + comma", hl.dsp.window.move({out_of_group = true}))
 
   --------------------------------------------------
   -- WORKSPACES
@@ -392,10 +375,21 @@
       hl.exec_cmd(gdbus_cmd)
   end
 
-  local function monitor_cmd(cmd_type, action, value)
-     local monitor_call = string.format("monitorctl %s %s %s", cmd_type, action, value or "")
-     local osd_logic = [[hyprctl lua 'show_osd("Brightness $(monitorctl b -g)%%", "display-brightness-symbolic")']]
-     return hl.dsp.exec_cmd(monitor_call .. " && " .. osd_logic)
+  local function change_brightness(cmd_type, action, value)
+      -- 1. Execute the monitor command
+      local monitor_call = string.format("monitorctl %s %s %s", cmd_type, action, value or "")
+      os.execute(monitor_call)
+
+      -- 2. Fetch the new value
+      local handle = io.popen("monitorctl b -g")
+      local current_val = "0"
+      if handle then
+          current_val = handle:read("*a"):gsub("%s+", "")
+          handle:close()
+      end
+
+      -- 3. Show OSD
+      show_osd("Brightness " .. current_val .. "%", "display-brightness-symbolic")
   end
 
   -- Audio (unchanged, but could be moved to monitorctl v if preferred)
@@ -404,13 +398,13 @@
   hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
 
   -- Brightness Binds using monitorctl
-  hl.bind("XF86MonBrightnessUp",   monitor_cmd("b", "-i", "5"), { locked = true, repeating = true })
-  hl.bind("XF86MonBrightnessDown", monitor_cmd("b", "-d", "5"), { locked = true, repeating = true })
+  hl.bind("XF86MonBrightnessUp",   function() change_brightness("b", "-i", "5") end, { locked = true, repeating = true })
+  hl.bind("XF86MonBrightnessDown", function() change_brightness("b", "-d", "5") end, { locked = true, repeating = true })
 
   -- Preset Levels
-  hl.bind(mainMod .. " + XF86MonBrightnessUp",   monitor_cmd("b", "", "30"),  { locked = true })
-  hl.bind(mainMod .. " + XF86MonBrightnessDown", monitor_cmd("b", "", "5"),   { locked = true })
-  hl.bind(mainMod .. " + SHIFT + XF86MonBrightnessUp", monitor_cmd("b", "", "100"), { locked = true })
+  hl.bind(mainMod .. " + XF86MonBrightnessUp",   function() change_brightness("b", "", "25") end,  { locked = true })
+  hl.bind(mainMod .. " + XF86MonBrightnessDown", function() change_brightness("b", "", "5") end,   { locked = true })
+  hl.bind(mainMod .. " + SHIFT + XF86MonBrightnessUp", function() change_brightness("b", "", "100") end, { locked = true })
 
   --------------------------------------------------
   -- WINDOW RULES
@@ -470,7 +464,6 @@
       match = { class = "^(steam_app_.*|cs2|gamescope)$" },
       float = false,
       fullscreen = true,
-      monitor = "DP-1" -- Note: On 'poseidon' this works, on 'red' you might want to use 0 or current
   })
 
   -- Simple Floats

@@ -482,7 +482,7 @@
     (minions-mode))
 
   (use-package base16-theme
-    :config (load-theme 'base16-framer t))
+    :config (load-theme 'base16-gruvbox-material-dark-hard t))
 
   (setq line-spacing 0.00)
   (set-face-attribute 'default nil

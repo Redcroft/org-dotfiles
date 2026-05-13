@@ -140,14 +140,14 @@
   hl.on("hyprland.start", function()
   	 local startup_commands = {
   	    "systemctl --user start hyprpolkitagent",
-  	    "uwsm app -- waybar",
   	    [[uwsm app -- gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"]],
   	    "uwsm app -- mako",
   	    "uwsm app -- udiskie",
+  	    "uwsm app -- waybar",
   	 }
 
   	 for _, cmd in ipairs(startup_commands) do
-  	    exec(cmd)
+  	    hl.exec(cmd)
   	 end
 
   	 if current_machine.startup then

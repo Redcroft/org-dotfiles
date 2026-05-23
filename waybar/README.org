@@ -12,13 +12,7 @@
       "reload_style_on_change": true,
       "modules-left": ["hyprland/workspaces"],
       "modules-center": ["clock"],
-      "modules-right": ["pulseaudio", "custom/bl", "cpu", "memory", "battery"],
-
-      "custom/bl": {
-  	"exec": "ddcutil getvcp 10 | awk '{print $9}' | sed 's/,/%/g'",
-  	"format": " 󰃠 {} ",
-  	"interval": 60,
-      },
+      "modules-right": ["pulseaudio", "cpu", "memory", "battery"],
       
       "clock": {
   	"format": "{:%I:%M %p}",
@@ -51,7 +45,7 @@
   	],
       },
       "pulseaudio": {
-  	"format": "{icon}{volume}% ",
+  	"format": "{icon} {volume}% ",
   	"format-bluetooth": "  {icon} {volume}% ",
   	"format-muted": "",
   	"format-icons": {
@@ -67,11 +61,11 @@
   	"on-click": "pavucontrol"
       },
       "cpu": {
-  	"format": "  {usage}% ",
+  	"format": "   {usage}% ",
   	"tooltip": true
       },
       "memory": {
-  	"format": "  {percentage}%"
+  	"format": "   {percentage}%"
       },
       "temperature": {
   	"critical-threshold": 80,
@@ -92,7 +86,10 @@
     font-family: IosevkaTerm Nerd Font;
     font-size: 14px;
     font-weight: 600;
-    color: #727272;
+  }
+
+  #clock,#cpu,#memory,#pulseaudio,#battery {
+    color: #949494;
   }
 
   window#waybar {
@@ -119,11 +116,12 @@
     margin: 3px 3px;
     border-radius: 4px;
     background-color: #1e1e2e;
+    color: #727272;
   }
 
   #workspaces button.active {
-
-    background-color: #323232;
+    color: #e08060;
+    background-color: #4e4e4e;
   }
 
   #workspaces button:hover {
@@ -134,14 +132,13 @@
   }
 
   #workspaces button.urgent {
-    background-color: #f38ba8;
+    background-color: #c27a1d;
   }
-
 
   #battery.warning,
   #battery.critical,
   #battery.urgent {
-    color: #FF0000;
+    color: #e08060;
   }
 
   #battery.charging {

@@ -48,6 +48,14 @@
         startup = function()
            hl.exec_cmd([[uwsm app -- openrgb --profile "off.orp"]])
         end,
+
+        keybinds = function(mainMod)
+  	 hl.bind("XF86MonBrightnessUp",   function() change_brightness("b", "-i", "5") end, { locked = true, repeating = false })
+  	 hl.bind("XF86MonBrightnessDown", function() change_brightness("b", "-d", "5") end, { locked = true, repeating = false })
+  	 hl.bind(mainMod .. " + XF86MonBrightnessUp",   function() change_brightness("b", "", "25") end,  { locked = true })
+  	 hl.bind(mainMod .. " + XF86MonBrightnessDown", function() change_brightness("b", "", "5") end,   { locked = true })
+  	 hl.bind(mainMod .. " + SHIFT + XF86MonBrightnessUp", function() change_brightness("b", "", "100") end, { locked = true })
+        end,
      },
 
      red = {
@@ -58,6 +66,14 @@
   	       position = "0x0",
   	       scale    = 1,
            })
+        end,
+
+        keybinds = function(mainMod)
+  	 hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("blight inc 200"), { locked = true, repeating = true })
+  	 hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("blight dec 200"), { locked = true, repeating = true })
+  	 hl.bind(mainMod .. " + XF86MonBrightnessUp",   hl.dsp.exec_cmd("blight set 32768"),  { locked = true })
+  	 hl.bind(mainMod .. " + XF86MonBrightnessDown", hl.dsp.exec_cmd("blight set 5"),   { locked = true })
+  	 hl.bind(mainMod .. " + SHIFT + XF86MonBrightnessUp", hl.dsp.exec_cmd("blight set 65535"), { locked = true })
         end,
      },
 
@@ -108,7 +124,7 @@
   local apps = {
      terminal = "uwsm app -- ghostty",
      menu     = "uwsm app -- $HOME/.local/bin/mybemenu",
-     browser  = "uwsm app -- zen-browser",
+     browser  = "uwsm app -- helium-browser",
      editor   = "uwsm app -- emacs",
   }
 
@@ -203,7 +219,7 @@
   	 border_size              = 2,
   	 
   	 col = {
-  	    active_border         = "rgb(484848)",
+  	    active_border         = "rgb(e08060)",
   	    inactive_border       = "rgb(000000)",
   	 },
 
@@ -213,7 +229,7 @@
 
         group = {
   	 col = {
-  	   border_active          = "rgb(484848)",
+  	   border_active          = "rgb(e08060)",
   	   border_inactive        = "rgb(000000)",
   	 },
   	 
@@ -228,7 +244,7 @@
   	    text_color            = "rgb(eeeeee)",
   	    text_color_inactive   = "rgb(484848)",
   	    col = {
-  	       active             = "rgb(484848)",
+  	       active             = "rgb(e08060)",
   	       inactive           = "rgb(000000)",
   	    }
   	 },
@@ -421,14 +437,10 @@
   hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),   { locked = true, repeating = true })
   hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
 
-  -- Brightness Binds using monitorctl
-  hl.bind("XF86MonBrightnessUp",   function() change_brightness("b", "-i", "5") end, { locked = true, repeating = true })
-  hl.bind("XF86MonBrightnessDown", function() change_brightness("b", "-d", "5") end, { locked = true, repeating = true })
+  if current_machine.keybinds then
+     current_machine.keybinds(mainMod)
+  end
 
-  -- Preset Levels
-  hl.bind(mainMod .. " + XF86MonBrightnessUp",   function() change_brightness("b", "", "25") end,  { locked = true })
-  hl.bind(mainMod .. " + XF86MonBrightnessDown", function() change_brightness("b", "", "5") end,   { locked = true })
-  hl.bind(mainMod .. " + SHIFT + XF86MonBrightnessUp", function() change_brightness("b", "", "100") end, { locked = true })
 
   --------------------------------------------------
   -- WINDOW RULES

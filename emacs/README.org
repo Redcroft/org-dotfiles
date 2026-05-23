@@ -145,6 +145,8 @@
   (use-package which-key
     :init (which-key-mode)
     :custom (which-key-idle-delay 0.5))
+
+  (use-package compat :ensure (:wait t))
 #+end_src
 ** Workspaces
 #+begin_src emacs-lisp
@@ -187,9 +189,9 @@
   (use-package org-auto-tangle
     :hook (org-mode . org-auto-tangle-mode))
 
-  (use-package org-modern
-    :after (org)
-    :hook (org-mode . org-modern-mode))
+  ;;(use-package org-modern
+  ;;  :after (org)
+  ;;  :hook (org-mode . org-modern-mode))
 #+end_src
 ** Ligatures
 #+begin_src emacs-lisp
@@ -427,6 +429,9 @@
     :custom
     (elixir-indent-style 'no-argument))
 
+  ;; Json
+  (use-package json-mode)
+
   ;; Lua
   (use-package lua-mode)
 
@@ -461,6 +466,10 @@
     :after eglot
     :init
     (add-to-list 'eglot-server-programs '(svelte-mode . ("svelteserver" "--stdio"))))
+
+
+  ;; Toml
+  (use-package toml-mode)
 #+end_src
 
 ** Aesthetics
@@ -481,12 +490,16 @@
     :init
     (minions-mode))
 
-  (use-package base16-theme
-    :config (load-theme 'base16-gruvbox-material-dark-hard t))
+  (use-package doom-themes :ensure (:wait t))
+  (if (not (file-directory-p "~/.emacs.d/themes/ember"))
+      (shell-command (format "git clone %s %s" "https://github.com/ember-theme/emacs" "~/.emacs.d/themes/ember"))
+    )
+  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/ember")
+  (load-theme 'ember t)
 
   (setq line-spacing 0.00)
   (set-face-attribute 'default nil
-                      :family "CommitMono Nerd Font"
-                      :height 110
-                      :weight 'SemiBold)
+                      :family "IosevkaTerm Nerd Font"
+                      :height 120
+                      :weight 'Regular)
 #+end_src

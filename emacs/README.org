@@ -490,16 +490,22 @@
     :init
     (minions-mode))
 
-  (use-package doom-themes :ensure (:wait t))
-  (if (not (file-directory-p "~/.emacs.d/themes/ember"))
-      (shell-command (format "git clone %s %s" "https://github.com/ember-theme/emacs" "~/.emacs.d/themes/ember"))
-    )
-  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/ember")
-  (load-theme 'ember t)
+  (use-package ef-themes
+    :ensure t
+    :init
+    (ef-themes-take-over-modus-themes-mode 1)
+    :bind
+    (("<f5>" . modus-themes-rotate)
+     ("C-<f5>" . modus-themes-select)
+     ("M-<f5>" . modus-themes-load-random))
+    :config
+    (setq modus-themes-mixed-fonts t)
+    (setq modus-themes-italic-constructs t)
+    (modus-themes-load-theme 'ef-elea-dark))
 
   (setq line-spacing 0.00)
   (set-face-attribute 'default nil
-                      :family "IosevkaTerm Nerd Font"
+                      :family "Aporetic Sans Mono"
                       :height 120
-                      :weight 'Regular)
+                      :weight 'Semibold)
 #+end_src

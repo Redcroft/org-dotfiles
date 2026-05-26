@@ -120,8 +120,8 @@
   }
 
   #workspaces button.active {
-    color: #e08060;
-    background-color: #4e4e4e;
+    background-color: #9c180c;
+    color: #1e1e2e;
   }
 
   #workspaces button:hover {
@@ -138,7 +138,7 @@
   #battery.warning,
   #battery.critical,
   #battery.urgent {
-    color: #e08060;
+    color: #9c180c;
   }
 
   #battery.charging {

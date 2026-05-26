@@ -219,7 +219,7 @@
    	 border_size              = 2,
    	 
    	 col = {
-   	    active_border         = "rgb(e08060)",
+   	    active_border         = "rgb(9c180c)",
    	    inactive_border       = "rgb(000000)",
    	 },
 
@@ -229,7 +229,7 @@
 
          group = {
    	 col = {
-   	   border_active          = "rgb(e08060)",
+   	   border_active          = "rgb(9c180c)",
    	   border_inactive        = "rgb(000000)",
    	 },
    	 
@@ -244,7 +244,7 @@
    	    text_color            = "rgb(eeeeee)",
    	    text_color_inactive   = "rgb(484848)",
    	    col = {
-   	       active             = "rgb(e08060)",
+   	       active             = "rgb(9c180c)",
    	       inactive           = "rgb(000000)",
    	    }
    	 },

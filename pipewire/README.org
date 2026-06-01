@@ -241,20 +241,20 @@ I want to keep hrtf files within the dotfile repo, so use emacs to determine whe
                           label = spatializer
                           name = spLFE
                           config = {
-  			    filename = "<<sofa-file()>>"
+                      filename = "<<sofa-file()>>"
                           }
                           control = {
                               "Azimuth"    = 0.0
-                              "Elevation"  = -60.0
-                              "Radius"     = 6.0
+                              "Elevation"  = 0.0
+                              "Radius"     = 3.0
                           }
                       }
 
                       # stereo output
                       { type = builtin label = mixer name = mixL }
                       { type = builtin label = mixer name = mixR }
-                  ]
-                  links = [
+                      ]
+                      links = [
                       # output
                       { output = "spFL:Out L"  input="mixL:In 1" }
                       { output = "spFL:Out R"  input="mixR:In 1" }
@@ -272,26 +272,26 @@ I want to keep hrtf files within the dotfile repo, so use emacs to determine whe
                       { output = "spSR:Out R"  input="mixR:In 7" }
                       { output = "spLFE:Out L" input="mixL:In 8" }
                       { output = "spLFE:Out R" input="mixR:In 8" }
-                  ]
-                  inputs  = [ "spFL:In" "spFR:In" "spFC:In" "spLFE:In" "spRL:In" "spRR:In", "spSL:In", "spSR:In" ]
-                  outputs = [ "mixL:Out" "mixR:Out" ]
-              }
-              capture.props = {
-                  node.name      = "effect_input.spatializer"
-                  media.class    = Audio/Sink
-                  audio.channels = 8
-                  audio.position = [ FL FR FC LFE RL RR SL SR ]
-              }
-              playback.props = {
-                  node.name      = "effect_output.spatializer"
-                  node.passive   = true
-  		node.target    = "alsa_output.usb-Sennheiser_GSX_1000_Main_Audio_5698800377011146-00.analog-output-surround71"
-                  audio.channels = 2
-                  audio.position = [ FL FR ]
-              }
-          }
-      }
-  ]
+                      ]
+                      inputs  = [ "spFL:In" "spFR:In" "spFC:In" "spLFE:In" "spRL:In" "spRR:In", "spSL:In", "spSR:In" ]
+                      outputs = [ "mixL:Out" "mixR:Out" ]
+                      }
+                      capture.props = {
+                      node.name      = "effect_input.spatializer"
+                      media.class    = Audio/Sink
+                      audio.channels = 8
+                      audio.position = [ FL FR FC LFE RL RR SL SR ]
+                      }
+                      playback.props = {
+                      node.name      = "effect_output.spatializer"
+                      node.passive   = true
+                      node.target    = "alsa_output.usb-Sennheiser_GSX_1000_Main_Audio_5698800377011146-00.analog-output-surround71"
+                      audio.channels = 2
+                      audio.position = [ FL FR ]
+                      }
+                      }
+                      }
+                      ]
 #+end_src
 
 #+begin_src systemd :tangle "~/.config/systemd/user/filter-chain.service.d/override.conf"

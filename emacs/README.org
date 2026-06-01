@@ -117,6 +117,7 @@
       (add-hook (intern (concat (symbol-name mode) "-hook"))
                 (lambda () (display-line-numbers-mode -1))))
     :config
+    (setq auth-sources '("~/.authinfo.gpg"))
     (setq apropos-do-all t
     	custom-file (concat user-emacs-directory "custom.el")
     	custom-safe-themes t
@@ -148,26 +149,64 @@
 
   (use-package compat :ensure (:wait t))
 #+end_src
-** Workspaces
+** Gnus
 #+begin_src emacs-lisp
-  ;; ============================================================
-  ;; Workspaces
-  ;; ============================================================
-  (use-package eyebrowse
-    :bind (("M-1" . eyebrowse-switch-to-window-config-1)
-           ("M-2" . eyebrowse-switch-to-window-config-2)
-           ("M-3" . eyebrowse-switch-to-window-config-3)
-           ("M-4" . eyebrowse-switch-to-window-config-4)
-           ("M-5" . eyebrowse-switch-to-window-config-5)
-           ("M-6" . eyebrowse-switch-to-window-config-6)
-           ("M-7" . eyebrowse-switch-to-window-config-7)
-           ("M-8" . eyebrowse-switch-to-window-config-8)
-           ("M-9" . eyebrowse-switch-to-window-config-9)
-           ("M-0" . eyebrowse-switch-to-window-config-0))
-    :init (eyebrowse-mode)
-    :custom
-    (eyebrowse-new-workspace t))
+  (use-package gnus
+    :ensure nil
+    :config
+    ;; Recieve
+    (setq gnus-select-method '(nnnil ""))
+    (setq gnus-secondary-select-methods
+          '((nnimap "gmail"
+                    (nnimap-address "imap.gmail.com")
+                    (nnimap-server-port 993)
+                    (nnimap-stream ssl))
+
+            (nnimap "work"
+                    (nnimap-address "imap.gmail.com")
+                    (nnimap-server-port 993)
+                    (nnimap-stream ssl))
+
+            (nnimap "redcroft"
+                    (nnimap-address "imap.hostinger.com")
+                    (nnimap-server-port 993)
+                    (nnimap-stream ssl))))
+
+    (setq gnus-parameters
+  	'(("nnimap\\+gmail:.*"
+             (nnimap-user "animationrich@gmail.com"))
+
+            ("nnimap\\+work:.*"
+             (nnimap-user "richard@carseandwaterman.com"))
+
+            ("nnimap\\+redcroft:.*"
+             (nnimap-user "richard@redcroft.tech"))))
+
+    ;; Sending
+    (setq message-send-mail-function
+  	'smtpmail-send-it)
+    (setq smtpmail-stream-type 'starttls)
+    (setq smtpmail-smtp-service 587)
+    (setq gnus-posting-styles
+  	'(("nnimap\\+gmail:"
+             (address "animationrich@gmail.com")
+             (name "Richard Redcroft"))
+
+            ("nnimap\\+work:"
+             (address "richard@carseandwaterman.com")
+             (name "Richard DW Redcroft"))
+
+            ("nnimap\\+redcroft:"
+             (address "richard@redcroft.tech")
+             (name "Richard Redcroft"))))
+    (setq gnus-use-cache t)
+    (setq gnus-asynchronous t)
+    (setq gnus-fetch-old-headers t)
+    (setq gnus-save-newsrc-file nil)
+    (setq gnus-read-active-file 'some)
+    )
 #+end_src
+
 ** Org
 #+begin_src emacs-lisp
   ;; ============================================================
@@ -340,6 +379,26 @@
           register-preview-function #'consult-register-format))
 #+end_src
 
+** Workspaces
+#+begin_src emacs-lisp
+  ;; ============================================================
+  ;; Workspaces
+  ;; ============================================================
+  (use-package eyebrowse
+    :bind (("M-1" . eyebrowse-switch-to-window-config-1)
+           ("M-2" . eyebrowse-switch-to-window-config-2)
+           ("M-3" . eyebrowse-switch-to-window-config-3)
+           ("M-4" . eyebrowse-switch-to-window-config-4)
+           ("M-5" . eyebrowse-switch-to-window-config-5)
+           ("M-6" . eyebrowse-switch-to-window-config-6)
+           ("M-7" . eyebrowse-switch-to-window-config-7)
+           ("M-8" . eyebrowse-switch-to-window-config-8)
+           ("M-9" . eyebrowse-switch-to-window-config-9)
+           ("M-0" . eyebrowse-switch-to-window-config-0))
+    :init (eyebrowse-mode)
+    :custom
+    (eyebrowse-new-workspace t))
+#+end_src
 ** LSP
 #+begin_src emacs-lisp
   ;; ============================================================
@@ -490,18 +549,9 @@
     :init
     (minions-mode))
 
-  (use-package ef-themes
-    :ensure t
-    :init
-    (ef-themes-take-over-modus-themes-mode 1)
-    :bind
-    (("<f5>" . modus-themes-rotate)
-     ("C-<f5>" . modus-themes-select)
-     ("M-<f5>" . modus-themes-load-random))
+  (use-package gruvbox-theme
     :config
-    (setq modus-themes-mixed-fonts t)
-    (setq modus-themes-italic-constructs t)
-    (modus-themes-load-theme 'ef-elea-dark))
+    (load-theme 'gruvbox-dark-hard t))
 
   (setq line-spacing 0.00)
   (set-face-attribute 'default nil

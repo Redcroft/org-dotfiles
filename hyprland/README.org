@@ -124,7 +124,7 @@
    local apps = {
       terminal = "uwsm app -- ghostty",
       menu     = "uwsm app -- $HOME/.local/bin/mybemenu",
-      browser  = "uwsm app -- vivaldi",
+      browser  = "uwsm app -- zen-browser",
       editor   = "uwsm app -- emacs",
    }
 

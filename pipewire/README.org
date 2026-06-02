@@ -154,7 +154,7 @@ I want to keep hrtf files within the dotfile repo, so use emacs to determine whe
                           }
                           control = {
                               "Azimuth"    = 30.0
-                              "Elevation"  = 0.0
+                              "Elevation"  = -10.0
                               "Radius"     = 3.0
                           }
                       }
@@ -167,7 +167,7 @@ I want to keep hrtf files within the dotfile repo, so use emacs to determine whe
                           }
                           control = {
                               "Azimuth"    = 330.0
-                              "Elevation"  = 0.0
+                              "Elevation"  = -10.0
                               "Radius"     = 3.0
                           }
                       }
@@ -180,7 +180,7 @@ I want to keep hrtf files within the dotfile repo, so use emacs to determine whe
                           }
                           control = {
                               "Azimuth"    = 0.0
-                              "Elevation"  = 0.0
+                              "Elevation"  = -10.0
                               "Radius"     = 3.0
                           }
                       }
@@ -245,10 +245,9 @@ I want to keep hrtf files within the dotfile repo, so use emacs to determine whe
                           }
                           control = {
                               "Azimuth"    = 0.0
-                              "Elevation"  = 0.0
+                              "Elevation"  = -15.0
                               "Radius"     = 3.0
-                          }
-                      }
+                          }                      }
 
                       # stereo output
                       { type = builtin label = mixer name = mixL }

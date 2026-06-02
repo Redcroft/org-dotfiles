@@ -147,8 +147,10 @@ class HRTFTesterGUI:
         
     def apply_file(self, filename):
         config = self.get_current_config()
-        source_path = os.path.join(config["dir"], filename)
-        target_link = config["target_link"]
+        # Use absolute paths for both source and target
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        source_path = os.path.join(base_path, config["dir"], filename)
+        target_link = os.path.join(base_path, config["target_link"])
         
         try:
             if os.path.exists(target_link) or os.path.islink(target_link):

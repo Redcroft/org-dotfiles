@@ -17,12 +17,15 @@ echo "=== Tangling all README.org files in $DOTFILES_ROOT ==="
 NUM_CORES=$(nproc 2>/dev/null || echo 4)
 
 find "$DOTFILES_ROOT" -name "README.org" -type f -print0 | xargs -0 -I {} -P "$NUM_CORES" sh -c "
-    echo 'Tangling: {}'
-    emacs --batch --eval \"(require 'org)\" \
-	  --eval \"(require 'ob-shell)\" \
-	  --eval \"(setq org-confirm-babel-evaluate nil)\" \
-	  --eval \"(org-babel-tangle-file \\\"{}\\\")\"
+    TMP_LOG=\$(mktemp)
+    if ! emacs --batch --eval \"(require 'org)\" \
+          --eval \"(require 'ob-shell)\" \
+          --eval \"(setq org-confirm-babel-evaluate nil)\" \
+          --eval \"(org-babel-tangle-file \\\"{}\\\")\" > \"\$TMP_LOG\" 2>&1; then
+        echo 'FAILED: {}'
+        cat \"\$TMP_LOG\"
+    fi
+    rm -f \"\$TMP_LOG\"
 "
 
 echo "=== Tangling complete ==="
-echo "Manually Add FREETYPE_PROPERTIES=\"cff:no-stem-darkening=0 autofitter:no-stem-darkening=0\" to /etc/environment"

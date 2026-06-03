@@ -27,12 +27,3 @@
 
 
 
-#+NAME: get-val
-#+begin_src emacs-lisp :var key="font-family" table=theme-table :exports none
-  (cadr (assoc key table))
-#+end_src
-
-#+NAME: get-color
-#+begin_src emacs-lisp :var name="bg" table=palette :exports none
-  (cadr (assoc name table))
-#+end_src

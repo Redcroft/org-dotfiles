@@ -1,0 +1,38 @@
+#+TITLE: Theme Configuration
+#+NAME: theme-table
+| Key             | Value                   | red |
+|-----------------+-------------------------+-----|
+| font-family     | JetBrainsMono Nerd Font | -   |
+| font-size       | 12                      | 14  |
+| font-style      | Medium                  | -   |
+| ui-font         | IosevkaTerm Nerd Font   | -   |
+| emacs-theme-pkg | gruvbox-theme           | -   |
+| emacs-theme     | gruvbox-dark-hard       | -   |
+
+#+NAME: palette
+| Name      | Hex     | red     |
+|-----------+---------+---------|
+| bg        | #1c1b19 | #000000 |
+| fg        | #d8d0c0 | -       |
+| accent    | #e08060 | -       |
+| comment   | #5c5855 | -       |
+| selection | #3e3c38 | -       |
+| red       | #e08060 | -       |
+| green     | #8a9868 | -       |
+| yellow    | #c8b468 | -       |
+| blue      | #7890a0 | -       |
+| magenta   | #b07878 | -       |
+| cyan      | #80a090 | -       |
+
+
+
+
+#+NAME: get-val
+#+begin_src emacs-lisp :var key="font-family" table=theme-table :exports none
+  (cadr (assoc key table))
+#+end_src
+
+#+NAME: get-color
+#+begin_src emacs-lisp :var name="bg" table=palette :exports none
+  (cadr (assoc name table))
+#+end_src

@@ -1,9 +1,55 @@
-#+TITLE: SSH Configuration
+#+TITLE: Herbstluftwm Configuration
 #+AUTHOR: Richard Redcroft
 #+EMAIL: Richard@Redcroft.tech
 #+OPTIONS: toc:nil num:nil
-#+PROPERTY: Header-args :tangle-mode (identity #o755) :mkdirp yes
+#+PROPERTY: Header-args :tangle-mode (identity #o755) :mkdirp yes :noweb yes
 #+auto_tangle: t
+
+#+INCLUDE: "../theme.org"
+
+* Theme Helpers :noexport:
+#+NAME: get-val
+#+begin_src emacs-lisp :var key="font-family" :exports none :tangle no
+  (with-current-buffer (find-file-noselect "../theme.org")
+    (save-excursion
+      (goto-char (point-min))
+      (re-search-forward "^#\\+NAME: theme-table")
+      (forward-line)
+      (let* ((full-table (org-babel-read-table))
+             (headers (car full-table))
+             (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
+             (host (system-name))
+             (col-idx (or (cl-position host headers :test 'string-equal) 1))
+             (row (assoc key table))
+             (val (nth col-idx row))
+             (val-str (format "%s" val)))
+        (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
+            (nth 1 row)
+          val))))
+#+end_src
+
+#+NAME: get-color
+#+begin_src emacs-lisp :var name="bg" nohash="nil" :exports none :tangle no
+  (let ((color (with-current-buffer (find-file-noselect "../theme.org")
+                 (save-excursion
+                   (goto-char (point-min))
+                   (re-search-forward "^#\\+NAME: palette")
+                   (forward-line)
+                   (let* ((full-table (org-babel-read-table))
+                          (headers (car full-table))
+                          (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
+                          (host (system-name))
+                          (col-idx (or (cl-position host headers :test 'string-equal) 1))
+                          (row (assoc name table))
+                          (val (nth col-idx row))
+                          (val-str (format "%s" val)))
+                     (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
+                         (nth 1 row)
+                       val))))))
+    (if (and color (string-equal nohash "t"))
+        (replace-regexp-in-string "^#" "" color)
+      color))
+#+end_src
 
 * Autostart
 ** Init
@@ -122,10 +168,10 @@
   # theme
   hc attr theme.tiling.reset 1
   hc attr theme.floating.reset 1
-  hc set frame_border_active_color "#15141b"
-  hc set frame_border_normal_color "#15141b"
-  hc set frame_bg_normal_color "#15141b"
-  hc set frame_bg_active_color "#454545"
+  hc set frame_border_active_color "<<get-color("bg")>>"
+  hc set frame_border_normal_color "<<get-color("bg")>>"
+  hc set frame_bg_normal_color "<<get-color("bg")>>"
+  hc set frame_bg_active_color "<<get-color("accent")>>"
   hc set frame_border_width 0
   hc set show_frame_decorations 'focused_if_multiple'
   hc set frame_bg_transparent on
@@ -135,33 +181,33 @@
   hc attr theme.title_height 12
   hc attr theme.title_when multiple_tabs
   hc attr theme.floating.title_when multiple_tabs
-  hc attr theme.title_font 'JetBrainsMono Nerd Font-8'
+  hc attr theme.title_font '<<get-val("font-family")>>-8'
   hc attr theme.title_depth 3
-  hc attr theme.active.color "#727272"
-  hc attr theme.title_color "#111111"
-  hc attr theme.normal.color "#15141b"
-  hc attr theme.urgent.color "#f57373"
-  hc attr theme.tab_color "#15141b"
-  hc attr theme.active.tab_color "#15141b"
-  hc attr theme.active.tab_outer_color "#15141b"
-  hc attr theme.active.tab_title_color "#ababab"
-  hc attr theme.normal.title_color "#ababab"
+  hc attr theme.active.color "<<get-color("accent")>>"
+  hc attr theme.title_color "<<get-color("bg")>>"
+  hc attr theme.normal.color "<<get-color("bg")>>"
+  hc attr theme.urgent.color "<<get-color("red")>>"
+  hc attr theme.tab_color "<<get-color("bg")>>"
+  hc attr theme.active.tab_color "<<get-color("bg")>>"
+  hc attr theme.active.tab_outer_color "<<get-color("bg")>>"
+  hc attr theme.active.tab_title_color "<<get-color("fg")>>"
+  hc attr theme.normal.title_color "<<get-color("fg")>>"
   hc attr theme.inner_width 1
-  hc attr theme.inner_color black
+  hc attr theme.inner_color "<<get-color("bg")>>"
   hc attr theme.border_width 1
   hc attr theme.floating.border_width 1
   hc attr theme.floating.outer_width 1
-  hc attr theme.floating.outer_color "#727272"
-  hc attr theme.active.inner_color "#727272"
-  hc attr theme.urgent.inner_color "#f57373"
-  hc attr theme.normal.inner_color "#15141b"
+  hc attr theme.floating.outer_color "<<get-color("accent")>>"
+  hc attr theme.active.inner_color "<<get-color("accent")>>"
+  hc attr theme.urgent.inner_color "<<get-color("red")>>"
+  hc attr theme.normal.inner_color "<<get-color("bg")>>"
   # copy inner color to outer_color
   for state in active urgent normal ; do
       hc substitute C theme.${state}.inner_color \
           attr theme.${state}.outer_color C
   done
   hc attr theme.tiling.outer_width 0
-  hc attr theme.background_color "#15141b"
+  hc attr theme.background_color "<<get-color("bg")>>"
 
   hc set window_gap 0
   hc set frame_padding 0
@@ -209,8 +255,8 @@
   #picom &
   killall dunst; dunst &
   killall udiskie; udiskie &
-  xsetroot -solid '#000000'
-  hsetroot -solid '#000000'
+  xsetroot -solid '<<get-color("bg")>>'
+  hsetroot -solid '<<get-color("bg")>>'
 #+end_src
 
 
@@ -286,13 +332,13 @@
 #+begin_src bash :tangle "~/.config/herbstluftwm/panel.sh" :tangle-mode (identity #o777)
   #!/bin/bash
 
-  FG="#454545"
-  BG="#000000"
-  ACCENT="#454545"
-  URGENT="#BF616A"
-  EMPTY="#555555"
+  FG="<<get-color("fg")>>"
+  BG="<<get-color("bg")>>"
+  ACCENT="<<get-color("accent")>>"
+  URGENT="<<get-color("red")>>"
+  EMPTY="<<get-color("comment")>>"
   #FONT="-gohu-gohufont-medium-r-normal--11-*-*-*-*-*-*-*"
-  FONT="JetBrainsMono Nerd Font-10"
+  FONT="<<get-val("font-family")>>-10"
 
   C_BUSY="%{B$ACCENT}%{F$BG}"
   C_FREE="%{F$FG}"

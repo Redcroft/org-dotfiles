@@ -2,8 +2,52 @@
 #+AUTHOR: Richard Redcroft
 #+EMAIL: Richard@Redcroft.tech
 #+OPTIONS: toc:nil num:nil
-#+PROPERTY: Header-args :tangle ~/.emacs.d/init.el :tangle-mode (identity #o444) :mkdirp yes
+#+PROPERTY: Header-args :tangle ~/.emacs.d/init.el :tangle-mode (identity #o444) :mkdirp yes :noweb yes
 #+auto_tangle: t
+
+
+#+INCLUDE: "../theme.org"
+
+* Theme Helpers :noexport:
+#+NAME: get-val
+#+begin_src emacs-lisp :var key="font-family" :exports none :tangle no
+  (with-current-buffer (find-file-noselect "../theme.org")
+    (save-excursion
+      (goto-char (point-min))
+      (re-search-forward "^#\\+NAME: theme-table")
+      (forward-line)
+      (let* ((full-table (org-babel-read-table))
+             (headers (car full-table))
+             (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
+             (host (system-name))
+             (col-idx (or (cl-position host headers :test 'string-equal) 1))
+             (row (assoc key table))
+             (val (nth col-idx row))
+             (val-str (format "%s" val)))
+        (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
+            (nth 1 row)
+          val))))
+#+end_src
+
+#+NAME: get-color
+#+begin_src emacs-lisp :var name="bg" :exports none :tangle no
+  (with-current-buffer (find-file-noselect "../theme.org")
+    (save-excursion
+      (goto-char (point-min))
+      (re-search-forward "^#\\+NAME: palette")
+      (forward-line)
+      (let* ((full-table (org-babel-read-table))
+             (headers (car full-table))
+             (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
+             (host (system-name))
+             (col-idx (or (cl-position host headers :test 'string-equal) 1))
+             (row (assoc name table))
+             (val (nth col-idx row))
+             (val-str (format "%s" val)))
+        (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
+            (nth 1 row)
+          val))))
+#+end_src
 
 * Early Init
 ** Visuals
@@ -362,7 +406,8 @@
 ** Rainbow Mode
 #+begin_src emacs-lisp
   (use-package rainbow-mode
-    :hook (prog-mode . rainbow-mode))
+    :hook ((org-mode . rainbow-mode)
+  	 (prog-mode . rainbow-mode)))
 #+end_src
 
 ** Search
@@ -549,13 +594,46 @@
     :init
     (minions-mode))
 
-  (use-package gruvbox-theme
+  (use-package autothemer
+    :ensure t
     :config
-    (load-theme 'gruvbox-dark-hard t))
+    (autothemer-deftheme system-theme
+      "Centralized system theme"
+      ((((class color) (min-colors #xFFFFFF))
+        (bg      "<<get-color("bg")>>")
+        (fg      "<<get-color("fg")>>")
+        (red     "<<get-color("red")>>")
+        (green   "<<get-color("green")>>")
+        (yellow  "<<get-color("yellow")>>")
+        (blue    "<<get-color("blue")>>")
+        (magenta "<<get-color("magenta")>>")
+        (cyan    "<<get-color("cyan")>>")
+        (comment "<<get-color("comment")>>")
+        (select  "<<get-color("selection")>>")
+        (accent  "<<get-color("accent")>>")))
+      ((default :background bg :foreground fg)
+       (cursor :background fg)
+       (region :background select)
+       (mode-line :background select :foreground fg)
+       (mode-line-inactive :background bg :foreground comment)
+       (font-lock-comment-face :foreground comment)
+       (font-lock-keyword-face :foreground magenta :weight bold)
+       (font-lock-string-face :foreground green)
+       (font-lock-type-face :foreground yellow)
+       (font-lock-constant-face :foreground cyan)
+       (font-lock-variable-name-face :foreground blue)
+       (font-lock-function-name-face :foreground blue :weight bold)
+       (font-lock-builtin-face :foreground cyan)
+       (font-lock-warning-face :foreground red :weight bold)
+       (org-level-1 :foreground accent :weight bold :height 1.2)
+       (org-level-2 :foreground blue :weight bold :height 1.1)
+       (org-level-3 :foreground green :weight bold)
+       (org-link :foreground cyan :underline t)))
+    (load-theme 'system-theme t))
 
   (setq line-spacing 0.00)
   (set-face-attribute 'default nil
-                      :family "Aporetic Sans Mono"
+                      :family "<<get-val("font-family")>>"
                       :height 120
                       :weight 'Semibold)
 #+end_src

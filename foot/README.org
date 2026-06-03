@@ -2,13 +2,65 @@
 #+AUTHOR: Richard Redcroft
 #+EMAIL: Richard@Redcroft.tech
 #+OPTIONS: toc:nil num:nil
-#+PROPERTY: Header-args :tangle ~/.config/foot/foot.ini :tangle-mode (identity #o444) :mkdirp yes
+#+PROPERTY: Header-args :tangle ~/.config/foot/foot.ini :tangle-mode (identity #o444) :mkdirp yes :noweb yes
 #+auto_tangle: t
+
+#+INCLUDE: "../theme.org"
+
+* Theme Helpers :noexport:
+#+NAME: get-val
+#+begin_src emacs-lisp :var key="font-family" :exports none :tangle no
+  (with-current-buffer (find-file-noselect "../theme.org")
+    (save-excursion
+      (goto-char (point-min))
+      (re-search-forward "^#\\+NAME: theme-table")
+      (forward-line)
+      (let* ((full-table (org-babel-read-table))
+             (headers (car full-table))
+             (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
+             (host (system-name))
+             (col-idx (or (cl-position host headers :test 'string-equal) 1))
+             (row (assoc key table))
+             (val (nth col-idx row))
+             (val-str (format "%s" val)))
+        (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
+            (nth 1 row)
+          val))))
+#+end_src
+
+#+NAME: get-color
+#+begin_src emacs-lisp :var name="bg" nohash="nil" :exports none :tangle no
+  (let ((color (with-current-buffer (find-file-noselect "../theme.org")
+                 (save-excursion
+                   (goto-char (point-min))
+                   (re-search-forward "^#\\+NAME: palette")
+                   (forward-line)
+                   (let* ((full-table (org-babel-read-table))
+                          (headers (car full-table))
+                          (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
+                          (host (system-name))
+                          (col-idx (or (cl-position host headers :test 'string-equal) 1))
+                          (row (assoc name table))
+                          (val (nth col-idx row))
+                          (val-str (format "%s" val)))
+                     (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
+                         (nth 1 row)
+                       val))))))
+    (if (and color (string-equal nohash "t"))
+        (replace-regexp-in-string "^#" "" color)
+      color))
+#+end_src
+
+
+
+
+
+
 
 * Main
 #+begin_src conf
   [main]
-  font=JetBrains Mono Nerd Font:size=11:style=semibold
+  font=<<get-val("font-family")>>:size=11:style=semibold
   pad=12x12 center-when-maximized-and-fullscreen
 
   [colors-dark]
@@ -18,22 +70,22 @@
 * Colors
 #+begin_src conf
   [colors-dark]
-  background=21202e
-  foreground=edecee
-  regular0=1c1b22
-  regular1=ff6767
-  regular2=61ffca
-  regular3=ffca85
-  regular4=a277ff
-  regular5=a277ff
-  regular6=61ffca
-  regular7=edecee
-  bright0=4d4d4d
-  bright1=ffca85
-  bright2=a277ff
-  bright3=ffca85
-  bright4=a277ff
-  bright5=a277ff
-  bright6=61ffca
-  bright7=edecee
+  background=<<get-color(name="bg", nohash="t")>>
+  foreground=<<get-color(name="fg", nohash="t")>>
+  regular0=<<get-color(name="bg", nohash="t")>>
+  regular1=<<get-color(name="red", nohash="t")>>
+  regular2=<<get-color(name="green", nohash="t")>>
+  regular3=<<get-color(name="yellow", nohash="t")>>
+  regular4=<<get-color(name="blue", nohash="t")>>
+  regular5=<<get-color(name="magenta", nohash="t")>>
+  regular6=<<get-color(name="cyan", nohash="t")>>
+  regular7=<<get-color(name="fg", nohash="t")>>
+  bright0=<<get-color(name="bg", nohash="t")>>
+  bright1=<<get-color(name="red", nohash="t")>>
+  bright2=<<get-color(name="green", nohash="t")>>
+  bright3=<<get-color(name="yellow", nohash="t")>>
+  bright4=<<get-color(name="blue", nohash="t")>>
+  bright5=<<get-color(name="magenta", nohash="t")>>
+  bright6=<<get-color(name="cyan", nohash="t")>>
+  bright7=<<get-color(name="fg", nohash="t")>>
 #+end_src

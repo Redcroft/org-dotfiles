@@ -2,118 +2,106 @@
 #+AUTHOR: Richard Redcroft
 #+EMAIL: Richard@Redcroft.tech
 #+OPTIONS: toc:nil num:nil
-#+PROPERTY: Header-args :tangle ~/.config/kitty/kitty.conf :tangle-mode (identity #o444) :mkdirp yes
+#+PROPERTY: Header-args :tangle ~/.config/kitty/kitty.conf :tangle-mode (identity #o444) :mkdirp yes :noweb yes
 #+auto_tangle: t
+
+#+INCLUDE: "../theme.org"
+
+* Theme Helpers :noexport:
+#+NAME: get-val
+#+begin_src emacs-lisp :var key="font-family" :exports none :tangle no
+  (with-current-buffer (find-file-noselect "../theme.org")
+    (save-excursion
+      (goto-char (point-min))
+      (re-search-forward "^#\\+NAME: theme-table")
+      (forward-line)
+      (let* ((full-table (org-babel-read-table))
+             (headers (car full-table))
+             (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
+             (host (system-name))
+             (col-idx (or (cl-position host headers :test 'string-equal) 1))
+             (row (assoc key table))
+             (val (nth col-idx row))
+             (val-str (format "%s" val)))
+        (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
+            (nth 1 row)
+          val))))
+#+end_src
+
+#+NAME: get-color
+#+begin_src emacs-lisp :var name="bg" :exports none :tangle no
+  (with-current-buffer (find-file-noselect "../theme.org")
+    (save-excursion
+      (goto-char (point-min))
+      (re-search-forward "^#\\+NAME: palette")
+      (forward-line)
+      (let* ((full-table (org-babel-read-table))
+             (headers (car full-table))
+             (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
+             (host (system-name))
+             (col-idx (or (cl-position host headers :test 'string-equal) 1))
+             (row (assoc name table))
+             (val (nth col-idx row))
+             (val-str (format "%s" val)))
+        (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
+            (nth 1 row)
+          val))))
+#+end_src
+
+
+
+
+
+
 
 * Kitty
 ** Font
 #+begin_src conf
-  font_family      family='JetBrainsMono Nerd Font' style=Light
-  bold_font        family='JetBrainsMono Nerd Font' style=Regular
-  italic_font      family='JetBrainsMono Nerd Font' style='Light Italic'
-  bold_italic_font family='JetBrainsMono Nerd Font' style='Medium Italic'
+  font_family      family='<<get-val("font-family")>>' style=Light
+  bold_font        family='<<get-val("font-family")>>' style=Regular
+  italic_font      family='<<get-val("font-family")>>' style='Light Italic'
+  bold_italic_font family='<<get-val("font-family")>>' style='Medium Italic'
 
-  font_size 12.0
+  font_size <<get-val("font-size")>>.0
 #+end_src
 
 ** Theme
-*** Material Darker
-#+begin_src conf :tangle no
-  # Base16 Material Darker - kitty color config
-  # Scheme by Nate Peterson
-  background #212121
-  foreground #EEFFFF
-  selection_background #EEFFFF
-  selection_foreground #212121
-  url_color #B2CCD6
-  cursor #EEFFFF
-  active_border_color #4A4A4A
-  inactive_border_color #303030
-  active_tab_background #212121
-  active_tab_foreground #EEFFFF
-  inactive_tab_background #303030
-  inactive_tab_foreground #B2CCD6
-  tab_bar_background #303030
+*** Centralized Theme
+#+begin_src conf
+  # Centralized Theme consumed from theme.org
+  background <<get-color("bg")>>
+  foreground <<get-color("fg")>>
+  selection_background <<get-color("fg")>>
+  selection_foreground <<get-color("bg")>>
+  url_color <<get-color("red")>>
+  cursor <<get-color("fg")>>
+  active_border_color <<get-color("red")>>
+  inactive_border_color <<get-color("bg")>>
+  active_tab_background <<get-color("bg")>>
+  active_tab_foreground <<get-color("fg")>>
+  inactive_tab_background <<get-color("bg")>>
+  inactive_tab_foreground <<get-color("yellow")>>
+  tab_bar_background <<get-color("bg")>>
 
   # normal
-  color0 #212121
-  color1 #F07178
-  color2 #C3E88D
-  color3 #FFCB6B
-  color4 #82AAFF
-  color5 #C792EA
-  color6 #89DDFF
-  color7 #EEFFFF
+  color0 <<get-color("bg")>>
+  color1 <<get-color("red")>>
+  color2 <<get-color("green")>>
+  color3 <<get-color("yellow")>>
+  color4 <<get-color("blue")>>
+  color5 <<get-color("magenta")>>
+  color6 <<get-color("cyan")>>
+  color7 <<get-color("fg")>>
 
   # bright
-  color8 #4A4A4A
-  color9 #F07178
-  color10 #C3E88D
-  color11 #FFCB6B
-  color12 #82AAFF
-  color13 #C792EA
-  color14 #89DDFF
-  color15 #FFFFFF
-
-  # extended base16 colors
-  color16 #F78C6C
-  color17 #FF5370
-  color18 #303030
-  color19 #353535
-  color20 #B2CCD6
-  color21 #EEFFFF
-#+end_src
-*** Horizon
-#+begin_src conf
-  # vim:ft kitty
-
-  ## name: Horizon Extended
-  ## license: MIT
-  ## author: Lance Wilhelm
-  ## upstream: 
-
-  background #1C1E26
-  foreground #D5D8DA
-  selection_background #D5D8DA
-  selection_foreground #1C1E26
-  url_color #f6637c
-  cursor #D5D8DA
-  cursor_text_color #1C1E26
-
-  # Tabs
-  active_tab_background #f6637c
-  active_tab_foreground #1C1E26
-  inactive_tab_background #1C1E26
-  inactive_tab_foreground #565c75
-  #tab_bar_background #1c1e26
-
-  # Windows
-  active_border_color #f6637c
-  inactive_border_color #1c1e26
-
-  # normal
-  color0 #414557
-  color1 #f6637c
-  color2 #99d279
-  color3 #f8d28a
-  color4 #21b1be
-  color5 #b774dc
-  color6 #f9c199
-  color7 #f88e7c
-
-  # brignt
-  color8 #565c75
-  color9 #d68492
-  color10 #9ec08a
-  color11 #e0caa3
-  color12 #389ea8
-  color13 #b08ec2
-  color14 #e9c4a9
-  color15 #e39d90
-
-  # extended colors
-  color16 #ff9e64
-  color17 #db4b4b
+  color8 <<get-color("bg")>>
+  color9 <<get-color("red")>>
+  color10 <<get-color("green")>>
+  color11 <<get-color("yellow")>>
+  color12 <<get-color("blue")>>
+  color13 <<get-color("magenta")>>
+  color14 <<get-color("cyan")>>
+  color15 <<get-color("fg")>>
 #+end_src
 ** General
 #+begin_src conf

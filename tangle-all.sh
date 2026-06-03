@@ -11,14 +11,18 @@ cd "$DOTFILES_ROOT"
 
 echo "=== Tangling all README.org files in $DOTFILES_ROOT ==="
 
-# Find all README.org files and tangle them
-find "$DOTFILES_ROOT" -name "README.org" -type f | while read -r org_file; do
-    echo "Tangling: $org_file"
-    emacs --batch --eval "(require 'org)" \
-	  --eval "(require 'ob-shell)" \
-	  --eval "(setq org-confirm-babel-evaluate nil)" \
-	  --eval "(org-babel-tangle-file \"$org_file\")"
-done
+# Find all README.org files and tangle them in parallel
+# Use xargs -P to run multiple emacs instances at once
+# nproc determines the number of available CPU cores
+NUM_CORES=$(nproc 2>/dev/null || echo 4)
+
+find "$DOTFILES_ROOT" -name "README.org" -type f -print0 | xargs -0 -I {} -P "$NUM_CORES" sh -c "
+    echo 'Tangling: {}'
+    emacs --batch --eval \"(require 'org)\" \
+	  --eval \"(require 'ob-shell)\" \
+	  --eval \"(setq org-confirm-babel-evaluate nil)\" \
+	  --eval \"(org-babel-tangle-file \\\"{}\\\")\"
+"
 
 echo "=== Tangling complete ==="
 echo "Manually Add FREETYPE_PROPERTIES=\"cff:no-stem-darkening=0 autofitter:no-stem-darkening=0\" to /etc/environment"

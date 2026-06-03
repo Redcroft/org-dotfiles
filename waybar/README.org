@@ -2,8 +2,54 @@
 #+AUTHOR: Richard Redcroft
 #+EMAIL: Richard@Redcroft.tech
 #+OPTIONS: toc:nil num:nil
-#+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes
+#+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes :noweb yes
 #+auto_tangle: t
+
+#+INCLUDE: "../theme.org"
+
+* Theme Helpers :noexport:
+#+NAME: get-val
+#+begin_src emacs-lisp :var key="font-family" :exports none :tangle no
+  (with-current-buffer (find-file-noselect "../theme.org")
+    (save-excursion
+      (goto-char (point-min))
+      (re-search-forward "^#\\+NAME: theme-table")
+      (forward-line)
+      (let* ((full-table (org-babel-read-table))
+             (headers (car full-table))
+             (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
+             (host (system-name))
+             (col-idx (or (cl-position host headers :test 'string-equal) 1))
+             (row (assoc key table))
+             (val (nth col-idx row))
+             (val-str (format "%s" val)))
+        (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
+            (nth 1 row)
+          val))))
+#+end_src
+
+#+NAME: get-color
+#+begin_src emacs-lisp :var name="bg" nohash="nil" :exports none :tangle no
+  (let ((color (with-current-buffer (find-file-noselect "../theme.org")
+                 (save-excursion
+                   (goto-char (point-min))
+                   (re-search-forward "^#\\+NAME: palette")
+                   (forward-line)
+                   (let* ((full-table (org-babel-read-table))
+                          (headers (car full-table))
+                          (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
+                          (host (system-name))
+                          (col-idx (or (cl-position host headers :test 'string-equal) 1))
+                          (row (assoc name table))
+                          (val (nth col-idx row))
+                          (val-str (format "%s" val)))
+                     (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
+                         (nth 1 row)
+                       val))))))
+    (if (and color (string-equal nohash "t"))
+        (replace-regexp-in-string "^#" "" color)
+      color))
+#+end_src
 
 #+begin_src json :tangle "~/.config/waybar/config"
   {
@@ -20,7 +66,7 @@
   	"tooltip-format": "<tt>{calendar}</tt>",
   	"calendar": {
   	    "format": {
-  		"today": "<span color='#fAfBfC'><b>{}</b></span>"
+  		"today": "<span color='<<get-color("fg")>>'><b>{}</b></span>"
   	    }
   	},
       },
@@ -83,17 +129,17 @@
     border: none;
     border-radius: 0;
     min-height: 0;
-    font-family: IosevkaTerm Nerd Font;
+    font-family: <<get-val("ui-font")>>;
     font-size: 14px;
     font-weight: 600;
   }
 
   #clock,#cpu,#memory,#pulseaudio,#battery {
-    color: #949494;
+    color: <<get-color("comment")>>;
   }
 
   window#waybar {
-    background-color: rgba(0,0,0,1.0);
+    background-color: <<get-color("bg")>>;
     transition: all 0.3s ease-in-out;
   }
 
@@ -115,34 +161,34 @@
     padding: 3px 8px;
     margin: 3px 3px;
     border-radius: 4px;
-    background-color: #1e1e2e;
-    color: #727272;
+    background-color: <<get-color("bg")>>;
+    color: <<get-color("comment")>>;
   }
 
   #workspaces button.active {
-    background-color: #9c180c;
-    color: #1e1e2e;
+    background-color: <<get-color("accent")>>;
+    color: <<get-color("bg")>>;
   }
 
   #workspaces button:hover {
     box-shadow: inherit;
     text-shadow: inherit;
-    color: #1e1e2e;
-    background-color: #cdd6f4;
+    color: <<get-color("bg")>>;
+    background-color: <<get-color("fg")>>;
   }
 
   #workspaces button.urgent {
-    background-color: #c27a1d;
+    background-color: <<get-color("red")>>;
   }
 
   #battery.warning,
   #battery.critical,
   #battery.urgent {
-    color: #9c180c;
+    color: <<get-color("red")>>;
   }
 
   #battery.charging {
-    color: #a6e3a1;
+    color: <<get-color("green")>>;
   }
 
   tooltip {

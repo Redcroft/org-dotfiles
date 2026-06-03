@@ -2,8 +2,75 @@
 #+AUTHOR: Richard Redcroft
 #+EMAIL: Richard@Redcroft.tech
 #+OPTIONS: toc:nil num:nil
-#+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes
+#+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes :noweb yes
 #+auto_tangle: t
+
+#+INCLUDE: "../theme.org"
+
+* Theme Helpers :noexport:
+#+NAME: get-val
+#+begin_src emacs-lisp :var key="font-family" :exports none :tangle no
+  (with-current-buffer (find-file-noselect "../theme.org")
+    (save-excursion
+      (goto-char (point-min))
+      (re-search-forward "^#\\+NAME: theme-table")
+      (forward-line)
+      (let* ((full-table (org-babel-read-table))
+             (headers (car full-table))
+             (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
+             (host (system-name))
+             (col-idx (or (cl-position host headers :test 'string-equal) 1))
+             (row (assoc key table))
+             (val (nth col-idx row))
+             (val-str (format "%s" val)))
+        (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
+            (nth 1 row)
+          val))))
+#+end_src
+
+#+NAME: get-color
+#+begin_src emacs-lisp :var name="bg" nohash="nil" :exports none :tangle no
+  (let ((color (with-current-buffer (find-file-noselect "../theme.org")
+                 (save-excursion
+                   (goto-char (point-min))
+                   (re-search-forward "^#\\+NAME: palette")
+                   (forward-line)
+                   (let* ((full-table (org-babel-read-table))
+                          (headers (car full-table))
+                          (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
+                          (host (system-name))
+                          (col-idx (or (cl-position host headers :test 'string-equal) 1))
+                          (row (assoc name table))
+                          (val (nth col-idx row))
+                          (val-str (format "%s" val)))
+                     (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
+                         (nth 1 row)
+                       val))))))
+    (if (and color (string-equal nohash "t"))
+        (replace-regexp-in-string "^#" "" color)
+      color))
+#+end_src
+
+#+NAME: get-color-rgb
+#+begin_src emacs-lisp :var name="accent" :exports none :tangle no
+  (let ((color (with-current-buffer (find-file-noselect "../theme.org")
+                 (save-excursion
+                   (goto-char (point-min))
+                   (re-search-forward "^#\\+NAME: palette")
+                   (forward-line)
+                   (let* ((full-table (org-babel-read-table))
+                          (headers (car full-table))
+                          (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
+                          (host (system-name))
+                          (col-idx (or (cl-position host headers :test 'string-equal) 1))
+                          (row (assoc name table))
+                          (val (nth col-idx row))
+                          (val-str (format "%s" val)))
+                     (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
+                         (nth 1 row)
+                       val))))))
+    (format "rgb(%s)" (replace-regexp-in-string "^#" "" color)))
+#+end_src
 
 * Hyprland
 ** Config
@@ -219,8 +286,8 @@
    	 border_size              = 2,
    	 
    	 col = {
-   	    active_border         = "rgb(9c180c)",
-   	    inactive_border       = "rgb(000000)",
+   	    active_border         = "<<get-color-rgb("accent")>>",
+   	    inactive_border       = "<<get-color-rgb("bg")>>",
    	 },
 
    	 resize_on_border         = true,
@@ -229,23 +296,23 @@
 
          group = {
    	 col = {
-   	   border_active          = "rgb(9c180c)",
-   	   border_inactive        = "rgb(000000)",
+   	   border_active          = "<<get-color-rgb("accent")>>",
+   	   border_inactive        = "<<get-color-rgb("bg")>>",
    	 },
    	 
    	 groupbar = {
    	    enabled               = true,
    	    render_titles         = true,
-   	    font_family           = "JetBrainsMono Nerd Font",
-   	    font_size             = 12,
+   	    font_family           = "<<get-val("font-family")>>",
+   	    font_size             = <<get-val("font-size")>>,
    	    font_weight_active    = "Semibold",
    	    font_weight_inactive  = "Semibold",
    	    gradients             = true,
-   	    text_color            = "rgb(eeeeee)",
-   	    text_color_inactive   = "rgb(484848)",
+   	    text_color            = "<<get-color-rgb("fg")>>",
+   	    text_color_inactive   = "<<get-color-rgb("comment")>>",
    	    col = {
-   	       active             = "rgb(9c180c)",
-   	       inactive           = "rgb(000000)",
+   	       active             = "<<get-color-rgb("accent")>>",
+   	       inactive           = "<<get-color-rgb("bg")>>",
    	    }
    	 },
          },
@@ -270,7 +337,7 @@
          },
 
          misc = {
-   	 background_color         = 0x000000,
+   	 background_color         = 0x<<get-color(name="bg", nohash="t")>>,
    	 disable_hyprland_logo    = true,
    	 disable_splash_rendering = true,
          },
@@ -576,15 +643,15 @@
     outline_thickness = 3
     inner_color = rgba(0, 0, 0, 0.0)
 
-    outer_color = rgba(33ccffee)
-    check_color = rgba(00ff99ee)
-    fail_color = rgba(ff66ffee)
+    outer_color = rgba(<<get-color(name="accent", nohash="t")>>ee)
+    check_color = rgba(<<get-color(name="green", nohash="t")>>ee)
+    fail_color = rgba(<<get-color(name="red", nohash="t")>>ee)
 
-    font_color = rgb(143, 143, 143)
+    font_color = rgb(<<get-color(name="fg", nohash="t")>>)
     fade_on_empty = true
     rounding = 12
 
-    font_family = JetBrainsMono Nerd Font
+    font_family = <<get-val("font-family")>>
     placeholder_text = Input Password...
     fail_text = $PAMFAIL
 
@@ -597,25 +664,25 @@
 
 * Hyprtoolkit
 #+begin_src conf :tangle "~/.config/hypr/hyprtoolkit.conf"
-  background = 0xFF282828
-  base = 0xFF1d2021
-  text = 0xFFebdbb2
-  alternate_base = 0xFF3c3836
-  bright_text = 0xFFfbf1c7
-  accent = 0xFF8ec07c
-  accent_secondary = 0xFF83a598
+  background = 0xFF<<get-color(name="bg", nohash="t")>>
+  base = 0xFF<<get-color(name="bg", nohash="t")>>
+  text = 0xFF<<get-color(name="fg", nohash="t")>>
+  alternate_base = 0xFF<<get-color(name="selection", nohash="t")>>
+  bright_text = 0xFF<<get-color(name="fg", nohash="t")>>
+  accent = 0xFF<<get-color(name="accent", nohash="t")>>
+  accent_secondary = 0xFF<<get-color(name="blue", nohash="t")>>
   h1_size = 19
   h2_size = 15
   h3_size = 13v
-  font_size = 11
+  font_size = <<get-val("font-size")>>
   small_font_size = 10
-  font_family = Ioskeley Mono
-  font_family_monospace = Ioskeley Mono
+  font_family = <<get-val("font-family")>>
+  font_family_monospace = <<get-val("font-family")>>
   icon_theme = Flatery-Dark
 #+end_src
 
 * Bemenu
 #+begin_src bash :tangle "~/.local/bin/mybemenu" :tangle-mode (identity #o777) :mkdirp yes
   #!/bin/bash
-  bemenu-run --fn "Ioskeley Mono 12" --fb "#000000" --ff "#cdd6f4" --nb "#1e1e2e" --nf "#cdd6f4" --tb "#1e1e2e" --hb "#1e1e2e" --tf "#f38ba8" --hf "#f9e2af" --af "#cdd6f4" --ab "#1e1e2e"
+  bemenu-run --fn "<<get-val("font-family")>> 12" --fb "<<get-color("bg")>>" --ff "<<get-color("fg")>>" --nb "<<get-color("bg")>>" --nf "<<get-color("fg")>>" --tb "<<get-color("bg")>>" --hb "<<get-color("accent")>>" --tf "<<get-color("accent")>>" --hf "<<get-color("fg")>>" --af "<<get-color("fg")>>" --ab "<<get-color("bg")>>"
 #+end_src

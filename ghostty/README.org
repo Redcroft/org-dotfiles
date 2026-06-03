@@ -2,16 +2,64 @@
 #+AUTHOR: Richard Redcroft
 #+EMAIL: Richard@Redcroft.tech
 #+OPTIONS: toc:nil num:nil
-#+PROPERTY: Header-args :tangle ~/.config/ghostty/config :tangle-mode (identity #o444) :mkdirp yes
+#+PROPERTY: Header-args :tangle ~/.config/ghostty/config :tangle-mode (identity #o444) :mkdirp yes :noweb yes
 #+auto_tangle: t
+
+#+INCLUDE: "../theme.org"
+
+* Theme Helpers :noexport:
+#+NAME: get-val
+#+begin_src emacs-lisp :var key="font-family" :exports none :tangle no
+  (with-current-buffer (find-file-noselect "../theme.org")
+    (save-excursion
+      (goto-char (point-min))
+      (re-search-forward "^#\\+NAME: theme-table")
+      (forward-line)
+      (let* ((full-table (org-babel-read-table))
+             (headers (car full-table))
+             (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
+             (host (system-name))
+             (col-idx (or (cl-position host headers :test 'string-equal) 1))
+             (row (assoc key table))
+             (val (nth col-idx row))
+             (val-str (format "%s" val)))
+        (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
+            (nth 1 row)
+          val))))
+#+end_src
+
+#+NAME: get-color
+#+begin_src emacs-lisp :var name="bg" :exports none :tangle no
+  (with-current-buffer (find-file-noselect "../theme.org")
+    (save-excursion
+      (goto-char (point-min))
+      (re-search-forward "^#\\+NAME: palette")
+      (forward-line)
+      (let* ((full-table (org-babel-read-table))
+             (headers (car full-table))
+             (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
+             (host (system-name))
+             (col-idx (or (cl-position host headers :test 'string-equal) 1))
+             (row (assoc name table))
+             (val (nth col-idx row))
+             (val-str (format "%s" val)))
+        (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
+            (nth 1 row)
+          val))))
+#+end_src
+
+
+
+
+
+
 
 * Config
 
 #+begin_src conf
-  font-family = "JetBrainsMono Nerd Font"
-  font-size = 12
-  font-style = "Medium"
-  theme = Ayu
+  font-family = "<<get-val("font-family")>>"
+  font-size = <<get-val("font-size")>>
+  font-style = "<<get-val("font-style")>>"
   quick-terminal-position = center
   quick-terminal-size = 60%,60%
 
@@ -28,101 +76,31 @@
 #+end_src
 
 #+begin_src conf
-  # Ember — dark variant
-  # Source: https://github.com/ember-theme/ember/blob/main/palette.json
-
-  background = #1c1b19
-  foreground = #d8d0c0
-  cursor-color = #e08060
-  cursor-text = #1c1b19
-  selection-background = #3e3c38
-  selection-foreground = #d8d0c0
+  # Centralized Theme
+  background = <<get-color("bg")>>
+  foreground = <<get-color("fg")>>
+  cursor-color = <<get-color("red")>>
+  cursor-text = <<get-color("bg")>>
+  selection-background = <<get-color("blue")>>
+  selection-foreground = <<get-color("fg")>>
 
   # Normal colors
-  palette = 0=#1c1b19
-  palette = 1=#e08060
-  palette = 2=#8a9868
-  palette = 3=#c8b468
-  palette = 4=#7890a0
-  palette = 5=#b07878
-  palette = 6=#80a090
-  palette = 7=#d8d0c0
+  palette = 0=<<get-color("bg")>>
+  palette = 1=<<get-color("red")>>
+  palette = 2=<<get-color("green")>>
+  palette = 3=<<get-color("yellow")>>
+  palette = 4=<<get-color("blue")>>
+  palette = 5=<<get-color("magenta")>>
+  palette = 6=<<get-color("cyan")>>
+  palette = 7=<<get-color("fg")>>
 
-  # Bright colors (same as normal — Ember's muted philosophy)
-  palette = 8=#1c1b19
-  palette = 9=#e08060
-  palette = 10=#8a9868
-  palette = 11=#c8b468
-  palette = 12=#7890a0
-  palette = 13=#b07878
-  palette = 14=#80a090
-  palette = 15=#d8d0c0
-#+end_src
-
-#+begin_src conf :tangle no
-  # Modus-Vivendi Colors
-  background = #000000
-  foreground = #ffffff
-  selection-background = #5a5a5a
-  selection-foreground = #ffffff
-  cursor-color = #ffffff
-
-  # black
-  palette = 0=#1e1e1e
-  palette = 8=#535353
-  # red
-  palette = 1=#ff5f59
-  palette = 9=#ff7f9f
-  # green
-  palette = 2=#44bc44
-  palette = 10=#00c06f
-  # yellow
-  palette = 3=#d0bc00
-  palette = 11=#dfaf7a
-  # blue
-  palette = 4=#2fafff
-  palette = 12=#00bcff
-  # magenta
-  palette = 5=#feacd0
-  palette = 13=#b6a0ff
-  # cyan
-  palette = 6=#00d3d0
-  palette = 14=#6ae4b9
-  # white
-  palette = 7=#ffffff
-  palette = 15=#989898
-#+end_src
-
-#+begin_src conf :tangle no
-  # Modus-Vivendi-Tritanopia Colors
-  background = #000000
-  foreground = #ffffff
-  selection-background = #5a5a5a
-  selection-foreground = #ffffff
-  cursor-color = #ffffff
-
-  # black
-  palette = 0=#1e1e1e
-  palette = 8=#535353
-  # red
-  palette = 1=#ff5f59
-  palette = 9=#ff6f9f
-  # green
-  palette = 2=#44bc44
-  palette = 10=#00c06f
-  # yellow
-  palette = 3=#cabf00
-  palette = 11=#d8af7a
-  # blue
-  palette = 4=#2fafff
-  palette = 12=#00bcff
-  # magenta
-  palette = 5=#feacd0
-  palette = 13=#b6a0ff
-  # cyan
-  palette = 6=#00d3d0
-  palette = 14=#6ae4b9
-  # white
-  palette = 7=#ffffff
-  palette = 15=#989898
+  # Bright colors (same as normal)
+  palette = 8=<<get-color("bg")>>
+  palette = 9=<<get-color("red")>>
+  palette = 10=<<get-color("green")>>
+  palette = 11=<<get-color("yellow")>>
+  palette = 12=<<get-color("blue")>>
+  palette = 13=<<get-color("magenta")>>
+  palette = 14=<<get-color("cyan")>>
+  palette = 15=<<get-color("fg")>>
 #+end_src

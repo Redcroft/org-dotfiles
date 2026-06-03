@@ -2,8 +2,54 @@
 #+AUTHOR: Richard Redcroft
 #+EMAIL: Richard@Redcroft.tech
 #+OPTIONS: toc:nil num:nil
-#+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes
+#+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes :noweb yes
 #+auto_tangle: t
+
+#+INCLUDE: "../theme.org"
+
+* Theme Helpers :noexport:
+#+NAME: get-val
+#+begin_src emacs-lisp :var key="font-family" :exports none :tangle no
+  (with-current-buffer (find-file-noselect "../theme.org")
+    (save-excursion
+      (goto-char (point-min))
+      (re-search-forward "^#\\+NAME: theme-table")
+      (forward-line)
+      (let* ((full-table (org-babel-read-table))
+             (headers (car full-table))
+             (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
+             (host (system-name))
+             (col-idx (or (cl-position host headers :test 'string-equal) 1))
+             (row (assoc key table))
+             (val (nth col-idx row))
+             (val-str (format "%s" val)))
+        (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
+            (nth 1 row)
+          val))))
+#+end_src
+
+#+NAME: get-color
+#+begin_src emacs-lisp :var name="bg" nohash="nil" :exports none :tangle no
+  (let ((color (with-current-buffer (find-file-noselect "../theme.org")
+                 (save-excursion
+                   (goto-char (point-min))
+                   (re-search-forward "^#\\+NAME: palette")
+                   (forward-line)
+                   (let* ((full-table (org-babel-read-table))
+                          (headers (car full-table))
+                          (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
+                          (host (system-name))
+                          (col-idx (or (cl-position host headers :test 'string-equal) 1))
+                          (row (assoc name table))
+                          (val (nth col-idx row))
+                          (val-str (format "%s" val)))
+                     (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
+                         (nth 1 row)
+                       val))))))
+    (if (and color (string-equal nohash "t"))
+        (replace-regexp-in-string "^#" "" color)
+      color))
+#+end_src
 
 * Mako
 
@@ -15,19 +61,19 @@
   max-icon-size=32
 
   # Colors
-  background-color=#21202e
-  text-color=#edecee
-  border-color=#a277ff
-  progress-color=over #363a4f
+  background-color=<<get-color("bg")>>
+  text-color=<<get-color("fg")>>
+  border-color=<<get-color("accent")>>
+  progress-color=over <<get-color("selection")>>
 
   [urgency=high]
-  border-color=#ffca85
+  border-color=<<get-color("red")>>
 
   [app-name=osd]
   group-by=none
-  border-color=#a277ff
-  background-color=#000000
-  text-color=#727272
+  border-color=<<get-color("accent")>>
+  background-color=<<get-color("bg")>>
+  text-color=<<get-color("comment")>>
   default-timeout=100
   anchor=center
   width=300

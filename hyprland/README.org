@@ -644,8 +644,8 @@
     inner_color = rgba(0, 0, 0, 0.0)
 
     outer_color = rgba(<<get-color(name="accent", nohash="t")>>ee)
-    check_color = rgba(<<get-color(name="green", nohash="t")>>ee)
-    fail_color = rgba(<<get-color(name="red", nohash="t")>>ee)
+    check_color = rgba(<<get-color(name="color2", nohash="t")>>ee)
+    fail_color = rgba(<<get-color(name="color1", nohash="t")>>ee)
 
     font_color = rgb(<<get-color(name="fg", nohash="t")>>)
     fade_on_empty = true
@@ -670,7 +670,7 @@
   alternate_base = 0xFF<<get-color(name="selection", nohash="t")>>
   bright_text = 0xFF<<get-color(name="fg", nohash="t")>>
   accent = 0xFF<<get-color(name="accent", nohash="t")>>
-  accent_secondary = 0xFF<<get-color(name="blue", nohash="t")>>
+  accent_secondary = 0xFF<<get-color(name="color3", nohash="t")>>
   h1_size = 19
   h2_size = 15
   h3_size = 13v

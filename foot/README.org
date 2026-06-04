@@ -73,19 +73,19 @@
   background=<<get-color(name="bg", nohash="t")>>
   foreground=<<get-color(name="fg", nohash="t")>>
   regular0=<<get-color(name="bg", nohash="t")>>
-  regular1=<<get-color(name="red", nohash="t")>>
-  regular2=<<get-color(name="green", nohash="t")>>
-  regular3=<<get-color(name="yellow", nohash="t")>>
-  regular4=<<get-color(name="blue", nohash="t")>>
-  regular5=<<get-color(name="magenta", nohash="t")>>
-  regular6=<<get-color(name="cyan", nohash="t")>>
-  regular7=<<get-color(name="fg", nohash="t")>>
+  regular1=<<get-color(name="color1", nohash="t")>>
+  regular2=<<get-color(name="color2", nohash="t")>>
+  regular3=<<get-color(name="color3", nohash="t")>>
+  regular4=<<get-color(name="color4", nohash="t")>>
+  regular5=<<get-color(name="color5", nohash="t")>>
+  regular6=<<get-color(name="color6", nohash="t")>>
+  regular7=<<get-color(name="color7", nohash="t")>>
   bright0=<<get-color(name="bg", nohash="t")>>
-  bright1=<<get-color(name="red", nohash="t")>>
-  bright2=<<get-color(name="green", nohash="t")>>
-  bright3=<<get-color(name="yellow", nohash="t")>>
-  bright4=<<get-color(name="blue", nohash="t")>>
-  bright5=<<get-color(name="magenta", nohash="t")>>
-  bright6=<<get-color(name="cyan", nohash="t")>>
-  bright7=<<get-color(name="fg", nohash="t")>>
+  bright1=<<get-color(name="color9", nohash="t")>>
+  bright2=<<get-color(name="color10", nohash="t")>>
+  bright3=<<get-color(name="color11", nohash="t")>>
+  bright4=<<get-color(name="color12", nohash="t")>>
+  bright5=<<get-color(name="color13", nohash="t")>>
+  bright6=<<get-color(name="color14", nohash="t")>>
+  bright7=<<get-color(name="color15", nohash="t")>>
 #+end_src

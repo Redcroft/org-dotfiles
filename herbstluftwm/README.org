@@ -186,7 +186,7 @@
   hc attr theme.active.color "<<get-color("accent")>>"
   hc attr theme.title_color "<<get-color("bg")>>"
   hc attr theme.normal.color "<<get-color("bg")>>"
-  hc attr theme.urgent.color "<<get-color("red")>>"
+  hc attr theme.urgent.color "<<get-color("color1")>>"
   hc attr theme.tab_color "<<get-color("bg")>>"
   hc attr theme.active.tab_color "<<get-color("bg")>>"
   hc attr theme.active.tab_outer_color "<<get-color("bg")>>"
@@ -199,7 +199,7 @@
   hc attr theme.floating.outer_width 1
   hc attr theme.floating.outer_color "<<get-color("accent")>>"
   hc attr theme.active.inner_color "<<get-color("accent")>>"
-  hc attr theme.urgent.inner_color "<<get-color("red")>>"
+  hc attr theme.urgent.inner_color "<<get-color("color1")>>"
   hc attr theme.normal.inner_color "<<get-color("bg")>>"
   # copy inner color to outer_color
   for state in active urgent normal ; do
@@ -335,7 +335,7 @@
   FG="<<get-color("fg")>>"
   BG="<<get-color("bg")>>"
   ACCENT="<<get-color("accent")>>"
-  URGENT="<<get-color("red")>>"
+  URGENT="<<get-color("color1")>>"
   EMPTY="<<get-color("comment")>>"
   #FONT="-gohu-gohufont-medium-r-normal--11-*-*-*-*-*-*-*"
   FONT="<<get-val("font-family")>>-10"

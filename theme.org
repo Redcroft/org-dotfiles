@@ -2,26 +2,43 @@
 #+NAME: theme-table
 | Key         | Value                   | red |
 |-------------+-------------------------+-----|
-| font-family | JetBrainsMono Nerd Font | -   |
+| font-family | JetBrainsMono Nerd Font |     |
 | font-size   | 13                      | 14  |
-| font-style  | Medium                  | -   |
-| ui-font     | IosevkaTerm Nerd Font   | -   |
+| font-style  | Medium                  |     |
+| ui-font     | IosevkaTerm Nerd Font   |     |
 
 #+NAME: palette
-| Name      | Hex     | red     |
-|-----------+---------+---------|
-| bg        | #000000 | #1c1b19 |
-| fg        | #d8d0c0 | -       |
-| accent    | #7e6aac | -       |
-| comment   | #5c5855 | -       |
-| selection | #3e3c38 | -       |
-| red       | #e08060 | -       |
-| green     | #8a9868 | -       |
-| yellow    | #c8b468 | -       |
-| blue      | #7890a0 | -       |
-| magenta   | #b07878 | -       |
-| cyan      | #80a090 | -       |
-
-
-
-
+| Name            | Hex     | red     |
+|-----------------+---------+---------|
+| bg              | #000000 | #21202e |
+| fg              | #edecee |         |
+| accent          | #7e6aac |         |
+| comment         | #5c5855 |         |
+| selection       | #1c1b22 |         |
+| active_border   | #edecee |         |
+| inactive_border | #21202e |         |
+| bell_border     | #ffca85 |         |
+| url             | #61ffca |         |
+| active_tab_fg   | #edecee |         |
+| active_tab_bg   | #21202e |         |
+| inactive_tab_fg | #4d4d4d |         |
+| inactive_tab_bg | #21202e |         |
+| cursor          | #edecee |         |
+| selection_fg    | #edecee |         |
+| selection_bg    | #1c1b22 |         |
+| color0          | #1c1b22 |         |
+| color8          | #4d4d4d |         |
+| color1          | #ff6767 |         |
+| color9          | #ffca85 |         |
+| color2          | #61ffca |         |
+| color10         | #a277ff |         |
+| color3          | #ffca85 |         |
+| color11         | #ffca85 |         |
+| color4          | #a277ff |         |
+| color12         | #a277ff |         |
+| color5          | #a277ff |         |
+| color13         | #a277ff |         |
+| color6          | #61ffca |         |
+| color14         | #61ffca |         |
+| color7          | #edecee |         |
+| color15         | #edecee |         |

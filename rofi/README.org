@@ -72,7 +72,7 @@
       foreground:     <<get-color("fg")>>;
       selected:       <<get-color("accent")>>;
       active:         <<get-color("accent")>>;
-      urgent:         <<get-color("red")>>;
+      urgent:         <<get-color("color1")>>;
       border-colour:               var(selected);
       handle-colour:               var(foreground);
       background-colour:           var(background);
@@ -122,7 +122,7 @@
       /* Backgroud Image */
       //background-image:          url("/path/to/image.png", none);
       /* Simple Linear Gradient */
-      //background-image:          linear-gradient(red, orange, pink, purple);
+      //background-image:          linear-gradient(color1, orange, pink, purple);
       /* Directional Linear Gradient */
       //background-image:          linear-gradient(to bottom, pink, yellow, magenta);
       /* Angle Linear Gradient */

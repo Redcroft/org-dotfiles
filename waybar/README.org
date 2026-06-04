@@ -178,17 +178,17 @@
   }
 
   #workspaces button.urgent {
-    background-color: <<get-color("red")>>;
+    background-color: <<get-color("color1")>>;
   }
 
   #battery.warning,
   #battery.critical,
   #battery.urgent {
-    color: <<get-color("red")>>;
+    color: <<get-color("color1")>>;
   }
 
   #battery.charging {
-    color: <<get-color("green")>>;
+    color: <<get-color("color2")>>;
   }
 
   tooltip {

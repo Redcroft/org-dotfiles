@@ -67,7 +67,7 @@
   progress-color=over <<get-color("selection")>>
 
   [urgency=high]
-  border-color=<<get-color("red")>>
+  border-color=<<get-color("color1")>>
 
   [app-name=osd]
   group-by=none

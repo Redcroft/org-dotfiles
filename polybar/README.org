@@ -57,14 +57,14 @@
   background-alt = <<get-color("selection")>>
   foreground = <<get-color("fg")>>
   primary = <<get-color("accent")>>
-  secondary = <<get-color("cyan")>>
-  alert = <<get-color("red")>>
+  secondary = <<get-color("color6")>>
+  alert = <<get-color("color1")>>
   disabled = <<get-color("comment")>>
   # Used for bars
-  green = <<get-color("green")>>
-  yellow = <<get-color("yellow")>>
+  green = <<get-color("color2")>>
+  yellow = <<get-color("color3")>>
   orange = <<get-color("accent")>>
-  red = <<get-color("red")>>
+  red = <<get-color("color1")>>
 
   [bar/main]
   width = 100%

@@ -85,22 +85,22 @@
   selection-foreground = <<get-color("fg")>>
 
   # Normal colors
-  palette = 0=<<get-color("bg")>>
-  palette = 1=<<get-color("red")>>
-  palette = 2=<<get-color("green")>>
-  palette = 3=<<get-color("yellow")>>
-  palette = 4=<<get-color("blue")>>
-  palette = 5=<<get-color("magenta")>>
-  palette = 6=<<get-color("cyan")>>
-  palette = 7=<<get-color("fg")>>
+  palette = 0=<<get-color("color0")>>
+  palette = 1=<<get-color("color1")>>
+  palette = 2=<<get-color("color2")>>
+  palette = 3=<<get-color("color3")>>
+  palette = 4=<<get-color("color4")>>
+  palette = 5=<<get-color("color5")>>
+  palette = 6=<<get-color("color6")>>
+  palette = 7=<<get-color("color7")>>
 
   # Bright colors (same as normal)
-  palette = 8=<<get-color("bg")>>
-  palette = 9=<<get-color("red")>>
-  palette = 10=<<get-color("green")>>
-  palette = 11=<<get-color("yellow")>>
-  palette = 12=<<get-color("blue")>>
-  palette = 13=<<get-color("magenta")>>
-  palette = 14=<<get-color("cyan")>>
-  palette = 15=<<get-color("fg")>>
+  palette = 8=<<get-color("color8")>>
+  palette = 9=<<get-color("color9")>>
+  palette = 10=<<get-color("color10")>>
+  palette = 11=<<get-color("color11")>>
+  palette = 12=<<get-color("color12")>>
+  palette = 13=<<get-color("color13")>>
+  palette = 14=<<get-color("color14")>>
+  palette = 15=<<get-color("color15")>>
 #+end_src

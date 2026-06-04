@@ -73,35 +73,35 @@
   foreground <<get-color("fg")>>
   selection_background <<get-color("fg")>>
   selection_foreground <<get-color("bg")>>
-  url_color <<get-color("red")>>
+  url_color <<get-color("color1")>>
   cursor <<get-color("fg")>>
-  active_border_color <<get-color("red")>>
+  active_border_color <<get-color("color1")>>
   inactive_border_color <<get-color("bg")>>
   active_tab_background <<get-color("bg")>>
   active_tab_foreground <<get-color("fg")>>
   inactive_tab_background <<get-color("bg")>>
-  inactive_tab_foreground <<get-color("yellow")>>
+  inactive_tab_foreground <<get-color("color3")>>
   tab_bar_background <<get-color("bg")>>
 
   # normal
-  color0 <<get-color("bg")>>
-  color1 <<get-color("red")>>
-  color2 <<get-color("green")>>
-  color3 <<get-color("yellow")>>
-  color4 <<get-color("blue")>>
-  color5 <<get-color("magenta")>>
-  color6 <<get-color("cyan")>>
-  color7 <<get-color("fg")>>
+  color0 <<get-color("color0")>>
+  color1 <<get-color("color1")>>
+  color2 <<get-color("color2")>>
+  color3 <<get-color("color3")>>
+  color4 <<get-color("color4")>>
+  color5 <<get-color("color5")>>
+  color6 <<get-color("color6")>>
+  color7 <<get-color("color7")>>
 
   # bright
-  color8 <<get-color("bg")>>
-  color9 <<get-color("red")>>
-  color10 <<get-color("green")>>
-  color11 <<get-color("yellow")>>
-  color12 <<get-color("blue")>>
-  color13 <<get-color("magenta")>>
-  color14 <<get-color("cyan")>>
-  color15 <<get-color("fg")>>
+  color8 <<get-color("color8")>>
+  color9 <<get-color("color9")>>
+  color10 <<get-color("color10")>>
+  color11 <<get-color("color11")>>
+  color12 <<get-color("color12")>>
+  color13 <<get-color("color13")>>
+  color14 <<get-color("color14")>>
+  color15 <<get-color("color15")>>
 #+end_src
 ** General
 #+begin_src conf

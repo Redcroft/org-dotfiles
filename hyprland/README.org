@@ -308,7 +308,7 @@
    	    font_weight_active    = "Semibold",
    	    font_weight_inactive  = "Semibold",
    	    gradients             = true,
-   	    text_color            = "<<get-color-rgb("fg")>>",
+   	    text_color            = "<<get-color-rgb("bg")>>",
    	    text_color_inactive   = "<<get-color-rgb("comment")>>",
    	    col = {
    	       active             = "<<get-color-rgb("accent")>>",

@@ -411,6 +411,11 @@
     :hook ((org-mode . rainbow-mode)
   	 (prog-mode . rainbow-mode)))
 #+end_src
+** Color Picker
+#+begin_src emacs-lisp
+  (use-package zenity-color-picker
+    :bind ("C-x c" . zenity-cp-adjust-color-at-point))
+#+end_src
 
 ** Search
 #+begin_src emacs-lisp

@@ -1,20 +1,18 @@
 #+TITLE: Theme Configuration
 #+NAME: theme-table
-| Key             | Value                   | red |
-|-----------------+-------------------------+-----|
-| font-family     | JetBrainsMono Nerd Font | -   |
-| font-size       | 12                      | 14  |
-| font-style      | Medium                  | -   |
-| ui-font         | IosevkaTerm Nerd Font   | -   |
-| emacs-theme-pkg | gruvbox-theme           | -   |
-| emacs-theme     | gruvbox-dark-hard       | -   |
+| Key         | Value                   | red |
+|-------------+-------------------------+-----|
+| font-family | JetBrainsMono Nerd Font | -   |
+| font-size   | 13                      | 14  |
+| font-style  | Medium                  | -   |
+| ui-font     | IosevkaTerm Nerd Font   | -   |
 
 #+NAME: palette
 | Name      | Hex     | red     |
 |-----------+---------+---------|
-| bg        | #1c1b19 | #000000 |
+| bg        | #000000 | #1c1b19 |
 | fg        | #d8d0c0 | -       |
-| accent    | #e08060 | -       |
+| accent    | #7e6aac | -       |
 | comment   | #5c5855 | -       |
 | selection | #3e3c38 | -       |
 | red       | #e08060 | -       |

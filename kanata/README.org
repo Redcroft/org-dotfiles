@@ -77,7 +77,7 @@
       _    _    _    _    _  _  _  _  _  _)
 #+end_src
 
-#+begin_src lisp :tangle (if (string= system-name "poseidon") "/sudo::/etc/kanata/config.kbd" "")
+#+begin_src lisp :tangle (if (string= system-name "heimdall") "/sudo::/etc/kanata/config.kbd" "")
   (defcfg
       linux-dev ( /dev/input/by-id/usb-hfd.cn_USB_DEVICE-event-kbd
                   /dev/input/by-id/usb-HS6209_USB_Dongle_No.161-0047-5-event-kbd
@@ -126,7 +126,7 @@
       _ _ _ _ _ _ _ _)
 #+end_src
 
-#+begin_src lisp :tangle (if (string= system-name "heimdall") "/sudo::/etc/kanata/config.kbd" "")
+#+begin_src lisp :tangle (if (string= system-name "poseidon") "/sudo::/etc/kanata/config.kbd" "")
   (defcfg
       linux-dev ( /dev/input/by-id/usb-ROYUAN_MonsGeek_2.4G_Wireless_Keyboard-event-kbd
                   /dev/input/by-id/usb-ROYUAN_MonsGeek_Keyboard-event-kbd

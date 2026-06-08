@@ -79,9 +79,9 @@
   # Centralized Theme
   background = <<get-color("bg")>>
   foreground = <<get-color("fg")>>
-  cursor-color = <<get-color("red")>>
+  cursor-color = <<get-color("color3")>>
   cursor-text = <<get-color("bg")>>
-  selection-background = <<get-color("blue")>>
+  selection-background = <<get-color("color4")>>
   selection-foreground = <<get-color("fg")>>
 
   # Normal colors

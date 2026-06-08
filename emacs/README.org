@@ -3,8 +3,6 @@
 #+EMAIL: Richard@Redcroft.tech
 #+OPTIONS: toc:nil num:nil
 #+PROPERTY: Header-args :tangle ~/.emacs.d/init.el :tangle-mode (identity #o444) :mkdirp yes :noweb yes
-#+auto_tangle: t
-
 
 #+INCLUDE: "../theme.org"
 
@@ -31,24 +29,27 @@
 #+end_src
 
 #+NAME: get-color
-#+begin_src emacs-lisp :var name="bg" :exports none :tangle no
-  (let ((name (if (symbolp name) (symbol-name name) name)))
-    (with-current-buffer (find-file-noselect "../theme.org")
-      (save-excursion
-        (goto-char (point-min))
-        (re-search-forward "^#\\+NAME: palette")
-        (forward-line)
-        (let* ((full-table (org-babel-read-table))
-               (headers (car full-table))
-               (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
-               (host (system-name))
-               (col-idx (or (cl-position host headers :test 'string-equal) 1))
-               (row (assoc name table))
-               (val (nth col-idx row))
-               (val-str (format "%s" val)))
-          (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
-              (nth 1 row)
-            val))))))
+#+begin_src emacs-lisp :var name="bg" nohash="nil" :exports none :tangle no
+  (let* ((name (if (symbolp name) (symbol-name name) name))
+         (color (with-current-buffer (find-file-noselect "../theme.org")
+                  (save-excursion
+                    (goto-char (point-min))
+                    (re-search-forward "^#\\+NAME: palette")
+                    (forward-line)
+                    (let* ((full-table (org-babel-read-table))
+                           (headers (car full-table))
+                           (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
+                           (host (system-name))
+                           (col-idx (or (cl-position host headers :test 'string-equal) 1))
+                           (row (assoc name table))
+                           (val (nth col-idx row))
+                           (val-str (format "%s" val)))
+                      (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
+                          (nth 1 row)
+                        val))))))
+    (if (and color (string-equal nohash "t"))
+        (replace-regexp-in-string "^#" "" color)
+      color))
 #+end_src
 
 * Early Init
@@ -278,6 +279,18 @@
   ;;  :after (org)
   ;;  :hook (org-mode . org-modern-mode))
 #+end_src
+
+** Kirigami
+#+begin_src emacs-lisp
+  (use-package hideshow
+    :ensure nil ; Built-in to Emacs
+    :hook (prog-mode . hs-minor-mode)
+    :bind (:map hs-minor-mode-map
+                ("C-c TAB" . hs-toggle-hiding)
+                ("C-c S"   . hs-show-all)
+  	      ("C-c H"   . hs-hide-all)))
+#+end_src
+
 ** Ligatures
 #+begin_src emacs-lisp
   (use-package ligature
@@ -357,6 +370,18 @@
     :bind ("C-x g" . magit-status)
     :custom (magit-diff-refine-hunk t))
 #+end_src
+
+** MC
+#+begin_src emacs-lisp
+  (use-package multiple-cursors
+    :ensure t
+    :bind (("C-c m c" . mc/edit-lines)
+           ("C-c m n" . mc/mark-next-like-this)
+           ("C-c m p" . mc/mark-previous-like-this)
+           ("C-c m a" . mc/mark-all-like-this)
+           ("C-c m r" . mc/mark-all-in-region)))
+#+end_src
+
 ** Mise
 #+begin_src emacs-lisp
   ;; ============================================================
@@ -464,8 +489,11 @@
            (js-mode     . eglot-ensure)
   	 (svelte-mode . eglot-ensure))
     :bind (:map eglot-mode-map
+  	      ("C-c a" . eglot-code-actions)
                 ("C-c r" . eglot-rename)
-                ("C-c f" . eglot-format-buffer))
+  	      ("C-c h" . eglot-inlay-hints-mode)
+                ("C-c f" . eglot-format-buffer)
+  	      ("C-c t" . eglot-find-typeDefinition))
     :custom
     (eldoc-idle-delay   0.1)
     (eglot-autoshutdown t))
@@ -609,36 +637,74 @@
       ((((class color) (min-colors #xFFFFFF)))
         (bg       "<<get-color("bg")>>")
         (fg       "<<get-color("fg")>>")
-        (color1      "<<get-color("color1")>>")
-        (green    "<<get-color("color2")>>")
-        (yellow   "<<get-color("color3")>>")
-        (blue     "<<get-color("color4")>>")
-        (magenta  "<<get-color("color5")>>")
-        (cyan     "<<get-color("color6")>>")
+        (color0   "<<get-color("color0")>>")
+        (color1   "<<get-color("color1")>>")
+        (color2   "<<get-color("color2")>>")
+        (color3   "<<get-color("color3")>>")
+        (color4   "<<get-color("color4")>>")
+        (color5   "<<get-color("color5")>>")
+        (color6   "<<get-color("color6")>>")
+        (color7   "<<get-color("color7")>>")
+        (color8   "<<get-color("color8")>>")
+        (color9   "<<get-color("color9")>>")
+        (color10  "<<get-color("color10")>>")
+        (color11  "<<get-color("color11")>>")
+        (color12  "<<get-color("color12")>>")
+        (color13  "<<get-color("color13")>>")
+        (color14  "<<get-color("color14")>>")
+        (color15  "<<get-color("color15")>>")
         (comment  "<<get-color("comment")>>")
         (select   "<<get-color("selection")>>")
         (accent   "<<get-color("accent")>>")
       )
       ((default  (:background bg :foreground fg))
        (cursor   (:background fg))
-       (region   (:background select))
-       (mode-line (:background select :foreground fg))
+       (region   (:background color0))
+       (mode-line (:background color0 :foreground fg))
        (mode-line-inactive (:background bg :foreground comment))
        (font-lock-comment-face (:foreground comment))
-       (font-lock-keyword-face (:foreground magenta :weight 'bold))
-       (font-lock-string-face (:foreground green))
-       (font-lock-type-face (:foreground yellow))
-       (font-lock-constant-face (:foreground cyan))
-       (font-lock-variable-name-face (:foreground blue))
-       (font-lock-function-name-face (:foreground blue :weight 'bold))
-       (font-lock-builtin-face (:foreground cyan))
+       (font-lock-comment-delimiter-face (:foreground color8))
+       (font-lock-doc-face (:foreground color8))
+       (font-lock-keyword-face (:foreground color5 :weight 'bold))
+       (font-lock-string-face (:foreground color2))
+       (font-lock-type-face (:foreground color3))
+       (font-lock-constant-face (:foreground color6))
+       (font-lock-variable-name-face (:foreground color4))
+       (font-lock-function-name-face (:foreground color4 :weight 'bold))
+       (font-lock-builtin-face (:foreground color6))
        (font-lock-warning-face (:foreground color1 :weight 'bold))
        (org-level-1 (:foreground accent :weight 'bold :height 1.2))
-       (org-level-2 (:foreground blue :weight 'bold :height 1.1))
-       (org-level-3 (:foreground green :weight 'bold))
-       (org-link (:foreground cyan :underline t))
+       (org-level-2 (:foreground color4 :weight 'bold :height 1.1))
+       (org-level-3 (:foreground color2 :weight 'bold))
+       (org-link (:foreground color6 :underline t))
+       ;; 16-color ANSI palette
+       (ansi-color-black (:foreground color0))
+       (ansi-color-red (:foreground color1))
+       (ansi-color-green (:foreground color2))
+       (ansi-color-yellow (:foreground color3))
+       (ansi-color-blue (:foreground color4))
+       (ansi-color-magenta (:foreground color5))
+       (ansi-color-cyan (:foreground color6))
+       (ansi-color-white (:foreground color7))
+       (ansi-color-bright-black (:foreground color8))
+       (ansi-color-bright-red (:foreground color9))
+       (ansi-color-bright-green (:foreground color10))
+       (ansi-color-bright-yellow (:foreground color11))
+       (ansi-color-bright-blue (:foreground color12))
+       (ansi-color-bright-magenta (:foreground color13))
+       (ansi-color-bright-cyan (:foreground color14))
+       (ansi-color-bright-white (:foreground color15))
       ))
-    (enable-theme 'system-theme))
+    (enable-theme 'system-theme)
+    (setq ansi-color-names-vector
+          (vector "<<get-color("color0")>>"
+                  "<<get-color("color1")>>"
+                  "<<get-color("color2")>>"
+                  "<<get-color("color3")>>"
+                  "<<get-color("color4")>>"
+                  "<<get-color("color5")>>"
+                  "<<get-color("color6")>>"
+                  "<<get-color("color7")>>")))
 
   ;; Font and spacing settings
   (setq line-spacing 0.0)

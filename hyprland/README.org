@@ -3,7 +3,6 @@
 #+EMAIL: Richard@Redcroft.tech
 #+OPTIONS: toc:nil num:nil
 #+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes :noweb yes
-#+auto_tangle: t
 
 #+INCLUDE: "../theme.org"
 
@@ -396,6 +395,7 @@
    hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd(apps.editor))
    hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.close())
    hl.bind(mainMod .. " + SHIFT + escape", hl.dsp.exit())
+   hl.bind(mainMod .. " + SHIFT + grave", hl.dsp.exit())
    hl.bind(mainMod .. " + escape", hl.dsp.exec_cmd("hyprctl reload"))
    hl.bind(mainMod .. " + SHIFT + space", hl.dsp.window.float({ action = "toggle" }))
    hl.bind(mainMod .. " + D", hl.dsp.exec_cmd(apps.menu))
@@ -536,6 +536,19 @@
          match = { class = "UnrealEditor", title = "%w*" },
          no_initial_focus = true,
          suppress_event = "activate"
+   })
+
+   -- Nomad
+   hl.window_rule({
+         name = "float nomad",
+         match = { title = "Nomad" },
+         float = true,
+   })
+
+   hl.window_rule({
+         name = "float file dialog",
+         match = { class = "xdg-desktop-portal-gtk" },
+         float = true,
    })
 
    -- Video/Photo Editing Rules (Resolve & Affinity)

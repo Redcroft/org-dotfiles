@@ -78,35 +78,35 @@ once after enabling:
                       { type = builtin label = copy   name = copyR }
 
                       # Band 1 - low shelf 105 Hz +6.7 dB
-                      { type = builtin label = biquad name = eqL1  config = { type = lshelf freq = 105   q = 0.70 gain =  6.7 } }
-                      { type = builtin label = biquad name = eqR1  config = { type = lshelf freq = 105   q = 0.70 gain =  6.7 } }
+                      { type = builtin label = bq_lowshelf  name = eqL1  config = { freq = 105   q = 0.70 gain =  6.7 } }
+                      { type = builtin label = bq_lowshelf  name = eqR1  config = { freq = 105   q = 0.70 gain =  6.7 } }
                       # Band 2 - peak 1968 Hz +5.1 dB
-                      { type = builtin label = biquad name = eqL2  config = { type = peq    freq = 1968  q = 2.37 gain =  5.1 } }
-                      { type = builtin label = biquad name = eqR2  config = { type = peq    freq = 1968  q = 2.37 gain =  5.1 } }
+                      { type = builtin label = bq_peaking   name = eqL2  config = { freq = 1968  q = 2.37 gain =  5.1 } }
+                      { type = builtin label = bq_peaking   name = eqR2  config = { freq = 1968  q = 2.37 gain =  5.1 } }
                       # Band 3 - peak 861 Hz -2.3 dB
-                      { type = builtin label = biquad name = eqL3  config = { type = peq    freq = 861   q = 1.86 gain = -2.3 } }
-                      { type = builtin label = biquad name = eqR3  config = { type = peq    freq = 861   q = 1.86 gain = -2.3 } }
+                      { type = builtin label = bq_peaking   name = eqL3  config = { freq = 861   q = 1.86 gain = -2.3 } }
+                      { type = builtin label = bq_peaking   name = eqR3  config = { freq = 861   q = 1.86 gain = -2.3 } }
                       # Band 4 - peak 101 Hz -2.4 dB
-                      { type = builtin label = biquad name = eqL4  config = { type = peq    freq = 101   q = 0.32 gain = -2.4 } }
-                      { type = builtin label = biquad name = eqR4  config = { type = peq    freq = 101   q = 0.32 gain = -2.4 } }
+                      { type = builtin label = bq_peaking   name = eqL4  config = { freq = 101   q = 0.32 gain = -2.4 } }
+                      { type = builtin label = bq_peaking   name = eqR4  config = { freq = 101   q = 0.32 gain = -2.4 } }
                       # Band 5 - peak 1619 Hz +1.1 dB
-                      { type = builtin label = biquad name = eqL5  config = { type = peq    freq = 1619  q = 3.53 gain =  1.1 } }
-                      { type = builtin label = biquad name = eqR5  config = { type = peq    freq = 1619  q = 3.53 gain =  1.1 } }
+                      { type = builtin label = bq_peaking   name = eqL5  config = { freq = 1619  q = 3.53 gain =  1.1 } }
+                      { type = builtin label = bq_peaking   name = eqR5  config = { freq = 1619  q = 3.53 gain =  1.1 } }
                       # Band 6 - high shelf 10 kHz -2.6 dB
-                      { type = builtin label = biquad name = eqL6  config = { type = hshelf freq = 10000 q = 0.70 gain = -2.6 } }
-                      { type = builtin label = biquad name = eqR6  config = { type = hshelf freq = 10000 q = 0.70 gain = -2.6 } }
+                      { type = builtin label = bq_highshelf name = eqL6  config = { freq = 10000 q = 0.70 gain = -2.6 } }
+                      { type = builtin label = bq_highshelf name = eqR6  config = { freq = 10000 q = 0.70 gain = -2.6 } }
                       # Band 7 - peak 138 Hz +0.7 dB
-                      { type = builtin label = biquad name = eqL7  config = { type = peq    freq = 138   q = 1.98 gain =  0.7 } }
-                      { type = builtin label = biquad name = eqR7  config = { type = peq    freq = 138   q = 1.98 gain =  0.7 } }
+                      { type = builtin label = bq_peaking   name = eqL7  config = { freq = 138   q = 1.98 gain =  0.7 } }
+                      { type = builtin label = bq_peaking   name = eqR7  config = { freq = 138   q = 1.98 gain =  0.7 } }
                       # Band 8 - peak 64 Hz -0.7 dB
-                      { type = builtin label = biquad name = eqL8  config = { type = peq    freq = 64    q = 1.95 gain = -0.7 } }
-                      { type = builtin label = biquad name = eqR8  config = { type = peq    freq = 64    q = 1.95 gain = -0.7 } }
+                      { type = builtin label = bq_peaking   name = eqL8  config = { freq = 64    q = 1.95 gain = -0.7 } }
+                      { type = builtin label = bq_peaking   name = eqR8  config = { freq = 64    q = 1.95 gain = -0.7 } }
                       # Band 9 - peak 251 Hz -0.4 dB
-                      { type = builtin label = biquad name = eqL9  config = { type = peq    freq = 251   q = 2.33 gain = -0.4 } }
-                      { type = builtin label = biquad name = eqR9  config = { type = peq    freq = 251   q = 2.33 gain = -0.4 } }
+                      { type = builtin label = bq_peaking   name = eqL9  config = { freq = 251   q = 2.33 gain = -0.4 } }
+                      { type = builtin label = bq_peaking   name = eqR9  config = { freq = 251   q = 2.33 gain = -0.4 } }
                       # Band 10 - peak 29 Hz +0.5 dB
-                      { type = builtin label = biquad name = eqL10 config = { type = peq    freq = 29    q = 2.63 gain =  0.5 } }
-                      { type = builtin label = biquad name = eqR10 config = { type = peq    freq = 29    q = 2.63 gain =  0.5 } }
+                      { type = builtin label = bq_peaking   name = eqL10 config = { freq = 29    q = 2.63 gain =  0.5 } }
+                      { type = builtin label = bq_peaking   name = eqR10 config = { freq = 29    q = 2.63 gain =  0.5 } }
 
                       { type = builtin label = mixer name = mixL }
                       { type = builtin label = mixer name = mixR }
@@ -207,7 +207,7 @@ once after enabling:
                         { type = builtin label = convolver name = convLFE_R config = { filename = "<<wav-file()>>" channel = 13 } }
 
                         # low-pass LFE so sub-bass doesn't image into the stereo field
-                        { type = builtin label = lowpass name = lpLFE config = { cutoff = 100.0 } }
+                        { type = builtin label = bq_lowpass name = lpLFE config = { freq = 100.0 } }
 
                         # stereo output
                         { type = builtin label = mixer name = mixL }

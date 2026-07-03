@@ -5,9 +5,7 @@
 #+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes
 
 #+begin_src bash :tangle no :results none
-  systemctl --user enable --now filter-chain
   systemctl --user restart pipewire pipewire-pulse
-  systemctl --user restart filter-chain
 #+end_src
 
 
@@ -16,6 +14,149 @@
 #+begin_src conf :tangle (if (not (string= system-name "red")) "~/.config/pipewire/pipewire.conf.d/50-network.conf" "")
   context.exec = [
     { path = "pactl" args = "load-module module-native-protocol-tcp listen=0.0.0.0 port=4714 auth-anonymous=1" }
+  ]
+#+end_src
+
+* Resampler & Clock
+Default graph rate is 48 kHz (matches the HeSuVi HRIR WAV's native rate,
+removing internal resampling in the convolver), with the full set of UAC 2.0
+rates allowed so the graph can switch to native rates when bypassing the WAV
+filter for high-resolution sources. Resampler quality is pinned to 14 (max);
+CPU cost is minor at music buffer sizes, benefit is measurable on transients.
+
+#+begin_src conf :tangle "~/.config/pipewire/pipewire.conf.d/10-quality.conf"
+  context.properties = {
+      resample.quality            = 14
+      link.max-buffers            = 16
+      default.clock.rate          = 48000
+      default.clock.allowed-rates = [ 44100 48000 88200 96000 176400 192000 ]
+  }
+#+end_src
+
+* DAC Dither (heimdall)
+The Fosi ZH3 runs at 24-bit over USB. Pin the alsa node to S24 so the hardware
+path uses 24-bit samples, and enable 2 bits of dither noise to truncate the
+float32 mix without quantization distortion. The node's audio.rate is left
+unset so the DAC follows the graph rate (48k default, switching to higher
+native rates for hi-res sources when bypassing the WAV filter). Disabled on
+non-heimdall hosts via the host guard.
+
+#+begin_src conf :tangle (if (string= system-name "heimdall") "~/.config/pipewire/pipewire.conf.d/51-fosi-dither.conf" "")
+  monitor.alsa.rules = [
+    { matches = [ { node.name = "alsa_output.usb-Fosi_Fosi_Audio_ZH3-00.analog-stereo" } ]
+      actions = {
+        update-props = {
+          dither.noise                   = 2
+          session.suspend-timeout-seconds = 0
+          audio.format                   = "S24"
+        }
+      }
+    }
+  ]
+#+end_src
+
+* Headphone EQ
+Parametric EQ for the Hifiman HE400se, derived from AutoEq using oratory1990's
+measurement against the Harman over-ear 2018 target. Sits before the spatial
+sink in the signal path (EQ playback targets the spatial sink's capture node).
+
+The AutoEq preset calls for -6.0 dB of preamp to avoid clipping when the low
+shelf at 105 Hz adds +6.7 dB. Rather than baking a gain reduction into the
+chain (which trades headroom for SNR pointlessly), set the EQ sink's volume
+once after enabling:
+: wpctl set-volume effect_input.eq-he400se 0.5
+
+#+begin_src conf :tangle "~/.config/pipewire/pipewire.conf.d/98-eq-he400se.conf"
+  context.modules = [
+      { name = libpipewire-module-filter-chain
+          args = {
+              node.description = "HE400se Parametric EQ"
+              media.name       = "HE400se Parametric EQ"
+              filter.graph = {
+                  nodes = [
+                      { type = builtin label = copy   name = copyL }
+                      { type = builtin label = copy   name = copyR }
+
+                      # Band 1 - low shelf 105 Hz +6.7 dB
+                      { type = builtin label = biquad name = eqL1  config = { type = lshelf freq = 105   q = 0.70 gain =  6.7 } }
+                      { type = builtin label = biquad name = eqR1  config = { type = lshelf freq = 105   q = 0.70 gain =  6.7 } }
+                      # Band 2 - peak 1968 Hz +5.1 dB
+                      { type = builtin label = biquad name = eqL2  config = { type = peq    freq = 1968  q = 2.37 gain =  5.1 } }
+                      { type = builtin label = biquad name = eqR2  config = { type = peq    freq = 1968  q = 2.37 gain =  5.1 } }
+                      # Band 3 - peak 861 Hz -2.3 dB
+                      { type = builtin label = biquad name = eqL3  config = { type = peq    freq = 861   q = 1.86 gain = -2.3 } }
+                      { type = builtin label = biquad name = eqR3  config = { type = peq    freq = 861   q = 1.86 gain = -2.3 } }
+                      # Band 4 - peak 101 Hz -2.4 dB
+                      { type = builtin label = biquad name = eqL4  config = { type = peq    freq = 101   q = 0.32 gain = -2.4 } }
+                      { type = builtin label = biquad name = eqR4  config = { type = peq    freq = 101   q = 0.32 gain = -2.4 } }
+                      # Band 5 - peak 1619 Hz +1.1 dB
+                      { type = builtin label = biquad name = eqL5  config = { type = peq    freq = 1619  q = 3.53 gain =  1.1 } }
+                      { type = builtin label = biquad name = eqR5  config = { type = peq    freq = 1619  q = 3.53 gain =  1.1 } }
+                      # Band 6 - high shelf 10 kHz -2.6 dB
+                      { type = builtin label = biquad name = eqL6  config = { type = hshelf freq = 10000 q = 0.70 gain = -2.6 } }
+                      { type = builtin label = biquad name = eqR6  config = { type = hshelf freq = 10000 q = 0.70 gain = -2.6 } }
+                      # Band 7 - peak 138 Hz +0.7 dB
+                      { type = builtin label = biquad name = eqL7  config = { type = peq    freq = 138   q = 1.98 gain =  0.7 } }
+                      { type = builtin label = biquad name = eqR7  config = { type = peq    freq = 138   q = 1.98 gain =  0.7 } }
+                      # Band 8 - peak 64 Hz -0.7 dB
+                      { type = builtin label = biquad name = eqL8  config = { type = peq    freq = 64    q = 1.95 gain = -0.7 } }
+                      { type = builtin label = biquad name = eqR8  config = { type = peq    freq = 64    q = 1.95 gain = -0.7 } }
+                      # Band 9 - peak 251 Hz -0.4 dB
+                      { type = builtin label = biquad name = eqL9  config = { type = peq    freq = 251   q = 2.33 gain = -0.4 } }
+                      { type = builtin label = biquad name = eqR9  config = { type = peq    freq = 251   q = 2.33 gain = -0.4 } }
+                      # Band 10 - peak 29 Hz +0.5 dB
+                      { type = builtin label = biquad name = eqL10 config = { type = peq    freq = 29    q = 2.63 gain =  0.5 } }
+                      { type = builtin label = biquad name = eqR10 config = { type = peq    freq = 29    q = 2.63 gain =  0.5 } }
+
+                      { type = builtin label = mixer name = mixL }
+                      { type = builtin label = mixer name = mixR }
+                  ]
+                  links = [
+                      { output = "copyL:Out"  input = "eqL1:In"  }
+                      { output = "copyR:Out"  input = "eqR1:In"  }
+                      { output = "eqL1:Out"   input = "eqL2:In"  }
+                      { output = "eqR1:Out"   input = "eqR2:In"  }
+                      { output = "eqL2:Out"   input = "eqL3:In"  }
+                      { output = "eqR2:Out"   input = "eqR3:In"  }
+                      { output = "eqL3:Out"   input = "eqL4:In"  }
+                      { output = "eqR3:Out"   input = "eqR4:In"  }
+                      { output = "eqL4:Out"   input = "eqL5:In"  }
+                      { output = "eqR4:Out"   input = "eqR5:In"  }
+                      { output = "eqL5:Out"   input = "eqL6:In"  }
+                      { output = "eqR5:Out"   input = "eqR6:In"  }
+                      { output = "eqL6:Out"   input = "eqL7:In"  }
+                      { output = "eqR6:Out"   input = "eqR7:In"  }
+                      { output = "eqL7:Out"   input = "eqL8:In"  }
+                      { output = "eqR7:Out"   input = "eqR8:In"  }
+                      { output = "eqL8:Out"   input = "eqL9:In"  }
+                      { output = "eqR8:Out"   input = "eqR9:In"  }
+                      { output = "eqL9:Out"   input = "eqL10:In" }
+                      { output = "eqR9:Out"   input = "eqR10:In" }
+                      { output = "eqL10:Out"  input = "mixL:In 1" }
+                      { output = "eqR10:Out"  input = "mixR:In 1" }
+                  ]
+                  inputs  = [ "copyL:In" "copyR:In" ]
+                  outputs = [ "mixL:Out" "mixR:Out" ]
+              }
+              capture.props = {
+                  node.name      = "effect_input.eq-he400se"
+                  media.class    = Audio/Sink
+                  audio.channels = 2
+                  audio.position = [ FL FR ]
+                  audio.format   = "F32"
+                  audio.rate     = 48000
+                  node.quantum   = 2048
+                  node.latency   = 2048/48000
+              }
+              playback.props = {
+                  node.name      = "effect_output.eq-he400se"
+                  node.passive   = true
+                  audio.channels = 2
+                  audio.position = [ FL FR ]
+                  node.target    = "effect_input.virtual-surround-7.1-hesuvi"
+              }
+          }
+      }
   ]
 #+end_src
 
@@ -61,14 +202,17 @@
                        { type = builtin label = convolver name = convRR_L config = { filename = "<<wav-file()>>" channel = 12 } }
                        { type = builtin label = convolver name = convFC_R config = { filename = "<<wav-file()>>" channel = 13 } }
 
-                       # treat LFE as FC
-                       { type = builtin label = convolver name = convLFE_L config = { filename = "<<wav-file()>>" channel =  6 } }
-                       { type = builtin label = convolver name = convLFE_R config = { filename = "<<wav-file()>>" channel = 13 } }
+                        # treat LFE as FC
+                        { type = builtin label = convolver name = convLFE_L config = { filename = "<<wav-file()>>" channel =  6 } }
+                        { type = builtin label = convolver name = convLFE_R config = { filename = "<<wav-file()>>" channel = 13 } }
 
-                       # stereo output
-                       { type = builtin label = mixer name = mixL }
-                       { type = builtin label = mixer name = mixR }
-                   ]
+                        # low-pass LFE so sub-bass doesn't image into the stereo field
+                        { type = builtin label = lowpass name = lpLFE config = { cutoff = 100.0 } }
+
+                        # stereo output
+                        { type = builtin label = mixer name = mixL }
+                        { type = builtin label = mixer name = mixR }
+                    ]
                    links = [
                        # input to convolver
                        { output = "copyFL:Out"  input="convFL_L:In"  }
@@ -84,9 +228,11 @@
                        { output = "copySR:Out"  input="convSR_L:In"  }
                        { output = "copyRR:Out"  input="convRR_R:In"  }
                        { output = "copyRR:Out"  input="convRR_L:In"  }
-                       { output = "copyFC:Out"  input="convFC_R:In"  }
-                       { output = "copyLFE:Out" input="convLFE_L:In" }
-                       { output = "copyLFE:Out" input="convLFE_R:In" }
+                        { output = "copyFC:Out"  input="convFC_R:In"  }
+                        # route LFE through the low-pass before HRTF
+                        { output = "copyLFE:Out" input="lpLFE:In"    }
+                        { output = "lpLFE:Out"   input="convLFE_L:In" }
+                        { output = "lpLFE:Out"   input="convLFE_R:In" }
 
                        # mix processed signal into stereo input
                        { output = "convFL_L:Out"  input="mixL:In 1" }
@@ -109,12 +255,16 @@
                    inputs  = [ "copyFL:In" "copyFR:In" "copyFC:In" "copyLFE:In" "copyRL:In" "copyRR:In", "copySL:In", "copySR:In" ]
                    outputs = [ "mixL:Out" "mixR:Out" ]
                }
-               capture.props = {
-                   node.name      = "effect_input.virtual-surround-7.1-hesuvi"
-                   media.class    = Audio/Sink
-                   audio.channels = 8
-                   audio.position = [ FL FR FC LFE RL RR SL SR ]
-               }
+                capture.props = {
+                    node.name      = "effect_input.virtual-surround-7.1-hesuvi"
+                    media.class    = Audio/Sink
+                    audio.channels = 8
+                    audio.position = [ FL FR FC LFE RL RR SL SR ]
+                    audio.format   = "F32"
+                    audio.rate     = 48000
+                    node.quantum   = 2048
+                    node.latency   = 2048/48000
+                }
                playback.props = {
                    node.name      = "effect_output.virtual-surround-7.1-hesuvi"
                    node.passive   = true
@@ -131,199 +281,4 @@
            }
        }
    ]
-#+end_src
-
-** Sofa
-Tested sofa hrir, but havn't found a sofa file i like yet, so disabling
-
-#+NAME: sofa-file
-#+begin_src emacs-lisp :cache yes
-  (expand-file-name "hrtf.sofa" default-directory)
-#+end_src
-
-#+begin_src conf :tangle no :tgle "~/.config/pipewire/filter-chain.conf.d/spatializer.conf" :noweb yes
-  context.modules = [
-      { name = libpipewire-module-filter-chain
-          args = {
-              node.description = "Virtual Surround (HRIR SOFA)"
-              media.name       = "Virtual Surround (HRIR SOFA)"
-              filter.graph = {
-                  nodes = [
-                      {
-                          type = sofa
-                          label = spatializer
-                          name = spFL
-                          config = {
-                              filename = "<<sofa-file()>>" 
-                          }
-                          control = {
-                              "Azimuth"    = 30.0
-                              "Elevation"  = -10.0
-                              "Radius"     = 3.0
-                          }
-                      }
-                      {
-                          type = sofa
-                          label = spatializer
-                          name = spFR
-                          config = {
-  			    filename = "<<sofa-file()>>"
-                          }
-                          control = {
-                              "Azimuth"    = 330.0
-                              "Elevation"  = -10.0
-                              "Radius"     = 3.0
-                          }
-                      }
-                      {
-                          type = sofa
-                          label = spatializer
-                          name = spFC
-                          config = {
-  			    filename = "<<sofa-file()>>"
-                          }
-                          control = {
-                              "Azimuth"    = 0.0
-                              "Elevation"  = -10.0
-                              "Radius"     = 3.0
-                          }
-                      }
-                      {
-                          type = sofa
-                          label = spatializer
-                          name = spRL
-                          config = {
-  			    filename = "<<sofa-file()>>"
-                          }
-                          control = {
-                              "Azimuth"    = 150.0
-                              "Elevation"  = 0.0
-                              "Radius"     = 3.0
-                          }
-                      }
-                      {
-                          type = sofa
-                          label = spatializer
-                          name = spRR
-                          config = {
-  			    filename = "<<sofa-file()>>"
-                          }
-                          control = {
-                              "Azimuth"    = 210.0
-                              "Elevation"  = 0.0
-                              "Radius"     = 3.0
-                          }
-                      }
-                      {
-                          type = sofa
-                          label = spatializer
-                          name = spSL
-                          config = {
-  			    filename = "<<sofa-file()>>"
-                          }
-                          control = {
-                              "Azimuth"    = 90.0
-                              "Elevation"  = 0.0
-                              "Radius"     = 3.0
-                          }
-                      }
-                      {
-                          type = sofa
-                          label = spatializer
-                          name = spSR
-                          config = {
-  			    filename = "<<sofa-file()>>"
-                          }
-                          control = {
-                              "Azimuth"    = 270.0
-                              "Elevation"  = 0.0
-                              "Radius"     = 3.0
-                          }
-                      }
-                      {
-                          type = sofa
-                          label = spatializer
-                          name = spLFE
-                          config = {
-                      filename = "<<sofa-file()>>"
-                          }
-                          control = {
-                              "Azimuth"    = 0.0
-                              "Elevation"  = -15.0
-                              "Radius"     = 3.0
-                          }                      }
-
-                      # stereo output
-                      { type = builtin label = mixer name = mixL }
-                      { type = builtin label = mixer name = mixR }
-                      ]
-                      links = [
-                      # output
-                      { output = "spFL:Out L"  input="mixL:In 1" }
-                      { output = "spFL:Out R"  input="mixR:In 1" }
-                      { output = "spFR:Out L"  input="mixL:In 2" }
-                      { output = "spFR:Out R"  input="mixR:In 2" }
-                      { output = "spFC:Out L"  input="mixL:In 3" }
-                      { output = "spFC:Out R"  input="mixR:In 3" }
-                      { output = "spRL:Out L"  input="mixL:In 4" }
-                      { output = "spRL:Out R"  input="mixR:In 4" }
-                      { output = "spRR:Out L"  input="mixL:In 5" }
-                      { output = "spRR:Out R"  input="mixR:In 5" }
-                      { output = "spSL:Out L"  input="mixL:In 6" }
-                      { output = "spSL:Out R"  input="mixR:In 6" }
-                      { output = "spSR:Out L"  input="mixL:In 7" }
-                      { output = "spSR:Out R"  input="mixR:In 7" }
-                      { output = "spLFE:Out L" input="mixL:In 8" }
-                      { output = "spLFE:Out R" input="mixR:In 8" }
-                      ]
-                      inputs  = [ "spFL:In" "spFR:In" "spFC:In" "spLFE:In" "spRL:In" "spRR:In", "spSL:In", "spSR:In" ]
-                      outputs = [ "mixL:Out" "mixR:Out" ]
-                      }
-                      capture.props = {
-                      node.name      = "effect_input.spatializer"
-                      media.class    = Audio/Sink
-                      audio.channels = 8
-                      audio.position = [ FL FR FC LFE RL RR SL SR ]
-                      }
-                      playback.props = {
-                      node.name      = "effect_output.spatializer"
-                      node.passive   = true
-#+end_src
-
-#+begin_src conf :tangle no :tgle (if (string= system-name "heimdall") "~/.config/pipewire/filter-chain.conf.d/spatializer.conf" "")
-                      node.target    = "alsa_output.usb-Fosi_Fosi_Audio_ZH3-00.analog-stereo"
-#+end_src
-
-#+begin_src conf :tangle no :tgle "~/.config/pipewire/filter-chain.conf.d/spatializer.conf"
-                      audio.channels = 2
-                      audio.position = [ FL FR ]
-                      }
-                  }
-             }
-  ]
-#+end_src
-
-#+begin_src systemd :tangle no :tgle "~/.config/systemd/user/filter-chain.service.d/override.conf"
-  [Unit]
-  Description=PipeWire filter chain daemon
-
-  After=pipewire.service pipewire-session-manager.service
-  BindsTo=pipewire.service
-
-  [Service]
-  LockPersonality=yes
-  MemoryDenyWriteExecute=yes
-  NoNewPrivileges=yes
-  RestrictNamespaces=yes
-  SystemCallArchitectures=native
-  SystemCallFilter=@system-service
-  Type=simple
-  ExecStart=
-  ExecStart=pipewire -c filter-chain.conf
-  Restart=on-failure
-  Slice=session.slice
-
-  [Install]
-  Also=pipewire.socket
-  WantedBy=default.target
 #+end_src

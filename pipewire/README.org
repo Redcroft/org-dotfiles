@@ -153,7 +153,13 @@ ZH3's analog knob for listening level.
                   node.passive   = true
                   audio.channels = 2
                   audio.position = [ FL FR ]
-                  node.target    = "effect_input.virtual-surround-7.1-hesuvi"
+#+end_src
+
+#+begin_src conf :tangle (if (string= system-name "heimdall") "~/.config/pipewire/pipewire.conf.d/98-eq-he400se.conf" "")
+                  node.target    = "alsa_output.usb-Fosi_Fosi_Audio_ZH3-00.analog-stereo"
+#+end_src
+
+#+begin_src conf :tangle "~/.config/pipewire/pipewire.conf.d/98-eq-he400se.conf"
               }
           }
       }
@@ -272,8 +278,8 @@ ZH3's analog knob for listening level.
                    audio.position = [ FL FR ]
 #+end_src
 
-#+begin_src conf :tangle (if (string= system-name "heimdall") "~/.config/pipewire/pipewire.conf.d/99-spatial-hrir.conf" "")
-                      node.target    = "alsa_output.usb-Fosi_Fosi_Audio_ZH3-00.analog-stereo"
+#+begin_src conf :tangle "~/.config/pipewire/pipewire.conf.d/99-spatial-hrir.conf"
+                       node.target    = "effect_input.eq-he400se"
 #+end_src
 
 #+begin_src conf :tangle "~/.config/pipewire/pipewire.conf.d/99-spatial-hrir.conf"

@@ -61,10 +61,10 @@ measurement against the Harman over-ear 2018 target. Sits before the spatial
 sink in the signal path (EQ playback targets the spatial sink's capture node).
 
 The AutoEq preset calls for -6.0 dB of preamp to avoid clipping when the low
-shelf at 105 Hz adds +6.7 dB. Rather than baking a gain reduction into the
-chain (which trades headroom for SNR pointlessly), set the EQ sink's volume
-once after enabling:
-: wpctl set-volume effect_input.eq-he400se 0.5
+shelf at 105 Hz adds +6.7 dB. This is baked into the final mixers as a linear
+gain of 0.5012 (= 10^(-6/20)), applied pre-DAC so the S24 output stage never
+clips on the EQ boost. Software node volume stays at 1.0 (0 dB) — use the Fosi
+ZH3's analog knob for listening level.
 
 #+begin_src conf :tangle "~/.config/pipewire/pipewire.conf.d/98-eq-he400se.conf"
   context.modules = [
@@ -108,8 +108,8 @@ once after enabling:
                       { type = builtin label = bq_peaking   name = eqL10 config = { freq = 29    q = 2.63 gain =  0.5 } }
                       { type = builtin label = bq_peaking   name = eqR10 config = { freq = 29    q = 2.63 gain =  0.5 } }
 
-                      { type = builtin label = mixer name = mixL }
-                      { type = builtin label = mixer name = mixR }
+                      { type = builtin label = mixer name = mixL config = { gain = 0.5012 } }
+                      { type = builtin label = mixer name = mixR config = { gain = 0.5012 } }
                   ]
                   links = [
                       { output = "copyL:Out"  input = "eqL1:In"  }

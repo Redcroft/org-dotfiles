@@ -74,522 +74,557 @@
 * Hyprland
 ** Config
 #+begin_src lua :tangle "~/.config/hypr/hyprland.lua" :tangle-mode (identity #o775)
-   --------------------------------------------------
-   -- HOSTNAME
-   --------------------------------------------------
+  --------------------------------------------------
+  -- HOSTNAME
+  --------------------------------------------------
 
-   local function get_hostname()
-      local handle = io.popen("hostname")
+  local function get_hostname()
+     local handle = io.popen("hostname")
 
-      if not handle then
-         return "unknown"
-      end
+     if not handle then
+        return "unknown"
+     end
 
-      local result = handle:read("*l")
-      handle:close()
+     local result = handle:read("*l")
+     handle:close()
 
-      return result or "unknown"
-   end
+     return result or "unknown"
+  end
 
-   local hostname = get_hostname()
+  local hostname = get_hostname()
 
-   --------------------------------------------------
-   -- MACHINE CONFIGURATION
-   --------------------------------------------------
+  --------------------------------------------------
+  -- MACHINE CONFIGURATION
+  --------------------------------------------------
 
-   local machines = {
-      heimdall = {
-         monitors = function()
-            hl.monitor({
-   	       output   = "DP-1",
-   	       mode     = "3440x1440@175",
-   	       position = "0x0",
-   	       scale    = 1,
-   	       bitdepth = 10,
-   	       vrr      = 1,
-   	       cm       = "srgb",
-            })
-         end,
+  local machines = {
+     heimdall = {
+        monitors = function()
+           hl.monitor({
+                 output   = "DP-1",
+                 mode     = "3440x1440@175",
+                 position = "0x0",
+                 scale    = 1,
+                 bitdepth = 10,
+                 vrr      = 1,
+                 cm       = "srgb",
+           })
+        end,
 
-         startup = function()
-            hl.exec_cmd([[uwsm app -- openrgb --profile "off.orp"]])
-         end,
+        startup = function()
+           hl.exec_cmd([[uwsm app -- openrgb --profile "off.orp"]])
+        end,
 
-         keybinds = function(mainMod)
-   	 hl.bind("XF86MonBrightnessUp",   function() change_brightness("b", "-i", "5") end, { locked = true, repeating = false })
-   	 hl.bind("XF86MonBrightnessDown", function() change_brightness("b", "-d", "5") end, { locked = true, repeating = false })
-   	 hl.bind(mainMod .. " + XF86MonBrightnessUp",   function() change_brightness("b", "", "25") end,  { locked = true })
-   	 hl.bind(mainMod .. " + XF86MonBrightnessDown", function() change_brightness("b", "", "5") end,   { locked = true })
-   	 hl.bind(mainMod .. " + SHIFT + XF86MonBrightnessUp", function() change_brightness("b", "", "100") end, { locked = true })
-         end,
-      },
+        keybinds = function(mainMod)
+           hl.bind("XF86MonBrightnessUp",   function() change_brightness("b", "-i", "5") end, { locked = true, repeating = false })
+           hl.bind("XF86MonBrightnessDown", function() change_brightness("b", "-d", "5") end, { locked = true, repeating = false })
+           hl.bind(mainMod .. " + XF86MonBrightnessUp",   function() change_brightness("b", "", "25") end,  { locked = true })
+           hl.bind(mainMod .. " + XF86MonBrightnessDown", function() change_brightness("b", "", "5") end,   { locked = true })
+           hl.bind(mainMod .. " + SHIFT + XF86MonBrightnessUp", function() change_brightness("b", "", "100") end, { locked = true })
+        end,
+     },
 
-      red = {
-         monitors = function()
-            hl.monitor({
-   	       output   = "eDP-1",
-   	       mode     = "1920x1080",
-   	       position = "0x0",
-   	       scale    = 1,
-            })
-         end,
+     red = {
+        monitors = function()
+           hl.monitor({
+                 output   = "eDP-1",
+                 mode     = "1920x1080",
+                 position = "0x0",
+                 scale    = 1,
+           })
+        end,
 
-         keybinds = function(mainMod)
-   	 hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("blight inc 200"), { locked = true, repeating = true })
-   	 hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("blight dec 200"), { locked = true, repeating = true })
-   	 hl.bind(mainMod .. " + XF86MonBrightnessUp",   hl.dsp.exec_cmd("blight set 32768"),  { locked = true })
-   	 hl.bind(mainMod .. " + XF86MonBrightnessDown", hl.dsp.exec_cmd("blight set 5"),   { locked = true })
-   	 hl.bind(mainMod .. " + SHIFT + XF86MonBrightnessUp", hl.dsp.exec_cmd("blight set 65535"), { locked = true })
-         end,
-      },
+        keybinds = function(mainMod)
+           hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("blight inc 200"), { locked = true, repeating = true })
+           hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("blight dec 200"), { locked = true, repeating = true })
+           hl.bind(mainMod .. " + XF86MonBrightnessUp",   hl.dsp.exec_cmd("blight set 32768"),  { locked = true })
+           hl.bind(mainMod .. " + XF86MonBrightnessDown", hl.dsp.exec_cmd("blight set 5"),   { locked = true })
+           hl.bind(mainMod .. " + SHIFT + XF86MonBrightnessUp", hl.dsp.exec_cmd("blight set 65535"), { locked = true })
+        end,
+     },
 
-      poseidon = {
-         monitors = function()
-            hl.monitor({
-   	       output   = "DP-1",
-   	       mode     = "3840x2160",
-   	       position = "3840x0",
-   	       scale    = 1,
-            })
+     poseidon = {
+        monitors = function()
+           hl.monitor({
+                 output   = "DP-1",
+                 mode     = "3840x2160",
+                 position = "3840x0",
+                 scale    = 1,
+           })
 
-            hl.monitor({
-   	       output   = "DP-2",
-   	       mode     = "3840x2160",
-   	       position = "0x0",
-   	       scale    = 1,
-            })
-         end,
-      },
+           hl.monitor({
+                 output   = "DP-2",
+                 mode     = "3840x2160",
+                 position = "0x0",
+                 scale    = 1,
+           })
+        end,
+     },
 
-      default = {
-         monitors = function()
-            hl.monitor({
-   	       output   = "*",
-   	       mode     = "preferred",
-   	       position = "auto",
-   	       scale    = 1,
-            })
-         end,
-      },
-   }
+     default = {
+        monitors = function()
+           hl.monitor({
+                 output   = "*",
+                 mode     = "preferred",
+                 position = "auto",
+                 scale    = 1,
+           })
+        end,
+     },
+  }
 
-   local current_machine = machines[hostname] or machines.default
-
-
-   --------------------------------------------------
-   -- MONITORS
-   --------------------------------------------------
-
-   current_machine.monitors()
+  local current_machine = machines[hostname] or machines.default
 
 
-   --------------------------------------------------
-   -- USER PROGRAMS
-   --------------------------------------------------
+  --------------------------------------------------
+  -- MONITORS
+  --------------------------------------------------
 
-   local apps = {
-      terminal = "uwsm app -- ghostty",
-      menu     = "uwsm app -- $HOME/.local/bin/mybemenu",
-      browser  = "uwsm app -- zen-browser",
-      editor   = "uwsm app -- emacs",
-   }
+  current_machine.monitors()
 
 
-   --------------------------------------------------
-   -- ENVIRONMENT VARIABLES
-   --------------------------------------------------
+  --------------------------------------------------
+  -- USER PROGRAMS
+  --------------------------------------------------
 
-   local env = {
-      DXVK_HDR             = 1,
-      HYPRCURSOR_SIZE      = "32",
-      HYPRCURSOR_THEME     = "Posy_Cursor_Black",
-      PROTON_ENABLE_WAYLAND = 1,
-      PROTON_ENABLE_HDR     = 1,
-      PROTON_DLSS_UPGRADE   = 1,
-      XCURSOR_SIZE         = "32",
-      XCURSOR_THEME        = "Posy_Cursor_Black",
-   }
-
-   for key, value in pairs(env) do
-      hl.env(key, value)
-   end
+  local apps = {
+     terminal = "uwsm app -- ghostty",
+     menu     = "uwsm app -- $HOME/.local/bin/mybemenu",
+     browser  = "uwsm app -- zen-browser",
+     editor   = "uwsm app -- emacs",
+  }
 
 
-   --------------------------------------------------
-   -- AUTOSTART
-   --------------------------------------------------
+  --------------------------------------------------
+  -- ENVIRONMENT VARIABLES
+  --------------------------------------------------
 
-   hl.on("hyprland.start", function()
-   	 local startup_commands = {
-   	    "systemctl --user start hyprpolkitagent",
-   	    [[uwsm app -- ghostty --title="Scratchpad"]],
-   	    [[uwsm app -- gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"]],
-   	    "uwsm app -- mako",
-   	    "uwsm app -- udiskie",
-   	    "uwsm app -- waybar",
-   	 }
+  local env = {
+     DXVK_HDR             = 1,
+     HYPRCURSOR_SIZE      = "32",
+     HYPRCURSOR_THEME     = "macOS",
+     PROTON_ENABLE_WAYLAND = 1,
+     PROTON_ENABLE_HDR     = 1,
+     PROTON_DLSS_UPGRADE   = 1,
+     XCURSOR_SIZE         = "32",
+     XCURSOR_THEME        = "macOS",
+  }
 
-   	 for _, cmd in ipairs(startup_commands) do
-   	    hl.exec_cmd(cmd)
-   	 end
-
-   	 if current_machine.startup then
-   	    current_machine.startup()
-   	 end
-   end)
+  for key, value in pairs(env) do
+     hl.env(key, value)
+  end
 
 
-   --------------------------------------------------
-   -- LOOK AND FEEL
-   --------------------------------------------------
-   hl.config({
-         animations = {
-   	 enabled                  = false,
-         },
-         
-         cursor = {
-   	 no_hardware_cursors      = false,
-   	 min_refresh_rate         = 60,
-   	 no_warps                 = false,
-         },
+  --------------------------------------------------
+  -- AUTOSTART
+  --------------------------------------------------
 
-         decoration = {
-   	 rounding                 = 12,
-   	 rounding_power           = 2,
+  hl.on("hyprland.start", function()
+           local startup_commands = {
+              "systemctl --user start hyprpolkitagent",
+              "uwsm app -- mako",
+              [[uwsm app -- ghostty --title="Scratchpad"]],
+              [[uwsm app -- gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"]],
+              "uwsm app -- udiskie",
+              "uwsm app -- waybar",
+              "hyprctl plugin load /home/lambda/projects/hyprframe/build/libhyprframe.so",
+           }
 
-   	 active_opacity           = 1.0,
-   	 inactive_opacity         = 1.0,
+           for _, cmd in ipairs(startup_commands) do
+              hl.exec_cmd(cmd)
+           end
 
-   	 shadow = {
-   	    enabled               = false,
-   	    range                 = 4,
-   	    render_power          = 3,
-   	    color                 = 0x441a1a1a,
-   	 },
+           if current_machine.startup then
+              current_machine.startup()
+           end
+  end)
 
-   	 blur = {
-   	    enabled               = false,
-   	    size                  = 10,
-   	    passes                = 1,
-   	    vibrancy              = 0.1696,
-   	 }
-         },
-
-         dwindle = {
-   	 preserve_split           = true,
-         },
-         
-         general = {
-   	 gaps_in                  = 4,
-   	 gaps_out                 = 20,
-   	 border_size              = 2,
-   	 
-   	 col = {
-   	    active_border         = "<<get-color-rgb("accent")>>",
-   	    inactive_border       = "<<get-color-rgb("bg")>>",
-   	 },
-
-   	 resize_on_border         = true,
-   	 allow_tearing            = true,
-         },
-
-         group = {
-   	 col = {
-   	   border_active          = "<<get-color-rgb("accent")>>",
-   	   border_inactive        = "<<get-color-rgb("bg")>>",
-   	 },
-   	 
-   	 groupbar = {
-   	    enabled               = true,
-   	    render_titles         = true,
-   	    font_family           = "<<get-val("font-family")>>",
-   	    font_size             = <<get-val("font-size")>>,
-   	    font_weight_active    = "Semibold",
-   	    font_weight_inactive  = "Semibold",
-   	    gradients             = true,
-   	    text_color            = "<<get-color-rgb("bg")>>",
-   	    text_color_inactive   = "<<get-color-rgb("comment")>>",
-   	    col = {
-   	       active             = "<<get-color-rgb("accent")>>",
-   	       inactive           = "<<get-color-rgb("bg")>>",
-   	    }
-   	 },
-         },
-
-         input = {
-   	 kb_layout                = "us",
-   	 kb_variant               = "",
-   	 kb_model                 = "",
-   	 kb_options               = "",
-   	 kb_rules                 = "",
-   	 follow_mouse             = 1,
-   	 sensitivity              = 0,
-   	 accel_profile            = "flat",
-   	 touchpad = {
-   	    natural_scroll        = true,
-   	    disable_while_typing  = false,
-   	 },
-         },
-
-         master = {
-   	 new_status                = "master", 
-         },
-
-         misc = {
-   	 background_color         = 0x<<get-color(name="bg", nohash="t")>>,
-   	 disable_hyprland_logo    = true,
-   	 disable_splash_rendering = true,
-         },
-
-         render = {
-   	 -- cm_auto_hdr              = 1,
-   	 direct_scanout           = 1,
-   	 new_render_scheduling    = 1,
-         }
-
-   })
+  --------------------------------------------------
+  -- WORKSPACE LAYOUT (frame layout)
+  --------------------------------------------------
+  for i = 1, 9 do
+     hl.workspace_rule({ workspace = tostring(i), layout = "frame" })
+  end
 
 
-   --------------------------------------------------
-   -- ANIMATIONS
-   --------------------------------------------------
+  --------------------------------------------------
+  -- LOOK AND FEEL
+  --------------------------------------------------
+  hl.config({
+        animations = {
+           enabled                  = false,
+        },
+        
+        cursor = {
+           no_hardware_cursors      = false,
+           min_refresh_rate         = 60,
+           no_warps                 = false,
+        },
 
-   hl.curve("easeOutQuint",   { type = "bezier", points = { {0.23, 1},    {0.32, 1}    } })
-   hl.curve("easeInOutCubic", { type = "bezier", points = { {0.65, 0.05}, {0.36, 1}    } })
-   hl.curve("linear",         { type = "bezier", points = { {0, 0},       {1, 1}       } })
-   hl.curve("almostLinear",   { type = "bezier", points = { {0.5, 0.5},   {0.75, 1}    } })
-   hl.curve("quick",          { type = "bezier", points = { {0.15, 0},    {0.1, 1}     } })
+        decoration = {
+           rounding                 = 12,
+           rounding_power           = 2,
 
-   -- Default springs
-   hl.curve("easy",           { type = "spring", mass = 1, stiffness = 71.2633, dampening = 15.8273644 })
+           active_opacity           = 1.0,
+           inactive_opacity         = 1.0,
 
-   hl.animation({ leaf = "global",        enabled = true,  speed = 10,   bezier = "default" })
-   hl.animation({ leaf = "border",        enabled = true,  speed = 5.39, bezier = "easeOutQuint" })
-   hl.animation({ leaf = "windows",       enabled = true,  speed = 4.79, spring = "easy" })
-   hl.animation({ leaf = "windowsIn",     enabled = true,  speed = 4.1,  spring = "easy",         style = "popin 87%" })
-   hl.animation({ leaf = "windowsOut",    enabled = true,  speed = 1.49, bezier = "linear",       style = "popin 87%" })
-   hl.animation({ leaf = "fadeIn",        enabled = true,  speed = 1.73, bezier = "almostLinear" })
-   hl.animation({ leaf = "fadeOut",       enabled = true,  speed = 1.46, bezier = "almostLinear" })
-   hl.animation({ leaf = "fade",          enabled = true,  speed = 3.03, bezier = "quick" })
-   hl.animation({ leaf = "layers",        enabled = true,  speed = 3.81, bezier = "easeOutQuint" })
-   hl.animation({ leaf = "layersIn",      enabled = true,  speed = 4,    bezier = "easeOutQuint", style = "fade" })
-   hl.animation({ leaf = "layersOut",     enabled = true,  speed = 1.5,  bezier = "linear",       style = "fade" })
-   hl.animation({ leaf = "fadeLayersIn",  enabled = true,  speed = 1.79, bezier = "almostLinear" })
-   hl.animation({ leaf = "fadeLayersOut", enabled = true,  speed = 1.39, bezier = "almostLinear" })
-   hl.animation({ leaf = "workspaces",    enabled = true,  speed = 1.94, bezier = "almostLinear", style = "fade" })
-   hl.animation({ leaf = "workspacesIn",  enabled = true,  speed = 1.21, bezier = "almostLinear", style = "fade" })
-   hl.animation({ leaf = "workspacesOut", enabled = true,  speed = 1.94, bezier = "almostLinear", style = "fade" })
-   hl.animation({ leaf = "zoomFactor",    enabled = true,  speed = 7,    bezier = "quick" })
+           shadow = {
+              enabled               = false,
+              range                 = 4,
+              render_power          = 3,
+              color                 = 0x441a1a1a,
+           },
+
+           blur = {
+              enabled               = false,
+              size                  = 10,
+              passes                = 1,
+              vibrancy              = 0.1696,
+           }
+        },
+
+        dwindle = {
+           preserve_split           = true,
+        },
+        
+        general = {
+           gaps_in                  = 0,
+           gaps_out                 = 12,
+           border_size              = 2,
+           
+           col = {
+              active_border         = "<<get-color-rgb("color2")>>",
+              inactive_border       = "<<get-color-rgb("bg")>>",
+           },
+
+           resize_on_border         = true,
+           allow_tearing            = true,
+        },
+
+        group = {
+           col = {
+              border_active          = "<<get-color-rgb("accent")>>",
+              border_inactive        = "<<get-color-rgb("bg")>>",
+           },
+           
+           groupbar = {
+              enabled               = true,
+              render_titles         = true,
+              font_family           = "<<get-val("font-family")>>",
+              font_size             = <<get-val("font-size")>>,
+              font_weight_active    = "Semibold",
+              font_weight_inactive  = "Semibold",
+              gradients             = true,
+              text_color            = "<<get-color-rgb("bg")>>",
+              text_color_inactive   = "<<get-color-rgb("comment")>>",
+              col = {
+                 active             = "<<get-color-rgb("accent")>>",
+                 inactive           = "<<get-color-rgb("bg")>>",
+              }
+           },
+        },
+
+        input = {
+           kb_layout                = "us",
+           kb_variant               = "",
+           kb_model                 = "",
+           kb_options               = "",
+           kb_rules                 = "",
+           follow_mouse             = 1,
+           sensitivity              = 0,
+           accel_profile            = "flat",
+           touchpad = {
+              natural_scroll        = true,
+              disable_while_typing  = false,
+           },
+        },
+
+        master = {
+           new_status                = "master", 
+        },
+
+        misc = {
+           background_color         = 0x<<get-color(name="bg", nohash="t")>>,
+           disable_hyprland_logo    = true,
+           disable_splash_rendering = true,
+        },
+
+        render = {
+           -- cm_auto_hdr              = 1,
+           direct_scanout           = 1,
+           new_render_scheduling    = 1,
+        },
+
+        plugin = {
+           hyprframe = {
+              frame_gap               = 12,
+              frame_border_size       = 4,
+              frame_padding           = 4,
+              frame_color_active      = 0xee<<get-color(name="accent", nohash="t")>>,
+              frame_color_normal      = 0xee<<get-color(name="inactive_tab_bg", nohash="t")>>,
+              frame_bg_transparent    = true,
+              auto_close_frames       = false,
+              focus_wrap              = true,
+              show_tabs               = true,
+              show_frame_decorations  = "focused_if_multiple",
+              tab_bar_height          = 8,
+              tab_gap                 = 4,
+              tab_bar_gap             = 10,
+              tab_rounding            = -1,
+  	    tab_titles              = false,
+              tab_color_active        = 0xee<<get-color(name="accent", nohash="t")>>,
+              tab_color_normal        = 0xee<<get-color(name="inactive_tab_bg", nohash="t")>>,
+           },
+        },
+
+  })
 
 
-   --------------------------------------------------
-   -- KEYBINDS
-   --------------------------------------------------
-   local mainMod = "SUPER"
+  --------------------------------------------------
+  -- ANIMATIONS
+  --------------------------------------------------
 
-   --------------------------------------------------
-   -- GENERAL BINDS
-   --------------------------------------------------
-   hl.bind(mainMod .. " + return", hl.dsp.exec_cmd(apps.terminal))
-   hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd(apps.browser))
-   hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd(apps.editor))
-   hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.close())
-   hl.bind(mainMod .. " + SHIFT + escape", hl.dsp.exit())
-   hl.bind(mainMod .. " + SHIFT + grave", hl.dsp.exit())
-   hl.bind(mainMod .. " + escape", hl.dsp.exec_cmd("hyprctl reload"))
-   hl.bind(mainMod .. " + SHIFT + space", hl.dsp.window.float({ action = "toggle" }))
-   hl.bind(mainMod .. " + D", hl.dsp.exec_cmd(apps.menu))
-   hl.bind(mainMod .. " + backspace", hl.dsp.focus({ monitor = "+1" }))
-   hl.bind(mainMod .. " + Y", hl.dsp.exec_cmd("killall -SIGUSR1 waybar"))
-   hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("hyprlock"))
+  hl.curve("easeOutQuint",   { type = "bezier", points = { {0.23, 1},    {0.32, 1}    } })
+  hl.curve("easeInOutCubic", { type = "bezier", points = { {0.65, 0.05}, {0.36, 1}    } })
+  hl.curve("linear",         { type = "bezier", points = { {0, 0},       {1, 1}       } })
+  hl.curve("almostLinear",   { type = "bezier", points = { {0.5, 0.5},   {0.75, 1}    } })
+  hl.curve("quick",          { type = "bezier", points = { {0.15, 0},    {0.1, 1}     } })
 
-   -- Screenshot & Picker
-   hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd([[grim -g "$(slurp -d)"]]))
-   hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd("hyprpicker -a"))
+  -- Default springs
+  hl.curve("easy",           { type = "spring", mass = 1, stiffness = 71.2633, dampening = 15.8273644 })
 
-   --------------------------------------------------
-   -- NAVIGATION (Emacs/Vim-style focus)
-   --------------------------------------------------
-   hl.bind(mainMod .. " + F", hl.dsp.focus({ direction = "right" }))
-   hl.bind(mainMod .. " + B", hl.dsp.focus({ direction = "left" }))
-   hl.bind(mainMod .. " + P", hl.dsp.focus({ direction = "up" }))
-   hl.bind(mainMod .. " + N", hl.dsp.focus({ direction = "down" }))
-   hl.bind(mainMod .. " + M", hl.dsp.window.fullscreen({ action = "toggle" }))
+  hl.animation({ leaf = "global",        enabled = true,  speed = 10,   bezier = "default" })
+  hl.animation({ leaf = "border",        enabled = true,  speed = 5.39, bezier = "easeOutQuint" })
+  hl.animation({ leaf = "windows",       enabled = true,  speed = 4.79, spring = "easy" })
+  hl.animation({ leaf = "windowsIn",     enabled = true,  speed = 4.1,  spring = "easy",         style = "popin 87%" })
+  hl.animation({ leaf = "windowsOut",    enabled = true,  speed = 1.49, bezier = "linear",       style = "popin 87%" })
+  hl.animation({ leaf = "fadeIn",        enabled = true,  speed = 1.73, bezier = "almostLinear" })
+  hl.animation({ leaf = "fadeOut",       enabled = true,  speed = 1.46, bezier = "almostLinear" })
+  hl.animation({ leaf = "fade",          enabled = true,  speed = 3.03, bezier = "quick" })
+  hl.animation({ leaf = "layers",        enabled = true,  speed = 3.81, bezier = "easeOutQuint" })
+  hl.animation({ leaf = "layersIn",      enabled = true,  speed = 4,    bezier = "easeOutQuint", style = "fade" })
+  hl.animation({ leaf = "layersOut",     enabled = true,  speed = 1.5,  bezier = "linear",       style = "fade" })
+  hl.animation({ leaf = "fadeLayersIn",  enabled = true,  speed = 1.79, bezier = "almostLinear" })
+  hl.animation({ leaf = "fadeLayersOut", enabled = true,  speed = 1.39, bezier = "almostLinear" })
+  hl.animation({ leaf = "workspaces",    enabled = true,  speed = 1.94, bezier = "almostLinear", style = "fade" })
+  hl.animation({ leaf = "workspacesIn",  enabled = true,  speed = 1.21, bezier = "almostLinear", style = "fade" })
+  hl.animation({ leaf = "workspacesOut", enabled = true,  speed = 1.94, bezier = "almostLinear", style = "fade" })
+  hl.animation({ leaf = "zoomFactor",    enabled = true,  speed = 7,    bezier = "quick" })
 
-   -- Resizing (Repeating)
-   hl.bind(mainMod .. " + CONTROL + F", hl.dsp.window.resize({ x = 10, y = 0, relative = true }),  { repeating = true })
-   hl.bind(mainMod .. " + CONTROL + B", hl.dsp.window.resize({ x = -10, y = 0, relative = true }), { repeating = true })
-   hl.bind(mainMod .. " + CONTROL + P", hl.dsp.window.resize({ x = 0, y = -10, relative = true }), { repeating = true })
-   hl.bind(mainMod .. " + CONTROL + N", hl.dsp.window.resize({ x = 0, y = 10, relative = true }),  { repeating = true })
 
-   --------------------------------------------------
-   -- GROUPS
-   --------------------------------------------------
-   hl.bind(mainMod .. " + G", hl.dsp.group.toggle())
-   hl.bind(mainMod .. " + Tab", hl.dsp.group.next({}))
-   hl.bind(mainMod .. " + SHIFT + Tab", hl.dsp.group.prev({}))
-   hl.bind(mainMod .. " + ALT + B", hl.dsp.window.move({into_group = "left"}))
-   hl.bind(mainMod .. " + ALT + F", hl.dsp.window.move({into_group = "right"}))
-   hl.bind(mainMod .. " + ALT + P", hl.dsp.window.move({into_group = "up"}))
-   hl.bind(mainMod .. " + ALT + N", hl.dsp.window.move({into_group = "down"}))
-   hl.bind(mainMod .. " + comma", hl.dsp.window.move({out_of_group = true}))
+  --------------------------------------------------
+  -- KEYBINDS
+  --------------------------------------------------
+  local mainMod = "SUPER"
 
-   --------------------------------------------------
-   -- WORKSPACES
-   --------------------------------------------------
-   for i = 1, 10 do
-      local key = i % 10
-      hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }))
-      hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
-   end
+  --------------------------------------------------
+  -- GENERAL BINDS
+  --------------------------------------------------
+  hl.bind(mainMod .. " + return", hl.dsp.exec_cmd(apps.terminal))
+  hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd(apps.browser))
+  hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exec_cmd(apps.editor))
+  hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.close())
+  hl.bind(mainMod .. " + SHIFT + escape", hl.dsp.exit())
+  hl.bind(mainMod .. " + SHIFT + grave", hl.dsp.exit())
+  hl.bind(mainMod .. " + escape", hl.dsp.exec_cmd("hyprctl reload"))
+  hl.bind(mainMod .. " + SHIFT + space", hl.dsp.window.float({ action = "toggle" }))
+  hl.bind(mainMod .. " + D", hl.dsp.exec_cmd(apps.menu))
+  hl.bind(mainMod .. " + backspace", hl.dsp.focus({ monitor = "+1" }))
+  hl.bind(mainMod .. " + Y", hl.dsp.exec_cmd("killall -SIGUSR1 waybar"))
+  hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("hyprlock"))
 
-   -- Special Workspace
-   hl.bind(mainMod .. " + minus", hl.dsp.workspace.toggle_special("magic"))
-   hl.bind(mainMod .. " + SHIFT + minus", hl.dsp.window.move({ workspace = "special:magic" }))
+  -- Screenshot & Picker
+  hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd([[grim -g "$(slurp -d)"]]))
+  hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd("hyprpicker -a"))
 
-   --------------------------------------------------
-   -- MOUSE
-   --------------------------------------------------
-   hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
-   hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
-   hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
-   hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
+  --------------------------------------------------
+  -- FRAME LAYOUT
+  --------------------------------------------------
+  local msg = function(cmd) hl.plugin.hyprframe.msg(cmd) end
 
-   --------------------------------------------------
-   -- MULTIMEDIA & BRIGHTNESS
-   --------------------------------------------------
-   function show_osd(message, icon_name)
-      local icon_path = "/usr/share/icons/Adwaita/symbolic/status/" .. icon_name .. ".svg"
-      
-      local f = io.open(icon_path, "r")
-      if f then 
-         f:close() 
-      else
-         icon_path = "/usr/share/icons/AdwaitaLegacy/32x32/legacy/" .. icon_name .. ".png"
-      end
+  -- Navigation (frame-tree aware)
+  hl.bind(mainMod .. " + F", function() msg("focus right") end)
+  hl.bind(mainMod .. " + B", function() msg("focus left")  end)
+  hl.bind(mainMod .. " + P", function() msg("focus up")    end)
+  hl.bind(mainMod .. " + N", function() msg("focus down")  end)
+  hl.bind(mainMod .. " + M", hl.dsp.window.fullscreen({ action = "toggle" }))
 
-      hl.exec_cmd("makoctl dismiss -a 'osd'")
-      
-      local gdbus_cmd = string.format(
-         [[gdbus call --session --dest org.freedesktop.Notifications ]] ..
-         [[--object-path /org/freedesktop/Notifications ]] ..
-         [[--method org.freedesktop.Notifications.Notify ]] ..
-         [["osd" 999 "%s" "%s" "" "[]" ]] ..
-         [[ '{"x-mako-stack-tag": <"osd-notification">, "transient": <true>}' 500]],
-         icon_path, message
-      )
+  -- Frame manipulation
+  hl.bind(mainMod .. " + H",      function() msg("split h") end)
+  hl.bind(mainMod .. " + V",      function() msg("split v") end)
+  hl.bind(mainMod .. " + X",      function() msg("close_frame") end)
+  hl.bind(mainMod .. " + E",      function() msg("cycle_layout") end)
+  hl.bind(mainMod .. " + Tab",   function() msg("cycle +1") end)
+  hl.bind(mainMod .. " + SHIFT + Tab", function() msg("cycle -1") end)
 
-      hl.exec_cmd(gdbus_cmd)
-   end
+  -- Move window between frames
+  hl.bind(mainMod .. " + SHIFT + B", function() msg("move left")  end)
+  hl.bind(mainMod .. " + SHIFT + N", function() msg("move down")  end)
+  hl.bind(mainMod .. " + SHIFT + P", function() msg("move up")    end)
+  hl.bind(mainMod .. " + SHIFT + F", function() msg("move right") end)
+
+  -- Resizing (repeating, 0.5% steps per step)
+  hl.bind(mainMod .. " + CONTROL + F", function() msg("resize right +0.005") end, { repeating = true })
+  hl.bind(mainMod .. " + CONTROL + B", function() msg("resize left +0.005")  end, { repeating = true })
+  hl.bind(mainMod .. " + CONTROL + P", function() msg("resize up -0.005")    end, { repeating = true })
+  hl.bind(mainMod .. " + CONTROL + N", function() msg("resize down +0.005")  end, { repeating = true })
+
+  --------------------------------------------------
+  -- WORKSPACES
+  --------------------------------------------------
+  for i = 1, 10 do
+     local key = i % 10
+     hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }))
+     hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
+  end
+
+  -- Special Workspace
+  hl.bind(mainMod .. " + minus", hl.dsp.workspace.toggle_special("magic"))
+  hl.bind(mainMod .. " + SHIFT + minus", hl.dsp.window.move({ workspace = "special:magic" }))
+
+  --------------------------------------------------
+  -- MOUSE
+  --------------------------------------------------
+  hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
+  hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
+  hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
+  hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
+
+  --------------------------------------------------
+  -- MULTIMEDIA & BRIGHTNESS
+  --------------------------------------------------
+  function show_osd(message, icon_name)
+     local icon_path = "/usr/share/icons/Adwaita/symbolic/status/" .. icon_name .. ".svg"
+     
+     local f = io.open(icon_path, "r")
+     if f then 
+        f:close() 
+     else
+        icon_path = "/usr/share/icons/AdwaitaLegacy/32x32/legacy/" .. icon_name .. ".png"
+     end
+
+     hl.exec_cmd("makoctl dismiss -a 'osd'")
+     
+     local gdbus_cmd = string.format(
+        [[gdbus call --session --dest org.freedesktop.Notifications ]] ..
+        [[--object-path /org/freedesktop/Notifications ]] ..
+        [[--method org.freedesktop.Notifications.Notify ]] ..
+        [["osd" 999 "%s" "%s" "" "[]" ]] ..
+        [[ '{"x-mako-stack-tag": <"osd-notification">, "transient": <true>}' 500]],
+        icon_path, message
+     )
+
+     hl.exec_cmd(gdbus_cmd)
+  end
 
   function change_brightness(cmd_type, action, value)
-      -- 1. Execute the monitor command
-      local monitor_call = string.format("monitorctl %s %s %s", cmd_type, action, value or "")
-      os.execute(monitor_call)
+     -- 1. Execute the monitor command
+     local monitor_call = string.format("monitorctl %s %s %s", cmd_type, action, value or "")
+     os.execute(monitor_call)
 
-      -- 2. Fetch the new value
-      local handle = io.popen("monitorctl b -g")
-      local current_val = "0"
-      if handle then
-         current_val = handle:read("*a"):gsub("%s+", "")
-         handle:close()
-      end
+     -- 2. Fetch the new value
+     local handle = io.popen("monitorctl b -g")
+     local current_val = "0"
+     if handle then
+        current_val = handle:read("*a"):gsub("%s+", "")
+        handle:close()
+     end
 
-      -- 3. Show OSD
-      show_osd("Brightness " .. current_val .. "%", "display-brightness-symbolic")
-   end
+     -- 3. Show OSD
+     show_osd("Brightness " .. current_val .. "%", "display-brightness-symbolic")
+  end
 
-   -- Audio (unchanged, but could be moved to monitorctl v if preferred)
-   hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
-   hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),   { locked = true, repeating = true })
-   hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
+  -- Audio (unchanged, but could be moved to monitorctl v if preferred)
+  hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
+  hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),   { locked = true, repeating = true })
+  hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
 
-   if current_machine.keybinds then
-      current_machine.keybinds(mainMod)
-   end
+  if current_machine.keybinds then
+     current_machine.keybinds(mainMod)
+  end
 
 
-   --------------------------------------------------
-   -- WINDOW RULES
-   --------------------------------------------------
+  --------------------------------------------------
+  -- WINDOW RULES
+  --------------------------------------------------
 
-   -- Suppress Maximize (Global)
-   hl.window_rule({
-         name  = "suppress-maximize",
-         match = { class = ".*" },
-         suppress_event = "maximize",
-   })
+  -- Suppress Maximize (Global)
+  hl.window_rule({
+        name  = "suppress-maximize",
+        match = { class = ".*" },
+        suppress_event = "maximize",
+  })
 
-   -- Scratchpad Rule
-   hl.window_rule({
-         name = "float-scratchpad",
-         match = { title = ".*Scratchpad.*" },
-         float = true,
-         size = {"(monitor_w*0.6)", "(monitor_h*0.6)"},
-         move = {"(monitor_w*0.15)", "(monitor_h*0.15)"},
-         workspace = "special:magic"
-   })
+  -- Scratchpad Rule
+  hl.window_rule({
+        name = "float-scratchpad",
+        match = { title = ".*Scratchpad.*" },
+        float = true,
+        size = {"(monitor_w*0.6)", "(monitor_h*0.6)"},
+        move = {"(monitor_w*0.15)", "(monitor_h*0.15)"},
+        workspace = "special:magic"
+  })
 
-   -- Unreal Engine Fixes
-   hl.window_rule({
-         name = "unreal-engine-tweak",
-         match = { class = "UnrealEditor", title = "%w*" },
-         no_initial_focus = true,
-         suppress_event = "activate"
-   })
+  -- Unreal Engine Fixes
+  hl.window_rule({
+        name = "unreal-engine-tweak",
+        match = { class = "UnrealEditor", title = "%w*" },
+        no_initial_focus = true,
+        suppress_event = "activate"
+  })
 
-   -- Nomad
-   hl.window_rule({
-         name = "float nomad",
-         match = { title = "Nomad" },
-         float = true,
-   })
+  -- Nomad
+  hl.window_rule({
+        name = "float nomad",
+        match = { title = "Nomad" },
+        float = true,
+  })
 
-   hl.window_rule({
-         name = "float file dialog",
-         match = { class = "xdg-desktop-portal-gtk" },
-         float = true,
-   })
+  hl.window_rule({
+        name = "float file dialog",
+        match = { class = "xdg-desktop-portal-gtk" },
+        float = true,
+  })
 
-   -- Video/Photo Editing Rules (Resolve & Affinity)
-   local editing_apps = {
-      { name = "davinci", class = "resolve", title = "resolve" },
-      { name = "affinity", class = "affinity.exe", title = "" }
-   }
+  -- Video/Photo Editing Rules (Resolve & Affinity)
+  local editing_apps = {
+     { name = "davinci", class = "resolve", title = "resolve" },
+     { name = "affinity", class = "affinity.exe", title = "" }
+  }
 
-   for _, app in ipairs(editing_apps) do
-      hl.window_rule({
-   	 name = app.name .. "-tweak",
-   	 match = { class = app.class, title = app.title },
-   	 no_blur = true,
-   	 border_size = 0,
-   	 no_shadow = true
-      })
-   end
+  for _, app in ipairs(editing_apps) do
+     hl.window_rule({
+           name = app.name .. "-tweak",
+           match = { class = app.class, title = app.title },
+           no_blur = true,
+           border_size = 0,
+           no_shadow = true
+     })
+  end
 
-   -- Affinity Tile Override
-   hl.window_rule({
-         name = "affinity-photo-tile-tweak",
-         match = { class = "affinity.exe", title = "Affinity" },
-         tile = true
-   })
+  -- Affinity Tile Override
+  hl.window_rule({
+        name = "affinity-photo-tile-tweak",
+        match = { class = "affinity.exe", title = "Affinity" },
+        tile = true
+  })
 
-   -- Gamescope / Gaming Rule
-   hl.window_rule({
-         name = "gamescope",
-         match = { class = "^(steam_app_.*|cs2|gamescope)$" },
-         float = false,
-         fullscreen = true,
-   })
+  -- Gamescope / Gaming Rule
+  hl.window_rule({
+        name = "gamescope",
+        match = { class = "^(steam_app_.*|cs2|gamescope)$" },
+        float = false,
+        fullscreen = true,
+  })
 
-   -- Simple Floats
-   hl.window_rule({
-         name = "floating-windows",
-         match = { title = "Steam - Self Updater" },
-         float = true
-   })
+  -- Simple Floats
+  hl.window_rule({
+        name = "floating-windows",
+        match = { title = "Steam - Self Updater" },
+        float = true
+  })
 
-   ;
+  ;
 #+end_src
 * Hyprlauncher
 #+begin_src conf :tangle "~/.config/hypr/hyprlauncher.conf"
@@ -686,7 +721,7 @@
   accent_secondary = 0xFF<<get-color(name="color3", nohash="t")>>
   h1_size = 19
   h2_size = 15
-  h3_size = 13v
+  h3_size = 13
   font_size = <<get-val("font-size")>>
   small_font_size = 10
   font_family = <<get-val("font-family")>>
@@ -697,5 +732,5 @@
 * Bemenu
 #+begin_src bash :tangle "~/.local/bin/mybemenu" :tangle-mode (identity #o777) :mkdirp yes
   #!/bin/bash
-  bemenu-run --fn "<<get-val("font-family")>> 12" --fb "<<get-color("bg")>>" --ff "<<get-color("fg")>>" --nb "<<get-color("bg")>>" --nf "<<get-color("fg")>>" --tb "<<get-color("bg")>>" --hb "<<get-color("accent")>>" --tf "<<get-color("accent")>>" --hf "<<get-color("fg")>>" --af "<<get-color("fg")>>" --ab "<<get-color("bg")>>"
+  bemenu-run --fn "<<get-val("font-family")>> 14" --fb "<<get-color("bg")>>" --ff "<<get-color("fg")>>" --nb "<<get-color("bg")>>" --nf "<<get-color("fg")>>" --tb "<<get-color("bg")>>" --hb "<<get-color("accent")>>" --tf "<<get-color("accent")>>" --hf "<<get-color("fg")>>" --af "<<get-color("fg")>>" --ab "<<get-color("bg")>>"
 #+end_src

@@ -3,7 +3,6 @@
 #+EMAIL: Richard@Redcroft.tech
 #+OPTIONS: toc:nil num:nil
 #+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes
-#+auto_tangle: t
 
 * Hyprpaper
 #+NAME: get_wallpaper
@@ -41,7 +40,3 @@
       path = <<get_wallpaper()>>
   }
 #+end_src
-
-# Local Variables:
-# org-confirm-babel-evaluate: nil
-# End:

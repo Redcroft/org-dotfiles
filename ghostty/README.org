@@ -3,7 +3,6 @@
 #+EMAIL: Richard@Redcroft.tech
 #+OPTIONS: toc:nil num:nil
 #+PROPERTY: Header-args :tangle ~/.config/ghostty/config :tangle-mode (identity #o444) :mkdirp yes :noweb yes
-#+auto_tangle: t
 
 #+INCLUDE: "../theme.org"
 
@@ -60,8 +59,8 @@
   font-family = "<<get-val("font-family")>>"
   font-size = <<get-val("font-size")>>
   font-style = "<<get-val("font-style")>>"
-  quick-terminal-position = center
-  quick-terminal-size = 60%,60%
+  # quick-terminal-position = center
+  # quick-terminal-size = 60%,60%
 
   window-padding-x = 6
   window-padding-y = 6

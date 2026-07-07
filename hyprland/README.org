@@ -94,6 +94,12 @@
   local hostname = get_hostname()
 
   --------------------------------------------------
+  -- UWSM
+  --------------------------------------------------
+  local uwsm_exists = os.execute("command -v uwsm >/dev/null 2>&1") == true
+  local spawn = uwsm_exists and "uwsm app -- " or ""
+
+  --------------------------------------------------
   -- MACHINE CONFIGURATION
   --------------------------------------------------
 
@@ -112,7 +118,7 @@
         end,
 
         startup = function()
-           hl.exec_cmd([[uwsm app -- openrgb --profile "off.orp"]])
+           hl.exec_cmd(spawn .. [[openrgb --profile "off.orp"]])
         end,
 
         keybinds = function(mainMod)
@@ -134,9 +140,13 @@
            })
         end,
 
+        startup = function()
+           hl.exec_cmd(spawn .. "pipewire &")
+        end,
+
         keybinds = function(mainMod)
-           hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("blight inc 200"), { locked = true, repeating = true })
-           hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("blight dec 200"), { locked = true, repeating = true })
+           hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("blight inc 2"), { locked = true, repeating = true })
+           hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("blight dec 2"), { locked = true, repeating = true })
            hl.bind(mainMod .. " + XF86MonBrightnessUp",   hl.dsp.exec_cmd("blight set 32768"),  { locked = true })
            hl.bind(mainMod .. " + XF86MonBrightnessDown", hl.dsp.exec_cmd("blight set 5"),   { locked = true })
            hl.bind(mainMod .. " + SHIFT + XF86MonBrightnessUp", hl.dsp.exec_cmd("blight set 65535"), { locked = true })
@@ -188,10 +198,10 @@
   --------------------------------------------------
 
   local apps = {
-     terminal = "uwsm app -- ghostty",
-     menu     = "uwsm app -- $HOME/.local/bin/mybemenu",
-     browser  = "uwsm app -- zen-browser",
-     editor   = "uwsm app -- emacs",
+     terminal = spawn .. "ghostty",
+     menu     = spawn .. "$HOME/.local/bin/mybemenu",
+     browser  = spawn .. "zen-browser",
+     editor   = spawn .. "emacs",
   }
 
 
@@ -222,11 +232,11 @@
   hl.on("hyprland.start", function()
            local startup_commands = {
               "systemctl --user start hyprpolkitagent",
-              "uwsm app -- mako",
-              [[uwsm app -- ghostty --title="Scratchpad"]],
-              [[uwsm app -- gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"]],
-              "uwsm app -- udiskie",
-              "uwsm app -- waybar",
+              spawn .. "mako",
+              spawn .. [[ghostty --title="Scratchpad"]],
+              spawn .. [[gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"]],
+              spawn .. "udiskie",
+              spawn .. "waybar",
               "hyprctl plugin load /home/lambda/projects/hyprframe/build/libhyprframe.so",
            }
 

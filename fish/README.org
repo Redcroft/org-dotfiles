@@ -25,7 +25,9 @@
   # --- PATH & Environment ---
   # Add local binaries and Cargo/Go paths if they exist
   fish_add_path ~/.local/bin
+  fish_add_path ~/.local/share/bin
   fish_add_path ~/.cargo/bin
+  fish_add_path ~/.opencode/bin
 
   # Set Editor (Muscle memory for Bash users)
   set -gx EDITOR nvim

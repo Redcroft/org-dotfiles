@@ -3,8 +3,8 @@
 #+EMAIL: Richard@Redcroft.tech
 #+OPTIONS: toc:nil num:nil
 #+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes
-#+auto_tangle: t
 
+* Red
 #+begin_src lisp :tangle (if (string= system-name "red") "/sudo::/etc/kanata/config.kbd" "")
   (defcfg
       linux-dev "/dev/input/by-path/platform-i8042-serio-0-event-kbd"
@@ -77,9 +77,11 @@
       _    _    _    _    _  _  _  _  _  _)
 #+end_src
 
+* Heimdall
 #+begin_src lisp :tangle (if (string= system-name "heimdall") "/sudo::/etc/kanata/config.kbd" "")
   (defcfg
       linux-dev ( /dev/input/by-id/usb-hfd.cn_USB_DEVICE-event-kbd
+  		/dev/input/by-id/usb-hfd.cn_USB_DEVICE-if01-event-mouse
                   /dev/input/by-id/usb-HS6209_USB_Dongle_No.161-0047-5-event-kbd
                   )
     process-unmapped-keys yes)
@@ -91,41 +93,42 @@
     cmk (layer-switch colemak))
 
   (defsrc
-      esc  1  2  3  4  5  6  7  8  9  0   -   =   bspc
+      esc  1  2  3  4  5  6  7  8  9  0   -   =   bspc vold volu
       tab  q  w  e  r  t  y  u  i  o  p   [   ]   \    del
       caps a  s  d  f  g  h  j  k  l  ;   '   ret      pgup
       lsft z  x  c  v  b  n  m  ,  .   /  rsft  up pgdn
       lctl lmet  lalt  spc  ralt  lft  down rght)
 
   (deflayer colemak
-      esc  1  2  3  4  5  6  7  8  9  0   '   =   bspc
+      esc  1  2  3  4  5  6  7  8  9  0   '   =   bspc brdwn brup
       tab  q  w  f  p  b  j  l  u  y  ;   [   ]   \    del
       lctl a  r  s  t  g  m  n  e  i   o   -  ret pgup
       lsft  x  c  d  v  z  k  h  ,  .  /  rsft up pgdn
       lctl lmet  lalt  spc  @lwr  lft  down rght)
 
   (deflayer qwerty
-      esc  1  2  3  4  5  6  7  8  9  0   -   =   bspc
+      esc  1  2  3  4  5  6  7  8  9  0   -   =   bspc brdwn brup
       tab  q  w  e  r  t  y  u  i  o  p   [   ]   \ del
       lctl a  s  d  f  g  h  j  k  l  ;   '   ret pgup
       lsft z  x  c  v  b  n  m  ,  .   /   rsft up pgdn
       lctl lmet  lalt  spc  @lwr  lft  down rght)
 
   (deflayer dvorak
-      esc  1  2  3  4  5  6  7  8  9  0   [   ]   bspc
+      esc  1  2  3  4  5  6  7  8  9  0   [   ]   bspc brdwn brup
       tab  '  ,  .  p  y  f  g  c  r  l   /   =   \ del
       lctl a  o  e  u  i  d  h  t  n  s   -   ret pgup
       lsft ;  q  j  k  x  b  m  w  v   z   rsft up pgdn
       lctl lmet  lalt  spc  @lwr  lft  down rght)
 
   (deflayer lower
-      _ f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 _
+      _ f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12 _ _ _
       _ @cmk @qwr @dvk _ _ _ _ _ _ _ _ _ _ _
       _ _ _ _ _ _ _ _ _ _ _ _ _ home
       _ _ _ _ _ _ _ _ _ _ _ _ _ end
       _ _ _ _ _ _ _ _)
 #+end_src
 
+* Poseidon
 #+begin_src lisp :tangle (if (string= system-name "poseidon") "/sudo::/etc/kanata/config.kbd" "")
   (defcfg
       linux-dev ( /dev/input/by-id/usb-ROYUAN_MonsGeek_2.4G_Wireless_Keyboard-event-kbd

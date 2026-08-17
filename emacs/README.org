@@ -171,13 +171,6 @@
     	inhibit-startup-screen t
     	use-short-answers t
   	display-line-numbers-type 'visual
-  	major-mode-remap-alist
-          '((js-ts-mode     . js-mode)
-            (bash-ts-mode   . bash-mode)
-            (json-ts-mode   . json-mode)
-    	  (python-ts-mode . python-mode)
-    	  (rust-ts-mode   . rustic-mode)
-    	  (svelte-ts-mode . svelte-mode))
   	recentf-max-saved-items 500
   	indent-tabs-mode nil
   	)
@@ -483,11 +476,14 @@
   ;; ============================================================
   (use-package eglot
     :ensure nil
-    :hook ((bash-mode   . eglot-ensure)
-  	 (elixir-mode . eglot-ensure)
-           (python-mode . eglot-ensure)
-           (js-mode     . eglot-ensure)
-  	 (svelte-mode . eglot-ensure))
+    :hook ((sh-base-mode     . eglot-ensure)
+           (elixir-mode      . eglot-ensure)
+           (elixir-ts-mode   . eglot-ensure)
+           (python-base-mode . eglot-ensure)
+           (js-base-mode     . eglot-ensure)
+           (lua-mode         . eglot-ensure)
+           (lua-ts-mode      . eglot-ensure)
+           (svelte-mode      . eglot-ensure))
     :bind (:map eglot-mode-map
   	      ("C-c a" . eglot-code-actions)
                 ("C-c r" . eglot-rename)
@@ -554,6 +550,44 @@
     :after (embark consult)
     :hook (embark-collect-mode . consult-preview-at-point-mode))
 #+end_src
+** Tree-sitter
+#+begin_src emacs-lisp
+  ;; ============================================================
+  ;; Tree-sitter — distro grammars only
+  ;; ============================================================
+  ;; Emacs 30.2 is linked to libtree-sitter 0.26 (language ABI 15).
+  ;; CachyOS/Arch `tree-sitter-*` packages ship ABI-15 .so files and
+  ;; load from /usr/lib. Do not call `treesit-install-language-grammar`
+  ;; or treesit-auto: those compile GitHub HEAD, which is what last
+  ;; produced ABI mismatches. Languages without a distro grammar stay
+  ;; on the classic mode (elixir, json, toml, svelte).
+  (use-package treesit
+    :ensure nil
+    :config
+    (setq treesit-font-lock-level 4)
+    (dolist (pair '((python-mode     . python-ts-mode)
+                    (js-mode         . js-ts-mode)
+                    (javascript-mode . js-ts-mode)
+                    (sh-mode         . bash-ts-mode)
+                    (bash-mode       . bash-ts-mode)
+                    (lua-mode        . lua-ts-mode)
+                    (json-mode       . json-ts-mode)
+                    (toml-mode       . toml-ts-mode)
+                    (elixir-mode     . elixir-ts-mode)))
+      (let ((lang (pcase (cdr pair)
+                    ('python-ts-mode 'python)
+                    ('js-ts-mode     'javascript)
+                    ('bash-ts-mode   'bash)
+                    ('lua-ts-mode    'lua)
+                    ('json-ts-mode   'json)
+                    ('toml-ts-mode   'toml)
+                    ('elixir-ts-mode 'elixir))))
+        (when (and lang (treesit-language-available-p lang))
+          (add-to-list 'major-mode-remap-alist pair))))
+    ;; rustic owns .rs buffers; keep rust-ts-mode from stealing them.
+    (add-to-list 'major-mode-remap-alist '(rust-ts-mode . rustic-mode)))
+#+end_src
+
 ** Languages
 #+begin_src emacs-lisp
   ;; ============================================================
@@ -574,24 +608,25 @@
   ;; Lua
   (use-package lua-mode)
 
-  ;; Python	
+  ;; Python
   (use-package python
     :ensure nil
     :custom
     (python-indent-guess-indent-offset-verbose nil)
-    (python-indent-offset 4)
-    :init
-    (add-to-list 'major-mode-remap-alist '(python-ts-mode . python-mode)))
+    (python-indent-offset 4))
 
   (use-package reformatter
     :init
     (reformatter-define python-black
       :program "black"
       :args '("-"))
-    (add-hook 'python-mode-hook #'python-black-on-save-mode))
+    (add-hook 'python-base-mode-hook #'python-black-on-save-mode))
 
   ;; Rust
   (use-package rustic
+    :init
+    (when (treesit-language-available-p 'rust)
+      (setq rust-mode-treesitter-derive t))
     :bind (:map rustic-mode-map
                 ("M-j" . consult-eglot-symbols)
                 ("C-c C-c r" . eglot-rename))

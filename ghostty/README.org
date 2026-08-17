@@ -47,12 +47,6 @@
           val))))
 #+end_src
 
-
-
-
-
-
-
 * Config
 
 #+begin_src conf
@@ -65,7 +59,7 @@
   window-padding-x = 6
   window-padding-y = 6
 
-  window-decoration = none
+  window-decoration = auto
 #+end_src
 
 #+begin_src conf :tangle no

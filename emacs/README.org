@@ -480,10 +480,13 @@
            (elixir-mode      . eglot-ensure)
            (elixir-ts-mode   . eglot-ensure)
            (python-base-mode . eglot-ensure)
+  	 (qml-ts-mode      . eglot-ensure)
            (js-base-mode     . eglot-ensure)
            (lua-mode         . eglot-ensure)
            (lua-ts-mode      . eglot-ensure)
-           (svelte-mode      . eglot-ensure))
+  	 (odin-ts-mode     . eglot-ensure)
+           (svelte-mode      . eglot-ensure)
+  	 (zig-ts-mode      . eglot-ensure))
     :bind (:map eglot-mode-map
   	      ("C-c a" . eglot-code-actions)
                 ("C-c r" . eglot-rename)
@@ -584,13 +587,17 @@
                     ('elixir-ts-mode 'elixir))))
         (when (and lang (treesit-language-available-p lang))
           (add-to-list 'major-mode-remap-alist pair))))
+    (add-to-list 'treesit-language-source-alist
+  		 '(odin "https://github.com/tree-sitter-grammars/tree-sitter-odin"))
+    (add-to-list 'treesit-language-source-alist
+  		 '(qmljs "https://github.com/yuja/tree-sitter-qmljs"))
     ;; rustic owns .rs buffers; keep rust-ts-mode from stealing them.
     (add-to-list 'major-mode-remap-alist '(rust-ts-mode . rustic-mode)))
 #+end_src
 
 ** Languages
 #+begin_src emacs-lisp
-  ;; ============================================================
+  ;; =============================================================
   ;; Languages
   ;; ============================================================
 
@@ -608,12 +615,21 @@
   ;; Lua
   (use-package lua-mode)
 
+  ;; Odin
+  (use-package odin-ts-mode
+    :ensure (:host github :repo "Sampie159/odin-ts-mode")
+    :mode "\\.odin\\'")
+
   ;; Python
   (use-package python
     :ensure nil
     :custom
     (python-indent-guess-indent-offset-verbose nil)
     (python-indent-offset 4))
+
+  ;; Qml
+  ;; (use-package qml-ts-mode
+  ;;  :ensure (:host github :repo "xhconfig/qml-ts-mode"))
 
   (use-package reformatter
     :init
@@ -644,6 +660,9 @@
 
   ;; Toml
   (use-package toml-mode)
+
+  ;; Zig
+  (use-package zig-ts-mode)
 #+end_src
 
 ** Aesthetics

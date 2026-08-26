@@ -88,9 +88,17 @@
 * Init
 ** Elpaca
 #+begin_src emacs-lisp
+  ;;; init.el --- Emacs initialization  -*- lexical-binding: t; -*-
+
   ;; ============================================================
   ;; Bootstrap Elpaca
   ;; ============================================================
+  ;; Elpaca's built-in Emacs release table does not yet include 31.1
+  ;; (2026-08-24), and this build has a nil emacs-build-time.
+  (setq elpaca-core-date
+        (list (or (and emacs-build-time
+                       (string-to-number (format-time-string "%Y%m%d" emacs-build-time)))
+                  20260824)))
   (defvar elpaca-installer-version 0.12)
   (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
   (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))

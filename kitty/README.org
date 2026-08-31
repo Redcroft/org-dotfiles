@@ -5,103 +5,54 @@
 #+PROPERTY: Header-args :tangle ~/.config/kitty/kitty.conf :tangle-mode (identity #o444) :mkdirp yes :noweb yes
 #+auto_tangle: t
 
-#+INCLUDE: "../theme.org"
-
-* Theme Helpers :noexport:
-#+NAME: get-val
-#+begin_src emacs-lisp :var key="font-family" :exports none :tangle no
-  (with-current-buffer (find-file-noselect "../theme.org")
-    (save-excursion
-      (goto-char (point-min))
-      (re-search-forward "^#\\+NAME: theme-table")
-      (forward-line)
-      (let* ((full-table (org-babel-read-table))
-             (headers (car full-table))
-             (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
-             (host (system-name))
-             (col-idx (or (cl-position host headers :test 'string-equal) 1))
-             (row (assoc key table))
-             (val (nth col-idx row))
-             (val-str (format "%s" val)))
-        (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
-            (nth 1 row)
-          val))))
-#+end_src
-
-#+NAME: get-color
-#+begin_src emacs-lisp :var name="bg" :exports none :tangle no
-  (with-current-buffer (find-file-noselect "../theme.org")
-    (save-excursion
-      (goto-char (point-min))
-      (re-search-forward "^#\\+NAME: palette")
-      (forward-line)
-      (let* ((full-table (org-babel-read-table))
-             (headers (car full-table))
-             (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
-             (host (system-name))
-             (col-idx (or (cl-position host headers :test 'string-equal) 1))
-             (row (assoc name table))
-             (val (nth col-idx row))
-             (val-str (format "%s" val)))
-        (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
-            (nth 1 row)
-          val))))
-#+end_src
-
-
-
-
-
-
-
 * Kitty
 ** Font
 #+begin_src conf
-  font_family      family='<<get-val("font-family")>>' style=Light
-  bold_font        family='<<get-val("font-family")>>' style=Regular
-  italic_font      family='<<get-val("font-family")>>' style='Light Italic'
-  bold_italic_font family='<<get-val("font-family")>>' style='Medium Italic'
+  font_family      family='Aporetic Sans Mono' style=Light
+  bold_font        family='Aporetic Sans Mono' style=Regular
+  italic_font      family='Aporetic Sans Mono' style='Light Italic'
+  bold_italic_font family='Aporetic Sans Mono' style='Medium Italic'
 
-  font_size <<get-val("font-size")>>.0
+  font_size 13.0
 #+end_src
 
 ** Theme
-*** Centralized Theme
 #+begin_src conf
-  # Centralized Theme consumed from theme.org
-  background <<get-color("bg")>>
-  foreground <<get-color("fg")>>
-  selection_background <<get-color("fg")>>
-  selection_foreground <<get-color("bg")>>
-  url_color <<get-color("color1")>>
-  cursor <<get-color("fg")>>
-  active_border_color <<get-color("color1")>>
-  inactive_border_color <<get-color("bg")>>
-  active_tab_background <<get-color("bg")>>
-  active_tab_foreground <<get-color("fg")>>
-  inactive_tab_background <<get-color("bg")>>
-  inactive_tab_foreground <<get-color("color3")>>
-  tab_bar_background <<get-color("bg")>>
+  # Modus Vivendi (Ghostty packaged palette; kitty has no built-in)
+  background #000000
+  foreground #ffffff
+  selection_background #5a5a5a
+  selection_foreground #ffffff
+  url_color #2fafff
+  cursor #ffffff
+  cursor_text_color #000000
+  active_border_color #2fafff
+  inactive_border_color #000000
+  active_tab_background #000000
+  active_tab_foreground #ffffff
+  inactive_tab_background #000000
+  inactive_tab_foreground #989898
+  tab_bar_background #000000
 
   # normal
-  color0 <<get-color("color0")>>
-  color1 <<get-color("color1")>>
-  color2 <<get-color("color2")>>
-  color3 <<get-color("color3")>>
-  color4 <<get-color("color4")>>
-  color5 <<get-color("color5")>>
-  color6 <<get-color("color6")>>
-  color7 <<get-color("color7")>>
+  color0 #000000
+  color1 #ff5f59
+  color2 #44bc44
+  color3 #d0bc00
+  color4 #2fafff
+  color5 #feacd0
+  color6 #00d3d0
+  color7 #a6a6a6
 
   # bright
-  color8 <<get-color("color8")>>
-  color9 <<get-color("color9")>>
-  color10 <<get-color("color10")>>
-  color11 <<get-color("color11")>>
-  color12 <<get-color("color12")>>
-  color13 <<get-color("color13")>>
-  color14 <<get-color("color14")>>
-  color15 <<get-color("color15")>>
+  color8 #595959
+  color9 #ff7f9f
+  color10 #00c06f
+  color11 #fec43f
+  color12 #79a8ff
+  color13 #b6a0ff
+  color14 #6ae4b9
+  color15 #ffffff
 #+end_src
 ** General
 #+begin_src conf

@@ -4,54 +4,6 @@
 #+OPTIONS: toc:nil num:nil
 #+PROPERTY: Header-args :tangle ~/.emacs.d/init.el :tangle-mode (identity #o444) :mkdirp yes :noweb yes
 
-#+INCLUDE: "../theme.org"
-
-* Theme Helpers :noexport:
-#+NAME: get-val
-#+begin_src emacs-lisp :var key="font-family" :exports none :tangle no
-  (let ((key (if (symbolp key) (symbol-name key) key)))
-    (with-current-buffer (find-file-noselect "../theme.org")
-      (save-excursion
-        (goto-char (point-min))
-        (re-search-forward "^#\\+NAME: theme-table")
-        (forward-line)
-        (let* ((full-table (org-babel-read-table))
-               (headers (car full-table))
-               (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
-               (host (system-name))
-               (col-idx (or (cl-position host headers :test 'string-equal) 1))
-               (row (assoc key table))
-               (val (nth col-idx row))
-               (val-str (format "%s" val)))
-          (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
-              (nth 1 row)
-            val))))))
-#+end_src
-
-#+NAME: get-color
-#+begin_src emacs-lisp :var name="bg" nohash="nil" :exports none :tangle no
-  (let* ((name (if (symbolp name) (symbol-name name) name))
-         (color (with-current-buffer (find-file-noselect "../theme.org")
-                  (save-excursion
-                    (goto-char (point-min))
-                    (re-search-forward "^#\\+NAME: palette")
-                    (forward-line)
-                    (let* ((full-table (org-babel-read-table))
-                           (headers (car full-table))
-                           (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
-                           (host (system-name))
-                           (col-idx (or (cl-position host headers :test 'string-equal) 1))
-                           (row (assoc name table))
-                           (val (nth col-idx row))
-                           (val-str (format "%s" val)))
-                      (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
-                          (nth 1 row)
-                        val))))))
-    (if (and color (string-equal nohash "t"))
-        (replace-regexp-in-string "^#" "" color)
-      color))
-#+end_src
-
 * Early Init
 ** Visuals
 #+begin_src emacs-lisp :tangle ~/.emacs.d/early-init.el
@@ -60,7 +12,7 @@
   (push '(menu-bar-lines . 0) default-frame-alist)
   (push '(tool-bar-lines . 0) default-frame-alist)
   (push '(vertical-scroll-bars nil . nil) default-frame-alist)
-  (push '(background-color . "<<get-color("bg")>>") default-frame-alist)
+  (push '(background-color . "#000000") default-frame-alist)
 
   (defvar default-file-name-handler-alist file-name-handler-alist)
   (setq file-name-handler-alist nil)
@@ -164,7 +116,6 @@
     :init
     (column-number-mode -1)
     (global-display-line-numbers-mode 1)
-    (global-prettify-symbols-mode 1)
     (recentf-mode 1)
     (save-place-mode 1)
     (scroll-bar-mode -1)
@@ -192,6 +143,7 @@
 
 
   (use-package which-key
+    :ensure nil
     :init (which-key-mode)
     :custom (which-key-idle-delay 0.5))
 
@@ -364,8 +316,6 @@
   ;; ============================================================
   ;; Magit
   ;; ============================================================
-  (use-package transient)
-
   (use-package magit
     :defer t
     :bind ("C-x g" . magit-status)
@@ -401,6 +351,7 @@
     (with-eval-after-load 'project
       (add-hook 'project-switch-hook (lambda () (mise-update-buffer (current-buffer))))))
 #+end_src
+
 ** Move Text
 #+begin_src emacs-lisp
   ;; ============================================================
@@ -409,6 +360,7 @@
   (use-package move-text
     :init (move-text-default-bindings))
 #+end_src
+
 ** No Littering
 #+begin_src emacs-lisp
   ;; ============================================================
@@ -431,12 +383,34 @@
     (kept-old-versions 2)
     (version-control t))
 #+end_src
+
+** Project
+#+begin_src emacs-lisp
+  (use-package project
+    :ensure nil
+    :config
+    (project-remember-projects-under "~/projects")
+    (defun project-remember-git-project ()
+      (when-let ((project (project-current)))
+        (when (eq (nth 1 project) 'Git)
+          (project-remember-project project nil t))))
+    (add-hook 'find-file-hook #'project-remember-git-project)
+    (add-hook 'dired-mode-hook #'project-remember-git-project))
+#+end_src
+
 ** Rainbow Mode
 #+begin_src emacs-lisp
   (use-package rainbow-mode
-    :hook ((org-mode . rainbow-mode)
-  	 (prog-mode . rainbow-mode)))
+    :hook ((org-mode     . rainbow-mode)
+           (css-mode     . rainbow-mode)
+           (css-ts-mode  . rainbow-mode)
+           (html-mode    . rainbow-mode)
+           (html-ts-mode . rainbow-mode)
+           (mhtml-mode   . rainbow-mode)
+           (nxml-mode    . rainbow-mode)
+           (qml-ts-mode  . rainbow-mode)))
 #+end_src
+
 ** Color Picker
 #+begin_src emacs-lisp
   (use-package zenity-color-picker
@@ -451,7 +425,10 @@
   (use-package consult
     :bind (("C-s"   . consult-line)
            ("M-y"   . consult-yank-pop)
-           ("C-x b" . consult-buffer))
+           ("C-x b" . consult-buffer)
+           ("M-s r" . consult-ripgrep)
+           ("M-g i" . consult-imenu)
+           ("M-g I" . consult-imenu-multi))
     :init
     (setq register-preview-delay    0.5
           register-preview-function #'consult-register-format))
@@ -484,16 +461,17 @@
   ;; ============================================================
   (use-package eglot
     :ensure nil
-    :hook ((sh-base-mode     . eglot-ensure)
-           (elixir-mode      . eglot-ensure)
+    :hook ((c-ts-mode        . eglot-ensure)
+           (c++-ts-mode      . eglot-ensure)
+           (c-or-c++-ts-mode . eglot-ensure)
+           (sh-base-mode     . eglot-ensure)
            (elixir-ts-mode   . eglot-ensure)
            (python-base-mode . eglot-ensure)
   	 (qml-ts-mode      . eglot-ensure)
            (js-base-mode     . eglot-ensure)
-           (lua-mode         . eglot-ensure)
            (lua-ts-mode      . eglot-ensure)
+           (rust-ts-mode     . eglot-ensure)
   	 (odin-ts-mode     . eglot-ensure)
-           (svelte-mode      . eglot-ensure)
   	 (zig-ts-mode      . eglot-ensure))
     :bind (:map eglot-mode-map
   	      ("C-c a" . eglot-code-actions)
@@ -544,6 +522,11 @@
     :init
     (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
+  (use-package cape
+    :init
+    (add-hook 'completion-at-point-functions #'cape-dabbrev)
+    (add-hook 'completion-at-point-functions #'cape-file))
+
 #+end_src
 ** Embark
 #+begin_src emacs-lisp
@@ -566,62 +549,82 @@
   ;; ============================================================
   ;; Tree-sitter — distro grammars only
   ;; ============================================================
-  ;; Emacs 30.2 is linked to libtree-sitter 0.26 (language ABI 15).
+  ;; Emacs 31 is linked to libtree-sitter 0.26 (language ABI 15).
   ;; CachyOS/Arch `tree-sitter-*` packages ship ABI-15 .so files and
   ;; load from /usr/lib. Do not call `treesit-install-language-grammar`
   ;; or treesit-auto: those compile GitHub HEAD, which is what last
   ;; produced ABI mismatches. Languages without a distro grammar stay
-  ;; on the classic mode (elixir, json, toml, svelte).
+  ;; on the classic built-in mode where one exists.
   (use-package treesit
     :ensure nil
     :config
-    (setq treesit-font-lock-level 4)
-    (dolist (pair '((python-mode     . python-ts-mode)
+    (setq treesit-font-lock-level 3)
+    (dolist (pair '((c-mode          . c-ts-mode)
+                    (c++-mode        . c++-ts-mode)
+                    (c-or-c++-mode   . c-or-c++-ts-mode)
+                    (python-mode     . python-ts-mode)
                     (js-mode         . js-ts-mode)
                     (javascript-mode . js-ts-mode)
                     (sh-mode         . bash-ts-mode)
                     (bash-mode       . bash-ts-mode)
                     (lua-mode        . lua-ts-mode)
+                    (js-json-mode    . json-ts-mode)
                     (json-mode       . json-ts-mode)
+                    (conf-toml-mode  . toml-ts-mode)
                     (toml-mode       . toml-ts-mode)
-                    (elixir-mode     . elixir-ts-mode)))
+                    (elixir-mode     . elixir-ts-mode)
+                    (rust-mode       . rust-ts-mode)))
       (let ((lang (pcase (cdr pair)
+                    ('c-ts-mode      'c)
+                    ('c++-ts-mode    'cpp)
+                    ('c-or-c++-ts-mode 'cpp)
                     ('python-ts-mode 'python)
                     ('js-ts-mode     'javascript)
                     ('bash-ts-mode   'bash)
                     ('lua-ts-mode    'lua)
                     ('json-ts-mode   'json)
                     ('toml-ts-mode   'toml)
-                    ('elixir-ts-mode 'elixir))))
+                    ('elixir-ts-mode 'elixir)
+                    ('rust-ts-mode   'rust))))
         (when (and lang (treesit-language-available-p lang))
           (add-to-list 'major-mode-remap-alist pair))))
     (add-to-list 'treesit-language-source-alist
-  		 '(odin "https://github.com/tree-sitter-grammars/tree-sitter-odin"))
+  	       '(odin "https://github.com/tree-sitter-grammars/tree-sitter-odin"))
     (add-to-list 'treesit-language-source-alist
-  		 '(qmljs "https://github.com/yuja/tree-sitter-qmljs"))
-    ;; rustic owns .rs buffers; keep rust-ts-mode from stealing them.
-    (add-to-list 'major-mode-remap-alist '(rust-ts-mode . rustic-mode)))
+  		 '(glsl "https://github.com/tree-sitter-grammars/tree-sitter-glsl"))
+    (add-to-list 'treesit-language-source-alist
+  		 '(qmljs "https://github.com/yuja/tree-sitter-qmljs")))
 #+end_src
 
 ** Languages
 #+begin_src emacs-lisp
   ;; =============================================================
   ;; Languages
-  ;; ============================================================
+  ;; =============================================================
 
-  ;; Elixir
-  (use-package elixir-mode
-    :mode (("\\.ex\\'" . elixir-mode)
-  	 ("\\.exs\\'" . elixir-mode))
-    :hook (elixir-mode . eglot-ensure)
-    :custom
-    (elixir-indent-style 'no-argument))
+  ;; C / C++
+  (use-package c-ts-mode
+    :ensure nil
+    :mode (("\\.c\\'"   . c-ts-mode)
+           ("\\.h\\'"   . c-or-c++-ts-mode)
+           ("\\.cc\\'"  . c++-ts-mode)
+           ("\\.cpp\\'" . c++-ts-mode)
+           ("\\.cxx\\'" . c++-ts-mode)
+           ("\\.c++\\'" . c++-ts-mode)
+           ("\\.hh\\'"  . c++-ts-mode)
+           ("\\.hpp\\'" . c++-ts-mode)
+           ("\\.hxx\\'" . c++-ts-mode)
+           ("\\.h++\\'" . c++-ts-mode)))
 
-  ;; Json
-  (use-package json-mode)
+  ;; Elixir (built-in elixir-ts-mode when the grammar is present)
+  (use-package elixir-ts-mode
+    :ensure nil
+    :if (treesit-language-available-p 'elixir)
+    :mode (("\\.ex\\'"  . elixir-ts-mode)
+           ("\\.exs\\'" . elixir-ts-mode)))
 
-  ;; Lua
-  (use-package lua-mode)
+  ;; GLSL
+  (use-package glsl-mode)
 
   ;; Odin
   (use-package odin-ts-mode
@@ -635,10 +638,6 @@
     (python-indent-guess-indent-offset-verbose nil)
     (python-indent-offset 4))
 
-  ;; Qml
-  ;; (use-package qml-ts-mode
-  ;;  :ensure (:host github :repo "xhconfig/qml-ts-mode"))
-
   (use-package reformatter
     :init
     (reformatter-define python-black
@@ -647,27 +646,16 @@
     (add-hook 'python-base-mode-hook #'python-black-on-save-mode))
 
   ;; Rust
-  (use-package rustic
-    :init
-    (when (treesit-language-available-p 'rust)
-      (setq rust-mode-treesitter-derive t))
-    :bind (:map rustic-mode-map
-                ("M-j" . consult-eglot-symbols)
-                ("C-c C-c r" . eglot-rename))
-    :custom
-    (rustic-lsp-client 'eglot)
-    (rustic-format-trigger 'on-save)
-    )
-
-  ;; Svelte
-  (use-package svelte-mode
-    :after eglot
-    :init
-    (add-to-list 'eglot-server-programs '(svelte-mode . ("svelteserver" "--stdio"))))
-
-
-  ;; Toml
-  (use-package toml-mode)
+  (use-package rust-ts-mode
+    :ensure nil
+    :if (treesit-language-available-p 'rust)
+    :mode "\\.rs\\'"
+    :hook (rust-ts-mode . (lambda ()
+                            (add-hook 'before-save-hook
+                                      (lambda ()
+                                        (when (eglot-managed-p)
+                                          (eglot-format-buffer)))
+                                      nil t))))
 
   ;; Zig
   (use-package zig-ts-mode)
@@ -691,87 +679,24 @@
     :init
     (minions-mode))
 
-  (use-package autothemer
-    :ensure t
+  ;; Modus (built-in; the library lives on custom-theme-load-path, not load-path)
+  (use-package modus-themes
+    :ensure nil
+    :no-require t
+    :init
+    (require-theme 'modus-themes)
     :config
-    (autothemer-deftheme system-theme
-      "Centralized system theme"
-      ((((class color) (min-colors #xFFFFFF)))
-        (bg       "<<get-color("bg")>>")
-        (fg       "<<get-color("fg")>>")
-        (color0   "<<get-color("color0")>>")
-        (color1   "<<get-color("color1")>>")
-        (color2   "<<get-color("color2")>>")
-        (color3   "<<get-color("color3")>>")
-        (color4   "<<get-color("color4")>>")
-        (color5   "<<get-color("color5")>>")
-        (color6   "<<get-color("color6")>>")
-        (color7   "<<get-color("color7")>>")
-        (color8   "<<get-color("color8")>>")
-        (color9   "<<get-color("color9")>>")
-        (color10  "<<get-color("color10")>>")
-        (color11  "<<get-color("color11")>>")
-        (color12  "<<get-color("color12")>>")
-        (color13  "<<get-color("color13")>>")
-        (color14  "<<get-color("color14")>>")
-        (color15  "<<get-color("color15")>>")
-        (comment  "<<get-color("comment")>>")
-        (select   "<<get-color("selection")>>")
-        (accent   "<<get-color("accent")>>")
-      )
-      ((default  (:background bg :foreground fg))
-       (cursor   (:background fg))
-       (region   (:background color0))
-       (mode-line (:background color0 :foreground fg))
-       (mode-line-inactive (:background bg :foreground comment))
-       (font-lock-comment-face (:foreground comment))
-       (font-lock-comment-delimiter-face (:foreground color8))
-       (font-lock-doc-face (:foreground color8))
-       (font-lock-keyword-face (:foreground color5 :weight 'bold))
-       (font-lock-string-face (:foreground color2))
-       (font-lock-type-face (:foreground color3))
-       (font-lock-constant-face (:foreground color6))
-       (font-lock-variable-name-face (:foreground color4))
-       (font-lock-function-name-face (:foreground color4 :weight 'bold))
-       (font-lock-builtin-face (:foreground color6))
-       (font-lock-warning-face (:foreground color1 :weight 'bold))
-       (org-level-1 (:foreground accent :weight 'bold :height 1.2))
-       (org-level-2 (:foreground color4 :weight 'bold :height 1.1))
-       (org-level-3 (:foreground color2 :weight 'bold))
-       (org-link (:foreground color6 :underline t))
-       ;; 16-color ANSI palette
-       (ansi-color-black (:foreground color0))
-       (ansi-color-red (:foreground color1))
-       (ansi-color-green (:foreground color2))
-       (ansi-color-yellow (:foreground color3))
-       (ansi-color-blue (:foreground color4))
-       (ansi-color-magenta (:foreground color5))
-       (ansi-color-cyan (:foreground color6))
-       (ansi-color-white (:foreground color7))
-       (ansi-color-bright-black (:foreground color8))
-       (ansi-color-bright-red (:foreground color9))
-       (ansi-color-bright-green (:foreground color10))
-       (ansi-color-bright-yellow (:foreground color11))
-       (ansi-color-bright-blue (:foreground color12))
-       (ansi-color-bright-magenta (:foreground color13))
-       (ansi-color-bright-cyan (:foreground color14))
-       (ansi-color-bright-white (:foreground color15))
-      ))
-    (enable-theme 'system-theme)
-    (setq ansi-color-names-vector
-          (vector "<<get-color("color0")>>"
-                  "<<get-color("color1")>>"
-                  "<<get-color("color2")>>"
-                  "<<get-color("color3")>>"
-                  "<<get-color("color4")>>"
-                  "<<get-color("color5")>>"
-                  "<<get-color("color6")>>"
-                  "<<get-color("color7")>>")))
+    (setq modus-themes-italic-constructs t
+          modus-themes-bold-constructs nil)
+
+    (modus-themes-load-theme 'modus-vivendi)
+
+    (define-key global-map (kbd "<f5>") #'modus-themes-toggle))
 
   ;; Font and spacing settings
   (setq line-spacing 0.0)
   (set-face-attribute 'default nil
-                      :family "<<get-val("font-family")>>"
+                      :family "Aporetic Sans Mono"
                       :height 120
                       :weight 'semibold)
 #+end_src

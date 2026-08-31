@@ -4,52 +4,6 @@
 #+OPTIONS: toc:nil num:nil
 #+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes :noweb yes
 
-#+INCLUDE: "../theme.org"
-
-* Theme Helpers :noexport:
-#+NAME: get-val
-#+begin_src emacs-lisp :var key="font-family" :exports none :tangle no
-  (with-current-buffer (find-file-noselect "../theme.org")
-    (save-excursion
-      (goto-char (point-min))
-      (re-search-forward "^#\\+NAME: theme-table")
-      (forward-line)
-      (let* ((full-table (org-babel-read-table))
-             (headers (car full-table))
-             (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
-             (host (system-name))
-             (col-idx (or (cl-position host headers :test 'string-equal) 1))
-             (row (assoc key table))
-             (val (nth col-idx row))
-             (val-str (format "%s" val)))
-        (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
-            (nth 1 row)
-          val))))
-#+end_src
-
-#+NAME: get-color
-#+begin_src emacs-lisp :var name="bg" nohash="nil" :exports none :tangle no
-  (let ((color (with-current-buffer (find-file-noselect "../theme.org")
-                 (save-excursion
-                   (goto-char (point-min))
-                   (re-search-forward "^#\\+NAME: palette")
-                   (forward-line)
-                   (let* ((full-table (org-babel-read-table))
-                          (headers (car full-table))
-                          (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
-                          (host (system-name))
-                          (col-idx (or (cl-position host headers :test 'string-equal) 1))
-                          (row (assoc name table))
-                          (val (nth col-idx row))
-                          (val-str (format "%s" val)))
-                     (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
-                         (nth 1 row)
-                       val))))))
-    (if (and color (string-equal nohash "t"))
-        (replace-regexp-in-string "^#" "" color)
-      color))
-#+end_src
-
 * Config
 
 #+begin_src json :tangle "~/.config/waybar/config"
@@ -67,7 +21,7 @@
   	"tooltip-format": "<tt>{calendar}</tt>",
   	"calendar": {
   	    "format": {
-  		"today": "<span color='<<get-color("fg")>>'><b>{}</b></span>"
+  		"today": "<span color='#ffffff'><b>{}</b></span>"
   	    }
   	},
       },
@@ -130,17 +84,17 @@
     border: none;
     border-radius: 0;
     min-height: 0;
-    font-family: <<get-val("ui-font")>>;
+    font-family: Aporetic Sans Mono;
     font-size: 14px;
     font-weight: 600;
   }
 
   #clock,#cpu,#memory,#pulseaudio,#battery {
-    color: <<get-color("comment")>>;
+    color: #989898;
   }
 
   window#waybar {
-    background-color: <<get-color("bg")>>;
+    background-color: #000000;
     transition: all 0.3s ease-in-out;
   }
 
@@ -162,34 +116,34 @@
     padding: 3px 8px;
     margin: 3px 3px;
     border-radius: 4px;
-    background-color: <<get-color("bg")>>;
-    color: <<get-color("comment")>>;
+    background-color: #000000;
+    color: #989898;
   }
 
   #workspaces button.active {
-    background-color: <<get-color("accent")>>;
-    color: <<get-color("bg")>>;
+    background-color: #2fafff;
+    color: #000000;
   }
 
   #workspaces button:hover {
     box-shadow: inherit;
     text-shadow: inherit;
-    color: <<get-color("bg")>>;
-    background-color: <<get-color("fg")>>;
+    color: #000000;
+    background-color: #ffffff;
   }
 
   #workspaces button.urgent {
-    background-color: <<get-color("color1")>>;
+    background-color: #ff5f59;
   }
 
   #battery.warning,
   #battery.critical,
   #battery.urgent {
-    color: <<get-color("color1")>>;
+    color: #ff5f59;
   }
 
   #battery.charging {
-    color: <<get-color("color2")>>;
+    color: #44bc44;
   }
 
   tooltip {

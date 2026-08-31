@@ -5,52 +5,6 @@
 #+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes :noweb yes
 #+auto_tangle: t
 
-#+INCLUDE: "../theme.org"
-
-* Theme Helpers :noexport:
-#+NAME: get-val
-#+begin_src emacs-lisp :var key="font-family" :exports none :tangle no
-  (with-current-buffer (find-file-noselect "../theme.org")
-    (save-excursion
-      (goto-char (point-min))
-      (re-search-forward "^#\\+NAME: theme-table")
-      (forward-line)
-      (let* ((full-table (org-babel-read-table))
-             (headers (car full-table))
-             (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
-             (host (system-name))
-             (col-idx (or (cl-position host headers :test 'string-equal) 1))
-             (row (assoc key table))
-             (val (nth col-idx row))
-             (val-str (format "%s" val)))
-        (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
-            (nth 1 row)
-          val))))
-#+end_src
-
-#+NAME: get-color
-#+begin_src emacs-lisp :var name="bg" nohash="nil" :exports none :tangle no
-  (let ((color (with-current-buffer (find-file-noselect "../theme.org")
-                 (save-excursion
-                   (goto-char (point-min))
-                   (re-search-forward "^#\\+NAME: palette")
-                   (forward-line)
-                   (let* ((full-table (org-babel-read-table))
-                          (headers (car full-table))
-                          (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
-                          (host (system-name))
-                          (col-idx (or (cl-position host headers :test 'string-equal) 1))
-                          (row (assoc name table))
-                          (val (nth col-idx row))
-                          (val-str (format "%s" val)))
-                     (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
-                         (nth 1 row)
-                       val))))))
-    (if (and color (string-equal nohash "t"))
-        (replace-regexp-in-string "^#" "" color)
-      color))
-#+end_src
-
 * Mako
 
 #+begin_src conf :tangle "~/.config/mako/config"
@@ -60,20 +14,20 @@
   icon-path=/usr/share/icons/Adwaita/symbolic/status
   max-icon-size=32
 
-  # Colors
-  background-color=<<get-color("bg")>>
-  text-color=<<get-color("fg")>>
-  border-color=<<get-color("accent")>>
-  progress-color=over <<get-color("selection")>>
+  # Colors (Modus Vivendi)
+  background-color=#000000
+  text-color=#ffffff
+  border-color=#2fafff
+  progress-color=over #5a5a5a
 
   [urgency=high]
-  border-color=<<get-color("color1")>>
+  border-color=#ff5f59
 
   [app-name=osd]
   group-by=none
-  border-color=<<get-color("accent")>>
-  background-color=<<get-color("bg")>>
-  text-color=<<get-color("comment")>>
+  border-color=#2fafff
+  background-color=#000000
+  text-color=#989898
   default-timeout=100
   anchor=center
   width=300

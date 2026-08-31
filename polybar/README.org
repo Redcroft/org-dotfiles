@@ -5,66 +5,20 @@
 #+PROPERTY: Header-args :tangle ~/.config/polybar/config.ini :tangle-mode (identity #o444) :mkdirp yes :noweb yes
 #+auto_tangle: t
 
-#+INCLUDE: "../theme.org"
-
-* Theme Helpers :noexport:
-#+NAME: get-val
-#+begin_src emacs-lisp :var key="font-family" :exports none :tangle no
-  (with-current-buffer (find-file-noselect "../theme.org")
-    (save-excursion
-      (goto-char (point-min))
-      (re-search-forward "^#\\+NAME: theme-table")
-      (forward-line)
-      (let* ((full-table (org-babel-read-table))
-             (headers (car full-table))
-             (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
-             (host (system-name))
-             (col-idx (or (cl-position host headers :test 'string-equal) 1))
-             (row (assoc key table))
-             (val (nth col-idx row))
-             (val-str (format "%s" val)))
-        (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
-            (nth 1 row)
-          val))))
-#+end_src
-
-#+NAME: get-color
-#+begin_src emacs-lisp :var name="bg" nohash="nil" :exports none :tangle no
-  (let ((color (with-current-buffer (find-file-noselect "../theme.org")
-                 (save-excursion
-                   (goto-char (point-min))
-                   (re-search-forward "^#\\+NAME: palette")
-                   (forward-line)
-                   (let* ((full-table (org-babel-read-table))
-                          (headers (car full-table))
-                          (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
-                          (host (system-name))
-                          (col-idx (or (cl-position host headers :test 'string-equal) 1))
-                          (row (assoc name table))
-                          (val (nth col-idx row))
-                          (val-str (format "%s" val)))
-                     (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
-                         (nth 1 row)
-                       val))))))
-    (if (and color (string-equal nohash "t"))
-        (replace-regexp-in-string "^#" "" color)
-      color))
-#+end_src
-
 #+begin_src conf
   [colors]
-  background = <<get-color("bg")>>
-  background-alt = <<get-color("selection")>>
-  foreground = <<get-color("fg")>>
-  primary = <<get-color("accent")>>
-  secondary = <<get-color("color6")>>
-  alert = <<get-color("color1")>>
-  disabled = <<get-color("comment")>>
+  background = #000000
+  background-alt = #1e1e1e
+  foreground = #ffffff
+  primary = #2fafff
+  secondary = #00d3d0
+  alert = #ff5f59
+  disabled = #989898
   # Used for bars
-  green = <<get-color("color2")>>
-  yellow = <<get-color("color3")>>
-  orange = <<get-color("accent")>>
-  red = <<get-color("color1")>>
+  green = #44bc44
+  yellow = #d0bc00
+  orange = #fec43f
+  red = #ff5f59
 
   [bar/main]
   width = 100%
@@ -87,7 +41,7 @@
   separator = |
   separator-foreground = ${colors.secondary}
 
-  font-0 = "<<get-val("font-family")>>:size=10:style=SemiBold"
+  font-0 = "Aporetic Sans Mono:size=10:style=SemiBold"
 
   modules-left = xworkspaces
   modules-center = xwindow

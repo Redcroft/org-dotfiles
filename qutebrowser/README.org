@@ -5,67 +5,11 @@
 #+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes :noweb yes
 #+auto_tangle: t
 
-#+INCLUDE: "../theme.org"
-
-* Theme Helpers :noexport:
-#+NAME: get-val
-#+begin_src emacs-lisp :var key="font-family" :exports none :tangle no
-  (with-current-buffer (find-file-noselect "../theme.org")
-    (save-excursion
-      (goto-char (point-min))
-      (re-search-forward "^#\\+NAME: theme-table")
-      (forward-line)
-      (let* ((full-table (org-babel-read-table))
-             (headers (car full-table))
-             (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
-             (host (system-name))
-             (col-idx (or (cl-position host headers :test 'string-equal) 1))
-             (row (assoc key table))
-             (val (nth col-idx row))
-             (val-str (format "%s" val)))
-        (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
-            (nth 1 row)
-          val))))
-#+end_src
-
-#+NAME: get-color
-#+begin_src emacs-lisp :var name="bg" nohash="nil" :exports none :tangle no
-  (let ((color (with-current-buffer (find-file-noselect "../theme.org")
-                 (save-excursion
-                   (goto-char (point-min))
-                   (re-search-forward "^#\\+NAME: palette")
-                   (forward-line)
-                   (let* ((full-table (org-babel-read-table))
-                          (headers (car full-table))
-                          (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
-                          (host (system-name))
-                          (col-idx (or (cl-position host headers :test 'string-equal) 1))
-                          (row (assoc name table))
-                          (val (nth col-idx row))
-                          (val-str (format "%s" val)))
-                     (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
-                         (nth 1 row)
-                       val))))))
-    (if (and color (string-equal nohash "t"))
-        (replace-regexp-in-string "^#" "" color)
-      color))
-#+end_src
-
 * Config
-** Theme
-#+NAME: base16-theme
-#+begin_src sh :tangle no :results none
-  curl -fsSL --create-dirs -o ~/.config/qutebrowser/theme.py https://raw.githubusercontent.com/theova/base16-qutebrowser/master/themes/default/base16-horizon-dark.config.py
-#+end_src
-
-#+begin_src python :tangle "~/.config/qutebrowser/config.py" :noweb yes
-  #<<base16-theme()>>
-  config.load_autoconfig()
-  config.source("theme.py")
-#+end_src
-
 ** Settings
 #+begin_src python :tangle "~/.config/qutebrowser/config.py"
+  config.load_autoconfig()
+
   c.auto_save.session = True
   c.completion.shrink = True
   c.content.notifications.enabled = True
@@ -85,7 +29,79 @@
   c.colors.webpage.preferred_color_scheme = "dark"
   c.colors.webpage.darkmode.enabled = False
   c.colors.webpage.darkmode.policy.images = "smart-simple"
-  c.fonts.default_family = ["<<get-val("font-family")>>"]
+  c.fonts.default_family = ["Aporetic Sans Mono"]
+
+  # Modus Vivendi (no packaged qutebrowser theme)
+  bg, fg, dim, sel = "#000000", "#ffffff", "#989898", "#5a5a5a"
+  accent, red, green, yellow = "#2fafff", "#ff5f59", "#44bc44", "#d0bc00"
+  bg_dim = "#1e1e1e"
+
+  c.colors.completion.fg = fg
+  c.colors.completion.odd.bg = bg
+  c.colors.completion.even.bg = bg_dim
+  c.colors.completion.category.bg = bg
+  c.colors.completion.category.fg = accent
+  c.colors.completion.category.border.top = bg
+  c.colors.completion.category.border.bottom = bg
+  c.colors.completion.item.selected.bg = sel
+  c.colors.completion.item.selected.fg = fg
+  c.colors.completion.item.selected.border.top = sel
+  c.colors.completion.item.selected.border.bottom = sel
+  c.colors.completion.match.fg = accent
+  c.colors.completion.scrollbar.bg = bg
+  c.colors.completion.scrollbar.fg = dim
+
+  c.colors.statusbar.normal.bg = bg
+  c.colors.statusbar.normal.fg = fg
+  c.colors.statusbar.insert.bg = green
+  c.colors.statusbar.insert.fg = bg
+  c.colors.statusbar.command.bg = bg_dim
+  c.colors.statusbar.command.fg = fg
+  c.colors.statusbar.caret.bg = "#feacd0"
+  c.colors.statusbar.caret.fg = bg
+  c.colors.statusbar.passthrough.bg = "#00d3d0"
+  c.colors.statusbar.passthrough.fg = bg
+  c.colors.statusbar.progress.bg = accent
+  c.colors.statusbar.url.fg = fg
+  c.colors.statusbar.url.success.http.fg = yellow
+  c.colors.statusbar.url.success.https.fg = green
+  c.colors.statusbar.url.error.fg = red
+  c.colors.statusbar.url.warn.fg = yellow
+  c.colors.statusbar.url.hover.fg = accent
+
+  c.colors.tabs.bar.bg = bg
+  c.colors.tabs.indicator.start = accent
+  c.colors.tabs.indicator.stop = green
+  c.colors.tabs.indicator.error = red
+  c.colors.tabs.odd.bg = bg
+  c.colors.tabs.odd.fg = dim
+  c.colors.tabs.even.bg = bg
+  c.colors.tabs.even.fg = dim
+  c.colors.tabs.selected.odd.bg = sel
+  c.colors.tabs.selected.odd.fg = fg
+  c.colors.tabs.selected.even.bg = sel
+  c.colors.tabs.selected.even.fg = fg
+
+  c.colors.hints.bg = yellow
+  c.colors.hints.fg = bg
+  c.colors.hints.match.fg = red
+  c.colors.messages.error.bg = red
+  c.colors.messages.error.fg = bg
+  c.colors.messages.warning.bg = yellow
+  c.colors.messages.warning.fg = bg
+  c.colors.messages.info.bg = bg_dim
+  c.colors.messages.info.fg = fg
+  c.colors.downloads.bar.bg = bg
+  c.colors.downloads.start.bg = accent
+  c.colors.downloads.start.fg = bg
+  c.colors.downloads.stop.bg = green
+  c.colors.downloads.stop.fg = bg
+  c.colors.downloads.error.bg = red
+  c.colors.downloads.error.fg = bg
+  c.colors.prompts.bg = bg_dim
+  c.colors.prompts.fg = fg
+  c.colors.prompts.border = f"1px solid {accent}"
+  c.colors.prompts.selected.bg = sel
 
   config.bind("<Ctrl-tab>", "tab-next")
   config.bind("<Ctrl-Shift-tab>", "tab-prev")

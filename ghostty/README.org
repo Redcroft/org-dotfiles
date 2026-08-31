@@ -4,55 +4,12 @@
 #+OPTIONS: toc:nil num:nil
 #+PROPERTY: Header-args :tangle ~/.config/ghostty/config :tangle-mode (identity #o444) :mkdirp yes :noweb yes
 
-#+INCLUDE: "../theme.org"
-
-* Theme Helpers :noexport:
-#+NAME: get-val
-#+begin_src emacs-lisp :var key="font-family" :exports none :tangle no
-  (with-current-buffer (find-file-noselect "../theme.org")
-    (save-excursion
-      (goto-char (point-min))
-      (re-search-forward "^#\\+NAME: theme-table")
-      (forward-line)
-      (let* ((full-table (org-babel-read-table))
-             (headers (car full-table))
-             (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
-             (host (system-name))
-             (col-idx (or (cl-position host headers :test 'string-equal) 1))
-             (row (assoc key table))
-             (val (nth col-idx row))
-             (val-str (format "%s" val)))
-        (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
-            (nth 1 row)
-          val))))
-#+end_src
-
-#+NAME: get-color
-#+begin_src emacs-lisp :var name="bg" :exports none :tangle no
-  (with-current-buffer (find-file-noselect "../theme.org")
-    (save-excursion
-      (goto-char (point-min))
-      (re-search-forward "^#\\+NAME: palette")
-      (forward-line)
-      (let* ((full-table (org-babel-read-table))
-             (headers (car full-table))
-             (table (cl-remove-if (lambda (x) (or (symbolp x) (not (listp x)))) (cdr full-table)))
-             (host (system-name))
-             (col-idx (or (cl-position host headers :test 'string-equal) 1))
-             (row (assoc name table))
-             (val (nth col-idx row))
-             (val-str (format "%s" val)))
-        (if (or (null val) (string-equal val-str "") (string-equal val-str "-") (string-equal val-str "nil"))
-            (nth 1 row)
-          val))))
-#+end_src
-
 * Config
 
 #+begin_src conf
-  font-family = "<<get-val("font-family")>>"
-  font-size = <<get-val("font-size")>>
-  font-style = "<<get-val("font-style")>>"
+  font-family = "Aporetic Sans Mono"
+  font-size = 12
+  font-style = "Medium"
   # quick-terminal-position = center
   # quick-terminal-size = 60%,60%
 
@@ -60,6 +17,8 @@
   window-padding-y = 6
 
   window-decoration = auto
+
+  theme = Modus Vivendi
 #+end_src
 
 #+begin_src conf :tangle no
@@ -68,32 +27,29 @@
   keybind = global:super+minus=toggle_quick_terminal
 #+end_src
 
-#+begin_src conf
-  # Centralized Theme
-  background = <<get-color("bg")>>
-  foreground = <<get-color("fg")>>
-  cursor-color = <<get-color("color3")>>
-  cursor-text = <<get-color("bg")>>
-  selection-background = <<get-color("color4")>>
-  selection-foreground = <<get-color("fg")>>
+#+begin_src conf :tangle no
+  # Fallback if the packaged theme is unavailable
+  background = #000000
+  foreground = #ffffff
+  cursor-color = #ffffff
+  cursor-text = #000000
+  selection-background = #5a5a5a
+  selection-foreground = #ffffff
 
-  # Normal colors
-  palette = 0=<<get-color("color0")>>
-  palette = 1=<<get-color("color1")>>
-  palette = 2=<<get-color("color2")>>
-  palette = 3=<<get-color("color3")>>
-  palette = 4=<<get-color("color4")>>
-  palette = 5=<<get-color("color5")>>
-  palette = 6=<<get-color("color6")>>
-  palette = 7=<<get-color("color7")>>
-
-  # Bright colors (same as normal)
-  palette = 8=<<get-color("color8")>>
-  palette = 9=<<get-color("color9")>>
-  palette = 10=<<get-color("color10")>>
-  palette = 11=<<get-color("color11")>>
-  palette = 12=<<get-color("color12")>>
-  palette = 13=<<get-color("color13")>>
-  palette = 14=<<get-color("color14")>>
-  palette = 15=<<get-color("color15")>>
+  palette = 0=#000000
+  palette = 1=#ff5f59
+  palette = 2=#44bc44
+  palette = 3=#d0bc00
+  palette = 4=#2fafff
+  palette = 5=#feacd0
+  palette = 6=#00d3d0
+  palette = 7=#a6a6a6
+  palette = 8=#595959
+  palette = 9=#ff7f9f
+  palette = 10=#00c06f
+  palette = 11=#fec43f
+  palette = 12=#79a8ff
+  palette = 13=#b6a0ff
+  palette = 14=#6ae4b9
+  palette = 15=#ffffff
 #+end_src

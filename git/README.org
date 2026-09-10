@@ -12,3 +12,45 @@
   	email = Richard@redcroft.tech
   	name = Richard DW Redcroft
 #+end_src
+
+* Defaults
+Histogram diffs, zdiff3 conflicts, rebase pulls, rerere, and
+=push.autoSetupRemote= so a new branch does not need =-u=.
+
+#+begin_src conf
+  [init]
+  	defaultBranch = main
+  [pull]
+  	rebase = true
+  [rerere]
+  	enabled = true
+  [push]
+  	autoSetupRemote = true
+  [diff]
+  	algorithm = histogram
+  	colorMoved = default
+  [merge]
+  	conflictstyle = zdiff3
+  [column]
+  	ui = auto
+  [branch]
+  	sort = -committerdate
+  [color]
+  	ui = auto
+#+end_src
+
+* Delta
+Requires the =git-delta= package. =n= / =N= jump between hunks.
+
+#+begin_src conf
+  [core]
+  	pager = delta
+  [interactive]
+  	diffFilter = delta --color-only
+  [delta]
+  	navigate = true
+  	line-numbers = true
+  	hyperlinks = true
+  [delta "interactive"]
+  	keep-plus-minus-markers = false
+#+end_src

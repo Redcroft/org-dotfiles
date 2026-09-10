@@ -1,0 +1,32 @@
+#+TITLE: Yazi Configuration
+#+AUTHOR: Richard Redcroft
+#+EMAIL: Richard@Redcroft.tech
+#+OPTIONS: toc:nil num:nil
+#+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes
+#+auto_tangle: t
+
+* Overview
+Terminal file manager. Shell wrapper =y= lives in the bash/fish
+configs: =q= cds into the last directory, =Q= quits in place.
+
+=z= is zoxide (same as the shell jumper). =Z= is fzf. Default yazi
+swaps those two.
+
+* Zoxide
+Record every directory yazi visits in the zoxide database.
+
+#+begin_src lua :tangle "~/.config/yazi/init.lua"
+  require("zoxide"):setup {
+      update_db = true,
+  }
+#+end_src
+
+* Keymap
+
+#+begin_src conf :tangle "~/.config/yazi/keymap.toml"
+  [mgr]
+  prepend_keymap = [
+    { on = "z", run = "plugin zoxide", desc = "Jump to a directory via zoxide" },
+    { on = "Z", run = "plugin fzf", desc = "Jump to a file/directory via fzf" },
+  ]
+#+end_src

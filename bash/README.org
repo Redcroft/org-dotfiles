@@ -1,6 +1,322 @@
-#+TITLE: Bash Config
+#+TITLE: Bash Configuration
 #+AUTHOR: Richard Redcroft
 #+EMAIL: Richard@Redcroft.tech
 #+OPTIONS: toc:nil num:nil
 #+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes
 #+auto_tangle: t
+
+* Overview
+This is the POSIX-syntax counterpart to [[../fish/README.org][the fish config]]: same tools
+(starship, zoxide, eza, ripgrep, fzf, direnv, mise), same aliases, bash
+grammar.
+
+Fish-like editing (syntax highlighting, autosuggestions, auto-pairs)
+comes from [[https://github.com/akinomyoga/ble.sh][ble.sh]] at =~/.local/share/blesh/ble.sh= (or
+=/usr/share/blesh/ble.sh=). This file sources it when present.
+
+* Login profile
+Login shells read =~/.bash_profile=, not =~/.bashrc=. Keep the profile
+thin and send everything through bashrc so PATH is set for both
+interactive and =ssh host cmd= sessions.
+
+#+begin_src bash :tangle "~/.bash_profile"
+  #
+  # ~/.bash_profile
+  #
+
+  [ -f "$HOME/.bashrc" ] && . "$HOME/.bashrc"
+#+end_src
+
+* Readline
+Applies to bash and other readline programs. Prefix-search on up/down
+mirrors zsh history-substring-search / fish history. ble.sh uses its
+own editor when attached; these still help python/psql/etc.
+
+#+begin_src conf :tangle "~/.inputrc"
+  $include /etc/inputrc
+
+  set completion-ignore-case on
+  set completion-map-case on
+  set show-all-if-ambiguous on
+  set show-all-if-unmodified on
+  set colored-stats on
+  set colored-completion-prefix on
+  set visible-stats on
+  set mark-symlinked-directories on
+  set menu-complete-display-prefix on
+  set bell-style none
+
+  "\e[A": history-search-backward
+  "\e[B": history-search-forward
+  "\C-p": history-search-backward
+  "\C-n": history-search-forward
+#+end_src
+
+* Bashrc
+
+** Environment and PATH
+Set for every shell that sources this file, including login
+non-interactive ones. Directories are added only if they exist.
+
+#+begin_src bash :tangle "~/.bashrc"
+  #
+  # ~/.bashrc
+  #
+
+  path_prepend() {
+      local dir="$1"
+      [ -d "$dir" ] || return 0
+      case ":${PATH}:" in
+          *":${dir}:"*) ;;
+          *) PATH="${dir}${PATH:+:$PATH}" ;;
+      esac
+  }
+
+  path_prepend "$HOME/.local/bin"
+  path_prepend "$HOME/.local/share/bin"
+  path_prepend "$HOME/.cargo/bin"
+  path_prepend "$HOME/.opencode/bin"
+  path_prepend "$HOME/.grok/bin"
+  path_prepend /var/lib/flatpak/exports/bin
+
+  if [ -d /usr/lib/jvm/java-21-openjdk ]; then
+      export JAVA_HOME=/usr/lib/jvm/java-21-openjdk
+      path_prepend "$JAVA_HOME/bin"
+  fi
+
+  if [ -d /opt/android-sdk ]; then
+      export ANDROID_HOME=/opt/android-sdk
+      export ANDROID_SDK_ROOT="$ANDROID_HOME"
+      path_prepend "$ANDROID_HOME/platform-tools"
+  fi
+
+  export EDITOR="${EDITOR:-nvim}"
+  export VISUAL="${VISUAL:-emacs}"
+  export LESS="${LESS:--R}"
+
+  [ -r "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+  # Non-interactive shells stop here.
+  case $- in
+      *i*) ;;
+      *) return ;;
+  esac
+
+  export GPG_TTY="$(tty 2>/dev/null || true)"
+#+end_src
+
+** Line editor
+ble.sh must load before other widgets (fzf, starship) and attach last.
+
+#+begin_src bash :tangle "~/.bashrc"
+  if [ -r "$HOME/.local/share/blesh/ble.sh" ]; then
+      . "$HOME/.local/share/blesh/ble.sh" --noattach
+  elif [ -r /usr/share/blesh/ble.sh ]; then
+      . /usr/share/blesh/ble.sh --noattach
+  fi
+
+  stty -ixon 2>/dev/null
+  set -o emacs
+#+end_src
+
+** History and options
+
+#+begin_src bash :tangle "~/.bashrc"
+  HISTFILE="${HISTFILE:-$HOME/.bash_history}"
+  HISTSIZE=100000
+  HISTFILESIZE=100000
+  HISTCONTROL=ignoreboth:erasedups
+  HISTTIMEFORMAT='%F %T '
+  shopt -s histappend histverify cmdhist
+  shopt -s extglob
+
+  # Notify on commands that ran >= 10s (fish 'done'). Must be first in
+  # PROMPT_COMMAND so $? is still the user's command after starship
+  # restores it.
+  _LONGCMD_THRESHOLD=10
+  _longcmd_notify() {
+      local status=${STARSHIP_CMD_STATUS-$?}
+      if [[ -n ${_LONGCMD_START-} ]] && command -v notify-send >/dev/null 2>&1; then
+          local elapsed=$((SECONDS - _LONGCMD_START))
+          if ((elapsed >= _LONGCMD_THRESHOLD)); then
+              local cmd
+              cmd=$(HISTTIMEFORMAT= builtin fc -ln -1 2>/dev/null)
+              cmd="${cmd#"${cmd%%[![:space:]]*}"}"
+              notify-send --app-name=bash -u low \
+                  "done (${elapsed}s$([ "$status" -eq 0 ] || printf ', exit %s' "$status"))" \
+                  "$cmd"
+          fi
+      fi
+      unset _LONGCMD_START
+      return "$status"
+  }
+
+  PROMPT_COMMAND="_longcmd_notify; history -a; ${PROMPT_COMMAND-}"
+
+  shopt -s checkwinsize
+  shopt -s globstar 2>/dev/null
+  shopt -s cdspell 2>/dev/null
+  shopt -s dirspell 2>/dev/null
+  shopt -s autocd 2>/dev/null
+  shopt -s checkjobs 2>/dev/null
+  shopt -s lastpipe 2>/dev/null
+#+end_src
+
+** Completion and fzf
+fd as the walker, bat/eza as previews. =fzf --bash= is the current
+integration; vendor files are the fallback.
+
+#+begin_src bash :tangle "~/.bashrc"
+  if [ -r /usr/share/bash-completion/bash_completion ]; then
+      . /usr/share/bash-completion/bash_completion
+  elif [ -r /etc/bash_completion ]; then
+      . /etc/bash_completion
+  fi
+
+  # >>> grok installer >>>
+  [ -r "$HOME/.grok/completions/bash/grok.bash" ] && . "$HOME/.grok/completions/bash/grok.bash"
+  # <<< grok installer <<<
+
+  if command -v fd >/dev/null 2>&1; then
+      export FZF_DEFAULT_COMMAND='fd --hidden --follow --exclude .git --color=always'
+      export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+      export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git --color=always'
+  fi
+  export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS:+$FZF_DEFAULT_OPTS }--ansi"
+  export FZF_CTRL_T_OPTS='--preview "bat --color=always --line-range :200 {} 2>/dev/null || eza --tree --color=always --level=2 {} 2>/dev/null || ls -la {}"'
+  export FZF_ALT_C_OPTS='--preview "eza --tree --color=always --level=2 {} 2>/dev/null || ls -la {}"'
+
+  if command -v fzf >/dev/null 2>&1; then
+      if fzf --bash >/dev/null 2>&1; then
+          eval "$(fzf --bash)"
+      else
+          [ -r /usr/share/fzf/key-bindings.bash ] && . /usr/share/fzf/key-bindings.bash
+          [ -r /usr/share/fzf/completion.bash ] && . /usr/share/fzf/completion.bash
+      fi
+  fi
+#+end_src
+
+** Pagers
+bat for man pages and =--help=. Not aliased over =cat=.
+
+#+begin_src bash :tangle "~/.bashrc"
+  if command -v bat >/dev/null 2>&1; then
+      export MANPAGER='sh -c "col -bx | bat -l man -p"'
+      export MANROFFOPT='-c'
+      alias bathelp='bat --plain --language=help'
+  fi
+#+end_src
+
+** Tool hooks
+Direnv and mise. Zoxide is initialized last (see below) so its prompt
+hook is not swallowed by starship.
+
+#+begin_src bash :tangle "~/.bashrc"
+  if command -v direnv >/dev/null 2>&1; then
+      eval "$(direnv hook bash)"
+  fi
+
+  if command -v mise >/dev/null 2>&1; then
+      eval "$(mise activate bash)"
+  fi
+#+end_src
+
+** Prompt
+Starship when installed; otherwise the Arch default. Package:
+=starship=. Init runs after mise so a mise-provided binary is visible.
+Starship takes over =PROMPT_COMMAND= and re-runs the previous value
+(notify, history flush, direnv, mise) inside its precmd.
+
+PS0 stamps the long-command timer when a command is accepted, after
+starship's own PS0 so both run.
+
+#+begin_src bash :tangle "~/.bashrc"
+  if command -v starship >/dev/null 2>&1; then
+      eval "$(starship init bash)"
+  else
+      PS1='[\u@\h \W]\$ '
+  fi
+
+  PS0="${PS0-}"'${_LONGCMD_START:$((_LONGCMD_START=SECONDS,0)):0}'
+#+end_src
+
+** Aliases
+Fish abbreviations become aliases: they do not expand in place, but
+they run the same commands. =grep= stays GNU grep (colorized);
+=rg= is the ripgrep binary. =gc= does not bake in =-m=.
+
+#+begin_src bash :tangle "~/.bashrc"
+  if command -v eza >/dev/null 2>&1; then
+      alias ls='eza --icons --group-directories-first'
+      alias ll='eza -lh --icons --git --grid --group-directories-first'
+      alias la='eza -a --icons --group-directories-first'
+      alias tree='eza --tree --icons'
+  else
+      alias ls='ls --color=auto'
+      alias ll='ls -lh'
+      alias la='ls -A'
+  fi
+
+  alias grep='grep --color=auto'
+  alias diff='diff --color=auto'
+  alias ip='ip -c'
+  alias mkdir='mkdir -p'
+  alias ..='cd ..'
+  alias ...='cd ../..'
+
+  alias gs='git status'
+  alias ga='git add'
+  alias gc='git commit'
+  alias gp='git push'
+
+  if command -v xh >/dev/null 2>&1; then
+      alias http='xh'
+  fi
+
+  alias xuu='sudo shutdown -h now'
+  alias xur='sudo reboot'
+  alias pwheimdall='pactl load-module module-tunnel-sink server=tcp:192.168.0.127'
+  alias pwposeidon='pactl load-module module-tunnel-sink server=tcp:10.0.0.20'
+  alias nas='ssh farm@10.0.0.5'
+#+end_src
+
+** Yazi
+=y= cds into the last directory on quit (=q=). =Q= quits without
+changing directory. Uses =builtin cd= so zoxide's jumper is not
+invoked; the zoxide hook still records the path.
+
+#+begin_src bash :tangle "~/.bashrc"
+  if command -v yazi >/dev/null 2>&1; then
+      y() {
+          local tmp cwd
+          tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+          command yazi "$@" --cwd-file="$tmp"
+          IFS= read -r -d '' cwd < "$tmp"
+          [ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd" || builtin true
+          command rm -f -- "$tmp"
+      }
+  fi
+#+end_src
+
+** Local overrides
+Machine-specific bits go in =~/.bashrc.local=, which is not tangled.
+
+#+begin_src bash :tangle "~/.bashrc"
+  [ -r "$HOME/.bashrc.local" ] && . "$HOME/.bashrc.local"
+#+end_src
+
+** Zoxide
+Must be last so =__zoxide_hook= stays in =PROMPT_COMMAND= (starship
+replaces that variable). =--cmd cd= makes =cd= jump, matching fish;
+=z= / =zi= are the names the fish plugin also defines, which
+=zoxide init --cmd cd= otherwise omits.
+
+#+begin_src bash :tangle "~/.bashrc"
+  if command -v zoxide >/dev/null 2>&1; then
+      eval "$(zoxide init --cmd cd bash)"
+      z()  { __zoxide_z  "$@"; }
+      zi() { __zoxide_zi "$@"; }
+  fi
+
+  [ -n "${BLE_VERSION-}" ] && ble-attach
+#+end_src

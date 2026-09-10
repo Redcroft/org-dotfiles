@@ -226,6 +226,6 @@
 
   eval "$(direnv hook zsh)"
   # eval "$(zoxide init --cmd cd zsh)"
-  export PATH="$HOME/.pyenv/bin:$PATH"
+  export GPG_TTY="$(tty 2>/dev/null || true)"
 #+end_src
 

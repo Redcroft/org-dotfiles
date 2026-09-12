@@ -131,9 +131,9 @@
   --------------------------------------------------
 
   local apps = {
-     terminal = spawn .. "ghostty",
+     terminal = spawn .. "foot -e tmux",
      menu     = spawn .. "$HOME/.local/bin/mybemenu",
-     browser  = spawn .. "zen-browser",
+     browser  = spawn .. "qutebrowser",
      editor   = spawn .. "emacs",
   }
 
@@ -166,11 +166,11 @@
            local startup_commands = {
               "systemctl --user start hyprpolkitagent",
               spawn .. "mako",
-              spawn .. [[ghostty --title="Scratchpad"]],
+              spawn .. [[foot --title="Scratchpad" -e tmux]],
               spawn .. [[gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"]],
               spawn .. "udiskie",
               spawn .. "waybar",
-              "hyprctl plugin load /home/lambda/projects/hyprframe/build/libhyprframe.so",
+              "hyprctl plugin load /home/lambda/Projects/hyprframe/build/libhyprframe.so",
            }
 
            for _, cmd in ipairs(startup_commands) do

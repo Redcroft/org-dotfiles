@@ -170,15 +170,22 @@ already highlights and autosuggests.
       return "$status"
   }
 
-  # Arch /etc/bash.bashrc uses PROMPT_COMMAND+=(...) which makes it an
-  # array. Starship's bash init only handles a scalar, so flatten first.
+  # Arch /etc/bash.bashrc and systemd's OSC context use
+  # PROMPT_COMMAND+=(...), which makes it an array. Systemd leaves
+  # [0] empty so a later scalar assignment does not wipe its hook.
+  # Starship's bash init only handles a scalar, so flatten — skip
+  # empty slots or eval sees `;;` and the prompt errors.
   if [[ "$(declare -p PROMPT_COMMAND 2>/dev/null)" == "declare -a"* ]]; then
-      _prompt_command=$(IFS=';'; printf '%s' "${PROMPT_COMMAND[*]}")
+      _prompt_command=
+      for _pc in "${PROMPT_COMMAND[@]}"; do
+          [ -n "$_pc" ] || continue
+          _prompt_command="${_prompt_command:+$_prompt_command;}$_pc"
+      done
       unset PROMPT_COMMAND
       PROMPT_COMMAND="$_prompt_command"
-      unset _prompt_command
+      unset _prompt_command _pc
   fi
-  PROMPT_COMMAND="_longcmd_notify; history -a; ${PROMPT_COMMAND-}"
+  PROMPT_COMMAND="_longcmd_notify; history -a${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
 
   shopt -s checkwinsize
   shopt -s globstar 2>/dev/null

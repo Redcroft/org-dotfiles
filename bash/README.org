@@ -8,16 +8,27 @@
 * Overview
 This is the POSIX-syntax counterpart to [[../fish/README.org][the fish config]]: same tools
 (starship, zoxide, eza, ripgrep, fzf, direnv, mise), same aliases, bash
-grammar.
+grammar. It is also the rc for [[https://github.com/reubeno/brush][brush]], which loads =~/.bashrc= the
+same way bash does.
 
-Fish-like editing (syntax highlighting, autosuggestions, auto-pairs)
-comes from [[https://github.com/akinomyoga/ble.sh][ble.sh]] at =~/.local/share/blesh/ble.sh= (or
-=/usr/share/blesh/ble.sh=). This file sources it when present.
+Detect brush with =$BRUSH_VERSION= (bash never sets it). Brush already
+does syntax highlighting and autosuggestions, so ble.sh is bash-only.
+Brush pre-sets =HISTFILE= to =~/.brush_history=; we only assign
+=HISTFILE= when it is unset, so the two shells keep separate histories.
+
+Fish-like editing under bash (syntax highlighting, autosuggestions,
+auto-pairs) comes from [[https://github.com/akinomyoga/ble.sh][ble.sh]] at =~/.local/share/blesh/ble.sh= (or
+=/usr/share/blesh/ble.sh=). This file sources it when present and the
+shell is not brush.
 
 * Login profile
 Login shells read =~/.bash_profile=, not =~/.bashrc=. Keep the profile
 thin and send everything through bashrc so PATH is set for both
 interactive and =ssh host cmd= sessions.
+
+Brush login shells follow the same profile chain as bash, but they do
+not auto-source =~/.brushrc= (non-login interactive brush does, after
+bashrc). Source it here so login and non-login match.
 
 #+begin_src bash :tangle "~/.bash_profile"
   #
@@ -25,12 +36,14 @@ interactive and =ssh host cmd= sessions.
   #
 
   [ -f "$HOME/.bashrc" ] && . "$HOME/.bashrc"
+  [ -n "${BRUSH_VERSION-}" ] && [ -r "$HOME/.brushrc" ] && . "$HOME/.brushrc"
 #+end_src
 
 * Readline
 Applies to bash and other readline programs. Prefix-search on up/down
 mirrors zsh history-substring-search / fish history. ble.sh uses its
-own editor when attached; these still help python/psql/etc.
+own editor when attached; these still help python/psql/etc. Brush uses
+reedline, not readline, so this file does not affect its line editor.
 
 #+begin_src conf :tangle "~/.inputrc"
   $include /etc/inputrc
@@ -60,7 +73,7 @@ non-interactive ones. Directories are added only if they exist.
 
 #+begin_src bash :tangle "~/.bashrc"
   #
-  # ~/.bashrc
+  # ~/.bashrc — bash and brush (reubeno/brush)
   #
 
   path_prepend() {
@@ -107,12 +120,16 @@ non-interactive ones. Directories are added only if they exist.
 
 ** Line editor
 ble.sh must load before other widgets (fzf, starship) and attach last.
+Skip it under brush: it patches bash internals, and brush's reedline
+already highlights and autosuggests.
 
 #+begin_src bash :tangle "~/.bashrc"
-  if [ -r "$HOME/.local/share/blesh/ble.sh" ]; then
-      . "$HOME/.local/share/blesh/ble.sh" --noattach
-  elif [ -r /usr/share/blesh/ble.sh ]; then
-      . /usr/share/blesh/ble.sh --noattach
+  if [ -z "${BRUSH_VERSION-}" ]; then
+      if [ -r "$HOME/.local/share/blesh/ble.sh" ]; then
+          . "$HOME/.local/share/blesh/ble.sh" --noattach
+      elif [ -r /usr/share/blesh/ble.sh ]; then
+          . /usr/share/blesh/ble.sh --noattach
+      fi
   fi
 
   stty -ixon 2>/dev/null
@@ -134,6 +151,8 @@ ble.sh must load before other widgets (fzf, starship) and attach last.
   # PROMPT_COMMAND so $? is still the user's command after starship
   # restores it.
   _LONGCMD_THRESHOLD=10
+  _LONGCMD_APP=bash
+  [ -n "${BRUSH_VERSION-}" ] && _LONGCMD_APP=brush
   _longcmd_notify() {
       local status=${STARSHIP_CMD_STATUS-$?}
       if [[ -n ${_LONGCMD_START-} ]] && command -v notify-send >/dev/null 2>&1; then
@@ -142,7 +161,7 @@ ble.sh must load before other widgets (fzf, starship) and attach last.
               local cmd
               cmd=$(HISTTIMEFORMAT= builtin fc -ln -1 2>/dev/null)
               cmd="${cmd#"${cmd%%[![:space:]]*}"}"
-              notify-send --app-name=bash -u low \
+              notify-send --app-name="$_LONGCMD_APP" -u low \
                   "done (${elapsed}s$([ "$status" -eq 0 ] || printf ', exit %s' "$status"))" \
                   "$cmd"
           fi
@@ -151,6 +170,14 @@ ble.sh must load before other widgets (fzf, starship) and attach last.
       return "$status"
   }
 
+  # Arch /etc/bash.bashrc uses PROMPT_COMMAND+=(...) which makes it an
+  # array. Starship's bash init only handles a scalar, so flatten first.
+  if [[ "$(declare -p PROMPT_COMMAND 2>/dev/null)" == "declare -a"* ]]; then
+      _prompt_command=$(IFS=';'; printf '%s' "${PROMPT_COMMAND[*]}")
+      unset PROMPT_COMMAND
+      PROMPT_COMMAND="$_prompt_command"
+      unset _prompt_command
+  fi
   PROMPT_COMMAND="_longcmd_notify; history -a; ${PROMPT_COMMAND-}"
 
   shopt -s checkwinsize
@@ -217,7 +244,11 @@ hook is not swallowed by starship.
   fi
 
   if command -v mise >/dev/null 2>&1; then
-      eval "$(mise activate bash)"
+      _mise_activate="$(mise activate bash)"
+      # brush's export has no -a; declare -a is enough for chpwd_functions.
+      [ -n "${BRUSH_VERSION-}" ] && _mise_activate="${_mise_activate//export -a /declare -a }"
+      eval "$_mise_activate"
+      unset _mise_activate
   fi
 #+end_src
 
@@ -319,4 +350,32 @@ replaces that variable). =--cmd cd= makes =cd= jump, matching fish;
   fi
 
   [ -n "${BLE_VERSION-}" ] && ble-attach
+#+end_src
+
+* Brush
+Non-login interactive brush sources =~/.brushrc= after =~/.bashrc=.
+Keep it thin: shared setup stays in bashrc. Machine-specific brush bits
+go in =~/.brushrc.local=, which is not tangled.
+
+Syntax highlighting is off in the stock CachyOS build unless opted in
+via config or =--enable-highlighting=. Enable it here so brush matches
+ble.sh / fish without a flag on every invocation. Terminal integration
+is the OSC 133 marks foot and ghostty already understand.
+
+#+begin_src bash :tangle "~/.brushrc"
+  #
+  # ~/.brushrc
+  #
+
+  [ -r "$HOME/.brushrc.local" ] && . "$HOME/.brushrc.local"
+#+end_src
+
+#+begin_src conf :tangle "~/.config/brush/config.toml"
+  #:schema https://raw.githubusercontent.com/reubeno/brush/main/schemas/config.schema.json
+
+  [ui]
+  syntax-highlighting = true
+
+  [experimental]
+  terminal-shell-integration = true
 #+end_src

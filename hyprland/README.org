@@ -74,7 +74,6 @@
         end,
 
         startup = function()
-           hl.exec_cmd(spawn .. "pipewire &")
         end,
 
         keybinds = function(mainMod)

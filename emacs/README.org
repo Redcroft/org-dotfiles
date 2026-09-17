@@ -219,6 +219,7 @@
     :custom
     (org-fold-core-style 'overlays)
     (org-src-window-setup 'current-window)
+    (org-src-fontify-natively t)
     :custom-face
     (org-quote ((t (:slant italic)))))
 
@@ -679,24 +680,12 @@
     :init
     (minions-mode))
 
-  ;; Modus (built-in; the library lives on custom-theme-load-path, not load-path)
-  (use-package modus-themes
-    :ensure nil
-    :no-require t
-    :init
-    (require-theme 'modus-themes)
-    :config
-    (setq modus-themes-italic-constructs t
-          modus-themes-bold-constructs nil)
+  (use-package gruvbox-theme
+    :config (load-theme 'gruvbox-dark-hard t))
 
-    (modus-themes-load-theme 'modus-vivendi)
-
-    (define-key global-map (kbd "<f5>") #'modus-themes-toggle))
-
-  ;; Font and spacing settings
-  (setq line-spacing 0.0)
+  (setq line-spacing 0.15)
   (set-face-attribute 'default nil
-                      :family "Aporetic Sans Mono"
-                      :height 120
-                      :weight 'semibold)
+                      :family "Pragmasevka Nerd Font"
+                      :height 140
+                      :weight 'regular)
 #+end_src

@@ -107,6 +107,8 @@
   config.bind("<Ctrl-Shift-tab>", "tab-prev")
   config.bind("m", "spawn mpv --hwdec=auto --ytdl-format=bestvideo[height<=?720]+bestaudio/best {url}")
   config.bind("M", "hint links spawn mpv --hwdec=auto --ytdl-format=bestvideo[height<=?720]+bestaudio/best {hint-url}")
+  config.bind("<z><f>", "spawn freetube {url}")
+  config.bind("<z><a>", "spawn mpv --no-video --ytdl-format='bestaudio' {url}")
   config.bind("<z><l>", "spawn --userscript qute-rbw")
   config.bind("<z><u>", "spawn --userscript qute-rbw --username-only")
   config.bind("<z><p>", "spawn --userscript qute-rbw --password-only")

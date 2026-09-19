@@ -43,6 +43,7 @@
   set -gx VISUAL emacs
   set -gx LESS -R
   set -gx GPG_TTY (tty)
+  set -gx GTK_THEME Adwaita:dark
 
   # --- Tool Initializations ---
   if command -q starship

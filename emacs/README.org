@@ -13,6 +13,10 @@
   (push '(tool-bar-lines . 0) default-frame-alist)
   (push '(vertical-scroll-bars nil . nil) default-frame-alist)
   (push '(background-color . "#000000") default-frame-alist)
+  ;; PGTK creates the first frame after early-init. Set the font here so
+  ;; that frame is born with it; set-face-attribute during init is too late
+  ;; and gets wiped when the theme recalculates `default'.
+  (push '(font . "Pragmasevka Nerd Font-13") default-frame-alist)
 
   (defvar default-file-name-handler-alist file-name-handler-alist)
   (setq file-name-handler-alist nil)
@@ -681,11 +685,14 @@
     (minions-mode))
 
   (use-package gruvbox-theme
-    :config (load-theme 'gruvbox-dark-hard t))
-
-  (setq line-spacing 0.15)
-  (set-face-attribute 'default nil
-                      :family "Pragmasevka Nerd Font"
-                      :height 140
-                      :weight 'regular)
+    :ensure (:wait t)
+    :config
+    (load-theme 'gruvbox-dark-hard t)
+    ;; `load-theme' recalculates `default' from the theme spec (bg/fg only)
+    ;; and drops a family set earlier in init. Apply the font after the theme.
+    (set-face-attribute 'default nil
+                        :family "Pragmasevka Nerd Font"
+                        :height 130
+                        :weight 'regular)
+    (setq-default line-spacing 0.15))
 #+end_src

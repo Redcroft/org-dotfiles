@@ -18,7 +18,7 @@
 
   window-decoration = auto
 
-  theme = Modus Vivendi
+  theme = Gruvbox Dark Hard
 #+end_src
 
 #+begin_src conf :tangle no

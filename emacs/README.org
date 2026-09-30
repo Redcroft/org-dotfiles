@@ -532,14 +532,23 @@
 ** Rainbow Mode
 #+begin_src emacs-lisp
   (use-package rainbow-mode
-    :hook ((org-mode     . rainbow-mode)
-           (css-mode     . rainbow-mode)
-           (css-ts-mode  . rainbow-mode)
-           (html-mode    . rainbow-mode)
-           (html-ts-mode . rainbow-mode)
-           (mhtml-mode   . rainbow-mode)
-           (nxml-mode    . rainbow-mode)
-           (qml-ts-mode  . rainbow-mode)))
+    :hook (prog-mode . rainbow-mode)
+    :config
+    (defun my-rainbow-colorize-0x ()
+      "Colorize 0xRRGGBB or 0xRRGGBBAA (AA ignored for the swatch)."
+      (let ((hex (match-string-no-properties 1)))
+        (rainbow-colorize-match (concat "#" (substring hex 0 6)))))
+
+    (defvar my-rainbow-0x-keywords
+      '(("\\_<0x\\([0-9a-fA-F]\\{6\\}\\(?:[0-9a-fA-F]\\{2\\}\\)?\\)\\_>"
+         (0 (my-rainbow-colorize-0x) prepend))))
+
+    (defun my-rainbow-0x-keywords-hook ()
+      (if rainbow-mode
+          (font-lock-add-keywords nil my-rainbow-0x-keywords 'prepend)
+        (font-lock-remove-keywords nil my-rainbow-0x-keywords)))
+
+    (add-hook 'rainbow-keywords-hook #'my-rainbow-0x-keywords-hook))
 #+end_src
 
 ** Color Picker

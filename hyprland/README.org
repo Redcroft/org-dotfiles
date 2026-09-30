@@ -82,6 +82,7 @@
            hl.bind(mainMod .. " + XF86MonBrightnessUp",   hl.dsp.exec_cmd("blight set 32768"),  { locked = true })
            hl.bind(mainMod .. " + XF86MonBrightnessDown", hl.dsp.exec_cmd("blight set 5"),   { locked = true })
            hl.bind(mainMod .. " + SHIFT + XF86MonBrightnessUp", hl.dsp.exec_cmd("blight set 65535"), { locked = true })
+  	  hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("qutebrowser"))
         end,
      },
 
@@ -132,7 +133,7 @@
   local apps = {
      terminal = spawn .. "foot -e tmux",
      menu     = spawn .. "$HOME/.local/bin/mybemenu",
-     browser  = spawn .. "qutebrowser",
+     browser  = spawn .. "zen-browser",
      editor   = spawn .. "emacs",
   }
 

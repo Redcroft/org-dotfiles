@@ -120,7 +120,6 @@
     :init
     (column-number-mode -1)
     (global-display-line-numbers-mode 1)
-    (recentf-mode 1)
     (save-place-mode 1)
     (scroll-bar-mode -1)
     (dolist (mode '(term-mode shell-mode eshell-mode eww-mode org-mode))
@@ -153,8 +152,9 @@
 
   (use-package compat :ensure (:wait t))
 #+end_src
+
 ** Gnus
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package gnus
     :ensure nil
     :config
@@ -211,6 +211,112 @@
     )
 #+end_src
 
+** Mu4e
+#+begin_src emacs-lisp
+  ;; mu 1.14 ships thread folding (TAB), desktop notifications, and Org
+  ;; links. consult-mu is the piece that is still a separate package:
+  ;; minibuffer search on top of the consult/embark setup above.
+  ;; mu4e-alert, mu4e-thread-folding, and mu4easy are not used. The first
+  ;; two are built in now, and mu4easy would replace the mbsync config.
+  (use-package mu4e
+    :ensure nil
+    :load-path "/usr/share/emacs/site-lisp/mu4e"
+    :bind ("C-c u" . mu4e)
+    :custom
+    (mu4e-mu-binary "/usr/sbin/mu")
+    ;; mbsync identifies messages by filename, so a move must rename.
+    (mu4e-change-filenames-when-moving t)
+    (mu4e-get-mail-command "mbsync -a")
+    (mu4e-update-interval 300)
+    (mu4e-notification-support t)
+    (mu4e-context-policy 'pick-first)
+    (mu4e-compose-context-policy 'ask-if-none)
+    (mu4e-completing-read-function #'completing-read)
+    (send-mail-function #'sendmail-send-it)
+    (message-send-mail-function #'message-send-mail-with-sendmail)
+    (sendmail-program "msmtp")
+    (message-sendmail-f-is-evil t)
+    (mail-specify-envelope-from t)
+    (message-sendmail-envelope-from 'header)
+    (mail-envelope-from 'header)
+    :config
+    (setq mu4e-contexts
+          `(,(make-mu4e-context
+              :name "Gmail"
+              :match-func (lambda (msg)
+                            (when msg
+                              (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+              :vars '((user-mail-address . "animationrich@gmail.com")
+                      (user-full-name . "Richard Redcroft")
+                      (mu4e-sent-folder . "/gmail/[Google Mail]/Sent Mail")
+                      (mu4e-drafts-folder . "/gmail/[Google Mail]/Drafts")
+                      (mu4e-trash-folder . "/gmail/[Google Mail]/Bin")
+                      (mu4e-refile-folder . "/gmail/Archive")
+                      ;; Gmail keeps the SMTP copy in Sent Mail.
+                      (mu4e-sent-messages-behavior . delete)
+                      (message-sendmail-extra-arguments . ("-a" "gmail"))))
+            ,(make-mu4e-context
+              :name "Work"
+              :match-func (lambda (msg)
+                            (when msg
+                              (string-prefix-p "/work" (mu4e-message-field msg :maildir))))
+              :vars '((user-mail-address . "richard@carseandwaterman.com")
+                      (user-full-name . "Richard DW Redcroft")
+                      (mu4e-sent-folder . "/work/[Google Mail]/Sent Mail")
+                      (mu4e-drafts-folder . "/work/[Google Mail]/Drafts")
+                      (mu4e-trash-folder . "/work/[Google Mail]/Bin")
+                      (mu4e-refile-folder . "/work/Archive")
+                      (mu4e-sent-messages-behavior . delete)
+                      (message-sendmail-extra-arguments . ("-a" "work"))))
+            ,(make-mu4e-context
+              :name "Redcroft"
+              :match-func (lambda (msg)
+                            (when msg
+                              (string-prefix-p "/redcroft" (mu4e-message-field msg :maildir))))
+              :vars '((user-mail-address . "richard@redcroft.tech")
+                      (user-full-name . "Richard Redcroft")
+                      (mu4e-sent-folder . "/redcroft/Sent")
+                      (mu4e-drafts-folder . "/redcroft/Drafts")
+                      (mu4e-trash-folder . "/redcroft/Trash")
+                      (mu4e-refile-folder . "/redcroft/Archive")
+                      ;; Hostinger does not store the SMTP copy.
+                      (mu4e-sent-messages-behavior . sent)
+                      (message-sendmail-extra-arguments . ("-a" "redcroft"))))))
+    (setq mu4e-bookmarks
+          '((:name "Unread" :query "flag:unread AND NOT flag:trashed" :key ?u :favorite t)
+            (:name "Today" :query "date:today..now" :key ?t)
+            (:name "Last 7 days" :query "date:7d..now" :hide-unread t :key ?d)
+            (:name "Gmail" :query "maildir:/gmail/Inbox" :key ?g)
+            (:name "Work" :query "maildir:/work/Inbox" :key ?w)
+            (:name "Redcroft" :query "maildir:/redcroft/Inbox" :key ?r)))
+    (setq mu4e-maildir-shortcuts
+          '((:maildir "/gmail/Inbox" :key ?g)
+            (:maildir "/work/Inbox" :key ?w)
+            (:maildir "/redcroft/Inbox" :key ?r))))
+
+  (use-package consult-mu
+    :ensure (:host github
+             :repo "armindarvish/consult-mu"
+             :files (:defaults "extras/*.el"))
+    :bind ("M-s m" . consult-mu)
+    :custom
+    (consult-mu-maxnum 200)
+    (consult-mu-mark-previewed-as-read nil)
+    (consult-mu-preview-key 'any)
+    (consult-mu-compose-preview-key "M-o")
+    (consult-mu-contacts-ignore-list '("^.*no.*reply.*"))
+    (consult-mu-contacts-ignore-case-fold-search t)
+    :init
+    (setq consult-mu-embark-attach-file-key "C-a")
+    :config
+    (require 'consult-mu-embark)
+    (require 'consult-mu-compose)
+    (require 'consult-mu-compose-embark)
+    (require 'consult-mu-contacts)
+    (require 'consult-mu-contacts-embark)
+    (consult-mu-compose-embark-bind-attach-file-key))
+#+end_src
+
 ** Org
 #+begin_src emacs-lisp
   ;; ============================================================
@@ -238,15 +344,24 @@
   ;;  :hook (org-mode . org-modern-mode))
 #+end_src
 
-** Kirigami
+** Hideshow
 #+begin_src emacs-lisp
+  ;; Code folding
+  ;; Tree-sitter modes fold the `list' thing (set up by
+  ;; `treesit-major-mode-setup'). Other prog modes use syntax.
   (use-package hideshow
-    :ensure nil ; Built-in to Emacs
+    :ensure nil
     :hook (prog-mode . hs-minor-mode)
+    :custom
+    (hs-show-indicators t)
+    (hs-indicator-type 'fringe)
+    (hs-display-lines-hidden t)
+    (hs-allow-nesting t)
     :bind (:map hs-minor-mode-map
-                ("C-c TAB" . hs-toggle-hiding)
-                ("C-c S"   . hs-show-all)
-  	      ("C-c H"   . hs-hide-all)))
+                ("C-c TAB" . hs-cycle)
+                ("C-c <backtab>" . hs-toggle-all)
+                ("C-c S" . hs-show-all)
+                ("C-c H" . hs-hide-all)))
 #+end_src
 
 ** Ligatures
@@ -386,7 +501,13 @@
     (delete-old-versions t)
     (kept-new-versions 6)
     (kept-old-versions 2)
-    (version-control t))
+    (version-control t)
+    :config
+    ;; recentf-mode reads recentf-save-file as soon as it is enabled.
+    ;; no-littering has just pointed that file at var/recentf-save.el.
+    ;; Enabling the mode any earlier loads a missing ~/.emacs.d/recentf.eld
+    ;; and the dashboard's Recent Files stays empty across restarts.
+    (recentf-mode 1))
 #+end_src
 
 ** Project
@@ -394,6 +515,11 @@
   (use-package project
     :ensure nil
     :config
+    ;; This use-package form runs before no-littering is activated, and
+    ;; project.el reads the list as soon as it is touched. Point it at
+    ;; the file no-littering will use, or startup sees a stale list.
+    (setq project-list-file
+          (expand-file-name "var/project-list.el" user-emacs-directory))
     (project-remember-projects-under "~/Projects")
     (defun project-remember-git-project ()
       (when-let ((project (project-current)))
@@ -666,6 +792,21 @@
   (use-package zig-ts-mode)
 #+end_src
 
+** Dashboard
+#+begin_src emacs-lisp
+  (use-package dashboard
+    :custom
+    (dashboard-items '((recents   . 5)
+                       (projects  . 5)
+                       (bookmarks . 5)
+                       (agenda    . 5)))
+    (dashboard-projects-backend 'project-el)
+    :config
+    (add-hook 'elpaca-after-init-hook #'dashboard-insert-startupify-lists)
+    (add-hook 'elpaca-after-init-hook #'dashboard-initialize)
+    (dashboard-setup-startup-hook))
+#+end_src
+
 ** Aesthetics
 #+begin_src emacs-lisp
   ;; ============================================================
@@ -684,15 +825,15 @@
     :init
     (minions-mode))
 
-  (use-package gruvbox-theme
+  (use-package dracula-theme
     :ensure (:wait t)
     :config
-    (load-theme 'gruvbox-dark-hard t)
+    (load-theme 'dracula t)
     ;; `load-theme' recalculates `default' from the theme spec (bg/fg only)
     ;; and drops a family set earlier in init. Apply the font after the theme.
     (set-face-attribute 'default nil
-                        :family "Pragmasevka Nerd Font"
+                        :family "BlexMono Nerd Font"
                         :height 130
-                        :weight 'regular)
+                        :weight 'SemiBold)
     (setq-default line-spacing 0.15))
 #+end_src

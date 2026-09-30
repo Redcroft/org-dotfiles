@@ -20,8 +20,8 @@
   IMAPAccount redcroft
   Host imap.hostinger.com
   User richard@redcroft.tech
-  #PassCmd "bw get password hostinger.com richard@redcroft.tech"
-  PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.repos/org-dotfiles/mail/redcroft.gpg"
+  PassCmd "rbw get Hostinger"
+  #PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.repos/org-dotfiles/mail/redcroft.gpg"
   TLSType IMAPS
   CertificateFIle /etc/ssl/certs/ca-certificates.crt
 
@@ -47,8 +47,8 @@
   IMAPAccount work
   Host imap.gmail.com
   User richard@carseandwaterman.com
-  #PassCmd "bw get password hostinger.com richard@work.tech"
-  PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.repos/org-dotfiles/mail/work.gpg"
+  PassCmd "rbw get GMail richard@carseandwaterman.com"
+  #PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.repos/org-dotfiles/mail/work.gpg"
   AuthMechs LOGIN
   TLSType IMAPS
   CertificateFIle /etc/ssl/certs/ca-certificates.crt
@@ -64,7 +64,7 @@
   Channel Work
   Far :work-remote:
   Near :work-local:
-  Patterns * ![Gmail]/All* ![Gmail]/Spam
+  Patterns * ![Google Mail]/All* ![Google Mail]/Spam ![Google Mail]/Important ![Google Mail]/Starred ![Google Mail]/Chats
   Create Both
   Expunge Both
   SyncState *
@@ -75,8 +75,8 @@
   IMAPAccount gmail
   Host imap.gmail.com
   User animationrich@gmail.com
-  #PassCmd "bw get password hostinger.com richard@gmail.tech"
-  PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.repos/org-dotfiles/mail/gmail.gpg"
+  PassCmd "rbw get GMail animationrich@gmail.com"
+  #PassCmd "gpg2 -q --for-your-eyes-only --no-tty -d ~/.repos/org-dotfiles/mail/gmail.gpg"
   AuthMechs LOGIN
   TLSType IMAPS
   CertificateFIle /etc/ssl/certs/ca-certificates.crt
@@ -92,7 +92,7 @@
   Channel Gmail
   Far :gmail-remote:
   Near :gmail-local:
-  Patterns * ![Gmail]/All* ![Gmail]/Spam
+  Patterns * ![Google Mail]/All* ![Google Mail]/Spam ![Google Mail]/Important ![Google Mail]/Starred ![Google Mail]/Chats
   Create Both
   Expunge Both
   SyncState *
@@ -164,8 +164,9 @@
 
 #+begin_src sh :tangle "~/.local/bin/mail-sync" :tangle-mode (identity #o777)
   #!/bin/bash
-  mbsync -Va
-  mu index
+  # Fetch only. A bare `mu index` here takes the database lock and
+  # fails while mu4e is running; mu4e indexes after `mbsync -a`.
+  mbsync -a
 #+end_src
 
 #+begin_src sh :tangle no :results none

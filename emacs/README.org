@@ -13,10 +13,6 @@
   (push '(tool-bar-lines . 0) default-frame-alist)
   (push '(vertical-scroll-bars nil . nil) default-frame-alist)
   (push '(background-color . "#000000") default-frame-alist)
-  ;; PGTK creates the first frame after early-init. Set the font here so
-  ;; that frame is born with it; set-face-attribute during init is too late
-  ;; and gets wiped when the theme recalculates `default'.
-  (push '(font . "Pragmasevka Nerd Font-13") default-frame-alist)
 
   (defvar default-file-name-handler-alist file-name-handler-alist)
   (setq file-name-handler-alist nil)
@@ -821,6 +817,9 @@
   ;; ============================================================
   ;; Aesthetics
   ;; ============================================================
+  (add-to-list 'custom-theme-load-path
+    	     (expand-file-name "themes" user-emacs-directory))
+
   (use-package nerd-icons :defer t)
 
   (use-package moody
@@ -834,15 +833,16 @@
     :init
     (minions-mode))
 
-  (use-package dracula-theme
-    :ensure (:wait t)
+  (use-package ember-theme
+    :ensure (:host github :repo "ember-theme/emacs" :files("*.el"))
+    :init
+    (add-to-list 'custom-theme-load-path (expand-file-name "ember-theme" elpaca-builds-directory))
     :config
-    (load-theme 'dracula t)
-    ;; `load-theme' recalculates `default' from the theme spec (bg/fg only)
-    ;; and drops a family set earlier in init. Apply the font after the theme.
+    (load-theme 'ember t)
     (set-face-attribute 'default nil
-                        :family "BlexMono Nerd Font"
-                        :height 130
-                        :weight 'SemiBold)
-    (setq-default line-spacing 0.15))
+                        :family "IosevkaTerm Nerd Font"
+                        :height 120
+                        :weight 'Semibold)
+    )
+  (setq-default line-spacing 0.00)
 #+end_src

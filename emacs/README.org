@@ -88,6 +88,27 @@
       (elpaca-generate-autoloads "elpaca" repo)
       (let ((load-source-file-function nil)) (load "./elpaca-autoloads"))))
   (add-hook 'after-init-hook #'elpaca-process-queues)
+  ;; elpaca-activate let-binds default-directory to the build directory
+  ;; of the package it is finishing, and the init queue ends inside that
+  ;; binding. Buffers created then, including the dashboard, inherit it,
+  ;; so Emacs comes up in ~/.emacs.d/elpaca/builds/<last-package>.
+  ;; command-line-default-directory is the directory Emacs was launched from.
+  (add-hook 'emacs-startup-hook
+            (lambda ()
+              (let ((dir command-line-default-directory)
+                    (roots (list (file-name-as-directory
+                                  (expand-file-name elpaca-builds-directory))
+                                 (file-name-as-directory
+                                  (expand-file-name elpaca-sources-directory)))))
+                (dolist (buf (buffer-list))
+                  (with-current-buffer buf
+                    (when (and (not buffer-file-name)
+                               (let ((here (file-name-as-directory
+                                            (expand-file-name default-directory))))
+                                 (or (string-prefix-p (car roots) here)
+                                     (string-prefix-p (cadr roots) here))))
+                      (setq default-directory dir))))))
+            90)
   (elpaca `(,@elpaca-order))
 #+end_src
 ** Use-package
@@ -217,7 +238,7 @@
   (use-package mu4e
     :ensure nil
     :load-path "/usr/share/emacs/site-lisp/mu4e"
-    :bind ("C-c u" . mu4e)
+    :bind ("C-x y m" . mu4e)
     :custom
     (mu4e-mu-binary "/usr/sbin/mu")
     ;; mbsync identifies messages by filename, so a move must rename.
@@ -822,16 +843,8 @@
 
   (use-package nerd-icons :defer t)
 
-  (use-package moody
-    :init
-    (setq x-underline-at-descent-line t)
-    (moody-replace-mode-line-front-space)
-    (moody-replace-mode-line-buffer-identification)
-    (moody-replace-vc-mode))
-
-  (use-package minions
-    :init
-    (minions-mode))
+  (use-package doom-modeline
+    :config (doom-modeline-mode))
 
   (use-package ember-theme
     :ensure (:host github :repo "ember-theme/emacs" :files("*.el"))
@@ -840,7 +853,7 @@
     :config
     (load-theme 'ember t)
     (set-face-attribute 'default nil
-                        :family "IosevkaTerm Nerd Font"
+                        :family "JetBrainsMono Nerd Font"
                         :height 120
                         :weight 'Semibold)
     )

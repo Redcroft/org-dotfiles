@@ -173,10 +173,22 @@
   	recentf-max-saved-items 500
   	indent-tabs-mode nil
   	read-process-output-max (* 1024 1024)
+  	tab-always-indent 'complete
+  	enable-recursive-minibuffers t
+  	read-extended-command-predicate #'command-completion-default-include-p
+  	set-mark-command-repeat-pop t       ; C-u C-SPC, then C-SPC to keep popping
+  	;; Responsiveness
+  	fast-but-imprecise-scrolling t
+  	redisplay-skip-fontification-on-input t
+  	inhibit-compacting-font-caches t    ; helps with nerd-icons/ligatures
+  	scroll-conservatively 101
+  	bidi-inhibit-bpa t
   	)
     (electric-indent-mode 1)
     (electric-pair-mode 1)
     (repeat-mode)
+    (global-so-long-mode 1)
+    (setq-default bidi-paragraph-direction 'left-to-right)
     )
 
   (use-package savehist
@@ -617,15 +629,69 @@
   ;; Search and Navigation — Consult
   ;; ============================================================
   (use-package consult
-    :bind (("C-s"   . consult-line)
-           ("M-y"   . consult-yank-pop)
-           ("C-x b" . consult-buffer)
-           ("M-s r" . consult-ripgrep)
-           ("M-g i" . consult-imenu)
-           ("M-g I" . consult-imenu-multi))
+    :bind (("C-s"     . consult-line)
+           ("M-y"     . consult-yank-pop)
+           ("C-x b"   . consult-buffer)
+           ("C-x 4 b" . consult-buffer-other-window)
+           ("C-x p b" . consult-project-buffer)
+           ("M-s r"   . consult-ripgrep)
+           ("M-s d"   . consult-fd)
+           ("M-s L"   . consult-line-multi)
+           ("M-g g"   . consult-goto-line)
+           ("M-g M-g" . consult-goto-line)
+           ("M-g o"   . consult-outline)
+           ("M-g m"   . consult-mark)
+           ("M-g k"   . consult-global-mark)
+           ("M-g f"   . consult-flymake)
+           ("M-g i"   . consult-imenu)
+           ("M-g I"   . consult-imenu-multi))
     :init
     (setq register-preview-delay    0.5
-          register-preview-function #'consult-register-format))
+          register-preview-function #'consult-register-format
+          ;; Definitions/references open in a searchable, previewed
+          ;; Vertico list instead of the *xref* buffer.
+          xref-show-xrefs-function       #'consult-xref
+          xref-show-definitions-function #'consult-xref)
+    :config
+    ;; Preview on demand/after a pause rather than on every keystroke;
+    ;; this is what makes ripgrep and xref over big trees feel instant.
+    (consult-customize
+     consult-ripgrep consult-git-grep consult-grep consult-fd
+     consult-xref consult-bookmark consult-recent-file
+     :preview-key '(:debounce 0.4 any)))
+#+end_src
+
+** Jumping
+#+begin_src emacs-lisp
+  ;; ============================================================
+  ;; Jumping — avy / ace-window / dumb-jump / expreg
+  ;; ============================================================
+  ;; Type a couple of characters, then press the hint letter to land
+  ;; there. Works across every visible window.
+  (use-package avy
+    :bind (("C-:"   . avy-goto-char-timer)
+           ("M-g w" . avy-goto-word-1)
+           ("M-g l" . avy-goto-line))
+    :custom (avy-timeout-seconds 0.3))
+
+  ;; Jump to a window by label (swaps directly when there are only two).
+  (use-package ace-window
+    :bind ("M-o" . ace-window)
+    :custom
+    (aw-scope 'frame)
+    (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+
+  ;; Fallback xref backend for buffers with no LSP (org, config files,
+  ;; languages without a server). Eglot's backend is buffer-local and is
+  ;; consulted first, so this only kicks in where Eglot is not running.
+  (use-package dumb-jump
+    :custom (dumb-jump-force-searcher 'rg)
+    :init (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
+
+  ;; Grow/shrink the selection along the tree-sitter syntax tree.
+  (use-package expreg
+    :bind (("C-="  . expreg-expand)
+           ("C-+"  . expreg-contract)))
 #+end_src
 
 ** Workspaces
@@ -661,44 +727,96 @@
            (sh-base-mode     . eglot-ensure)
            (elixir-ts-mode   . eglot-ensure)
            (python-base-mode . eglot-ensure)
-  	 (qml-ts-mode      . eglot-ensure)
+           (qml-ts-mode      . eglot-ensure)
            (js-base-mode     . eglot-ensure)
            (lua-ts-mode      . eglot-ensure)
            (rust-ts-mode     . eglot-ensure)
-  	 (odin-ts-mode     . eglot-ensure)
-  	 (zig-ts-mode      . eglot-ensure))
+           (odin-ts-mode     . eglot-ensure)
+           (zig-ts-mode      . eglot-ensure))
     :bind (:map eglot-mode-map
-  	      ("C-c a" . eglot-code-actions)
+                ("C-c a" . eglot-code-actions)
                 ("C-c r" . eglot-rename)
-  	      ("C-c h" . eglot-inlay-hints-mode)
+                ("C-c h" . eglot-inlay-hints-mode)
                 ("C-c f" . eglot-format-buffer)
-  	      ("C-c t" . eglot-find-typeDefinition))
+                ("C-c t" . eglot-find-typeDefinition)
+                ("C-c i" . eglot-find-implementation)
+                ("C-c d" . eldoc-doc-buffer))
     :custom
     (eglot-autoshutdown t)
+    ;; Default is 3: Emacs freezes for up to 3s while the server starts
+    ;; the first time you open a file. nil = connect in the background.
+    (eglot-sync-connect nil)
+    ;; Let M-. work in files outside any server's project.
+    (eglot-extend-to-xref t)
     (eglot-events-buffer-config '(:size 0))
     (eglot-send-changes-idle-time 0.3)
-    (eglot-sync-connect nil)
     (eldoc-idle-delay   0.1)
-    )
+    :config
+    ;; clangd: index the whole project in the background (fast, project-
+    ;; wide navigation/completion), keep the precompiled headers in RAM,
+    ;; show full signatures, and don't auto-insert #includes on accept.
+    (add-to-list 'eglot-server-programs
+                 '((c-ts-mode c++-ts-mode c-or-c++-ts-mode c-mode c++-mode)
+                   . ("clangd"
+                      "--background-index"
+                      "--completion-style=detailed"
+                      "--header-insertion=never"
+                      "--pch-storage=memory"))))
 
+  ;; Next/previous diagnostic without leaving the keyboard's home area.
+  (use-package flymake
+    :ensure nil
+    :bind (:map flymake-mode-map
+                ("M-n" . flymake-goto-next-error)
+                ("M-p" . flymake-goto-prev-error)))
+
+  ;; emacs-lsp-booster sits between Emacs and the server and converts
+  ;; JSON to bytecode outside Emacs, which makes busy servers (clangd,
+  ;; rust-analyzer, pyright) noticeably snappier. Needs the
+  ;; `emacs-lsp-booster' binary on PATH (AUR: emacs-lsp-booster-bin);
+  ;; skipped silently when it is absent.
+  (use-package eglot-booster
+    :ensure (:host github :repo "jdtsmith/eglot-booster")
+    :if (executable-find "emacs-lsp-booster")
+    :after eglot
+    :config (eglot-booster-mode 1))
+
+  ;; `M-?' is xref-find-references, so the symbol picker lives on M-g s.
   (use-package consult-eglot
     :after (consult eglot)
     :bind (:map eglot-mode-map
-                ("M-?" . consult-eglot-symbols)))
+                ("M-g s" . consult-eglot-symbols)))
 #+end_src
 ** Completions
 #+begin_src emacs-lisp
-    ;; ============================================================
+  ;; ============================================================
   ;; Completion UI — Vertico / Orderless / Marginalia
   ;; ============================================================
+  ;; :files pulls in the bundled extensions (vertico-directory, ...).
   (use-package vertico
+    :ensure (:files (:defaults "extensions/*.el"))
+    :custom (vertico-cycle t)
     :init (vertico-mode))
+
+  ;; Backspace deletes a whole path component, RET enters a directory.
+  (use-package vertico-directory
+    :ensure nil
+    :after vertico
+    :bind (:map vertico-map
+                ("RET"   . vertico-directory-enter)
+                ("DEL"   . vertico-directory-delete-char)
+                ("M-DEL" . vertico-directory-delete-word))
+    :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
 
   (use-package orderless
     :custom
     (completion-styles              '(orderless basic))
     (completion-category-defaults   nil)
-    (completion-category-overrides  '((file (styles partial-completion)))))
+    ;; Eglot registers its own `flex' style; use orderless there too so
+    ;; LSP candidates filter the same way as everything else.
+    (completion-category-overrides  '((file      (styles partial-completion))
+                                      (eglot     (styles orderless basic))
+                                      (eglot-capf (styles orderless basic)))))
 
   (use-package marginalia
     :bind (:map minibuffer-local-map
@@ -709,12 +827,23 @@
   ;; In-buffer Completion — Corfu
   ;; ============================================================
   (use-package corfu
+    :ensure (:files (:defaults "extensions/*.el"))
     :custom
     (corfu-auto-delay       0.05)
     (corfu-auto             t)
     (corfu-auto-prefix      2)
+    (corfu-cycle            t)
+    (corfu-preselect        'prompt)
     (corfu-quit-at-boundary 'separator)
-    :init (global-corfu-mode))
+    (corfu-quit-no-match    'separator)
+    :init (global-corfu-mode)
+    :config
+    ;; Docs/signature popup next to the candidate list.
+    (setq corfu-popupinfo-delay '(0.4 . 0.2))
+    (corfu-popupinfo-mode 1)
+    ;; Remember what you pick so frequent candidates sort first.
+    (corfu-history-mode 1)
+    (add-to-list 'savehist-additional-variables 'corfu-history))
 
   (use-package nerd-icons-corfu
     :after corfu
@@ -724,7 +853,19 @@
   (use-package cape
     :init
     (add-hook 'completion-at-point-functions #'cape-dabbrev)
-    (add-hook 'completion-at-point-functions #'cape-file))
+    (add-hook 'completion-at-point-functions #'cape-file)
+    :config
+    ;; `cape-capf-buster' makes Corfu re-query the server as you type
+    ;; instead of filtering a stale (often incomplete) cached list --
+    ;; the usual cause of "the completion I expected isn't there".
+    ;; Eglot's capf is non-exclusive, so file and dabbrev still act as
+    ;; fallbacks when the server has nothing.
+    (defun my/eglot-capf ()
+      (setq-local completion-at-point-functions
+                  (list (cape-capf-buster #'eglot-completion-at-point)
+                        #'cape-file
+                        #'cape-dabbrev)))
+    (add-hook 'eglot-managed-mode-hook #'my/eglot-capf))
 
 #+end_src
 ** Embark

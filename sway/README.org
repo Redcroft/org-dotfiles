@@ -1,0 +1,580 @@
+#+TITLE: Sway Configuration
+#+AUTHOR: Richard Redcroft
+#+EMAIL: Richard@Redcroft.tech
+#+OPTIONS: toc:nil num:nil
+#+PROPERTY: Header-args :tangle-mode (identity #o444) :mkdirp yes :noweb yes
+#+auto_tangle: t
+
+Sway analogue of the Hyprland + hyprframe setup. Same keys, apps, gaps, and
+host-specific monitors. Sway has no empty frames: ~$mod+h~ / ~$mod+v~ set the
+split for the next window, and ~$mod+x~ merges the focused container into a
+sibling (hyprframe ~close_frame~).
+
+* Wallpaper path
+#+NAME: wallpaper-path
+#+begin_src emacs-lisp :tangle no
+  (expand-file-name "../wallpaper.jpg" (file-name-directory (or (buffer-file-name) default-directory)))
+#+end_src
+
+* Config
+** Variables
+#+begin_src conf :tangle "~/.config/sway/config"
+  set $mod Mod4
+  set $spawn ~/.local/bin/sway-spawn
+  set $term foot -e tmux
+  set $menu bemenu-run --fn "Aporetic Sans Mono 14" --fb "#000000" --ff "#ffffff" --nb "#000000" --nf "#ffffff" --tb "#000000" --hb "#b6a0ff" --tf "#b6a0ff" --hf "#ffffff" --af "#ffffff" --ab "#000000"
+  set $browser zen-browser
+  set $editor emacs
+  set $lock swaylock -f
+
+  set $bg     #000000
+  set $fg     #ffffff
+  set $dim    #989898
+  set $acc    #2fafff
+  set $frame  #b6a0ff
+  set $normal #303030
+  set $urg    #ff5f59
+#+end_src
+
+** Outputs
+Default black background and wallpaper; ~host.sh~ applies per-machine modes
+after startup.
+
+#+begin_src conf :tangle "~/.config/sway/config" :noweb yes
+  output * bg <<wallpaper-path()>> fill #000000
+  output * allow_tearing yes
+
+  xwayland enable
+#+end_src
+
+** Look and feel
+Gaps follow hyprframe (~frame_gap~ 12, ~gaps_out~ 12). Pixel borders, no
+titlebars on tiled windows; tabbed layout still draws a titlebar (hyprframe
+tabs). Indicator colour is the frame purple; window border is the cyan
+active border.
+
+#+begin_src conf :tangle "~/.config/sway/config"
+  font pango:Aporetic Sans Mono Semibold 13
+
+  default_border pixel 2
+  default_floating_border pixel 2
+  titlebar_padding 8 2
+  titlebar_border_thickness 0
+  hide_edge_borders none
+
+  gaps inner 12
+  gaps outer 12
+  smart_gaps off
+  smart_borders off
+
+  # class                 border    backgr    text      indicator child_border
+  client.focused          $acc      $acc      $bg       $frame    $acc
+  client.focused_inactive $normal   $bg       $dim      $normal   $normal
+  client.unfocused        $bg       $bg       $dim      $bg       $bg
+  client.urgent           $urg      $urg      $bg       $urg      $urg
+  client.placeholder      $bg       $bg       $fg       $bg       $bg
+  client.background       $bg
+
+  seat * xcursor_theme macOS 32
+#+end_src
+
+** Input
+#+begin_src conf :tangle "~/.config/sway/config"
+  input type:keyboard {
+      xkb_layout us
+  }
+
+  input type:pointer {
+      accel_profile flat
+      pointer_accel 0
+  }
+
+  input type:touchpad {
+      natural_scroll enabled
+      dwt disabled
+      tap enabled
+      accel_profile flat
+  }
+
+  focus_follows_mouse yes
+  focus_wrapping yes
+  mouse_warping container
+  workspace_auto_back_and_forth no
+
+  floating_modifier $mod normal
+#+end_src
+
+** Keybinds
+*** General
+#+begin_src conf :tangle "~/.config/sway/config"
+  bindsym --no-repeat $mod+Return exec $spawn $term
+  bindsym --no-repeat $mod+Shift+w exec $spawn $browser
+  bindsym --no-repeat $mod+Shift+e exec $spawn $editor
+  bindsym --no-repeat $mod+Shift+q kill
+  bindsym --no-repeat $mod+Shift+Escape exit
+  bindsym --no-repeat $mod+Shift+grave exit
+  bindsym --no-repeat $mod+Escape reload
+  bindsym --no-repeat $mod+Shift+space floating toggle
+  bindsym --no-repeat $mod+d exec $spawn $menu
+  bindsym --no-repeat $mod+BackSpace exec "swaymsg focus output right || swaymsg focus output left"
+  bindsym --no-repeat $mod+y exec killall -SIGUSR1 waybar
+  bindsym --no-repeat $mod+l exec $lock
+
+  bindsym --no-repeat $mod+Shift+s exec grim -g "$(slurp -d)"
+  bindsym --no-repeat $mod+Shift+p exec ~/.local/bin/sway-color-picker
+#+end_src
+
+*** Frame layout
+Emacs-style movement, hyprframe split / cycle / close.
+
+#+begin_src conf :tangle "~/.config/sway/config"
+  bindsym $mod+f focus right
+  bindsym $mod+b focus left
+  bindsym $mod+p focus up
+  bindsym $mod+n focus down
+  bindsym --no-repeat $mod+m fullscreen toggle
+
+  bindsym --no-repeat $mod+h splith
+  bindsym --no-repeat $mod+v splitv
+  bindsym --no-repeat $mod+x exec ~/.local/bin/sway-close-frame
+  bindsym --no-repeat $mod+e layout toggle splith splitv tabbed
+  bindsym --no-repeat $mod+Tab focus next
+  bindsym --no-repeat $mod+Shift+Tab focus prev
+
+  bindsym $mod+Shift+b move left
+  bindsym $mod+Shift+n move down
+  bindsym $mod+Shift+p move up
+  bindsym $mod+Shift+f move right
+
+  bindsym $mod+Ctrl+f resize grow width 1 ppt
+  bindsym $mod+Ctrl+b resize shrink width 1 ppt
+  bindsym $mod+Ctrl+p resize shrink height 1 ppt
+  bindsym $mod+Ctrl+n resize grow height 1 ppt
+#+end_src
+
+*** Workspaces
+#+begin_src conf :tangle "~/.config/sway/config"
+  bindsym --no-repeat $mod+1 workspace number 1
+  bindsym --no-repeat $mod+2 workspace number 2
+  bindsym --no-repeat $mod+3 workspace number 3
+  bindsym --no-repeat $mod+4 workspace number 4
+  bindsym --no-repeat $mod+5 workspace number 5
+  bindsym --no-repeat $mod+6 workspace number 6
+  bindsym --no-repeat $mod+7 workspace number 7
+  bindsym --no-repeat $mod+8 workspace number 8
+  bindsym --no-repeat $mod+9 workspace number 9
+  bindsym --no-repeat $mod+0 workspace number 10
+
+  bindsym --no-repeat $mod+Shift+1 move container to workspace number 1
+  bindsym --no-repeat $mod+Shift+2 move container to workspace number 2
+  bindsym --no-repeat $mod+Shift+3 move container to workspace number 3
+  bindsym --no-repeat $mod+Shift+4 move container to workspace number 4
+  bindsym --no-repeat $mod+Shift+5 move container to workspace number 5
+  bindsym --no-repeat $mod+Shift+6 move container to workspace number 6
+  bindsym --no-repeat $mod+Shift+7 move container to workspace number 7
+  bindsym --no-repeat $mod+Shift+8 move container to workspace number 8
+  bindsym --no-repeat $mod+Shift+9 move container to workspace number 9
+  bindsym --no-repeat $mod+Shift+0 move container to workspace number 10
+
+  bindsym --no-repeat $mod+minus scratchpad show
+  bindsym --no-repeat $mod+Shift+minus move scratchpad
+#+end_src
+
+*** Mouse
+#+begin_src conf :tangle "~/.config/sway/config"
+  bindsym $mod+button5 workspace next
+  bindsym $mod+button4 workspace prev
+#+end_src
+
+*** Multimedia
+#+begin_src conf :tangle "~/.config/sway/config"
+  bindsym --locked XF86AudioRaiseVolume exec wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+
+  bindsym --locked XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+  bindsym --locked --no-repeat XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+
+  bindsym --locked XF86MonBrightnessUp exec ~/.local/bin/sway-brightness up
+  bindsym --locked XF86MonBrightnessDown exec ~/.local/bin/sway-brightness down
+  bindsym --locked --no-repeat $mod+XF86MonBrightnessUp exec ~/.local/bin/sway-brightness preset high
+  bindsym --locked --no-repeat $mod+XF86MonBrightnessDown exec ~/.local/bin/sway-brightness preset low
+  bindsym --locked --no-repeat $mod+Shift+XF86MonBrightnessUp exec ~/.local/bin/sway-brightness preset max
+#+end_src
+
+** Window rules
+#+begin_src conf :tangle "~/.config/sway/config"
+  for_window [app_id="scratchpad"] floating enable, resize set 60ppt 60ppt, move position 15ppt 15ppt, move scratchpad
+  for_window [title="Scratchpad"] floating enable, resize set 60ppt 60ppt, move position 15ppt 15ppt, move scratchpad
+
+  no_focus [class="UnrealEditor"]
+
+  for_window [title="Nomad"] floating enable
+  for_window [app_id="xdg-desktop-portal-gtk"] floating enable
+  for_window [class="xdg-desktop-portal-gtk"] floating enable
+  for_window [title="Steam - Self Updater"] floating enable
+
+  for_window [window_type="dialog"] floating enable
+  for_window [window_type="utility"] floating enable
+  for_window [window_type="splash"] floating enable
+  for_window [window_role="pop-up"] floating enable
+
+  for_window [class="resolve"] border pixel 0
+  for_window [title="resolve"] border pixel 0
+  for_window [class="affinity.exe"] border pixel 0
+  for_window [class="affinity.exe" title="Affinity"] floating disable
+
+  for_window [class="^steam_app_"] fullscreen enable, inhibit_idle fullscreen, allow_tearing yes
+  for_window [class="^cs2$"] fullscreen enable, inhibit_idle fullscreen, allow_tearing yes
+  for_window [class="^gamescope$"] fullscreen enable, inhibit_idle fullscreen, allow_tearing yes
+  for_window [app_id="^gamescope$"] fullscreen enable, inhibit_idle fullscreen, allow_tearing yes
+#+end_src
+
+** Autostart
+#+begin_src conf :tangle "~/.config/sway/config"
+  exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
+  exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
+  exec systemctl --user start hyprpolkitagent
+
+  exec $spawn mako
+  exec $spawn foot --app-id=scratchpad --title=Scratchpad -e tmux
+  exec $spawn gsettings set org.gnome.desktop.interface color-scheme prefer-dark
+  exec $spawn gsettings set org.gnome.desktop.interface cursor-theme macOS
+  exec $spawn gsettings set org.gnome.desktop.interface cursor-size 32
+  exec $spawn udiskie
+  exec $spawn waybar -c $HOME/.config/sway/waybar.json -s $HOME/.config/waybar/style.css
+
+  exec swayidle -w \
+      lock 'swaylock -f' \
+      before-sleep 'loginctl lock-session' \
+      after-resume 'swaymsg "output * dpms on"' \
+      timeout 60 'brightnessctl -s set 10' \
+      resume 'brightnessctl -r' \
+      timeout 180 'swaymsg "output * dpms off"' \
+      resume 'swaymsg "output * dpms on"' \
+      timeout 300 'loginctl lock-session'
+
+  exec_always ~/.config/sway/host.sh
+#+end_src
+
+* Host script
+Runtime hostname switch, same machines as Hyprland.
+
+#+begin_src bash :tangle "~/.config/sway/host.sh" :tangle-mode (identity #o777) :shebang "#!/bin/bash"
+  hostname="$(hostname)"
+  spawn="${HOME}/.local/bin/sway-spawn"
+
+  swaymsg -q corner_radius 12 2>/dev/null || true
+
+  case "$hostname" in
+      heimdall)
+          swaymsg -q output DP-1 mode 3440x1440@175Hz pos 0 0 scale 1 adaptive_sync off
+          swaymsg -q output DP-1 render_bit_depth 10 2>/dev/null || true
+          swaymsg -q output DP-1 color_profile srgb 2>/dev/null || true
+          if ! pgrep -x openrgb >/dev/null 2>&1; then
+              "$spawn" openrgb --profile off.orp >/dev/null 2>&1 &
+          fi
+          ;;
+      red)
+          swaymsg -q output eDP-1 mode 1920x1080 pos 0 0 scale 1
+          swaymsg -q "bindsym --no-repeat Mod4+Shift+w exec ${spawn} qutebrowser"
+          ;;
+      poseidon)
+          swaymsg -q output DP-2 mode 3840x2160 pos 0 0 scale 1
+          swaymsg -q output DP-1 mode 3840x2160 pos 3840 0 scale 1
+          ;;
+      *)
+          swaymsg -q output '*' mode preferred
+          ;;
+  esac
+#+end_src
+
+* Helpers
+** Spawn
+Prefix GUI launches with ~uwsm app --~ when UWSM is installed, matching
+Hyprland.
+
+#+begin_src bash :tangle "~/.local/bin/sway-spawn" :tangle-mode (identity #o777) :shebang "#!/bin/sh"
+  if command -v uwsm >/dev/null 2>&1; then
+      exec uwsm app -- "$@"
+  fi
+  exec "$@"
+#+end_src
+
+** Brightness
+heimdall uses ~monitorctl~ plus the shared OSD; red uses ~blight~.
+
+#+begin_src bash :tangle "~/.local/bin/sway-brightness" :tangle-mode (identity #o777) :shebang "#!/bin/bash"
+  set -euo pipefail
+
+  hostname="$(hostname)"
+  action="${1:-}"
+  osd="${HOME}/.local/bin/osd.sh"
+
+  show_osd() {
+      local message="$1"
+      if [ -x "$osd" ]; then
+          "$osd" "$message" "display-brightness-symbolic"
+      fi
+  }
+
+  case "$hostname" in
+      heimdall)
+          case "$action" in
+              up)     monitorctl b -i 5 ;;
+              down)   monitorctl b -d 5 ;;
+              preset)
+                  case "${2:-}" in
+                      high) monitorctl b 25 ;;
+                      low)  monitorctl b 5 ;;
+                      max)  monitorctl b 100 ;;
+                  esac
+                  ;;
+          esac
+          val="$(monitorctl b -g 2>/dev/null | tr -d '[:space:]')"
+          show_osd "Brightness ${val}%"
+          ;;
+      red)
+          case "$action" in
+              up)     blight inc 2 ;;
+              down)   blight dec 2 ;;
+              preset)
+                  case "${2:-}" in
+                      high) blight set 32768 ;;
+                      low)  blight set 5 ;;
+                      max)  blight set 65535 ;;
+                  esac
+                  ;;
+          esac
+          ;;
+      *)
+          case "$action" in
+              up)     brightnessctl set 5%+ ;;
+              down)   brightnessctl set 5%- ;;
+              preset)
+                  case "${2:-}" in
+                      high) brightnessctl set 25% ;;
+                      low)  brightnessctl set 5% ;;
+                      max)  brightnessctl set 100% ;;
+                  esac
+                  ;;
+          esac
+          ;;
+  esac
+#+end_src
+
+** Close frame
+Move every window in the focused container into the nearest sibling, then
+let the empty container collapse. No-op on a lone root leaf.
+
+#+begin_src python :tangle "~/.local/bin/sway-close-frame" :tangle-mode (identity #o777) :shebang "#!/usr/bin/env python3"
+  import json
+  import subprocess
+  import sys
+
+
+  def tree():
+      return json.loads(subprocess.check_output(["swaymsg", "-t", "get_tree", "-r"]))
+
+
+  def run(cmd):
+      subprocess.run(["swaymsg", cmd], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+  def walk(node):
+      yield node
+      for child in node.get("nodes", []) + node.get("floating_nodes", []):
+          yield from walk(child)
+
+
+  def is_window(node):
+      if node.get("type") == "workspace":
+          return False
+      if node.get("nodes") or node.get("floating_nodes"):
+          return False
+      return bool(node.get("pid") or node.get("app_id") or node.get("window"))
+
+
+  def parents_of(root):
+      mapping = {}
+      for node in walk(root):
+          for child in node.get("nodes", []) + node.get("floating_nodes", []):
+              mapping[child["id"]] = node
+      return mapping
+
+
+  def first_window(node):
+      if is_window(node):
+          return node
+      for child in node.get("nodes", []):
+          found = first_window(child)
+          if found is not None:
+              return found
+      return node
+
+
+  def main():
+      root = tree()
+      parents = parents_of(root)
+      focused = next((n for n in walk(root) if n.get("focused")), None)
+      if focused is None:
+          return
+
+      parent = parents.get(focused["id"])
+      if parent is None:
+          return
+
+      if parent.get("layout") in ("tabbed", "stacked"):
+          frame = parent
+      else:
+          frame = focused
+
+      split = parents.get(frame["id"])
+      if split is None or split.get("type") in ("output", "root"):
+          return
+
+      siblings = [c for c in split.get("nodes", []) if c["id"] != frame["id"]]
+      if not siblings:
+          return
+
+      frames = split.get("nodes", [])
+      idx = next(i for i, c in enumerate(frames) if c["id"] == frame["id"])
+      if idx + 1 < len(frames):
+          target = frames[idx + 1]
+      else:
+          target = frames[idx - 1]
+
+      mark = "_sway_frame_target"
+      dest = first_window(target)
+      run("[con_id=%s] mark --add %s" % (dest["id"], mark))
+
+      windows = [w for w in walk(frame) if is_window(w)]
+      windows.sort(key=lambda w: bool(w.get("focused")))
+      for window in windows:
+          run("[con_id=%s] move window to mark %s" % (window["id"], mark))
+
+      run("unmark %s" % mark)
+      run("[con_id=%s] focus" % focused["id"])
+
+
+  if __name__ == "__main__":
+      try:
+          main()
+      except Exception:
+          sys.exit(0)
+#+end_src
+
+** Color picker
+#+begin_src python :tangle "~/.local/bin/sway-color-picker" :tangle-mode (identity #o777) :shebang "#!/usr/bin/env python3"
+  import subprocess
+  import sys
+
+
+  def main():
+      geom = subprocess.check_output(["slurp", "-p"], text=True).strip()
+      ppm = subprocess.check_output(["grim", "-g", geom, "-t", "ppm", "-"])
+      body = ppm.split(b"\n", 3)[-1]
+      hex_color = "#%02x%02x%02x" % (body[0], body[1], body[2])
+      subprocess.run(["wl-copy"], input=hex_color.encode(), check=False)
+
+
+  if __name__ == "__main__":
+      try:
+          main()
+      except subprocess.CalledProcessError:
+          sys.exit(1)
+#+end_src
+
+* Swaylock
+#+begin_src conf :tangle "~/.config/swaylock/config"
+  color=000000
+  font=Aporetic Sans Mono
+  font-size=13
+  indicator-idle-visible
+  indicator-radius=120
+  indicator-thickness=3
+  inside-color=00000000
+  inside-clear-color=00000000
+  inside-caps-lock-color=00000000
+  inside-ver-color=00000000
+  inside-wrong-color=00000000
+  key-hl-color=2fafff
+  line-color=00000000
+  ring-color=b6a0ffee
+  ring-clear-color=b6a0ffee
+  ring-ver-color=44bc44ee
+  ring-wrong-color=ff5f59ee
+  separator-color=00000000
+  text-color=ffffffff
+  text-clear-color=ffffffff
+  text-ver-color=ffffffff
+  text-wrong-color=ffffffff
+  bs-hl-color=ff5f59
+  ignore-empty-password
+  show-failed-attempts
+#+end_src
+
+* Waybar
+Sway-specific bar config; shares the Hyprland stylesheet.
+
+#+begin_src json :tangle "~/.config/sway/waybar.json"
+  {
+      "layer": "top",
+      "position": "top",
+      "reload_style_on_change": true,
+      "modules-left": ["sway/workspaces"],
+      "modules-center": ["clock"],
+      "modules-right": ["pulseaudio", "cpu", "memory", "battery"],
+
+      "clock": {
+          "format": "{:%I:%M %p}",
+          "interval": 1,
+          "tooltip-format": "<tt>{calendar}</tt>",
+          "calendar": {
+              "format": {
+                  "today": "<span color='#ffffff'><b>{}</b></span>"
+              }
+          }
+      },
+      "battery": {
+          "interval": 30,
+          "states": {
+              "good": 95,
+              "warning": 30,
+              "critical": 20
+          },
+          "format": " {icon} {capacity}% {time} ",
+          "format-charging": " 󰂄 {capacity}% ",
+          "format-plugged": " 󰂄  {capacity}% ",
+          "format-alt": " {icon} {time} ",
+          "format-icons": [
+              "󰁻",
+              "󰁼",
+              "󰁾",
+              "󰂀",
+              "󰂂",
+              "󰁹"
+          ]
+      },
+      "pulseaudio": {
+          "format": "{icon} {volume}% ",
+          "format-bluetooth": "  {icon} {volume}% ",
+          "format-muted": "",
+          "format-icons": {
+              "headphone": " ",
+              "hands-free": " ",
+              "headset": " ",
+              "phone": " ",
+              "portable": " ",
+              "car": " ",
+              "default": [" ", " "]
+          },
+          "scroll-step": 1,
+          "on-click": "pavucontrol"
+      },
+      "cpu": {
+          "format": "   {usage}% ",
+          "tooltip": true
+      },
+      "memory": {
+          "format": "   {percentage}%"
+      }
+  }
+#+end_src

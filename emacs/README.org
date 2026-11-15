@@ -11,14 +11,7 @@
 
   (push '(menu-bar-lines . 0) default-frame-alist)
   (push '(tool-bar-lines . 0) default-frame-alist)
-  ;; The old `(vertical-scroll-bars nil . nil)' was a malformed cons:
-  ;; the value was a non-nil list, i.e. it asked FOR scroll bars.
   (push '(vertical-scroll-bars . nil) default-frame-alist)
-  (push '(background-color . "#000000") default-frame-alist)
-  ;; Font at frame creation: no flash of the default font and no
-  ;; reflow when the theme's `set-face-attribute' reconciles the
-  ;; weight after startup.
-  (push '(font . "JetBrainsMono Nerd Font-12") default-frame-alist)
 
   (defvar default-file-name-handler-alist file-name-handler-alist)
   (setq file-name-handler-alist nil)
@@ -894,17 +887,13 @@
   (use-package doom-modeline
     :config (doom-modeline-mode))
 
-  (use-package ember-theme
-    :ensure (:host github :repo "ember-theme/emacs" :files("*.el"))
-    :demand t
-    :init
-    (add-to-list 'custom-theme-load-path (expand-file-name "ember-theme" elpaca-builds-directory))
+  (use-package modus-themes
     :config
-    (load-theme 'ember t)
     (set-face-attribute 'default nil
-                        :family "JetBrainsMono Nerd Font"
-                        :height 120
-                        :weight 'Semibold)
+                        :family ""
+                        :height 130
+                        :weight 'Medium)
+    (setq-default line-spacing 0.10)
+    (modus-themes-load-theme 'modus-vivendi)
     )
-  (setq-default line-spacing 0.00)
 #+end_src

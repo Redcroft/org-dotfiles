@@ -22,5 +22,6 @@ This repository contains my personal dotfiles, managed with Org-mode and tangled
 - [[./rbw/README.org][Rbw]]
 - [[./rofi/README.org][Rofi]]
 - [[./ssh/README.org][SSH]]
+- [[./sway/README.org][Sway]]
 - [[./xorg/xorg.org][Xorg]]
 - [[./zsh/README.org][Zsh]]

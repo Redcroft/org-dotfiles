@@ -120,7 +120,8 @@
     color: #989898;
   }
 
-  #workspaces button.active {
+  #workspaces button.active,
+  #workspaces button.focused {
     background-color: #2fafff;
     color: #000000;
   }

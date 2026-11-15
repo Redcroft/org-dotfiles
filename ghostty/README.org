@@ -7,21 +7,21 @@
 * Config
 
 #+begin_src conf
-  font-family = "Aporetic Sans Mono"
+  font-family = "JetBrainsMono Sans Mono"
   font-size = 12
   font-style = "Medium"
-  # quick-terminal-position = center
-  # quick-terminal-size = 60%,60%
+  quick-terminal-position = center
+  quick-terminal-size = 60%,60%
 
   window-padding-x = 6
   window-padding-y = 6
 
   window-decoration = auto
 
-  theme = Gruvbox Dark Hard
+  theme = Aura
 #+end_src
 
-#+begin_src conf :tangle no
+#+begin_src conf
   initial-window = false
   quit-after-last-window-closed = false
   keybind = global:super+minus=toggle_quick_terminal

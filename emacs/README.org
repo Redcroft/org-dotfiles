@@ -1036,13 +1036,12 @@
   (use-package doom-modeline
     :config (doom-modeline-mode))
 
-  (use-package modus-themes
+  (use-package doom-themes
     :config
     (set-face-attribute 'default nil
                         :family "GeistMono NF"
                         :height 130
                         :weight 'Medium)
     (setq-default line-spacing 0.10)
-    (modus-themes-load-theme 'modus-vivendi)
-    )
+    (load-theme 'doom-gruvbox))
 #+end_src

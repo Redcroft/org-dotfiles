@@ -196,7 +196,7 @@
   argument_parser.add_argument(
       "--terminal",
       "-t",
-      default="kitty",
+      default="foot",
       help="Terminal used to execute rbw unlock",
   )
   argument_parser.add_argument(

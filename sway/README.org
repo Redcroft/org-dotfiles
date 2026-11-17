@@ -16,11 +16,13 @@ sibling (hyprframe ~close_frame~).
   (expand-file-name "../wallpaper.jpg" (file-name-directory (or (buffer-file-name) default-directory)))
 #+end_src
 
+#+RESULTS: wallpaper-path
+: /home/lambda/.repos/org-dotfiles/wallpaper.jpg
+
 * Config
 ** Variables
 #+begin_src conf :tangle "~/.config/sway/config"
   set $mod Mod4
-  set $spawn ~/.local/bin/sway-spawn
   set $term foot -e tmux
   set $menu bemenu-run --fn "GeistMono NF 14" --fb "#000000" --ff "#ffffff" --nb "#000000" --nf "#ffffff" --tb "#000000" --hb "#b6a0ff" --tf "#b6a0ff" --hf "#ffffff" --af "#ffffff" --ab "#000000"
   set $browser zen-browser
@@ -107,21 +109,20 @@ active border.
 ** Keybinds
 *** General
 #+begin_src conf :tangle "~/.config/sway/config"
-  bindsym --no-repeat $mod+Return exec $spawn $term
-  bindsym --no-repeat $mod+Shift+w exec $spawn $browser
-  bindsym --no-repeat $mod+Shift+e exec $spawn $editor
+  bindsym --no-repeat $mod+Return exec $term
+  bindsym --no-repeat $mod+Shift+w exec $browser
+  bindsym --no-repeat $mod+Shift+e exec $editor
   bindsym --no-repeat $mod+Shift+q kill
   bindsym --no-repeat $mod+Shift+Escape exit
   bindsym --no-repeat $mod+Shift+grave exit
   bindsym --no-repeat $mod+Escape reload
   bindsym --no-repeat $mod+Shift+space floating toggle
-  bindsym --no-repeat $mod+d exec $spawn $menu
+  bindsym --no-repeat $mod+d exec $menu
   bindsym --no-repeat $mod+BackSpace exec "swaymsg focus output right || swaymsg focus output left"
   bindsym --no-repeat $mod+y exec killall -SIGUSR1 waybar
   bindsym --no-repeat $mod+l exec $lock
 
   bindsym --no-repeat $mod+Shift+s exec grim -g "$(slurp -d)"
-  bindsym --no-repeat $mod+Shift+p exec ~/.local/bin/sway-color-picker
 #+end_src
 
 *** Frame layout
@@ -192,11 +193,11 @@ Emacs-style movement, hyprframe split / cycle / close.
   bindsym --locked XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
   bindsym --locked --no-repeat XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
 
-  bindsym --locked XF86MonBrightnessUp exec ~/.local/bin/sway-brightness up
-  bindsym --locked XF86MonBrightnessDown exec ~/.local/bin/sway-brightness down
-  bindsym --locked --no-repeat $mod+XF86MonBrightnessUp exec ~/.local/bin/sway-brightness preset high
-  bindsym --locked --no-repeat $mod+XF86MonBrightnessDown exec ~/.local/bin/sway-brightness preset low
-  bindsym --locked --no-repeat $mod+Shift+XF86MonBrightnessUp exec ~/.local/bin/sway-brightness preset max
+  bindsym --locked XF86MonBrightnessUp exec brightnessctl s +2%
+  bindsym --locked XF86MonBrightnessDown exec brightnessctl s 2%-
+  bindsym --locked --no-repeat $mod+XF86MonBrightnessUp exec brightnessctl s 15%
+  bindsym --locked --no-repeat $mod+XF86MonBrightnessDown exec brightnessctl s 0%
+  bindsym --locked --no-repeat $mod+Shift+XF86MonBrightnessUp exec brightnessctl s 100%
 #+end_src
 
 ** Window rules
@@ -230,16 +231,14 @@ Emacs-style movement, hyprframe split / cycle / close.
 ** Autostart
 #+begin_src conf :tangle "~/.config/sway/config"
   exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
-  exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK XDG_CURRENT_DESKTOP
-  exec systemctl --user start hyprpolkitagent
 
-  exec $spawn mako
-  exec $spawn foot --app-id=scratchpad --title=Scratchpad -e tmux
-  exec $spawn gsettings set org.gnome.desktop.interface color-scheme prefer-dark
-  exec $spawn gsettings set org.gnome.desktop.interface cursor-theme macOS
-  exec $spawn gsettings set org.gnome.desktop.interface cursor-size 32
-  exec $spawn udiskie
-  exec $spawn waybar -c $HOME/.config/sway/waybar.json -s $HOME/.config/waybar/style.css
+  exec mako
+  exec foot --app-id=scratchpad --title=Scratchpad -e tmux
+  exec gsettings set org.gnome.desktop.interface color-scheme prefer-dark
+  exec gsettings set org.gnome.desktop.interface cursor-theme macOS
+  exec gsettings set org.gnome.desktop.interface cursor-size 32
+  exec udiskie
+  exec waybar -c $HOME/.config/sway/waybar.json -s $HOME/.config/waybar/style.css
 
   exec swayidle -w \
       lock 'swaylock -f' \
@@ -259,7 +258,6 @@ Runtime hostname switch, same machines as Hyprland.
 
 #+begin_src bash :tangle "~/.config/sway/host.sh" :tangle-mode (identity #o777) :shebang "#!/bin/bash"
   hostname="$(hostname)"
-  spawn="${HOME}/.local/bin/sway-spawn"
 
   swaymsg -q corner_radius 12 2>/dev/null || true
 
@@ -269,12 +267,12 @@ Runtime hostname switch, same machines as Hyprland.
           swaymsg -q output DP-1 render_bit_depth 10 2>/dev/null || true
           swaymsg -q output DP-1 color_profile srgb 2>/dev/null || true
           if ! pgrep -x openrgb >/dev/null 2>&1; then
-              "$spawn" openrgb --profile off.orp >/dev/null 2>&1 &
+              openrgb --profile off.orp >/dev/null 2>&1 &
           fi
           ;;
       red)
           swaymsg -q output eDP-1 mode 1920x1080 pos 0 0 scale 1
-          swaymsg -q "bindsym --no-repeat Mod4+Shift+w exec ${spawn} qutebrowser"
+          swaymsg -q "bindsym --no-repeat Mod4+Shift+w exec qutebrowser"
           ;;
       poseidon)
           swaymsg -q output DP-2 mode 3840x2160 pos 0 0 scale 1
@@ -287,78 +285,6 @@ Runtime hostname switch, same machines as Hyprland.
 #+end_src
 
 * Helpers
-** Spawn
-Prefix GUI launches with ~uwsm app --~ when UWSM is installed, matching
-Hyprland.
-
-#+begin_src bash :tangle "~/.local/bin/sway-spawn" :tangle-mode (identity #o777) :shebang "#!/bin/sh"
-  if command -v uwsm >/dev/null 2>&1; then
-      exec uwsm app -- "$@"
-  fi
-  exec "$@"
-#+end_src
-
-** Brightness
-heimdall uses ~monitorctl~ plus the shared OSD; red uses ~blight~.
-
-#+begin_src bash :tangle "~/.local/bin/sway-brightness" :tangle-mode (identity #o777) :shebang "#!/bin/bash"
-  set -euo pipefail
-
-  hostname="$(hostname)"
-  action="${1:-}"
-  osd="${HOME}/.local/bin/osd.sh"
-
-  show_osd() {
-      local message="$1"
-      if [ -x "$osd" ]; then
-          "$osd" "$message" "display-brightness-symbolic"
-      fi
-  }
-
-  case "$hostname" in
-      heimdall)
-          case "$action" in
-              up)     monitorctl b -i 5 ;;
-              down)   monitorctl b -d 5 ;;
-              preset)
-                  case "${2:-}" in
-                      high) monitorctl b 25 ;;
-                      low)  monitorctl b 5 ;;
-                      max)  monitorctl b 100 ;;
-                  esac
-                  ;;
-          esac
-          val="$(monitorctl b -g 2>/dev/null | tr -d '[:space:]')"
-          show_osd "Brightness ${val}%"
-          ;;
-      red)
-          case "$action" in
-              up)     blight inc 2 ;;
-              down)   blight dec 2 ;;
-              preset)
-                  case "${2:-}" in
-                      high) blight set 32768 ;;
-                      low)  blight set 5 ;;
-                      max)  blight set 65535 ;;
-                  esac
-                  ;;
-          esac
-          ;;
-      *)
-          case "$action" in
-              up)     brightnessctl set 5%+ ;;
-              down)   brightnessctl set 5%- ;;
-              preset)
-                  case "${2:-}" in
-                      high) brightnessctl set 25% ;;
-                      low)  brightnessctl set 5% ;;
-                      max)  brightnessctl set 100% ;;
-                  esac
-                  ;;
-          esac
-          ;;
-  esac
-#+end_src
 
 ** Close frame
 Move every window in the focused container into the nearest sibling, then
@@ -459,27 +385,6 @@ let the empty container collapse. No-op on a lone root leaf.
           main()
       except Exception:
           sys.exit(0)
-#+end_src
-
-** Color picker
-#+begin_src python :tangle "~/.local/bin/sway-color-picker" :tangle-mode (identity #o777) :shebang "#!/usr/bin/env python3"
-  import subprocess
-  import sys
-
-
-  def main():
-      geom = subprocess.check_output(["slurp", "-p"], text=True).strip()
-      ppm = subprocess.check_output(["grim", "-g", geom, "-t", "ppm", "-"])
-      body = ppm.split(b"\n", 3)[-1]
-      hex_color = "#%02x%02x%02x" % (body[0], body[1], body[2])
-      subprocess.run(["wl-copy"], input=hex_color.encode(), check=False)
-
-
-  if __name__ == "__main__":
-      try:
-          main()
-      except subprocess.CalledProcessError:
-          sys.exit(1)
 #+end_src
 
 * Swaylock

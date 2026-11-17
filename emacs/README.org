@@ -1040,8 +1040,8 @@
     :config
     (set-face-attribute 'default nil
                         :family "GeistMono NF"
-                        :height 130
+                        :height 120
                         :weight 'Medium)
     (setq-default line-spacing 0.10)
-    (load-theme 'doom-gruvbox))
+    (load-theme 'doom-horizon))
 #+end_src

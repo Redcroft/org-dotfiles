@@ -22,7 +22,7 @@ sibling (hyprframe ~close_frame~).
   set $mod Mod4
   set $spawn ~/.local/bin/sway-spawn
   set $term foot -e tmux
-  set $menu bemenu-run --fn "Aporetic Sans Mono 14" --fb "#000000" --ff "#ffffff" --nb "#000000" --nf "#ffffff" --tb "#000000" --hb "#b6a0ff" --tf "#b6a0ff" --hf "#ffffff" --af "#ffffff" --ab "#000000"
+  set $menu bemenu-run --fn "GeistMono NF 14" --fb "#000000" --ff "#ffffff" --nb "#000000" --nf "#ffffff" --tb "#000000" --hb "#b6a0ff" --tf "#b6a0ff" --hf "#ffffff" --af "#ffffff" --ab "#000000"
   set $browser zen-browser
   set $editor emacs
   set $lock swaylock -f
@@ -54,7 +54,7 @@ tabs). Indicator colour is the frame purple; window border is the cyan
 active border.
 
 #+begin_src conf :tangle "~/.config/sway/config"
-  font pango:Aporetic Sans Mono Semibold 13
+  font pango:GeistMono NF Semibold 13
 
   default_border pixel 2
   default_floating_border pixel 2
@@ -485,7 +485,7 @@ let the empty container collapse. No-op on a lone root leaf.
 * Swaylock
 #+begin_src conf :tangle "~/.config/swaylock/config"
   color=000000
-  font=Aporetic Sans Mono
+  font=GeistMono NF
   font-size=13
   indicator-idle-visible
   indicator-radius=120

@@ -8,9 +8,9 @@
 * Main
 #+begin_src conf
   [main]
-  font=Aporetic Sans Mono:size=11:style=semibold
+  font=BlexMono NF:size=12:style=semibold
   pad=12x12 center-when-maximized-and-fullscreen
-  include=/usr/share/foot/themes/modus-vivendi
+  include=/usr/share/foot/themes/catppuccin-mocha
 
   [colors-dark]
   alpha = 0.95

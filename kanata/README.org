@@ -178,6 +178,7 @@
       _ _ _ _ _ pgdn pgup)
 #+end_src
 
+* Systemd
 #+begin_src conf :tangle "/sudo::/etc/systemd/system/kanata.service"
   [Unit]
   Description=Kanata key remapping daemon
@@ -190,4 +191,12 @@
 
   [Install]
   WantedBy=sysinit.target
+#+end_src
+
+* Dinit
+#+begin_src conf :tangle "/doas::/etc/dinit.d/kanata"
+  type            = process
+  command         = /usr/bin/kanata --cfg /etc/kanata/config.kbd
+  smooth-recovery = true
+  depends-on      = local.target
 #+end_src

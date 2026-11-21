@@ -80,8 +80,8 @@ non-interactive ones. Directories are added only if they exist.
       local dir="$1"
       [ -d "$dir" ] || return 0
       case ":${PATH}:" in
-          *":${dir}:"*) ;;
-          *) PATH="${dir}${PATH:+:$PATH}" ;;
+          ,*":${dir}:"*) ;;
+          ,*) PATH="${dir}${PATH:+:$PATH}" ;;
       esac
   }
 
@@ -91,6 +91,10 @@ non-interactive ones. Directories are added only if they exist.
   path_prepend "$HOME/.opencode/bin"
   path_prepend "$HOME/.grok/bin"
   path_prepend /var/lib/flatpak/exports/bin
+  if [ -d "$HOME/.repos/Odin" ]; then
+    path_prepend "$HOME/.repos/Odin"
+    path_prepend "$HOME/.repos/ols"
+  fi
 
   if [ -d /usr/lib/jvm/java-21-openjdk ]; then
       export JAVA_HOME=/usr/lib/jvm/java-21-openjdk
@@ -111,8 +115,8 @@ non-interactive ones. Directories are added only if they exist.
 
   # Non-interactive shells stop here.
   case $- in
-      *i*) ;;
-      *) return ;;
+      ,*i*) ;;
+      ,*) return ;;
   esac
 
   export GPG_TTY="$(tty 2>/dev/null || true)"

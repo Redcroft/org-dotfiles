@@ -240,15 +240,15 @@ Emacs-style movement, hyprframe split / cycle / close.
   exec udiskie
   exec waybar -c $HOME/.config/sway/waybar.json -s $HOME/.config/waybar/style.css
 
-  exec swayidle -w \
-      lock 'swaylock -f' \
-      before-sleep 'loginctl lock-session' \
-      after-resume 'swaymsg "output * dpms on"' \
-      timeout 60 'brightnessctl -s set 10' \
-      resume 'brightnessctl -r' \
-      timeout 180 'swaymsg "output * dpms off"' \
-      resume 'swaymsg "output * dpms on"' \
-      timeout 300 'loginctl lock-session'
+  # exec swayidle -w \
+  #     lock 'swaylock -f' \
+  #     before-sleep 'loginctl lock-session' \
+  #     after-resume 'swaymsg "output * dpms on"' \
+  #     timeout 60 'brightnessctl -s set 10' \
+  #     resume 'brightnessctl -r' \
+  #     timeout 180 'swaymsg "output * dpms off"' \
+  #     resume 'swaymsg "output * dpms on"' \
+  #     timeout 300 'loginctl lock-session'
 
   exec_always ~/.config/sway/host.sh
 #+end_src

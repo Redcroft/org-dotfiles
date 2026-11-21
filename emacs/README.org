@@ -147,8 +147,8 @@
   (use-package emacs
     :ensure nil
     :bind (("C-x r s" . replace-string)
-  	 ("C-c r" . eval-buffer)
-    	 ("M-#" . comment-or-uncomment-region))
+           ("C-c r" . eval-buffer)
+           ("M-#" . comment-or-uncomment-region))
     :hook
     (after-init . (lambda ()
                     (keyboard-translate ?\C-x ?\C-t)
@@ -164,26 +164,28 @@
       (add-hook (intern (concat (symbol-name mode) "-hook"))
                 (lambda () (display-line-numbers-mode -1))))
     :config
+
     (setq auth-sources '("~/.authinfo.gpg")
-  	apropos-do-all t
-    	custom-safe-themes t
-    	inhibit-startup-screen t
-    	use-short-answers t
-  	display-line-numbers-type 'visual
-  	recentf-max-saved-items 500
-  	indent-tabs-mode nil
-  	read-process-output-max (* 1024 1024)
-  	tab-always-indent 'complete
-  	enable-recursive-minibuffers t
-  	read-extended-command-predicate #'command-completion-default-include-p
-  	set-mark-command-repeat-pop t       ; C-u C-SPC, then C-SPC to keep popping
-  	;; Responsiveness
-  	fast-but-imprecise-scrolling t
-  	redisplay-skip-fontification-on-input t
-  	inhibit-compacting-font-caches t    ; helps with nerd-icons/ligatures
-  	scroll-conservatively 101
-  	bidi-inhibit-bpa t
-  	)
+          apropos-do-all t
+          warning-suppress-types (append warning-suppress-types '((files)))
+          custom-safe-themes t
+          inhibit-startup-screen t
+          use-short-answers t
+          display-line-numbers-type 'visual
+          recentf-max-saved-items 500
+          indent-tabs-mode nil
+          read-process-output-max (* 1024 1024)
+          tab-always-indent 'complete
+          enable-recursive-minibuffers t
+          read-extended-command-predicate #'command-completion-default-include-p
+          set-mark-command-repeat-pop t       ; C-u C-SPC, then C-SPC to keep popping
+          ;; Responsiveness
+          fast-but-imprecise-scrolling t
+          redisplay-skip-fontification-on-input t
+          inhibit-compacting-font-caches t    ; helps with nerd-icons/ligatures
+          scroll-conservatively 101
+          bidi-inhibit-bpa t
+          )
     (electric-indent-mode 1)
     (electric-pair-mode 1)
     (repeat-mode)
@@ -228,7 +230,7 @@
                     (nnimap-stream ssl))))
 
     (setq gnus-parameters
-  	'(("nnimap\\+gmail:.*"
+          '(("nnimap\\+gmail:.*"
              (nnimap-user "animationrich@gmail.com"))
 
             ("nnimap\\+work:.*"
@@ -239,11 +241,11 @@
 
     ;; Sending
     (setq message-send-mail-function
-  	'smtpmail-send-it)
+          'smtpmail-send-it)
     (setq smtpmail-stream-type 'starttls)
     (setq smtpmail-smtp-service 587)
     (setq gnus-posting-styles
-  	'(("nnimap\\+gmail:"
+          '(("nnimap\\+gmail:"
              (address "animationrich@gmail.com")
              (name "Richard Redcroft"))
 
@@ -376,7 +378,7 @@
   (use-package org
     :ensure nil
     :bind (("C-c x" . org-capture)
-  	 ("C-c e" . org-publish-all))
+           ("C-c e" . org-publish-all))
     :custom
     (org-fold-core-style 'overlays)
     (org-src-window-setup 'current-window)
@@ -899,7 +901,7 @@
     :ensure nil
     :config
     (setq treesit-font-lock-level 3
-  	treesit-auto-install-grammar 'ask)
+          treesit-auto-install-grammar 'ask)
     (dolist (pair '((c-mode          . c-ts-mode)
                     (c++-mode        . c++-ts-mode)
                     (c-or-c++-mode   . c-or-c++-ts-mode)
@@ -930,11 +932,11 @@
         (when (and lang (treesit-language-available-p lang))
           (add-to-list 'major-mode-remap-alist pair))))
     (add-to-list 'treesit-language-source-alist
-  	       '(odin "https://github.com/tree-sitter-grammars/tree-sitter-odin"))
+                 '(odin "https://github.com/tree-sitter-grammars/tree-sitter-odin"))
     (add-to-list 'treesit-language-source-alist
-  		 '(glsl "https://github.com/tree-sitter-grammars/tree-sitter-glsl"))
+                   '(glsl "https://github.com/tree-sitter-grammars/tree-sitter-glsl"))
     (add-to-list 'treesit-language-source-alist
-  		 '(qmljs "https://github.com/yuja/tree-sitter-qmljs")))
+                   '(qmljs "https://github.com/yuja/tree-sitter-qmljs")))
 #+end_src
 
 ** Languages
@@ -990,6 +992,12 @@
       :args '("-"))
     (add-hook 'python-base-mode-hook #'python-black-on-save-mode))
 
+  ;; Roswell
+  (if (file-exists-p "~/.roswell/helper.el")
+      (progn
+        (load (expand-file-name "~/.roswell/helper.el"))
+        (setq inferior-lisp-program "ros -Qrun")))
+
   ;; Rust
   (use-package rust-ts-mode
     :ensure nil
@@ -1029,19 +1037,20 @@
   ;; Aesthetics
   ;; ============================================================
   (add-to-list 'custom-theme-load-path
-    	     (expand-file-name "themes" user-emacs-directory))
+             (expand-file-name "themes" user-emacs-directory))
 
   (use-package nerd-icons :defer t)
 
   (use-package doom-modeline
     :config (doom-modeline-mode))
 
-  (use-package doom-themes
+  (use-package catppuccin-theme
     :config
     (set-face-attribute 'default nil
-                        :family "GeistMono NF"
-                        :height 120
+                        :family "BlexMono NF"
+                        :height 140
                         :weight 'Medium)
     (setq-default line-spacing 0.10)
-    (load-theme 'doom-horizon))
+    (setq catppuccin-flavor 'mocha)
+    (load-theme 'catppuccin))
 #+end_src

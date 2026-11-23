@@ -14,5 +14,8 @@
   max-cache-ttl-ssh 8400000
   allow-loopback-pinentry
   allow-emacs-pinentry
-  pinentry-program /usr/bin/pinentry-qt
+#+end_src
+
+#+begin_src :tangle (if (file-exists-p "/usr/bin/pinentry-bemenu") "~/.gnupg/gpg-agent.conf" no)
+  pinentry-program /usr/bin/pinentry-bemenu
 #+end_src
